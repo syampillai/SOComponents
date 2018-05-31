@@ -61,7 +61,7 @@ import com.vaadin.flow.router.Route;
 public class Demo2 extends Div {
 
     public Demo2() {
-        PDFBrowserViewer pdfViewer = new PDFBrowserViewer("http://www.cambridgeenglish.org/images/young-learners-sample-papers-2018-vol1.pdf");
+        PDFBrowserViewer pdfViewer = new PDFBrowserViewer("https://xxx.yyy.com/sample.pdf");
         pdfViewer.setWidth("800px");
         pdfViewer.setHeight("600px");
         add(pdfViewer);
