@@ -56,21 +56,33 @@ public class IronAutogrowTextArea extends TextFieldComponent<IronAutogrowTextAre
     }
 
     /**
-     * Get maximum visible rows
+     * Get maximum visible rows (without scrolling)
      * @return Maximum visible rows
      */
     public int getMaxRows() {
         return maxRowsProperty.get(this);
     }
 
+    /**
+     * Set maximum visible rows (without scrolling)
+     * @param maxRows Maximim visible rows
+     */
     public void setMaxRows(int maxRows) {
         maxRowsProperty.set(this, maxRows);
     }
 
+    /**
+     * Get minimum visible rows
+     * @return Minimum visible rows
+     */
     public int getMinRows() {
         return minRowsProperty.get(this);
     }
 
+    /**
+     * Set minimum visible rows
+     * @param rows Minimum visible rows
+     */
     public void setMinRows(int rows) {
         minRowsProperty.set(this, rows);
     }
