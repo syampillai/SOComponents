@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 /**
  * Element that has an Icon
+ * @author Syam
  */
 public interface HasIcon extends HasElement {
 

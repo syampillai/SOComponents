@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 /**
  * Enhancements to the standard HasElement in Vaadin
+ * @author Syam
  */
 public interface HasElement extends com.vaadin.flow.component.HasElement {
 

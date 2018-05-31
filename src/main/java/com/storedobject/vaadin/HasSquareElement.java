@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 /**
  * Element that has a square share (equal width and height)
+ * @author Syam
  */
 public interface HasSquareElement extends HasElement {
 

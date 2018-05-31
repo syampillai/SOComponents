@@ -5,6 +5,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
  * Enhancements to Vaadin's Icon to handle all Iron icon collections
+ * @author Syam
  */
 @HtmlImport("frontend://bower_components/iron-icons/iron-icons.html")
 @HtmlImport("frontend://bower_components/iron-icons/av-icons.html")
