@@ -5,7 +5,7 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.9.0</version>
     <name>SO Components</name>
     <description>Integration of paper-icon-button for Vaadin 10</description>
 
@@ -72,6 +72,11 @@
             <groupId>org.webjars.bowergithub.polymerelements</groupId>
             <artifactId>paper-icon-button</artifactId>
             <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.bowergithub.polymerelements</groupId>
+            <artifactId>iron-icons</artifactId>
+            <version>2.1.1</version>
         </dependency>
     </dependencies>
 

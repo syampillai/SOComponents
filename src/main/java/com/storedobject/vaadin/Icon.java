@@ -4,7 +4,7 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
- * Enhancement to Vaadin's Icon to handle all Iron icon collections
+ * Enhancements to Vaadin's Icon to handle all Iron icon collections
  */
 @HtmlImport("frontend://bower_components/iron-icons/iron-icons.html")
 @HtmlImport("frontend://bower_components/iron-icons/av-icons.html")
