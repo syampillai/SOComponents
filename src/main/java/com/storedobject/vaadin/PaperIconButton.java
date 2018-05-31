@@ -5,7 +5,7 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
- * Vaadin Flow warpper around the Web Component: <a href="https://github.com/PolymerElements/paper-icon-button" target="_blank">Paper Icon Button</a>
+ * Vaadin Flow wrapper around the Web Component: <a href="https://github.com/PolymerElements/paper-icon-button" target="_blank">Paper Icon Button</a>
  * @author Syam
  */
 @Tag("paper-icon-button")

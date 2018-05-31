@@ -3,7 +3,6 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Downloads/t" />
-    <option name="OPTION_SCOPE" value="public" />
     <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="true" />
     <option name="OPTION_DOCUMENT_TAG_VERSION" value="true" />
   </component>

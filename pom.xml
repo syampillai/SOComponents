@@ -5,7 +5,7 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
     <name>SO Components</name>
     <description>Integration of paper-icon-button for Vaadin 10</description>
 
@@ -80,13 +80,13 @@
         </dependency>
         <dependency>
             <groupId>org.webjars.bowergithub.polymerelements</groupId>
-            <artifactId>iron-icons</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bowergithub.polymerelements</groupId>
             <artifactId>iron-autogrow-textarea</artifactId>
             <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.bowergithub.ingressorapidowebcomponents</groupId>
+            <artifactId>pdf-browser-viewer</artifactId>
+            <version>1.0.6</version>
         </dependency>
     </dependencies>
 
