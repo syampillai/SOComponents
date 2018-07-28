@@ -7,7 +7,7 @@
     <artifactId>so-components</artifactId>
     <version>0.9.4</version>
     <name>SO Components</name>
-    <description>A set of Vaadin Flow Components derived from various Web Components</description>
+    <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
         <vaadin.version>10.0.1</vaadin.version>
