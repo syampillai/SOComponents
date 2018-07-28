@@ -22,30 +22,49 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 @HtmlImport("bower_components/iron-icons/places-icons.html")
 @HtmlImport("bower_components/vaadin-icons/vaadin-icons.html")
 @HtmlImport("bower_components/paper-icon-button/paper-icon-button.html")
-public class PaperIconButton extends Component implements HasSquareElement, HasIcon, ClickNotifier<PaperIconButton> {
+public class ButtonIcon extends Component implements HasSquareElement, HasIcon, ClickNotifier<ButtonIcon> {
+
+    /**
+     * Constructor
+     * @param icon Text label to display and the respective icon will be used
+     * @param clickHandler Click handler
+     */
+    public ButtonIcon(String icon, ClickHandler clickHandler) {
+        this(null, icon, ClickHandler.convert(clickHandler));
+    }
+
+    /**
+     * Constructor
+     * @param icon Icon to use
+     * @param clickHandler Click handler
+     */
+    public ButtonIcon(VaadinIcon icon, ClickHandler clickHandler) {
+        this(icon, ClickHandler.convert(clickHandler));
+    }
+
+    /**
+     * Create with an Iron icon from a specific collection
+     * @param iconCollection Icon collection name
+     * @param icon Name of the Iron icon
+     * @param clickHandler Click handler
+     */
+    public ButtonIcon(String iconCollection, String icon, ClickHandler clickHandler) {
+        this(iconCollection, icon, ClickHandler.convert(clickHandler));
+    }
 
     /**
      * Create with a Vaadin icon
      * @param icon Vaadin icon
      */
-    public PaperIconButton(VaadinIcon icon) {
-        this(icon, null);
-    }
-
-    /**
-     * Create with a Vaadin icon and a click event listener
-     * @param icon Vaadin icon
-     * @param listener Click listener
-     */
-    public PaperIconButton(VaadinIcon icon, ComponentEventListener<ClickEvent<PaperIconButton>> listener) {
-        this("vaadin", icon.name().toLowerCase().replace('_', '-'), listener);
+    public ButtonIcon(VaadinIcon icon) {
+        this(icon, (ComponentEventListener<ClickEvent<ButtonIcon>>)null);
     }
 
     /**
      * Create with an Iron icon name
      * @param icon Name of the Iron icon
      */
-    public PaperIconButton(String icon) {
+    public ButtonIcon(String icon) {
         this(null, icon);
     }
 
@@ -54,26 +73,15 @@ public class PaperIconButton extends Component implements HasSquareElement, HasI
      * @param iconCollection Icon collection name
      * @param icon Name of the Iron icon
      */
-    public PaperIconButton(String iconCollection, String icon) {
-        this(iconCollection, icon, null);
+    public ButtonIcon(String iconCollection, String icon) {
+        this(iconCollection, icon, (ComponentEventListener<ClickEvent<ButtonIcon>>)null);
     }
 
-    /**
-     * Create with an Iron icon and a click event listener
-     * @param icon Name of the Iron icon
-     * @param listener Click listener
-     */
-    public PaperIconButton(String icon, ComponentEventListener<ClickEvent<PaperIconButton>> listener) {
-        this(null, icon, listener);
+    private ButtonIcon(VaadinIcon icon, ComponentEventListener<ClickEvent<ButtonIcon>> listener) {
+        this("vaadin", icon.name().toLowerCase().replace('_', '-'), listener);
     }
 
-    /**
-     * Create with an Iron icon from a specific collection and a click event listener
-     * @param iconCollection Iron icon collection name
-     * @param icon Name of the Iron icon
-     * @param listener Click listener
-     */
-    public PaperIconButton(String iconCollection, String icon, ComponentEventListener<ClickEvent<PaperIconButton>> listener) {
+    private ButtonIcon(String iconCollection, String icon, ComponentEventListener<ClickEvent<ButtonIcon>> listener) {
         setIcon(iconCollection, icon);
         if(listener != null) {
             addClickListener(listener);

@@ -23,6 +23,9 @@ public interface HasIcon extends HasElement {
         if(icon == null || icon.trim().isEmpty()) {
             icon = "vaadin:vaadin-h";
         }
+        if(!icon.contains(":")) {
+            icon = Icon.resolveName(icon);
+        }
         if(iconCollection != null && !iconCollection.trim().isEmpty() && !icon.contains(":")) {
             icon = iconCollection.trim() + ":" + icon;
         }

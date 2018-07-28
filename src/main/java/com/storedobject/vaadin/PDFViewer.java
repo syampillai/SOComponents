@@ -11,12 +11,12 @@ import com.vaadin.flow.component.dependency.HtmlImport;
  */
 @Tag("pdf-browser-viewer")
 @HtmlImport("bower_components/pdf-browser-viewer/pdf-browser-viewer.html")
-public class PDFBrowserViewer extends Component implements HasSize {
+public class PDFViewer extends Component implements HasSize {
 
     /**
      * Default constructor
      */
-    public  PDFBrowserViewer() {
+    public PDFViewer() {
         this(null);
     }
 
@@ -24,7 +24,7 @@ public class PDFBrowserViewer extends Component implements HasSize {
      * Constructor with file to view
      * @param fileURL URL of the file to view
      */
-    public PDFBrowserViewer(String fileURL) {
+    public PDFViewer(String fileURL) {
         if(fileURL != null) {
             setFileURL(fileURL);
         }
