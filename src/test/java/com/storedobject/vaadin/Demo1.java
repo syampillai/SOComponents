@@ -1,7 +1,7 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
@@ -14,18 +14,20 @@ public class Demo1 extends VerticalLayout {
 
     public Demo1() {
         ObjectForm<Person> of = new ObjectForm<>(Person.class);
+        HorizontalLayout h = new HorizontalLayout();
         Form f = new Form();
-        add(new ButtonIcon("device", "bluetooth", e -> {
+        h.add(new ButtonIcon("device", "bluetooth", e -> {
             Notification.show("Bluetooh clicked!");
         }));
-        add(new Button("Save", new Icon("editor", "functions"), e -> {
+        h.add(new Button("Save", new Icon("editor", "functions"), e -> {
             Notification.show(f.commit() && of.commit() ? "Saved!" : "Not saved!!");
         }));
-        add(new Button("Load", new Icon("editor", "functions"), e -> {
+        h.add(new Button("Load", new Icon("editor", "functions"), e -> {
             f.load();
             of.load();
             Notification.show("Loaded!");
         }));
+        add(h);
         ETextArea ta = new ETextArea("Text");
         ta.setMinRows(5);
         ta.setMaxRows(10);
