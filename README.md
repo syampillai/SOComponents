@@ -2,8 +2,6 @@
 
 A set of Vaadin Flow Components and Abstractions
 
-## Components
-
 ### BigDecimalField
 Field to edit BigDecimal values
 
