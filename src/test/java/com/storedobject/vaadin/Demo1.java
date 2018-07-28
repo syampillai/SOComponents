@@ -1,6 +1,5 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.IronAutogrowTextArea;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -8,7 +7,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 /**
- * Demo ButtonIcon, Icon, ETextArea, ChoicesField
+ * Demo ButtonIcon, Button, Icon, ETextArea, IntegerField, ChoicesField, Form, ObjectForm
  */
 @Route("")
 public class Demo1 extends VerticalLayout {
@@ -17,7 +16,7 @@ public class Demo1 extends VerticalLayout {
         ObjectForm<Person> of = new ObjectForm<>(Person.class);
         Form f = new Form();
         add(new ButtonIcon("device", "bluetooth", e -> {
-            Notification.show("Dumped");
+            Notification.show("Bluetooh clicked!");
         }));
         add(new Button("Save", new Icon("editor", "functions"), e -> {
             Notification.show(f.commit() && of.commit() ? "Saved!" : "Not saved!!");
