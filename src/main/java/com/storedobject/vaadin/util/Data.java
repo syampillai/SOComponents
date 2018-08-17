@@ -11,7 +11,9 @@ import com.vaadin.flow.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Data extends HashMap<String, Object> {
 
@@ -47,11 +49,15 @@ public class Data extends HashMap<String, Object> {
         this.valueHandler = valueHandler;
     }
 
-    public String addField(HasValue<?, ?> field) {
-        return addField(null, field);
+    public FieldValueHandler getFieldValueHandler() {
+        return valueHandler;
     }
 
-    public String addField(String fieldName, HasValue<?, ?> field) {
+    public String addField(HasValue<?, ?> field) {
+        return addField(null, field, null, null);
+    }
+
+    public String addField(String fieldName, HasValue<?, ?> field, Supplier<?> get, Consumer<?> set) {
         if(field == null) {
             return null;
         }
@@ -71,15 +77,26 @@ public class Data extends HashMap<String, Object> {
         final String name = fieldName;
         final HasValue<?, Object> f = (HasValue<?, Object>)field;
         binder.withValidator(validator);
-        if(valueHandler.isBasic() || !valueHandler.canHandle(name)) {
-            setValue(fieldName, field.getValue());
-            binder.bind(f, x -> getValue(name), (d, v) -> setValue(name, v));
-        } else {
-            if(valueHandler.canSet(name)) {
-                valueHandler.setValue(fieldName, field.getValue());
-                binder.bind(f, x -> valueHandler.getValue(name), (d, v) -> valueHandler.setValue(name, v));
+        if(get != null) {
+            if(set != null) {
+                binder.bind(f, x -> get.get(), (d, v) -> ((Consumer<Object>)set).accept(v));
             } else {
-                binder.bind(f, x -> valueHandler.getValue(name), null);
+                if(!valueHandler.isBasic() && valueHandler.canHandle(name) && valueHandler.canSet(name)) {
+                    binder.bind(f, x -> get.get(), (d, v) -> valueHandler.setValue(name, v));
+                } else {
+                    binder.bind(f, x -> get.get(), null);
+                }
+            }
+        } else {
+            if (valueHandler.isBasic() || !valueHandler.canHandle(name)) {
+                setValue(fieldName, field.getValue());
+                binder.bind(f, x -> getValue(name), (d, v) -> setValue(name, v));
+            } else {
+                if (valueHandler.canSet(name)) {
+                    binder.bind(f, x -> valueHandler.getValue(name), (d, v) -> valueHandler.setValue(name, v));
+                } else {
+                    binder.bind(f, x -> valueHandler.getValue(name), null);
+                }
             }
         }
         return fieldName;

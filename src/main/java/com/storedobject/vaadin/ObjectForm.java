@@ -1,21 +1,26 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.FieldValueHandler;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ObjectForm<T> extends Form {
 
     private final Class<T> objectClass;
-    private final Map<String, Method> gets = new HashMap<>();
-    private final Map<String, Method> sets = new HashMap<>();
+    private final Map<String, Method> getM = new HashMap<>();
+    private final Map<String, Method> setM = new HashMap<>();
+    private final Map<String, Supplier<?>> getF = new HashMap<>();
+    private final Map<String, Consumer<?>> setF = new HashMap<>();
     private T objectData;
 
     public ObjectForm(Class<T> objectClass) {
@@ -28,49 +33,163 @@ public class ObjectForm<T> extends Form {
         data.setFieldValueHandler(new FieldHandler());
     }
 
+    public void setMethodHandlerHost(Object host) {
+        ((FieldHandler)data.getFieldValueHandler()).setHost(host);
+    }
+
     public Class<T> getObjectClass() {
         return objectClass;
     }
 
-    public Stream<String> getFieldNames() {
-        String name;
-        for(Method m: objectClass.getMethods()) {
-            name = m.getName();
-            if(name.equals("getClass")) {
-                continue;
-            }
-            if(name.startsWith("get")) {
-                name = name.substring(3);
-            } else if(name.startsWith("is")) {
-                name = name.substring(2);
-            } else {
-                continue;
-            }
-            if(includeField(name)) {
-                gets.put(name, m);
-            }
-        }
-        for(String fieldName: gets.keySet()) {
-            try {
-                sets.put(fieldName, objectClass.getMethod("set" + fieldName, new Class[] { gets.get(fieldName).getReturnType() }));
-            } catch (NoSuchMethodException e) {
-            }
-        }
-        return gets.keySet().stream();
+    protected void addField(Iterable<String> fieldNames) {
+        fieldNames.forEach(this::addField);
     }
 
-    protected boolean includeField(String fieldName) {
+    protected void addField(String... fieldNames) {
+        for(String fieldName: fieldNames) {
+            addField(fieldName, (Method)null, (Method)null);
+        }
+    }
+
+    protected void addField(String fieldName, Supplier<?> valueGetter) {
+        addField(fieldName, valueGetter, null);
+    }
+
+    protected void addField(String fieldName, Supplier<?> valueGetter, Consumer<?> valueSetter) {
+        if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
+            return;
+        }
+        if(valueGetter == null && valueSetter == null) {
+            addField(fieldName, (Method)null, (Method)null);
+            return;
+        }
+        Method m = null;
+        if(valueGetter == null) {
+            m = getFieldGetMethod(fieldName);
+            if(m != null) {
+                getM.put(fieldName, m);
+            } else {
+                return;
+            }
+        } else {
+            getF.put(fieldName, valueGetter);
+        }
+        if(valueSetter != null) {
+            setF.put(fieldName, valueSetter);
+        } else if(m != null) {
+            m = getFieldSetMethod(fieldName, m);
+            if(m != null) {
+                setM.put(fieldName, m);
+            }
+        }
+    }
+
+    protected void addField(String fieldName, Method getMethod) {
+        addField(fieldName, getMethod, null);
+    }
+
+    protected void addField(String fieldName, Method getMethod, Method setMethod) {
+        if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
+            return;
+        }
+        if(getMethod == null) {
+            getMethod = getFieldGetMethod(fieldName);
+        }
+        if(getMethod == null) {
+            return;
+        }
+        getM.put(fieldName, getMethod);
+        if(setMethod == null) {
+            setMethod = getFieldSetMethod(fieldName, getMethod);
+        }
+        if(setMethod == null) {
+            return;
+        }
+        setM.put(fieldName, setMethod);
+    }
+
+    protected Method getFieldGetMethod(String fieldName) {
+        try {
+            return this.getClass().getMethod("get" + fieldName);
+        } catch (NoSuchMethodException e) {
+        }
+        try {
+            return this.getClass().getMethod("is" + fieldName);
+        } catch (NoSuchMethodException e) {
+        }
+        try {
+            return objectClass.getMethod("get" + fieldName);
+        } catch (NoSuchMethodException e) {
+        }
+        try {
+            return objectClass.getMethod("is" + fieldName);
+        } catch (NoSuchMethodException e) {
+        }
+        return null;
+    }
+
+    protected Method getFieldSetMethod(String fieldName, Method getMethod) {
+        Class[] params = new Class[] { getMethod.getReturnType() };
+        try {
+            return this.getClass().getMethod("set" + fieldName, params);
+        } catch (NoSuchMethodException e) {
+        }
+        try {
+            return objectClass.getMethod("set" + fieldName, params);
+        } catch (NoSuchMethodException e) {
+        }
+        return null;
+    }
+
+    @Override
+    protected void generateFieldNames() {
+        getFieldGetMethods().forEach(m -> {
+            String name = getFieldName(m);
+            if(name != null && includeField(name)) {
+                addField(name, m, null);
+            }
+        });
+    }
+
+    protected String getFieldName(Method getMethod) {
+        String name = getMethod.getName();
+        if(name.equals("getClass")) {
+            return null;
+        } else if(name.startsWith("get")) {
+            return name.substring(3);
+        } else if(name.startsWith("is")) {
+            return name.substring(2);
+        }
+        return null;
+    }
+
+    protected Stream<Method> getFieldGetMethods() {
+        return Arrays.stream(objectClass.getMethods());
+    }
+
+    protected final Stream<String> getFieldNames() {
+        return Stream.concat(getM.keySet().stream(), getF.keySet().stream()).filter(n -> n != null && !n.isEmpty()).
+                filter(this::includeField).sorted(Comparator.comparingInt(this::getFieldOrder));
+    }
+
+    public int getFieldOrder(String fieldName) {
+        return Integer.MAX_VALUE;
+    }
+
+    public boolean includeField(String fieldName) {
         return true;
     }
 
     @Override
-    protected HasValue<?, ?> createField(String fieldName) {
-        Method m = gets.get(fieldName);
+    protected final HasValue<?, ?> createField(String fieldName) {
+        Method m = getM.get(fieldName);
         if(m == null) {
             return null;
         }
-        String label = getLabel(fieldName);
-        Class<?> type = m.getReturnType();
+        return createField(fieldName, m.getReturnType(), getLabel(fieldName));
+    }
+
+    protected HasValue<?, ?> createField(String fieldName, Class<?> type, String label) {
         if(type == boolean.class || type == Boolean.class) {
             return new BooleanField(label);
         }
@@ -97,7 +216,7 @@ public class ObjectForm<T> extends Form {
         return label.toString();
     }
 
-    protected T createObjectInstance() {
+    public T createObjectInstance() {
         try {
             return objectClass.newInstance();
         } catch (InstantiationException e) {
@@ -114,10 +233,25 @@ public class ObjectForm<T> extends Form {
     }
 
     public void setObject(T object) {
-        this.objectData = object;
+        setObject(object, true);
+    }
+
+    public void setObject(T object, boolean load) {
+        if (object != objectData) {
+            objectData = object;
+        }
+        if(load) {
+            load();
+        }
     }
 
     private class FieldHandler extends ValueHandler {
+
+        private Object host;
+
+        private void setHost(Object host) {
+            this.host = host;
+        }
 
         @Override
         public boolean isBasic() {
@@ -126,18 +260,24 @@ public class ObjectForm<T> extends Form {
 
         @Override
         public boolean canHandle(String fieldName) {
-            return gets.containsKey(fieldName);
+            return getM.containsKey(fieldName);
         }
 
         @Override
         public boolean canSet(String fieldName) {
-            return sets.containsKey(fieldName);
+            return setM.containsKey(fieldName);
         }
 
         @Override
         public Object getValue(String fieldName) {
+            Supplier<?> get = getF.get(fieldName);
+            if(get != null) {
+                return get.get();
+            }
             try {
-                return gets.get(fieldName).invoke(getObject());
+                Method m = getM.get(fieldName);
+                return m.invoke(actOn(m));
+            } catch (NullPointerException e) {
             } catch (IllegalAccessException e) {
             } catch (InvocationTargetException e) {
             }
@@ -146,16 +286,38 @@ public class ObjectForm<T> extends Form {
 
         @Override
         public void setValue(String fieldName, Object value) {
-            Method m = sets.get(fieldName);
+            Consumer<?> set = setF.get(fieldName);
+            if(set != null) {
+                try {
+                    ((Consumer<Object>)set).accept(value);
+                } catch (Throwable e) {
+                    if(value != null) {
+                        getField(fieldName).setReadOnly(true);
+                    }
+                }
+                return;
+            }
+            Method m = setM.get(fieldName);
             if(m != null) {
                 try {
-                    m.invoke(getObject(), new Object[] { value });
+                    m.invoke(actOn(m), new Object[] { value });
                 } catch (Throwable e) {
                     if(value != null) {
                         getField(fieldName).setReadOnly(true);
                     }
                 }
             }
+        }
+
+        private Object actOn(Method m) {
+            Class<?> dc = m.getDeclaringClass();
+            if(dc == getObjectClass()) {
+                return getObject();
+            }
+            if(dc == ObjectForm.this.getClass()) {
+                return ObjectForm.this;
+            }
+            return host;
         }
     }
 }

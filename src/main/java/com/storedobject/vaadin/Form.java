@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 public class Form {
 
-    private HasComponents container;
+    protected HasComponents container;
     protected final Data data;
 
     public Form() {
@@ -38,18 +38,30 @@ public class Form {
         return createDefaultContainer();
     }
 
+    protected void generateFieldNames() {}
+
     public final HasComponents getContainer() {
         if(container == null) {
             container = createContainer();
             if (container == null) {
                 container = createDefaultContainer();
             }
+            generateFieldNames();
             Stream<String> fieldNames = getFieldNames();
             if (fieldNames != null) {
-                fieldNames.filter(n -> n != null && !n.isEmpty()).forEach(n -> addField(n, createField(n)));
+                fieldNames.forEach(n -> addField(n, createField(n)));
             }
+            constructed();
         }
         return container;
+    }
+
+    protected void constructed() {
+    }
+
+    private void addFieldInt(String fieldName, HasValue<?, ?> field) {
+        data.addField(fieldName, field, null, null);
+        attachF(fieldName, field);
     }
 
     public final Component getComponent() {
@@ -57,7 +69,7 @@ public class Form {
         return container instanceof Component ? (Component)container : null;
     }
     
-    public Stream<String> getFieldNames() {
+    protected Stream<String> getFieldNames() {
         return null;
     }
 
@@ -70,8 +82,7 @@ public class Form {
     }
 
     public void addField(String fieldName, HasValue<?, ?> field) {
-        data.addField(fieldName, field);
-        attachF(fieldName, field);
+        addFieldInt(fieldName, field);
     }
 
     public void removeField(String fieldName) {

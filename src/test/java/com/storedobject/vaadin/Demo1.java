@@ -20,10 +20,11 @@ public class Demo1 extends VerticalLayout {
             Notification.show("Bluetooh clicked!");
         }));
         h.add(new Button("Save", new Icon("editor", "functions"), e -> {
-            Notification.show(f.commit() && of.commit() ? "Saved!" : "Not saved!!");
+            Notification.show(f.commit() && of.commit() ? "Saved!" : "Not saved!! " + of.getObject());
         }));
         h.add(new Button("Load", new Icon("editor", "functions"), e -> {
             f.load();
+            Notification.show("Loading: " + of.getObject());
             of.load();
             Notification.show("Loaded!");
         }));
