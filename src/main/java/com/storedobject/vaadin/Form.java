@@ -4,6 +4,7 @@ import com.storedobject.vaadin.util.Data;
 import com.storedobject.vaadin.util.FieldValueHandler;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.dom.Element;
@@ -15,6 +16,7 @@ public class Form {
 
     protected HasComponents container;
     protected final Data data;
+    private boolean loadPending = false;
 
     public Form() {
         this(null);
@@ -26,7 +28,7 @@ public class Form {
     }
 
     protected Form(HasComponents container, Object dummy) {
-        this.data = new Data();
+        this.data = new Data(this);
         this.container = container;
     }
 
@@ -52,6 +54,9 @@ public class Form {
                 fieldNames.forEach(n -> addField(n, createField(n)));
             }
             constructed();
+            if(loadPending) {
+                load();
+            }
         }
         return container;
     }
@@ -68,7 +73,7 @@ public class Form {
         getContainer();
         return container instanceof Component ? (Component)container : null;
     }
-    
+
     protected Stream<String> getFieldNames() {
         return null;
     }
@@ -140,6 +145,10 @@ public class Form {
     }
 
     public void load() {
+        if(container == null) {
+            loadPending = true;
+            return;
+        }
         data.loadValues();
     }
 
@@ -213,6 +222,10 @@ public class Form {
         data.clearErrors();
     }
 
+    public void setErrorDisplay(HasText display) {
+        data.setErrorDisplay(display);
+    }
+
     public void setReadOnly(boolean readOnly) {
         data.setReadOnly(readOnly);
     }
@@ -231,6 +244,20 @@ public class Form {
 
     public boolean isFieldEditable(HasValue<?, ?> field) {
         return true;
+    }
+
+    public String getLabel(String fieldName) {
+        StringBuilder label = new StringBuilder();
+        label.append(fieldName.charAt(0));
+        char c;
+        for(int i = 1; i < fieldName.length(); i++) {
+            c = fieldName.charAt(i);
+            if(Character.isUpperCase(c)) {
+                label.append(' ');
+            }
+            label.append(c);
+        }
+        return label.toString();
     }
 
     protected class ValueHandler implements FieldValueHandler {

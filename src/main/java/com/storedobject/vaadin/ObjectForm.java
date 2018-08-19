@@ -2,10 +2,14 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -190,30 +194,31 @@ public class ObjectForm<T> extends Form {
     }
 
     protected HasValue<?, ?> createField(String fieldName, Class<?> type, String label) {
-        if(type == boolean.class || type == Boolean.class) {
-            return new BooleanField(label);
-        }
         if(type == String.class) {
             return new TextField(label);
+        }
+        if(type == boolean.class || type == Boolean.class) {
+            return new BooleanField(label);
         }
         if(type == int.class || type == Integer.class) {
             return new IntegerField(label);
         }
-        return null;
-    }
-
-    public String getLabel(String fieldName) {
-        StringBuilder label = new StringBuilder();
-        label.append(fieldName.charAt(0));
-        char c;
-        for(int i = 1; i < fieldName.length(); i++) {
-            c = fieldName.charAt(i);
-            if(Character.isUpperCase(c)) {
-                label.append(' ');
-            }
-            label.append(c);
+        if(type == long.class || type == Long.class) {
+            return new LongField(label);
         }
-        return label.toString();
+        if(type == double.class || type == Double.class) {
+            return new DoubleField(label);
+        }
+        if(type == BigDecimal.class) {
+            return new BigDecimalField(label);
+        }
+        if(type == java.sql.Date.class) {
+            return new DateField(label);
+        }
+        if(type == LocalDate.class) {
+            return new DatePicker(label);
+        }
+        return null;
     }
 
     public T createObjectInstance() {
@@ -237,12 +242,14 @@ public class ObjectForm<T> extends Form {
     }
 
     public void setObject(T object, boolean load) {
-        if (object != objectData) {
-            objectData = object;
-        }
+        objectData = object;
         if(load) {
             load();
         }
+    }
+
+    protected boolean handleValueSetError(String fieldName, HasValue<?, ?> field, Object fieldValue, Object objectValue, Throwable error) {
+        return true;
     }
 
     private class FieldHandler extends ValueHandler {
@@ -291,9 +298,7 @@ public class ObjectForm<T> extends Form {
                 try {
                     ((Consumer<Object>)set).accept(value);
                 } catch (Throwable e) {
-                    if(value != null) {
-                        getField(fieldName).setReadOnly(true);
-                    }
+                    handleValueSetError(fieldName, getField(fieldName), value, getValue(fieldName), e);
                 }
                 return;
             }
@@ -302,9 +307,7 @@ public class ObjectForm<T> extends Form {
                 try {
                     m.invoke(actOn(m), new Object[] { value });
                 } catch (Throwable e) {
-                    if(value != null) {
-                        getField(fieldName).setReadOnly(true);
-                    }
+                    handleValueSetError(fieldName, getField(fieldName), value, getValue(fieldName), e);
                 }
             }
         }
@@ -318,6 +321,13 @@ public class ObjectForm<T> extends Form {
                 return ObjectForm.this;
             }
             return host;
+        }
+
+        private void handleValueSetError(String fieldName, HasValue<?, ?> field, Object fieldValue, Object objectValue, Throwable error) {
+            markError(field);
+            if(ObjectForm.this.handleValueSetError(fieldName, field, fieldValue, objectValue, error)) {
+                data.setExtraErrors();
+            }
         }
     }
 }

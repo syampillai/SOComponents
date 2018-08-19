@@ -6,8 +6,12 @@ import com.storedobject.vaadin.util.TranslatedField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 
 public class ChoiceField extends TranslatedField<Integer, String, ComboBox<String>> {
+
+    private static final Integer EMPTY = -1;
 
     public ChoiceField(String choices) {
         this(null, choices);
@@ -34,7 +38,7 @@ public class ChoiceField extends TranslatedField<Integer, String, ComboBox<Strin
     }
 
     public ChoiceField(String label, Collection<String> list) {
-        super(-1, new ComboBox<String>(list), (f, s) -> f.getIndex(s), (f, i) -> f.getValue(i));
+        super(-1, new ComboBox<String>(sanitize(list)), (f, s) -> f.getIndex(s), (f, i) -> f.getValue(i));
         setValue(0);
         setLabel(label);
     }
@@ -42,14 +46,30 @@ public class ChoiceField extends TranslatedField<Integer, String, ComboBox<Strin
     private static Collection<String> createList(Iterable<?> list) {
         ArrayList<String> a = new ArrayList<>();
         list.forEach(item -> {
-            if(item != null && item instanceof String && ((String)item).isEmpty()) {
-                item = null;
-            }
+            String s = null;
             if(item != null) {
-                a.add(item.toString().trim());
+                s = item.toString();
+            }
+            if(s != null) {
+                a.add(s.trim());
             }
         });
         return a;
+    }
+
+    private static Collection<String> sanitize(Collection<String> collection) {
+        if(!(collection instanceof List)) {
+            return collection;
+        }
+        List<String> list = (List<String>) collection;
+        String item;
+        for(int i = 0; i < list.size(); i++) {
+            item = list.get(i);
+            if(item.isEmpty()) {
+                list.set(i, " ");
+            }
+        }
+        return list;
     }
 
     public String getChoice() {
@@ -58,5 +78,10 @@ public class ChoiceField extends TranslatedField<Integer, String, ComboBox<Strin
 
     public void setChoice(String value) {
         getField().setValue(value);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue() < 0;
     }
 }

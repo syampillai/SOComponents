@@ -8,6 +8,8 @@ import java.util.GregorianCalendar;
 
 public class DateField extends TranslatedField<Date, LocalDate, com.storedobject.vaadin.util.DateField> {
 
+    private static Date today = null;
+
     public DateField() {
         super(today(), new com.storedobject.vaadin.util.DateField(),
                 (f, d) -> com.storedobject.vaadin.util.DateField.create(d), (f, d) -> com.storedobject.vaadin.util.DateField.create(d));
@@ -27,11 +29,20 @@ public class DateField extends TranslatedField<Date, LocalDate, com.storedobject
         setLabel(label);
         if(initialValue != null) {
             setValue(initialValue);
+        } else {
+            setValue(today());
         }
     }
 
     private static Date today() {
-        GregorianCalendar c = new GregorianCalendar();
-        return new Date(c.getTimeInMillis());
+        if(today == null) {
+            GregorianCalendar c = new GregorianCalendar();
+            today = new Date(c.getTimeInMillis());
+        }
+        return today;
+    }
+
+    public static void setToday(Date today) {
+        DateField.today = today;
     }
 }

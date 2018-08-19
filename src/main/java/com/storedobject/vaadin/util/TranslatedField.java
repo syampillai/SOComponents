@@ -1,6 +1,7 @@
 package com.storedobject.vaadin.util;
 
 import com.storedobject.vaadin.Field;
+import com.vaadin.flow.component.HasValue;
 
 import java.util.function.BiFunction;
 
@@ -34,5 +35,10 @@ public class TranslatedField<T, P, F extends Field<P>>
     @Override
     protected T getModelValue(P presentationValue) {
         return get.apply(getField(), presentationValue);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return ((HasValue)getField()).isEmpty();
     }
 }

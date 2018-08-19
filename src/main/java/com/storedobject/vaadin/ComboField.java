@@ -4,6 +4,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ComboField<T> extends ComboBox<T> implements Field<T> {
 
@@ -50,6 +51,9 @@ public class ComboField<T> extends ComboBox<T> implements Field<T> {
         if(item == null) {
             return -1;
         }
+        if(list instanceof List) {
+            return ((List<T>) list).indexOf(item);
+        }
         int i = 0;
         for(T loop: list) {
             if(loop.equals(item)) {
@@ -64,6 +68,9 @@ public class ComboField<T> extends ComboBox<T> implements Field<T> {
         if(index < 0 || index >= list.size()) {
             return null;
         }
+        if(list instanceof List) {
+            return ((List<T>) list).get(index);
+        }
         int i = 0;
         for(T loop: list) {
             if(i == index) {
@@ -71,6 +78,11 @@ public class ComboField<T> extends ComboBox<T> implements Field<T> {
             }
             ++i;
         }
+        return null;
+    }
+
+    @Override
+    public T getEmptyValue() {
         return null;
     }
 }

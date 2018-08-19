@@ -6,8 +6,6 @@ import java.util.Collection;
 
 public class ComboBox<T> extends ComboField<T> {
 
-    private T emptyValue;
-
     public ComboBox() {
         super();
         init();
@@ -36,38 +34,5 @@ public class ComboBox<T> extends ComboField<T> {
         setAllowCustomValue(false);
         setPreventInvalidInput(true);
         setRequired(true);
-        addSelectedItemChangeListener(e -> {
-           if(e.isFromClient()) {
-               if(getValue().equals(getEmptyValue())) {
-                   setValue(getEmptyValue());
-               }
-           }
-        });
-    }
-
-    @Override
-    public void setValue(T value) {
-        if(emptyValue == null && value != null) {
-            setEmptyValue(value);
-        }
-        super.setValue(value);
-    }
-
-    @Override
-    public T getValue() {
-        T v = super.getValue();
-        if(v == null) {
-            v = getEmptyValue();
-        }
-        return v;
-    }
-
-    public void setEmptyValue(T emptyValue) {
-        this.emptyValue = emptyValue;
-    }
-
-    @Override
-    public T getEmptyValue() {
-        return emptyValue;
     }
 }

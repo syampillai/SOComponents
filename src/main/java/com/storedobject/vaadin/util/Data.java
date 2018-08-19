@@ -29,7 +29,7 @@ public class Data extends HashMap<String, Object> {
             if(text == null || text.isEmpty()) {
                 return;
             }
-            Notification.show(text);
+            new Notification(text, 15000).open();
         }
     };
     private static long id = 0L;
@@ -39,10 +39,22 @@ public class Data extends HashMap<String, Object> {
     private final Map<HasValue<?, ?>, DataValidators> validators = new HashMap<>();
     private Binder<Data> binder;
     private boolean readOnly;
+    private final Form form;
+    private Required requiredCache;
+    private boolean extraErrors = false;
 
-    public Data() {
+    public Data(Form form) {
+        this.form = form;
         binder = new Binder<>();
         binder.setStatusLabel(errorText);
+    }
+
+    public void setErrorDisplay(HasText display) {
+        binder.setStatusLabel(display == null ? errorText : display);
+    }
+
+    public void setExtraErrors() {
+        this.extraErrors = true;
     }
 
     public void setFieldValueHandler(FieldValueHandler valueHandler) {
@@ -72,8 +84,7 @@ public class Data extends HashMap<String, Object> {
         }
         fields.put(fieldName, field);
         fieldNames.put(field, fieldName);
-        DataValidators validator = new DataValidators(field);
-        validators.put(field, validator);
+        DataValidators validator = validator(field);
         final String name = fieldName;
         final HasValue<?, Object> f = (HasValue<?, Object>)field;
         binder.withValidator(validator);
@@ -100,6 +111,15 @@ public class Data extends HashMap<String, Object> {
             }
         }
         return fieldName;
+    }
+
+    private DataValidators validator(HasValue<?, ?> field) {
+        DataValidators dv = validators.get(field);
+        if(dv == null) {
+            dv = new DataValidators(field);
+            validators.put(field, dv);
+        }
+        return dv;
     }
 
     public boolean isReadOnly() {
@@ -180,6 +200,7 @@ public class Data extends HashMap<String, Object> {
     }
 
     public boolean saveValues() {
+        extraErrors = false;
         if(!binder.writeBeanIfValid(this)) {
             return false;
         }
@@ -190,6 +211,9 @@ public class Data extends HashMap<String, Object> {
                     field.setValue(valueHandler.getValue(s.getKey()));
                 }
             });
+        }
+        if(extraErrors) {
+            return false;
         }
         setReadOnly(!readOnly);
         setReadOnly(!readOnly);
@@ -208,11 +232,11 @@ public class Data extends HashMap<String, Object> {
         if(field == null) {
             return;
         }
-        DataValidators dv = validators.get(field);
+        DataValidators dv = validator(field);
         if(dv == null) {
             return;
         }
-        dv.add(new DataValidator<T>(validator, errorMessage));
+        dv.add(new DataValidator<T>(form, validator, errorMessage));
     }
 
     public void setRequired(HasValue<?, ?> field, boolean required, String errorMessage) {
@@ -220,7 +244,7 @@ public class Data extends HashMap<String, Object> {
             return;
         }
         field.setRequiredIndicatorVisible(required);
-        DataValidators dv = validators.get(field);
+        DataValidators dv = validator(field);
         if(dv == null) {
             return;
         }
@@ -248,21 +272,27 @@ public class Data extends HashMap<String, Object> {
                 dv.remove(0);
             }
         }
-        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? Required.REQUIRED : new Required(errorMessage));
+        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(form, errorMessage));
+    }
+
+    private Required requiredCache() {
+        if(requiredCache == null) {
+            requiredCache = new Required(form, null);
+        }
+        return requiredCache;
     }
 
     private static class Required implements Validator<Data> {
 
-        private static final String CAN_NOT_BE_EMPTY = "Can not be empty!";
-        private static final Required REQUIRED = new Required();
+        private static final String CAN_NOT_BE_EMPTY = "Can not be empty";
         private String errorMessage;
+        private Form form;
 
-        private Required() {
-            this(null);
-        }
-
-        private Required(String errorMessage) {
-            this.errorMessage = errorMessage;
+        private Required(Form form, String errorMessage) {
+            this.form = form;
+            if(errorMessage != null && !errorMessage.isEmpty()) {
+                this.errorMessage = errorMessage;
+            }
         }
 
         @Override
@@ -276,7 +306,7 @@ public class Data extends HashMap<String, Object> {
                 m = CAN_NOT_BE_EMPTY;
                 String id = data.getName(field);
                 if(!id.startsWith("_")) {
-                    m = id + ": " + m;
+                    m = form.getLabel(id) + ": " + m;
                 }
             }
             return ValidationResult.error(m);
@@ -288,8 +318,10 @@ public class Data extends HashMap<String, Object> {
         private static final String INVALID = "Not valid";
         private Function<T, Boolean> validator;
         private String errorMessage;
+        private Form form;
 
-        private DataValidator(Function<T, Boolean> validator, String errorMessage) {
+        private DataValidator(Form form, Function<T, Boolean> validator, String errorMessage) {
+            this.form = form;
             this.validator = validator;
             if(errorMessage != null && !errorMessage.isEmpty()) {
                 this.errorMessage = errorMessage;
@@ -307,7 +339,7 @@ public class Data extends HashMap<String, Object> {
                 m = INVALID;
                 String id = data.getName(field);
                 if(!id.startsWith("_")) {
-                    m = id + ": " + m;
+                    m = form.getLabel(id) + ": " + m;
                 }
             }
             return ValidationResult.error(errorMessage == null ? INVALID : errorMessage);

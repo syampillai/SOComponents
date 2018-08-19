@@ -8,6 +8,7 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ChoicesField extends CompositeField<Integer, ChoicesField, HasValue.ValueChangeEvent<Integer>, com.storedobject.vaadin.util.ChoicesField> {
 
@@ -36,21 +37,37 @@ public class ChoicesField extends CompositeField<Integer, ChoicesField, HasValue
     }
 
     public ChoicesField(String label, Collection<String> list) {
-        super(new com.storedobject.vaadin.util.ChoicesField(list, container()), 0);
+        super(new com.storedobject.vaadin.util.ChoicesField(sanitize(list), container()), 0);
         setLabel(label);
     }
 
     private static Collection<String> createList(Iterable<?> list) {
         ArrayList<String> a = new ArrayList<>();
         list.forEach(item -> {
-            if(item != null && item instanceof String && ((String)item).isEmpty()) {
-                item = null;
-            }
+            String s = null;
             if(item != null) {
-                a.add(item.toString().trim());
+                s = item.toString();
+            }
+            if(s != null) {
+                a.add(s.trim());
             }
         });
         return a;
+    }
+
+    private static Collection<String> sanitize(Collection<String> collection) {
+        if(!(collection instanceof List)) {
+            return collection;
+        }
+        List<String> list = (List<String>) collection;
+        String item;
+        for(int i = 0; i < list.size(); i++) {
+            item = list.get(i);
+            if(item.isEmpty()) {
+                list.set(i, " ");
+            }
+        }
+        return list;
     }
 
     private static HasComponents container() {
