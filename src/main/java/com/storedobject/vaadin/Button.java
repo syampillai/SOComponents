@@ -61,4 +61,9 @@ public class Button extends com.vaadin.flow.component.button.Button {
     public Button(String text, VaadinIcon icon, ClickHandler clickHandler) {
         super(text, new Icon(icon), ClickHandler.convert(clickHandler));
     }
+
+    public Button asPrimary() {
+        getElement().setAttribute("theme", "primary");
+        return this;
+    }
 }

@@ -3,6 +3,7 @@ package com.storedobject.vaadin.util;
 import com.storedobject.vaadin.Box;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValueAndElement;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.shared.Registration;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class LabelField<T> extends Label
+public class LabelField<T> extends Div
         implements HasValueAndElement<AbstractField.ComponentValueChangeEvent<LabelField<T>, T>, T> {
 
     private List<T> items;
@@ -22,9 +23,7 @@ public class LabelField<T> extends Label
         Box b = new Box(this);
         b.setStyle("background", "var(--lumo-contrast-20pct)");
         b.setStyle("cursor", "pointer");
-        b.setBorderStyle("inset");
-        b.setBorderColor("var(--lumo-contrast-20pct)");
-        b.alignSizing();
+        b.setBorderWidth(0);
         click = new ElementClick(this);
         click.addClickListener(e -> {
             setIndex(index + 1, true);

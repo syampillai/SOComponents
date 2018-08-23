@@ -247,6 +247,10 @@ public class Form {
     }
 
     public String getLabel(String fieldName) {
+        return createLabel(fieldName);
+    }
+
+    static String createLabel(String fieldName) {
         StringBuilder label = new StringBuilder();
         label.append(fieldName.charAt(0));
         char c;
