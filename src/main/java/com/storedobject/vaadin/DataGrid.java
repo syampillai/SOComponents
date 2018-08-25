@@ -2,12 +2,11 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.data.provider.AbstractDataProvider;
-import com.vaadin.flow.data.provider.DataProvider;
-import com.vaadin.flow.data.provider.DataProviderListener;
-import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.function.SerializableBiFunction;
+import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 
 import java.lang.reflect.InvocationTargetException;
@@ -88,6 +87,14 @@ public class DataGrid<T> extends Grid<T> {
     public int size() {
         DataProvider<T, ?> p = provider();
         return p == null ? 0 : p.size(new Query<>());
+    }
+
+    public void refresh() {
+        getDataProvider().refreshAll();
+    }
+
+    public void refresh(T item) {
+        getDataProvider().refreshItem(item);
     }
 
     public T getItem(int index) {
@@ -327,9 +334,61 @@ public class DataGrid<T> extends Grid<T> {
         return ((DataSupplier<T, ?>)getDataProvider()).provider;
     }
 
-    private class DataSupplier<T, F> extends AbstractDataProvider<T, F> {
+    private class DataSupplier<T, F> extends AbstractDataProvider<T, F> implements BackEndDataProvider<T, F> {
 
         private DataProvider<T, F> provider;
+
+        @Override
+        public void setSortOrders(List<QuerySortOrder> list) {
+            if(provider == null || !(provider instanceof  BackEndDataProvider)) {
+                return;
+            }
+            ((BackEndDataProvider<T, F>)provider).setSortOrders(list);
+        }
+
+        @Override
+        public void setSortOrder(QuerySortOrder sortOrder) {
+            if(provider == null || !(provider instanceof  BackEndDataProvider)) {
+                return;
+            }
+            ((BackEndDataProvider<T, F>)provider).setSortOrder(sortOrder);
+        }
+
+        @Override
+        public void setSortOrders(QuerySortOrderBuilder builder) {
+            if(provider == null || !(provider instanceof  BackEndDataProvider)) {
+                return;
+            }
+            ((BackEndDataProvider<T, F>)provider).setSortOrders(builder);
+        }
+
+        public <C> DataProvider<T, C> withConvertedFilter(final SerializableFunction<C, F> filterConverter) {
+            if(provider == null) {
+                return super.withConvertedFilter(filterConverter);
+            }
+            return provider.withConvertedFilter(filterConverter);
+        }
+
+        @Override
+        public <Q, C> ConfigurableFilterDataProvider<T, Q, C> withConfigurableFilter(SerializableBiFunction<Q, C, F> filterCombiner) {
+            if(provider == null) {
+                return super.withConfigurableFilter(filterCombiner);
+            }
+            return provider.withConfigurableFilter(filterCombiner);
+        }
+
+        @Override
+        public ConfigurableFilterDataProvider<T, Void, F> withConfigurableFilter() {
+            if(provider == null) {
+                return super.withConfigurableFilter();
+            }
+            return provider.withConfigurableFilter();
+        }
+
+        @Override
+        public Object getId(T item) {
+            return provider == null ? item : provider.getId(item);
+        }
 
         @Override
         public boolean isInMemory() {
@@ -361,20 +420,18 @@ public class DataGrid<T> extends Grid<T> {
 
         @Override
         public void refreshItem(T t) {
-            if(provider == null) {
-                super.refreshItem(t);
-            } else {
+            if(provider != null) {
                 provider.refreshItem(t);
             }
+            super.refreshItem(t);
         }
 
         @Override
         public void refreshAll() {
-            if(provider == null) {
-                super.refreshAll();
-            } else {
+            if(provider != null) {
                 provider.refreshAll();
             }
+            super.refreshAll();
         }
 
         @Override
