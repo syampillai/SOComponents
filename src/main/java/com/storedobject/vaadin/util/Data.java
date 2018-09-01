@@ -1,5 +1,6 @@
 package com.storedobject.vaadin.util;
 
+import com.storedobject.vaadin.Alert;
 import com.storedobject.vaadin.Form;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
@@ -18,20 +19,7 @@ import java.util.function.Supplier;
 public class Data extends HashMap<String, Object> {
 
     private static ValidationResult OK = ValidationResult.ok();
-    private static HasText errorText = new HasText() {
-        @Override
-        public Element getElement() {
-            return null;
-        }
-
-        @Override
-        public void setText(String text) {
-            if(text == null || text.isEmpty()) {
-                return;
-            }
-            new Notification(text, 15000).open();
-        }
-    };
+    private static Alert errorText = new Alert(null);
     private static long id = 0L;
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
@@ -200,6 +188,9 @@ public class Data extends HashMap<String, Object> {
     }
 
     public boolean saveValues() {
+        if(binder.getStatusLabel().equals(errorText)) {
+            errorText.close();
+        }
         extraErrors = false;
         if(!binder.writeBeanIfValid(this)) {
             return false;
@@ -222,6 +213,9 @@ public class Data extends HashMap<String, Object> {
 
     public void clearErrors() {
         fields.values().forEach(hv -> Form.clearError(hv));
+        if(binder.getStatusLabel().equals(errorText)) {
+            errorText.close();
+        }
     }
 
     public void clearFields() {
@@ -232,11 +226,7 @@ public class Data extends HashMap<String, Object> {
         if(field == null) {
             return;
         }
-        DataValidators dv = validator(field);
-        if(dv == null) {
-            return;
-        }
-        dv.add(new DataValidator<T>(form, validator, errorMessage));
+        validator(field).add(new DataValidator<T>(form, validator, errorMessage));
     }
 
     public void setRequired(HasValue<?, ?> field, boolean required, String errorMessage) {
@@ -245,9 +235,6 @@ public class Data extends HashMap<String, Object> {
         }
         field.setRequiredIndicatorVisible(required);
         DataValidators dv = validator(field);
-        if(dv == null) {
-            return;
-        }
         if(!required) {
             if(dv.isEmpty()) {
                 return;

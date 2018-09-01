@@ -2,6 +2,9 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
@@ -22,6 +25,7 @@ public class DataGrid<T> extends Grid<T> {
     private Map<String, Renderer<T>> renderers = new HashMap<>();
     private Object methodHandlerHost;
     private int paramId = 0;
+    private ButtonIcon configure;
 
     public DataGrid(Class<T> objectClass) {
         this.objectClass = objectClass;
@@ -44,7 +48,58 @@ public class DataGrid<T> extends Grid<T> {
         renderers.keySet().stream().filter(this::includeColumn).sorted(Comparator.comparingInt(this::getColumnOrder)).forEach(n -> constructColumn(n));
         renderers = null;
         getElement().setAttribute("theme", "row-stripes");
+        constructHeader(createHeader());
         constructed();
+    }
+
+    protected Component createHeader() {
+        return null;
+    }
+
+    private void constructHeader(Component component) {
+        if(component == null) {
+            return;
+        }
+        HeaderRow r = prependHeaderRow();
+        List<Column<T>> columns = getColumns();
+        Column<T>[] a = new Column[columns.size()];
+        columns.toArray(a);
+        HeaderRow.HeaderCell c = r.join(a);
+        c.setComponent(component);
+    }
+
+    public ButtonIcon getConfigureButton() {
+        if(configure == null) {
+            configure = new ButtonIcon(VaadinIcon.COG_O, null);
+        }
+        return configure;
+    }
+
+    public void setMinWidth(String width) {
+        getElement().getStyle().set("min-width", width);
+    }
+
+    public void setMinWidth(int perColumnWidthInPixels, int maxWidthInPixels) {
+        if(maxWidthInPixels <= 10) {
+            maxWidthInPixels = 800;
+        }
+        setMinWidth(Math.min(maxWidthInPixels, perColumnWidthInPixels * getColumnCount()) + "px");
+    }
+
+    @Override
+    public List<Column<T>> getColumns() {
+        init();
+        return super.getColumns();
+    }
+
+    @Override
+    public Column<T> getColumnByKey(String columnKey) {
+        init();
+        return super.getColumnByKey(columnKey);
+    }
+
+    public int getColumnCount() {
+        return getColumns().size();
     }
 
     @Override

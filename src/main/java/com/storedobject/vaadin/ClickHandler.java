@@ -36,19 +36,25 @@ public interface ClickHandler extends ComponentEventListener<ClickEvent<? extend
     }
 
     static <T extends Component> ComponentEventListener<ClickEvent<T>> convert(ClickHandler clickHandler) {
-        return e -> clickHandler.onComponentEvent(e);
+        return e -> { if(clickHandler != null) {
+            clickHandler.onComponentEvent(e);
+        }};
     }
 
     static ClickHandler transfer(ClickHandler clickHandler, Component another) {
         return new ClickHandler() {
             @Override
             public void clicked(Component c) {
-                clickHandler.clicked(another);
+                if(clickHandler != null) {
+                    clickHandler.clicked(another);
+                }
             }
 
             @Override
             public void onComponentEvent(ClickEvent<? extends Component> event) {
-                clickHandler.onComponentEvent(new ModifiedClickEvent<>(event, another));
+                if(clickHandler != null) {
+                    clickHandler.onComponentEvent(new ModifiedClickEvent<>(event, another));
+                }
             }
         };
     }

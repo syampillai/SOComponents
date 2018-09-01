@@ -176,11 +176,11 @@ public class ObjectForm<T> extends Form {
                 filter(this::includeField).sorted(Comparator.comparingInt(this::getFieldOrder));
     }
 
-    public int getFieldOrder(String fieldName) {
+    protected int getFieldOrder(String fieldName) {
         return Integer.MAX_VALUE;
     }
 
-    public boolean includeField(String fieldName) {
+    protected boolean includeField(String fieldName) {
         return true;
     }
 
@@ -190,7 +190,14 @@ public class ObjectForm<T> extends Form {
         if(m == null) {
             return null;
         }
-        return createField(fieldName, m.getReturnType(), getLabel(fieldName));
+        HasValue<?, ?> field = createField(fieldName, m.getReturnType(), getLabel(fieldName));
+        if(field != null) {
+            customizeField(fieldName, field);
+        }
+        return field;
+    }
+
+    protected void customizeField(String fieldName, HasValue<?, ?> field) {
     }
 
     protected HasValue<?, ?> createField(String fieldName, Class<?> type, String label) {
@@ -221,7 +228,7 @@ public class ObjectForm<T> extends Form {
         return null;
     }
 
-    public T createObjectInstance() {
+    protected T createObjectInstance() {
         try {
             return objectClass.newInstance();
         } catch (InstantiationException e) {
@@ -231,7 +238,11 @@ public class ObjectForm<T> extends Form {
     }
 
     public T getObject() {
-        if(objectData == null) {
+        return getObject(true);
+    }
+
+    public T getObject(boolean create) {
+        if(objectData == null && create) {
             objectData = createObjectInstance();
         }
         return objectData;
@@ -244,7 +255,11 @@ public class ObjectForm<T> extends Form {
     public void setObject(T object, boolean load) {
         objectData = object;
         if(load) {
-            load();
+            if(object == null) {
+                clearFields();
+            } else {
+                load();
+            }
         }
     }
 

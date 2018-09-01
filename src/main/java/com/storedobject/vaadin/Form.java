@@ -51,7 +51,12 @@ public class Form {
             generateFieldNames();
             Stream<String> fieldNames = getFieldNames();
             if (fieldNames != null) {
-                fieldNames.forEach(n -> addField(n, createField(n)));
+                fieldNames.forEach(n -> {
+                    HasValue<?, ?> field = createField(n);
+                    if(n != null) {
+                        addField(n, field);
+                    }
+                });
             }
             constructed();
             if(loadPending) {

@@ -21,6 +21,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
      */
     public Button(Component icon, ClickHandler clickHandler) {
         super(icon, ClickHandler.convert(clickHandler));
+        init();
     }
 
     /**
@@ -41,6 +42,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
      */
     public Button(String text, Component icon, ClickHandler clickHandler) {
         super(text, icon, ClickHandler.convert(clickHandler));
+        init();
     }
 
     /**
@@ -50,6 +52,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
      */
     public Button(VaadinIcon icon, ClickHandler clickHandler) {
         super(new Icon(icon), ClickHandler.convert(clickHandler));
+        init();
     }
 
     /**
@@ -60,8 +63,17 @@ public class Button extends com.vaadin.flow.component.button.Button {
      */
     public Button(String text, VaadinIcon icon, ClickHandler clickHandler) {
         super(text, new Icon(icon), ClickHandler.convert(clickHandler));
+        init();
     }
 
+    private void init() {
+        getElement().getStyle().set("cursor", "pointer");
+    }
+
+    /**
+     * Mark this Button as Primary
+     * @return Self reference
+     */
     public Button asPrimary() {
         getElement().setAttribute("theme", "primary");
         return this;

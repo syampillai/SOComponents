@@ -113,11 +113,15 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
     }
 
     public void focus() {
-        ((Focusable)field).focus();
+        if(field instanceof Focusable) {
+            ((Focusable) field).focus();
+        }
     }
 
     public void blur() {
-        ((Focusable)field).blur();
+        if(field instanceof Focusable) {
+            ((Focusable) field).blur();
+        }
     }
 
     @Override
