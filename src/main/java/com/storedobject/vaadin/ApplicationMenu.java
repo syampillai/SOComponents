@@ -5,11 +5,11 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.dialog.Dialog;
 
-public interface ApplicationMenu {
+public interface ApplicationMenu extends HasComponents {
 
-    HasComponents getMenuPane();
-
-    HasComponents getContentPane();
+    default HasComponents getMenuPane() {
+        return this;
+    }
 
     default void add(MenuItem menuItem) {
         getMenuPane().getElement().appendChild(menuItem.getComponent().getElement());
@@ -21,13 +21,5 @@ public interface ApplicationMenu {
 
     default void remove(MenuItem menuItem) {
         getMenuPane().getElement().removeChild(menuItem.getComponent().getElement());
-    }
-
-    default void addView(View view) {
-        Component c = view.getComponent();
-        if(!(c instanceof Dialog) && c instanceof HasSize) {
-            ((HasSize) c).setWidth("98%");
-        }
-        getContentPane().getElement().appendChild(c.getElement());
     }
 }

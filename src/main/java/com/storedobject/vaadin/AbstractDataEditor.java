@@ -18,15 +18,6 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         setCaption(caption == null || caption.isEmpty() ? label(getObjectClass()) : caption);
     }
 
-    protected AbstractDataEditor(Application a) {
-        super(a);
-    }
-
-    protected void init(ObjectForm<T> form, String caption) {
-        this.form = form;
-        setCaption(caption == null || caption.isEmpty() ? label(getObjectClass()) : caption);
-    }
-
     private static String label(Class<?> className) {
         String s = className.getName();
         if(s.contains(".")) {
@@ -145,6 +136,15 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
             } catch (NoSuchMethodException e) {
             }
             return super.getFieldSetMethod(fieldName, getMethod);
+        }
+
+        @Override
+        protected HasValue<?, ?> createField(String fieldName, Class<?> fieldType, String label) {
+            try {
+                return AbstractDataEditor.this.createField(fieldName, fieldType, label);
+            } catch(FieldError e) {
+                return super.createField(fieldName, fieldType, label);
+            }
         }
 
         @Override

@@ -20,8 +20,12 @@ public class Alert extends Notification implements HasText, ClickNotifier {
     }
 
     public Alert(String htmlText, Runnable clickAction) {
+        this(new ELabel(htmlText), clickAction);
+    }
+
+    protected Alert(ELabel htmlContent, Runnable clickAction) {
         this.clickAction = clickAction;
-        content = new ELabel(htmlText);
+        content = htmlContent;
         content.getElement().getStyle().set("cursor", "pointer");
         add(content);
         click = new ElementClick(content);
@@ -39,7 +43,8 @@ public class Alert extends Notification implements HasText, ClickNotifier {
     }
 
     @Override
-    public Registration replaceClickListener(ComponentEventListener<ClickEvent<Component>> oldListener, ComponentEventListener<ClickEvent<Component>> newListener) {
+    public Registration replaceClickListener(ComponentEventListener<ClickEvent<Component>> oldListener,
+                                             ComponentEventListener<ClickEvent<Component>> newListener) {
         return click.replaceClickListener(oldListener, newListener);
     }
 
@@ -68,5 +73,9 @@ public class Alert extends Notification implements HasText, ClickNotifier {
     @Override
     public String getText() {
         return content.getText();
+    }
+
+    public ELabel getContent() {
+        return  content;
     }
 }

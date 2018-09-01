@@ -20,12 +20,14 @@ import java.util.stream.Stream;
 
 public class ObjectForm<T> extends Form {
 
+    private static ObjectFieldCreator fieldCreator;
     private final Class<T> objectClass;
     private final Map<String, Method> getM = new HashMap<>();
     private final Map<String, Method> setM = new HashMap<>();
     private final Map<String, Supplier<?>> getF = new HashMap<>();
     private final Map<String, Consumer<?>> setF = new HashMap<>();
     private T objectData;
+    private ObjectFieldCreator fCreator;
 
     public ObjectForm(Class<T> objectClass) {
         this(objectClass, null);
@@ -37,12 +39,34 @@ public class ObjectForm<T> extends Form {
         data.setFieldValueHandler(new FieldHandler());
     }
 
+    @Override
+    protected void constructed() {
+        if(fCreator != null) {
+            fCreator.close();
+            fCreator = null;
+        }
+    }
+
+    private ObjectFieldCreator fc() {
+        if(fCreator == null) {
+            if(fieldCreator == null) {
+                fieldCreator = new DefaultObjectFieldCreator();
+            }
+            fCreator = fieldCreator.create(this);
+        }
+        return fCreator;
+    }
+
     public void setMethodHandlerHost(Object host) {
         ((FieldHandler)data.getFieldValueHandler()).setHost(host);
     }
 
     public Class<T> getObjectClass() {
         return objectClass;
+    }
+
+    public static void setFieldCreator(ObjectFieldCreator fieldCreator) {
+        ObjectForm.fieldCreator = fieldCreator;
     }
 
     protected void addField(Iterable<String> fieldNames) {
@@ -148,27 +172,16 @@ public class ObjectForm<T> extends Form {
     @Override
     protected void generateFieldNames() {
         getFieldGetMethods().forEach(m -> {
-            String name = getFieldName(m);
+            String name = fc().getFieldName(m);
             if(name != null && includeField(name)) {
                 addField(name, m, null);
             }
         });
     }
 
-    protected String getFieldName(Method getMethod) {
-        String name = getMethod.getName();
-        if(name.equals("getClass")) {
-            return null;
-        } else if(name.startsWith("get")) {
-            return name.substring(3);
-        } else if(name.startsWith("is")) {
-            return name.substring(2);
-        }
-        return null;
-    }
-
-    protected Stream<Method> getFieldGetMethods() {
-        return Arrays.stream(objectClass.getMethods());
+    private Stream<Method> getFieldGetMethods() {
+        Stream<Method> stream = fc().getFieldGetMethods();
+        return stream == null ? Arrays.stream(objectClass.getMethods()) : stream;
     }
 
     protected final Stream<String> getFieldNames() {
@@ -177,7 +190,7 @@ public class ObjectForm<T> extends Form {
     }
 
     protected int getFieldOrder(String fieldName) {
-        return Integer.MAX_VALUE;
+        return fc().getFieldOrder(fieldName);
     }
 
     protected boolean includeField(String fieldName) {
@@ -197,35 +210,16 @@ public class ObjectForm<T> extends Form {
         return field;
     }
 
-    protected void customizeField(String fieldName, HasValue<?, ?> field) {
+    @Override
+    public String getLabel(String fieldName) {
+        return fc().getLabel(fieldName);
     }
 
-    protected HasValue<?, ?> createField(String fieldName, Class<?> type, String label) {
-        if(type == String.class) {
-            return new TextField(label);
-        }
-        if(type == boolean.class || type == Boolean.class) {
-            return new BooleanField(label);
-        }
-        if(type == int.class || type == Integer.class) {
-            return new IntegerField(label);
-        }
-        if(type == long.class || type == Long.class) {
-            return new LongField(label);
-        }
-        if(type == double.class || type == Double.class) {
-            return new DoubleField(label);
-        }
-        if(type == BigDecimal.class) {
-            return new BigDecimalField(label);
-        }
-        if(type == java.sql.Date.class) {
-            return new DateField(label);
-        }
-        if(type == LocalDate.class) {
-            return new DatePicker(label);
-        }
-        return null;
+    protected HasValue<?, ?> createField(String fieldName, Class<?> fieldType, String label) {
+        return fc().createField(fieldName, fieldType, label);
+    }
+
+    protected void customizeField(String fieldName, HasValue<?, ?> field) {
     }
 
     protected T createObjectInstance() {

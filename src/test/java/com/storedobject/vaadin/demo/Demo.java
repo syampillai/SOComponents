@@ -47,7 +47,7 @@ public class Demo extends Application {
         }
 
         @Override
-        public HasComponents getContentPane() {
+        public Component getContent() {
             return (Div)getSecondaryComponent();
         }
 
@@ -59,6 +59,9 @@ public class Demo extends Application {
             add(MenuItem.create("Test Alert Component", new AlertTest(application)));
             add(MenuItem.create("Test", new MiscTest(application)));
         }
+    }
+
+    private class SimpleMenu extends Div implements ApplicationMenu {
     }
 
     @WebServlet(urlPatterns = "/*", name = "SOServlet", asyncSupported = true, loadOnStartup = 0)

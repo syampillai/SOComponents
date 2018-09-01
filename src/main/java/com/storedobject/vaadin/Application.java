@@ -47,6 +47,10 @@ public abstract class Application extends UI implements RequestHandler {
         }
     }
 
+    public final boolean isError() {
+        return error;
+    }
+
     protected void unableToCreate() {
         error = true;
     }
@@ -217,7 +221,7 @@ public abstract class Application extends UI implements RequestHandler {
         notification(caption, "<BR/>Error: " + toText(error), 2, false);
     }
 
-    void setMainView(ApplicationLayout applicationLayout) {
+    final void setMainView(ApplicationLayout applicationLayout) {
         if(this.viewManager == null) {
             viewManager = new ViewManager(applicationLayout);
             if(!error) {
@@ -304,7 +308,7 @@ public abstract class Application extends UI implements RequestHandler {
                 hideAllContent(null);
             }
             stack.add(view);
-            menu.addView(view);
+            layout.addView(view);
             view.setVisible(true);
             MenuItem m = MenuItem.create(view.getCaption(), () -> select(view));
             menu.insert(0, m);

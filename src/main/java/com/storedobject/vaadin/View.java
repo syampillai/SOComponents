@@ -68,7 +68,7 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
     protected void initUI() {
     }
 
-    public final Application getApplication() {
+    public Application getApplication() {
         return application;
     }
 
