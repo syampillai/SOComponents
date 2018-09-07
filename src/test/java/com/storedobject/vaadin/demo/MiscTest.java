@@ -33,6 +33,7 @@ public class MiscTest extends View {
             dataForm.load();
             alert("Loaded");
         }));
+        h.add(new ActionTextField(e -> alert("It works! " + e)));
         form.add(h);
         ArrayList<String> a = new ArrayList<>();
         for(int i = 0; i < 5; i++) {

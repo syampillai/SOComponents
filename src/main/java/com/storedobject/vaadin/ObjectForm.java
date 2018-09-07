@@ -20,14 +20,13 @@ import java.util.stream.Stream;
 
 public class ObjectForm<T> extends Form {
 
-    private static ObjectFieldCreator fieldCreator;
     private final Class<T> objectClass;
     private final Map<String, Method> getM = new HashMap<>();
     private final Map<String, Method> setM = new HashMap<>();
     private final Map<String, Supplier<?>> getF = new HashMap<>();
     private final Map<String, Consumer<?>> setF = new HashMap<>();
     private T objectData;
-    private ObjectFieldCreator fCreator;
+    private ObjectFieldCreator<T> fCreator;
 
     public ObjectForm(Class<T> objectClass) {
         this(objectClass, null);
@@ -49,10 +48,7 @@ public class ObjectForm<T> extends Form {
 
     private ObjectFieldCreator fc() {
         if(fCreator == null) {
-            if(fieldCreator == null) {
-                fieldCreator = new DefaultObjectFieldCreator();
-            }
-            fCreator = fieldCreator.create(this);
+            fCreator = ((ObjectFieldCreator<T>)ApplicationEnvironment.get().getObjectFieldCreator()).create(this);
         }
         return fCreator;
     }
@@ -63,10 +59,6 @@ public class ObjectForm<T> extends Form {
 
     public Class<T> getObjectClass() {
         return objectClass;
-    }
-
-    public static void setFieldCreator(ObjectFieldCreator fieldCreator) {
-        ObjectForm.fieldCreator = fieldCreator;
     }
 
     protected void addField(Iterable<String> fieldNames) {

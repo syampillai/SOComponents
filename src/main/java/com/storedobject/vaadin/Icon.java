@@ -20,22 +20,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 @HtmlImport("frontend://bower_components/iron-icons/places-icons.html")
 public class Icon extends com.vaadin.flow.component.icon.Icon implements HasIcon, HasSquareElement {
 
-    private static NameResolver nameResolver = new NameResolver() {
-        @Override
-        public String resolve(String name) {
-            switch (name.toLowerCase()) {
-                case "save":
-                case "ok":
-                case "yes":
-                    return "check";
-                case "cancel":
-                case "no":
-                    return "close";
-            }
-            return name;
-        }
-    };
-
     /**
      * Create from a Vaadin icon
      * @param icon Vaadin icon
@@ -60,21 +44,5 @@ public class Icon extends com.vaadin.flow.component.icon.Icon implements HasIcon
     public Icon(String collection, String icon) {
         super(collection, icon);
         setIcon(collection, icon);
-    }
-
-    public static String resolveName(String name) {
-        return nameResolver.resolve(name);
-    }
-
-    public static void setNameResolver(NameResolver resolver) {
-        if(resolver == null) {
-            resolver = name -> name;
-        }
-        nameResolver = resolver;
-    }
-
-    @FunctionalInterface
-    public interface NameResolver {
-        String resolve(String name);
     }
 }

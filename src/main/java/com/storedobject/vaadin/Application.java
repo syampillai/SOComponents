@@ -22,6 +22,7 @@ import java.util.*;
 @Theme(value = Lumo.class, variant = Lumo.LIGHT)
 public abstract class Application extends UI implements RequestHandler {
 
+    private ApplicationEnvironment environment;
     private String link;
     private ViewManager viewManager;
     private boolean error;
@@ -57,6 +58,20 @@ public abstract class Application extends UI implements RequestHandler {
 
     protected abstract ApplicationLayout createLayout();
 
+    protected ApplicationEnvironment createEnvironment() {
+        return null;
+    }
+
+    public final ApplicationEnvironment getEnvironment() {
+        if(environment == null) {
+            environment = createEnvironment();
+        }
+        if(environment == null) {
+            environment = new ApplicationEnvironment() {};
+        }
+        return environment;
+    }
+
     @Override
     public boolean handleRequest(VaadinSession vaadinSession, VaadinRequest vaadinRequest, VaadinResponse vaadinResponse) throws IOException {
         return false;
@@ -73,17 +88,6 @@ public abstract class Application extends UI implements RequestHandler {
 
     public static Application get() {
         return (Application)UI.getCurrent();
-    }
-
-    public String toText(Object message) {
-        if(message == null) {
-            return "";
-        }
-        if(message.getClass() == Exception.class) {
-            return ((Exception)message).getMessage();
-        }
-        String m = message.toString();
-        return m == null ? "" : m;
     }
 
     public static void warning(Object message) {
@@ -150,13 +154,13 @@ public abstract class Application extends UI implements RequestHandler {
                     m = message.toString();
                     logMessage(m);
                 } else {
-                    m = a.toText(message);
-                    a.log(m);
+                    m = a.getEnvironment().toDisplay(message);
+                    a.log(a.getEnvironment().toString(m));
                 }
             }
         }
         if(m == null) {
-            m = a == null ? message.toString() : a.toText(message);
+            m = a == null ? message.toString() : a.getEnvironment().toDisplay(message);
         }
         Alert n = new Alert(m);
         if(position != null) {
@@ -218,7 +222,7 @@ public abstract class Application extends UI implements RequestHandler {
     }
 
     public void showNotification(String caption, Throwable error) {
-        notification(caption, "<BR/>Error: " + toText(error), 2, false);
+        notification(caption, "<BR/>Error: " + getEnvironment().toDisplay(error), 2, false);
     }
 
     final void setMainView(ApplicationLayout applicationLayout) {

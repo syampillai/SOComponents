@@ -252,21 +252,7 @@ public class Form {
     }
 
     public String getLabel(String fieldName) {
-        return createLabel(fieldName);
-    }
-
-    static String createLabel(String fieldName) {
-        StringBuilder label = new StringBuilder();
-        label.append(fieldName.charAt(0));
-        char c;
-        for(int i = 1; i < fieldName.length(); i++) {
-            c = fieldName.charAt(i);
-            if(Character.isUpperCase(c)) {
-                label.append(' ');
-            }
-            label.append(c);
-        }
-        return label.toString();
+        return ApplicationEnvironment.get().createLabel(fieldName);
     }
 
     protected class ValueHandler implements FieldValueHandler {

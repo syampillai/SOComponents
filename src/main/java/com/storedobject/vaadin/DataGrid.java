@@ -7,28 +7,47 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.*;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.RendererUtil;
+import com.vaadin.flow.data.renderer.Rendering;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.function.SerializableBiFunction;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableFunction;
+import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class DataGrid<T> extends Grid<T> {
+public class DataGrid<T> extends Grid<T> implements ClickHandler, Runnable {
 
     private final Class<T> objectClass;
     private Map<String, Renderer<T>> renderers = new HashMap<>();
+    private Map<String, Boolean> columnResizable = new HashMap<>();
+    private Map<String, Boolean> columnVisible = new HashMap<>();
+    private Map<String, Boolean> columnFrozen = new HashMap<>();
     private Object methodHandlerHost;
     private int paramId = 0;
     private ButtonIcon configure;
+    private ObjectColumnCreator<T> columnCreator;
+    private Iterable<String> columns;
+    private String caption;
+    private boolean allowColumnReordering = true;
+    private T objectRendered;
 
     public DataGrid(Class<T> objectClass) {
+        this(objectClass, null);
+    }
+
+    public DataGrid(Class<T> objectClass, Iterable<String> columns) {
         this.objectClass = objectClass;
+        this.columns = columns;
         addAttachListener(e -> init());
         super.setDataProvider(new DataSupplier<>());
     }
@@ -40,16 +59,142 @@ public class DataGrid<T> extends Grid<T> {
         if(renderers == null) {
             return;
         }
-        generateColumns();
-        Stream<String> columnNames = getColumnNames();
-        if (columnNames != null) {
-            columnNames.forEach(n -> createColumn(n));
+        if(columns != null) {
+            columns.forEach(n -> {
+                if(includeColumn(n)) {
+                    createColumn(n);
+                }
+            });
+            columns = null;
+        } else {
+            Stream<String> columnNames = getColumnNames();
+            if(columnNames != null) {
+                columnNames.filter(this::includeColumn).forEach(n -> createColumn(n));
+            } else {
+                generateColumns();
+            }
         }
         renderers.keySet().stream().filter(this::includeColumn).sorted(Comparator.comparingInt(this::getColumnOrder)).forEach(n -> constructColumn(n));
         renderers = null;
-        getElement().setAttribute("theme", "row-stripes");
+        columnResizable = null;
+        columnVisible = null;
+        columnFrozen = null;
+        getElement().setAttribute("theme", "row-stripes wrap-cell-content");
         constructHeader(createHeader());
+        if(columnCreator != null) {
+            columnCreator.close();
+            columnCreator = null;
+        }
+        super.setColumnReorderingAllowed(allowColumnReordering);
         constructed();
+    }
+
+    public void compact() {
+        getElement().setAttribute("theme", "compact row-stripes wrap-cell-content");
+    }
+
+    public T getObjectRendered() {
+        return objectRendered;
+    }
+
+    public void render(T object) {
+    }
+
+    private void setRO(T object) {
+        if(object == objectRendered) {
+            return;
+        }
+        objectRendered = object;
+        render(object);
+    }
+
+    private ObjectColumnCreator cc() {
+        if(columnCreator == null) {
+            columnCreator = ((ObjectColumnCreator<T>)ApplicationEnvironment.get().getObjectColumnCreator()).create(this);
+        }
+        return columnCreator;
+    }
+
+    @Override
+    public boolean isColumnReorderingAllowed() {
+        return renderers == null ? super.isColumnReorderingAllowed() : allowColumnReordering;
+    }
+
+    @Override
+    public void setColumnReorderingAllowed(boolean allowColumnReordering) {
+        if(renderers == null) {
+            super.setColumnReorderingAllowed(allowColumnReordering);
+        }
+        this.allowColumnReordering = allowColumnReordering;
+    }
+
+    public void setColumnResizable(String columnName, boolean resizable) {
+        if(renderers == null) {
+            Column<T> c = getColumnByKey(columnName);
+            if(c != null) {
+                c.setResizable(resizable);
+            }
+            return;
+        }
+        columnResizable.put(columnName, resizable);
+    }
+
+    public boolean isColumnResizable(String columnName) {
+        if(renderers == null) {
+            Column<T> c = getColumnByKey(columnName);
+            if(c != null) {
+                return c.isResizable();
+            }
+            return false;
+        }
+        Boolean v = columnResizable.get(columnName);
+        return v == null ? false : v;
+    }
+
+    public void setColumnVisible(String columnName, boolean visible) {
+        if(renderers == null) {
+            Column<T> c = getColumnByKey(columnName);
+            if(c != null) {
+                c.setVisible(visible);
+            }
+            return;
+        }
+        columnVisible.put(columnName, visible);
+    }
+
+    public boolean isColumnVisible(String columnName) {
+        if(renderers == null) {
+            Column<T> c = getColumnByKey(columnName);
+            if(c != null) {
+                return c.isVisible();
+            }
+            return false;
+        }
+        Boolean v = columnVisible.get(columnName);
+        return v == null ? false : v;
+    }
+
+    public void setColumnFrozen(String columnName, boolean frozen) {
+        if(renderers == null) {
+            Column<T> c = getColumnByKey(columnName);
+            if(c != null) {
+                c.setFrozen(frozen);
+            }
+            return;
+        }
+        columnFrozen.put(columnName, frozen);
+    }
+
+    public boolean isColumnFrozen(String columnName) {
+        if(renderers == null) {
+            Column<T> c = getColumnByKey(columnName);
+            if(c != null) {
+                return c.isFrozen();
+            }
+            return false;
+        }
+        Boolean v = columnFrozen.get(columnName);
+        return v == null ? false : v;
     }
 
     protected Component createHeader() {
@@ -70,7 +215,7 @@ public class DataGrid<T> extends Grid<T> {
 
     public ButtonIcon getConfigureButton() {
         if(configure == null) {
-            configure = new ButtonIcon(VaadinIcon.COG_O, null);
+            configure = new ButtonIcon(VaadinIcon.COG_O, e -> configure());
         }
         return configure;
     }
@@ -125,9 +270,12 @@ public class DataGrid<T> extends Grid<T> {
         return null;
     }
 
-    protected void generateColumns() {
+    private void generateColumns() {
         String name;
         for(Method m: objectClass.getMethods()) {
+            if(Modifier.isStatic(m.getModifiers()) || m.getParameterTypes().length > 0) {
+                continue;
+            }
             name = getColumnName(m);
             if(name != null && includeColumn(name)) {
                 createColumn(name, m);
@@ -136,7 +284,7 @@ public class DataGrid<T> extends Grid<T> {
     }
 
     protected Stream<String> getColumnNames() {
-        return null;
+        return cc().getColumnNames();
     }
 
     public int size() {
@@ -171,24 +319,6 @@ public class DataGrid<T> extends Grid<T> {
     }
 
     protected Method getColumnMethod(String columnName) {
-        if(methodHandlerHost != null) {
-            try {
-                return methodHandlerHost.getClass().getMethod("get" + columnName);
-            } catch (NoSuchMethodException e) {
-            }
-            try {
-                return methodHandlerHost.getClass().getMethod("is" + columnName);
-            } catch (NoSuchMethodException e) {
-            }
-        }
-        try {
-            return this.getClass().getMethod("get" + columnName);
-        } catch (NoSuchMethodException e) {
-        }
-        try {
-            return this.getClass().getMethod("is" + columnName);
-        } catch (NoSuchMethodException e) {
-        }
         try {
             return objectClass.getMethod("get" + columnName);
         } catch (NoSuchMethodException e) {
@@ -200,8 +330,31 @@ public class DataGrid<T> extends Grid<T> {
         return null;
     }
 
-    public Function<T, ?> getColumnFunction(String columnName) {
+    private Method getOutsideMethod(String columnName) {
+        Class<?>[] params = new Class<?>[] { getObjectClass() };
+        if(methodHandlerHost != null) {
+            try {
+                return methodHandlerHost.getClass().getMethod("get" + columnName, params);
+            } catch (NoSuchMethodException e) {
+            }
+            try {
+                return methodHandlerHost.getClass().getMethod("is" + columnName, params);
+            } catch (NoSuchMethodException e) {
+            }
+        }
+        try {
+            return this.getClass().getMethod("get" + columnName, params);
+        } catch (NoSuchMethodException e) {
+        }
+        try {
+            return this.getClass().getMethod("is" + columnName, params);
+        } catch (NoSuchMethodException e) {
+        }
         return null;
+    }
+
+    public Function<T, ?> getColumnFunction(String columnName) {
+        return cc().getColumnFunction(columnName);
     }
 
 
@@ -212,7 +365,14 @@ public class DataGrid<T> extends Grid<T> {
         if(renderers != null && renderers.containsKey(columnName)) {
             return false;
         }
-        Function<T, ?> function = getColumnFunction(columnName);
+        Method m = getOutsideMethod(columnName);
+        Function<T, ?> function = null;
+        if(m != null) {
+            function = getMethodFunction(m);
+        }
+        if(function == null) {
+            function = getColumnFunction(columnName);
+        }
         if(function == null) {
             function = getMethodFunction(columnName);
         }
@@ -285,17 +445,12 @@ public class DataGrid<T> extends Grid<T> {
         i = 0;
         for(i = 0; i < ids.length; i++) {
             final Function<T, ?> function = functions[i];
-            r.withProperty("so" + ids[i], object -> stringify(function.apply(object)));
+            r.withProperty("so" + ids[i], o -> {
+                setRO(o);
+                return ApplicationEnvironment.get().toString(function.apply(o));
+            });
         }
         return r;
-    }
-
-    protected String stringify(Object any) {
-        if(any == null) {
-            return "";
-        }
-        String s = any.toString();
-        return s == null ? "" : s;
     }
 
     private Function<T, ?> getMethodFunction(String columnName) {
@@ -312,7 +467,7 @@ public class DataGrid<T> extends Grid<T> {
                 @Override
                 public Object apply(T t) {
                     try {
-                        return method.invoke(methodHandlerHost);
+                        return method.invoke(methodHandlerHost, new Object[] { t });
                     } catch (IllegalAccessException e) {
                     } catch (InvocationTargetException e) {
                     }
@@ -325,7 +480,7 @@ public class DataGrid<T> extends Grid<T> {
                 @Override
                 public Object apply(T t) {
                     try {
-                        return method.invoke(DataGrid.this);
+                        return method.invoke(DataGrid.this, new Object[] { t });
                     } catch (IllegalAccessException e) {
                     } catch (InvocationTargetException e) {
                     }
@@ -359,6 +514,14 @@ public class DataGrid<T> extends Grid<T> {
         } else {
             c.setHeader(h);
         }
+        Boolean v = columnResizable.get(columnName);
+        if(v != null) {
+            c.setResizable(v);
+        }
+        v = columnVisible.get(columnName);
+        if(v != null) {
+            c.setVisible(v);
+        }
         customizeColumn(columnName, c);
     }
 
@@ -366,7 +529,7 @@ public class DataGrid<T> extends Grid<T> {
     }
 
     public int getColumnOrder(String columnName) {
-        return Integer.MAX_VALUE;
+        return cc().getColumnOrder(columnName);
     }
 
     public boolean includeColumn(String columnName) {
@@ -378,7 +541,7 @@ public class DataGrid<T> extends Grid<T> {
     }
 
     public String getHeader(String columnName) {
-        return Form.createLabel(columnName);
+        return cc().getHeader(columnName);
     }
 
     public void setMethodHandlerHost(Object host) {
@@ -387,6 +550,46 @@ public class DataGrid<T> extends Grid<T> {
 
     private DataProvider<T, ?> provider() {
         return ((DataSupplier<T, ?>)getDataProvider()).provider;
+    }
+
+    @Override
+    public void run() {
+        execute();
+    }
+
+    public void execute() {
+        new View(Application.get(), this, getCaption()).execute();
+    }
+
+    public String getCaption() {
+        return caption == null || caption.trim().isEmpty() ? ApplicationEnvironment.get().createLabel(getObjectClass()) : caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    @Override
+    public void clicked(Component c) {
+    }
+
+    public void configure() {
+    }
+
+    public void select(Iterable<T> items) {
+        items.forEach(this::select);
+    }
+
+    public void select(Iterator<T> items) {
+        items.forEachRemaining(this::deselect);
+    }
+
+    public void deselect(Iterable<T> items) {
+        items.forEach(this::select);
+    }
+
+    public void deselect(Iterator<T> items) {
+        items.forEachRemaining(this::deselect);
     }
 
     private class DataSupplier<T, F> extends AbstractDataProvider<T, F> implements BackEndDataProvider<T, F> {

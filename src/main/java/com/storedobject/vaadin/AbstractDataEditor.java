@@ -15,18 +15,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
     public AbstractDataEditor(Application a, Class<T> objectClass, String caption) {
         super(a);
         this.form = new DForm(objectClass);
-        setCaption(caption == null || caption.isEmpty() ? label(getObjectClass()) : caption);
-    }
-
-    private static String label(Class<?> className) {
-        String s = className.getName();
-        if(s.contains(".")) {
-            s = s.substring(s.lastIndexOf('.') + 1);
-        }
-        if(s.contains("$")) {
-            s = s.substring(s.lastIndexOf('$') + 1);
-        }
-        return Form.createLabel(s);
+        setCaption(caption == null || caption.isEmpty() ? a.getEnvironment().createLabel(getObjectClass()) : caption);
     }
 
     @Override
