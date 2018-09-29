@@ -9,6 +9,7 @@ import java.util.EventObject;
 public class ClickListeners extends Listeners {
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void fire(EventListener listener, EventObject event) {
         ((ComponentEventListener) listener).onComponentEvent((ComponentEvent)event);
     }

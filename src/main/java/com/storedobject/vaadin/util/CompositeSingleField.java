@@ -4,8 +4,6 @@ import com.storedobject.vaadin.Field;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.shared.Registration;
 
-import java.util.List;
-
 public abstract class CompositeSingleField<P, F extends Field<P>, S extends CompositeSingleField<P, F, S, T>, T>
         extends AbstractCompositeField<Component, S, T> implements Field<T>, Focusable<S> {
 
@@ -17,6 +15,7 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onAttach(AttachEvent attachEvent) {
         if(field == null) {
             createField();
@@ -89,7 +88,7 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
         setExtraPresentationValue(value);
     }
 
-    protected void setExtraPresentationValue(T value) {
+    protected void setExtraPresentationValue(@SuppressWarnings("unused") T value) {
     }
 
     protected abstract P getPresentationValue(T value);
@@ -113,25 +112,21 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
     }
 
     public void focus() {
-        if(field instanceof Focusable) {
-            ((Focusable) field).focus();
-        }
+        field.focus();
     }
 
     public void blur() {
-        if(field instanceof Focusable) {
-            ((Focusable) field).blur();
-        }
+        field.blur();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        ((HasValueAndElement)field).setEnabled(enabled);
+        field.setEnabled(enabled);
     }
 
     @Override
     public boolean isEnabled() {
-        return ((HasValueAndElement)field).isEnabled();
+        return field.isEnabled();
     }
 
     @Override
@@ -173,11 +168,11 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
     }
 
     public void setWidth(String width) {
-        ((HasSize)field).setWidth(width);
+        field.setWidth(width);
     }
 
     public void setHeight(String height) {
-        ((HasSize)field).setHeight(height);
+        field.setHeight(height);
     }
 
     @Override

@@ -6,15 +6,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class ComboList<T> extends ListBox<T> {
+public class BasicComboList<T> extends ListBox<T> {
 
     protected Collection<T> list;
 
-    public ComboList(T... list) {
+    @SafeVarargs
+    public BasicComboList(T... list) {
         this(Arrays.asList(list));
     }
 
-    public ComboList(Collection<T> list) {
+    public BasicComboList(Collection<T> list) {
         this.list = list;
         setItems(list);
     }
@@ -30,7 +31,7 @@ public class ComboList<T> extends ListBox<T> {
     }
 
     void setFirstValue() {
-        setValue((list instanceof List) ? ((List<T>) list).get(0) : list.stream().findFirst().get());
+        setValue((list instanceof List) ? ((List<T>) list).get(0) : list.stream().findFirst().orElse(null));
     }
 
     public int getIndex() {

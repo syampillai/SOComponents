@@ -2,7 +2,6 @@ package com.storedobject.vaadin.util;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.shared.Registration;
 
 /**
  * Vaadin Flow wrapper around the Web Component: <a href="https://github.com/PolymerElements/iron-autogrow-textarea" target="_blank">Iron Autogrow TextArea</a>

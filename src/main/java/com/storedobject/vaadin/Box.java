@@ -5,19 +5,25 @@ import com.vaadin.flow.component.Composite;
 
 public class Box extends Composite {
 
+    private static final String BACKGROUND = "var(--lumo-contrast-20pct)";
     private Component component;
 
     public Box(Component component) {
         this.component = component;
         setBorderStyle("solid");
         setBorderWidth(2);
-        setBorderColor("var(--lumo-contrast-20pct)");
+        setBorderColor(BACKGROUND);
         setPadding(4);
         setBorderRadius(5);
     }
 
     @Override
     protected Component initContent() {
+        return component;
+    }
+
+    @Override
+    public Component getContent() {
         return component;
     }
 
@@ -63,5 +69,14 @@ public class Box extends Composite {
 
     public void alignSizing() {
         setStyle("box-sizing", "border-box");
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        setStyle("background", readOnly ? "white" : BACKGROUND);
+        setBorderStyle(readOnly ? "dotted" : "solid");
+    }
+
+    public void setEnabled(boolean enabled) {
+        setStyle("background", enabled ? BACKGROUND : "white");
     }
 }

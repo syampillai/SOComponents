@@ -1,19 +1,20 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.BasicLabelField;
 import com.storedobject.vaadin.util.CompositeField;
 import com.vaadin.flow.component.AbstractField;
 
 import java.util.List;
 
 public class LabelField<T> extends
-        CompositeField.SingleField<T, LabelField<T>, com.storedobject.vaadin.util.LabelField<T>, AbstractField.ComponentValueChangeEvent<com.storedobject.vaadin.util.LabelField<T>, T>> {
+        CompositeField.SingleField<T, LabelField<T>, BasicLabelField<T>, AbstractField.ComponentValueChangeEvent<BasicLabelField<T>, T>> {
 
     public LabelField(List<T> items) {
         this(null, items);
     }
 
     public LabelField(String label, List<T> items) {
-        super(new com.storedobject.vaadin.util.LabelField<>(items), getDefault(items));
+        super(new BasicLabelField<>(items), getDefault(items));
         setLabel(label);
     }
 

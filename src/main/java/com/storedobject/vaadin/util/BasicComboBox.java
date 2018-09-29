@@ -4,28 +4,29 @@ import com.storedobject.vaadin.ComboField;
 
 import java.util.Collection;
 
-public class ComboBox<T> extends ComboField<T> {
+public class BasicComboBox<T> extends ComboField<T> {
 
-    public ComboBox() {
+    public BasicComboBox() {
         super();
         init();
     }
 
-    public ComboBox(String label) {
+    public BasicComboBox(String label) {
         super(label);
         init();
     }
 
-    public ComboBox(Collection<T> items) {
+    public BasicComboBox(Collection<T> items) {
         this(null, items);
     }
 
-    public ComboBox(String label, Collection<T> items) {
+    public BasicComboBox(String label, Collection<T> items) {
         super(label, items);
         init();
     }
 
-    public ComboBox(String label, T... items) {
+    @SafeVarargs
+    public BasicComboBox(String label, T... items) {
         super(label, items);
         init();
     }

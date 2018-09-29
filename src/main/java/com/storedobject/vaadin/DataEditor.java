@@ -2,7 +2,6 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.util.function.Consumer;
@@ -94,7 +93,7 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
     }
 
     private HasComponents createDefaultButtonLayout() {
-        return new HorizontalLayout();
+        return new ButtonLayout();
     }
 
     protected void buildButtons() {
@@ -134,7 +133,6 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
                 }
                 save();
             }
-            return;
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.storedobject.vaadin.util;
 
-import com.vaadin.flow.component.*;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.ArrayList;

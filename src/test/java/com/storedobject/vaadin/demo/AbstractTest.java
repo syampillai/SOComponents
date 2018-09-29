@@ -10,7 +10,7 @@ public class AbstractTest extends View {
 
     protected ButtonLayout buttons;
     protected HasComponents layout;
-    protected ELabel status;
+    protected StyledText status;
     protected int state = -1;
 
     public AbstractTest(Application a, String caption) {
@@ -25,7 +25,7 @@ public class AbstractTest extends View {
         buttons.add(new Button("Reset", VaadinIcon.REFRESH, e -> reset()));
         addButtons();
         buttons.add(new Button("Exit", e -> close()));
-        status = new ELabel("Test not started");
+        status = new StyledText("Test not started");
         layout.add(status);
         setComponent((Component)layout);
     }

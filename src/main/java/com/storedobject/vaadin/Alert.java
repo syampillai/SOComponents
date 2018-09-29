@@ -11,25 +11,41 @@ import com.vaadin.flow.shared.Registration;
 
 public class Alert extends Notification implements HasText, ClickNotifier {
 
-    private final ELabel content;
+    private final StyledText content;
     private final ElementClick click;
     private final Runnable clickAction;
 
     public Alert(String htmlText) {
-        this(htmlText, null);
+        this(null, htmlText, null);
     }
 
     public Alert(String htmlText, Runnable clickAction) {
-        this(new ELabel(htmlText), clickAction);
+        this(null, htmlText, clickAction);
     }
 
-    protected Alert(ELabel htmlContent, Runnable clickAction) {
+    public Alert(String caption, String htmlText) {
+        this(caption, htmlText, null);
+    }
+
+    public Alert(String caption, String htmlText, Runnable clickAction) {
+        this(styled(caption, htmlText), clickAction);
+    }
+
+    protected Alert(StyledText htmlContent, Runnable clickAction) {
         this.clickAction = clickAction;
         content = htmlContent;
         content.getElement().getStyle().set("cursor", "pointer");
         add(content);
         click = new ElementClick(content);
         addClickListener(e -> clicked());
+    }
+
+    private static StyledText styled(String caption, String text) {
+        text = new StyledText(text).getText();
+        if(caption == null || caption.isEmpty()) {
+            return new StyledText(text);
+        }
+        return new StyledText("<span>" + caption + "</span><br/>" + text);
     }
 
     @Override
@@ -75,7 +91,7 @@ public class Alert extends Notification implements HasText, ClickNotifier {
         return content.getText();
     }
 
-    public ELabel getContent() {
+    public StyledText getContent() {
         return  content;
     }
 }

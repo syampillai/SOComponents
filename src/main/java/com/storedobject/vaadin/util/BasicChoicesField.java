@@ -1,5 +1,6 @@
 package com.storedobject.vaadin.util;
 
+import com.storedobject.vaadin.Box;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
@@ -8,18 +9,21 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ChoicesField extends CompositeField.MultiField<HasValue.ValueChangeEvent<Integer>, Integer> {
+public class BasicChoicesField extends CompositeField.MultiField<HasValue.ValueChangeEvent<Integer>, Integer> {
 
     private ArrayList<Checkbox> list = new ArrayList<>();
     private Component container;
+    private Box box;
 
-    public ChoicesField(Collection<String> list, HasComponents container) {
+    public BasicChoicesField(Collection<String> list, HasComponents container) {
         this.container = (Component) container;
         list.forEach(item -> {
             Checkbox cb = new Checkbox(item);
             this.list.add(cb);
             container.add(cb);
         });
+        box = new Box((Component)container);
+        box.setReadOnly(false);
     }
 
     @Override
@@ -28,8 +32,13 @@ public class ChoicesField extends CompositeField.MultiField<HasValue.ValueChange
     }
 
     @Override
+    protected Component getContent() {
+        return container;
+    }
+
+    @Override
     protected HasValue[] fieldList() {
-        return list.toArray(new HasValue[list.size()]);
+        return (HasValue[]) list.toArray();
     }
 
     @Override
@@ -46,7 +55,7 @@ public class ChoicesField extends CompositeField.MultiField<HasValue.ValueChange
                 }
             }
             i <<= 1;
-        };
+        }
     }
 
     @Override
@@ -59,5 +68,17 @@ public class ChoicesField extends CompositeField.MultiField<HasValue.ValueChange
             i <<= 1;
         }
         return v;
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        box.setReadOnly(readOnly);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        box.setEnabled(enabled);
     }
 }

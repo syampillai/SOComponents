@@ -77,7 +77,7 @@ public class BigDecimalField extends NumericField<BigDecimal> {
     }
 
     public BigDecimalField(String label, int width, int decimals, boolean grouping, boolean allowNegative) {
-        this(null, null, width, decimals, grouping, allowNegative);
+        this(label, null, width, decimals, grouping, allowNegative);
     }
 
     public BigDecimalField(String label, BigDecimal initialValue, int width, int decimals, boolean grouping, boolean allowNegative) {
@@ -107,10 +107,10 @@ public class BigDecimalField extends NumericField<BigDecimal> {
 
     @Override
     protected String getPresentationValue(BigDecimal value) {
-        if(!isGrouping()) {
-            return value.toString();
+        if(isGrouping()) {
+            return format(value.doubleValue());
         }
-        return format(value.doubleValue());
+        return value.toString();
     }
 
     public void setLength(int width) {
@@ -159,7 +159,7 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         }
         try {
             return new BigDecimal(v.trim().replace(",", ""));
-        } catch(Throwable t) {
+        } catch(Throwable ignored) {
         }
         return null;
     }
@@ -171,7 +171,7 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         }
         try {
             return bd.setScale(decimals, BigDecimal.ROUND_DOWN);
-        } catch(Throwable t) {
+        } catch(Throwable ignored) {
         }
         return null;
     }

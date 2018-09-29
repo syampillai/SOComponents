@@ -1,8 +1,6 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.CompositeField;
 import com.storedobject.vaadin.util.TranslatedField;
-import com.vaadin.flow.component.AbstractField;
 
 import java.util.List;
 
@@ -12,8 +10,9 @@ public class LabelChoiceField extends TranslatedField<Integer, String, LabelFiel
         this(null, items);
     }
 
+    @SuppressWarnings("unchecked")
     public LabelChoiceField(String label, List<String> items) {
-        super(getDefault(items), new LabelField(items), (f, s) -> f.getIndex(s), (f, i) -> f.getValue(i));
+        super(getDefault(items), new LabelField(items), LabelField::getIndex, LabelField::getValue);
         setLabel(label);
     }
 

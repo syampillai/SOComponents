@@ -103,4 +103,12 @@ public class ButtonIcon extends Component implements HasSquareElement, HasIcon, 
     public String getInkColor() {
         return getStyle("--paper-icon-button-ink-color");
     }
+
+    /**
+     * Show tooltip/placeholder
+     * @param placeholder Tooltip text to show
+     */
+    public void setPlaceholder(String placeholder) {
+        getElement().setAttribute("title", placeholder == null ? "" : placeholder);
+    }
 }

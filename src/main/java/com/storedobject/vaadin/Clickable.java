@@ -10,7 +10,7 @@ public class Clickable<T extends Component> extends Composite<T> implements Clic
     private T component;
     private ElementClick click;
 
-    public Clickable(T component) {
+    public Clickable(@SuppressWarnings("unused") T component) {
     }
 
     public Clickable(T component, ComponentEventListener<ClickEvent<Component>> listener) {

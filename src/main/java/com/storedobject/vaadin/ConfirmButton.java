@@ -1,13 +1,14 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.Button;
-import com.storedobject.vaadin.ClickHandler;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
+
+import java.util.function.BooleanSupplier;
 
 public class ConfirmButton extends Button {
 
     private static final String SURE = ", are you sure?";
+    private CH handler;
 
     public ConfirmButton(String text, ClickHandler clickHandler) {
         this(text, clickHandler, text + SURE);
@@ -34,37 +35,43 @@ public class ConfirmButton extends Button {
     }
 
     public ConfirmButton(String text, ClickHandler clickHandler, String message) {
-        super(text, new CH(clickHandler, message));
-        init();
+        super(text, null);
+        init(clickHandler, message);
     }
 
     public ConfirmButton(Component icon, ClickHandler clickHandler, String message) {
-        super(icon, new CH(clickHandler, message));
-        init();
+        super(icon, null);
+        init(clickHandler, message);
     }
 
     public ConfirmButton(String text, String icon, ClickHandler clickHandler, String message) {
-        super(text, icon, new CH(clickHandler, message));
-        init();
+        super(text, icon, null);
+        init(clickHandler, message);
     }
 
     public ConfirmButton(String text, Component icon, ClickHandler clickHandler, String message) {
-        super(text, icon, new CH(clickHandler, message));
-        init();
+        super(text, icon, null);
+        init(clickHandler, message);
     }
 
     public ConfirmButton(VaadinIcon icon, ClickHandler clickHandler, String message) {
-        super(icon, new CH(clickHandler, message));
-        init();
+        super(icon, null);
+        init(clickHandler, message);
     }
 
     public ConfirmButton(String text, VaadinIcon icon, ClickHandler clickHandler, String message) {
-        super(text, icon, new CH(clickHandler, message));
-        init();
+        super(text, icon, null);
+        init(clickHandler, message);
     }
 
-    private void init() {
+    private void init(ClickHandler clickHandler, String message) {
+        handler = new CH(clickHandler, message);
+        addClickHanlder(handler);
         getElement().getStyle().set("background", "var(--lumo-error-color-10pct)");
+    }
+
+    public void setPreconfirm(BooleanSupplier preconfirm) {
+        handler.confirmBox.setPreconfirm(preconfirm);
     }
 
     private static class CH implements ClickHandler {

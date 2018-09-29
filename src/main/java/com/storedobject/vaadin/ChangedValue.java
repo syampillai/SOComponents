@@ -21,4 +21,8 @@ public class ChangedValue<V> {
     public boolean isFromClient() {
         return event.isFromClient();
     }
+
+    public HasValue<?, V> getChanged() {
+        return event.getHasValue();
+    }
 }

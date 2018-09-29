@@ -6,8 +6,6 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonObject;
 
-import java.util.ArrayList;
-
 public class ElementClick implements ClickNotifier {
 
     private Component component;

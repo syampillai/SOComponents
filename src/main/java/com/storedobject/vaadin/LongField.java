@@ -59,10 +59,10 @@ public class LongField extends NumericField<Long> {
 
     @Override
     protected String getPresentationValue(Long value) {
-        if(!isGrouping()) {
-            return value.toString();
+        if(isGrouping()) {
+            return format(value);
         }
-        return format(value);
+        return value.toString();
     }
 
     public void setLength(int width) {

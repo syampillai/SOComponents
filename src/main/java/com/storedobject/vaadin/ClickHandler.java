@@ -59,7 +59,7 @@ public interface ClickHandler extends ComponentEventListener<ClickEvent<? extend
         };
     }
 
-    static class ModifiedClickEvent<C extends Component> extends ClickEvent<C> {
+    class ModifiedClickEvent<C extends Component> extends ClickEvent<C> {
 
         public ModifiedClickEvent(ClickEvent<C> original, Component to) {
             super(to, original.isFromClient(), original.getScreenX(), original.getScreenY(), original.getClientX(),

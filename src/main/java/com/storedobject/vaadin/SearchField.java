@@ -14,7 +14,27 @@ public class SearchField extends ActionTextField {
 
     public SearchField(String label, String placeholder, Consumer<String> action) {
         super(label, placeholder, action);
-        setIcon("search");
+        ImageButton b = new ImageButton("search", e -> click());
+        addToPrefix(b);
         trim();
+    }
+
+    @Override
+    public SearchField toUpperCase() {
+        return (SearchField)super.toUpperCase();
+    }
+
+    @Override
+    public SearchField toLowerCase() {
+        return (SearchField)super.toLowerCase();
+    }
+
+    @Override
+    public SearchField trim() {
+        return (SearchField)super.trim();
+    }
+
+    protected void click() {
+        act();
     }
 }

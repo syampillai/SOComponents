@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.shared.Registration;
 
 public class Button extends com.vaadin.flow.component.button.Button {
 
@@ -20,8 +21,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
      * @param clickHandler Click handler
      */
     public Button(Component icon, ClickHandler clickHandler) {
-        super(icon, ClickHandler.convert(clickHandler));
-        init();
+        this(null, icon, clickHandler);
     }
 
     /**
@@ -41,8 +41,16 @@ public class Button extends com.vaadin.flow.component.button.Button {
      * @param clickHandler Click handler
      */
     public Button(String text, Component icon, ClickHandler clickHandler) {
-        super(text, icon, ClickHandler.convert(clickHandler));
-        init();
+        super();
+        if(icon != null) {
+            setIcon(icon);
+        }
+        if(text != null) {
+            this.setText(text);
+        }
+        addClickHanlder(clickHandler);
+        getElement().getStyle().set("cursor", "pointer");
+        getElement().setAttribute("theme", "small");
     }
 
     /**
@@ -51,8 +59,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
      * @param clickHandler Click handler
      */
     public Button(VaadinIcon icon, ClickHandler clickHandler) {
-        super(new Icon(icon), ClickHandler.convert(clickHandler));
-        init();
+        this(null, new Icon(icon), clickHandler);
     }
 
     /**
@@ -62,12 +69,19 @@ public class Button extends com.vaadin.flow.component.button.Button {
      * @param clickHandler Click handler
      */
     public Button(String text, VaadinIcon icon, ClickHandler clickHandler) {
-        super(text, new Icon(icon), ClickHandler.convert(clickHandler));
-        init();
+        this(text, new Icon(icon), clickHandler);
     }
 
-    private void init() {
-        getElement().getStyle().set("cursor", "pointer");
+    /**
+     * Add a click handler
+     * @param clickHandler Click handler to add
+     * @return Registration
+     */
+    public Registration addClickHanlder(ClickHandler clickHandler) {
+        if(clickHandler == null) {
+            return null;
+        }
+        return addClickListener(ClickHandler.convert(clickHandler));
     }
 
     /**
@@ -75,7 +89,29 @@ public class Button extends com.vaadin.flow.component.button.Button {
      * @return Self reference
      */
     public Button asPrimary() {
-        getElement().setAttribute("theme", "primary");
+        addTheme("primary");
         return this;
+    }
+
+    /**
+     * Make the button Small
+     * @return Self reference
+     */
+    public Button asSmall() {
+        addTheme("small");
+        return this;
+    }
+
+    private void addTheme(String theme) {
+        String current = getElement().getAttribute("theme");
+        if(current == null) {
+            getElement().setAttribute("theme", theme);
+            return;
+        }
+        current = " " + current + " ";
+        if(current.contains(theme)) {
+            return;
+        }
+        getElement().setAttribute("theme", current.substring(1) + theme);
     }
 }

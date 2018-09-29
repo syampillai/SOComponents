@@ -3,7 +3,6 @@ package com.storedobject.vaadin.util;
 import com.storedobject.vaadin.HasElement;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.AbstractSinglePropertyField;
-import com.vaadin.flow.component.textfield.TextField;
 
 /**
  * Generic Text Field component
@@ -85,7 +84,6 @@ public abstract class TextFieldComponent<C extends AbstractField<C, String>> ext
      * @return True or false
      */
     public boolean isReadonly() {
-        TextField x;
         return this.getElement().getProperty("readonly", false);
     }
 

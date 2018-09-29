@@ -10,31 +10,29 @@ import com.vaadin.flow.shared.Registration;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
-public class ListField<T> extends Div
-        implements HasValueAndElement<AbstractField.ComponentValueChangeEvent<ListField<T>, T>, T>, HasItems<T> {
+public class BasicListField<T> extends Div
+        implements HasValueAndElement<AbstractField.ComponentValueChangeEvent<BasicListField<T>, T>, T>, HasItems<T> {
 
     private Listeners listeners = new ValueChangeListeners();
-    private CList<T> comboList;
+    private CList comboList;
     private Div text;
 
-    public ListField(T... list) {
+    @SafeVarargs
+    public BasicListField(T... list) {
         this(Arrays.asList(list));
     }
 
-
-    public ListField(Collection<T> items) {
+    @SuppressWarnings("unchecked")
+    public BasicListField(Collection<T> items) {
         text = new Div();
         text.getStyle().set("cursor", "pointer");
         Box b = new Box(this);
         b.setStyle("background", "var(--lumo-contrast-20pct)");
         b.setBorderWidth(0);
-        comboList = new CList<T>(items);
-        new ElementClick(text).addClickListener(e -> {
-            comboList.setVisible(!comboList.isVisible());
-        });
+        comboList = new CList(items);
+        new ElementClick(text).addClickListener(e -> comboList.setVisible(!comboList.isVisible()));
         v(getValue());
         add(text);
         add(comboList.encloser);
@@ -52,12 +50,14 @@ public class ListField<T> extends Div
     private void v(T v) {
         if(v == null) {
             text.setText("");
+            return;
         }
         String s = v.toString();
         text.setText(s == null ? "" : s);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setItems(Collection<T> items) {
         T oldValue = getValue();
         comboList.setItems(items);
@@ -74,11 +74,8 @@ public class ListField<T> extends Div
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setValue(T value) {
-        setValue(value, false);
-    }
-
-    private void setValue(T value, boolean fromClient) {
         T oldValue = getValue();
         comboList.setValue(oldValue);
         T newValue = getValue();
@@ -114,7 +111,7 @@ public class ListField<T> extends Div
     }
 
     @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super AbstractField.ComponentValueChangeEvent<ListField<T>, T>> listener) {
+    public Registration addValueChangeListener(ValueChangeListener<? super AbstractField.ComponentValueChangeEvent<BasicListField<T>, T>> listener) {
         return listeners.add(listener);
     }
 
@@ -124,7 +121,7 @@ public class ListField<T> extends Div
         comboList.setVisible(comboList.isVisible());
     }
 
-    private class CList<T> extends ComboList<T> {
+    private class CList extends BasicComboList<T> {
 
         private Div encloser;
         private String height = "140px";

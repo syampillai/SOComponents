@@ -1,18 +1,19 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.BasicDateField;
 import com.storedobject.vaadin.util.TranslatedField;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.GregorianCalendar;
 
-public class DateField extends TranslatedField<Date, LocalDate, com.storedobject.vaadin.util.DateField> {
+public class DateField extends TranslatedField<Date, LocalDate, BasicDateField> {
 
     private static Date today = null;
 
     public DateField() {
-        super(today(), new com.storedobject.vaadin.util.DateField(),
-                (f, d) -> com.storedobject.vaadin.util.DateField.create(d), (f, d) -> com.storedobject.vaadin.util.DateField.create(d));
+        super(today(), new BasicDateField(),
+                (f, d) -> BasicDateField.create(d), (f, d) -> BasicDateField.create(d));
         setPresentationValue(getValue());
     }
 

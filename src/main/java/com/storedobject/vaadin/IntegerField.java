@@ -60,10 +60,10 @@ public class IntegerField extends NumericField<Integer> {
 
     @Override
     protected String getPresentationValue(Integer value) {
-        if(!isGrouping()) {
-            return value.toString();
+        if(isGrouping()) {
+            return format(value);
         }
-        return format(value);
+        return value.toString();
     }
 
     public void setLength(int width) {

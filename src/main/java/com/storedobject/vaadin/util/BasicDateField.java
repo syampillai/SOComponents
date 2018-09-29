@@ -11,9 +11,9 @@ import static java.util.Calendar.DATE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 
-public class DateField extends DatePicker implements Field<LocalDate> {
+public class BasicDateField extends DatePicker implements Field<LocalDate> {
 
-    public DateField() {
+    public BasicDateField() {
         setWidth("18ch");
     }
 

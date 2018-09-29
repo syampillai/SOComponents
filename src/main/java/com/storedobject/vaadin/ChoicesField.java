@@ -1,16 +1,15 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.BasicChoicesField;
 import com.storedobject.vaadin.util.CompositeField;
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class ChoicesField extends CompositeField<Integer, ChoicesField, HasValue.ValueChangeEvent<Integer>, com.storedobject.vaadin.util.ChoicesField> {
+public class ChoicesField extends CompositeField<Integer, ChoicesField, HasValue.ValueChangeEvent<Integer>, BasicChoicesField> {
 
     public ChoicesField(String choices) {
         this(null, choices);
@@ -37,7 +36,7 @@ public class ChoicesField extends CompositeField<Integer, ChoicesField, HasValue
     }
 
     public ChoicesField(String label, Collection<String> list) {
-        super(new com.storedobject.vaadin.util.ChoicesField(sanitize(list), container()), 0);
+        super(new BasicChoicesField(sanitize(list), new ButtonLayout()), 0);
         setLabel(label);
     }
 
@@ -68,11 +67,5 @@ public class ChoicesField extends CompositeField<Integer, ChoicesField, HasValue
             }
         }
         return list;
-    }
-
-    private static HasComponents container() {
-        FlexLayout c = new FlexLayout();
-        new Box(c);
-        return c;
     }
 }

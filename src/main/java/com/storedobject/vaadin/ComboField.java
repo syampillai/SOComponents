@@ -10,10 +10,12 @@ public class ComboField<T> extends ComboBox<T> implements Field<T> {
 
     private Collection<T> list;
 
+    @SafeVarargs
     public ComboField(T... list) {
         this(null, list);
     }
 
+    @SafeVarargs
     public ComboField(String label, T... list) {
         this(label, Arrays.asList(list));
     }

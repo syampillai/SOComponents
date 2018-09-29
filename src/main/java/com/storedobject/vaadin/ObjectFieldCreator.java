@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public interface ObjectFieldCreator<T> {
 
-    default ObjectFieldCreator<T> create(ObjectForm<T> objectForm) {
+    default ObjectFieldCreator<T> create(@SuppressWarnings("unused") ObjectForm<T> objectForm) {
         return this;
     }
 
@@ -19,7 +19,7 @@ public interface ObjectFieldCreator<T> {
         return null;
     }
 
-    default HasValue<?, ?> createField(String fieldName, Class<?> fieldType, String label) {
+    default HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, Class<?> fieldType, String label) {
         if(fieldType == String.class) {
             return new TextField(label);
         }
@@ -60,7 +60,7 @@ public interface ObjectFieldCreator<T> {
         return null;
     }
 
-    default int getFieldOrder(String fieldName) {
+    default int getFieldOrder(@SuppressWarnings("unused") String fieldName) {
         return Integer.MAX_VALUE;
     }
 

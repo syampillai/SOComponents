@@ -48,7 +48,7 @@ public class Demo extends Application {
 
         @Override
         public Component getContent() {
-            return (Div)getSecondaryComponent();
+            return getSecondaryComponent();
         }
 
         @Override
@@ -57,7 +57,10 @@ public class Demo extends Application {
             add(MenuItem.create("Edit Person Details", new PersonEditor(application)));
             add(MenuItem.create("Veiw Sample PDF", new PDFTest(application)));
             add(MenuItem.create("Test Alert Component", new AlertTest(application)));
-            add(MenuItem.create("Test", new MiscTest(application)));
+            add(MenuItem.create("Misc. Test", new MiscTest(application)));
+            add(MenuItem.create("Test Grid", new GridTest(application)));
+            add(MenuItem.create("Test Parent/Child", new ParentChildTest(application)));
+            add(MenuItem.create("Test Dashboard", new DashboardTest()));
         }
     }
 
@@ -65,8 +68,11 @@ public class Demo extends Application {
     }
 
     @WebServlet(urlPatterns = "/*", name = "SOServlet", asyncSupported = true, loadOnStartup = 0)
-    @VaadinServletConfiguration(ui = Demo.class, productionMode = false, closeIdleSessions = true)
-    public static class SOServlet extends VaadinServlet {
+    public static class MyServlet extends SOServlet {
+        @Override
+        protected Application createApplication() {
+            return new Demo();
+        }
     }
 
     private class PDFTest extends View {

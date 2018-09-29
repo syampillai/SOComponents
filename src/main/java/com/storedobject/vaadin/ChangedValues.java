@@ -14,8 +14,13 @@ public class ChangedValues {
         return event.getHasValue() == field;
     }
 
-    public <V extends Object> ChangedValue<V> getChanged(HasValue<?, V> field) {
-        return event.getHasValue() == field ? new ChangedValue<V>((HasValue.ValueChangeEvent<V>) event) : null;
+    @SuppressWarnings("unchecked")
+    public <V> ChangedValue<V> getChanged(HasValue<?, V> field) {
+        return event.getHasValue() == field ? new ChangedValue<>((HasValue.ValueChangeEvent<V>) event) : null;
+    }
+
+    public HasValue<?, ?> getChanged() {
+        return event.getHasValue();
     }
 
     public Object getOldValue() {

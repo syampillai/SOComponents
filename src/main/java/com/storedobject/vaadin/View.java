@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class View implements ClickHandler, ValueChangeHandler, Runnable {
+public class View implements ExecutableView {
 
     private final Application application;
     private Component component;
@@ -21,7 +21,6 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
     private View parent;
     private Registration windowMonitor;
     private boolean internalWindowAction = false;
-    private boolean initUI = false;
     private boolean doFocus = true;
     private Component postFocus;
 
@@ -58,7 +57,7 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
         if(!oc.isPresent()) {
             return c;
         }
-        if(c.getChildren().filter(e -> e != oc.get()).findAny().isPresent()) {
+        if(c.getChildren().anyMatch(e -> e != oc.get())) {
             return c;
         }
         return oc.get();
@@ -76,7 +75,6 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
         if(component == this.component || component == null) {
             return;
         }
-        initUI = true;
         Element parent  = parent();
         if(parent != null) {
             this.component.getElement().removeFromParent();
@@ -168,7 +166,7 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
 
     public static boolean focus(Component component) {
         if(component instanceof HasComponents) {
-            return component.getChildren().filter(c -> focus(c)).findAny().isPresent();
+            return component.getChildren().anyMatch(View::focus);
         } else {
             if(component instanceof HasValue && component instanceof Focusable && !((HasValue) component).isReadOnly() && component.isVisible()) {
                 ((Focusable) component).focus();
@@ -180,7 +178,7 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
 
     public static boolean focusAny(Component component) {
         if(component instanceof HasComponents) {
-            return component.getChildren().filter(c -> focusAny(c)).findAny().isPresent();
+            return component.getChildren().anyMatch(View::focusAny);
         } else {
             if(component instanceof Focusable && component.isVisible()) {
                 ((Focusable) component).focus();
@@ -226,11 +224,11 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
             return;
         }
         List<Component> list = new ArrayList<>();
-        ((Dialog)component).getChildren().forEach(c -> list.add(c));
+        component.getChildren().forEach(list::add);
         Component nc;
         if(list.size() != 1) {
             nc = new Div();
-            list.forEach(c -> ((Div) nc).add(c));
+            list.forEach(((Div) nc)::add);
         } else {
             nc = list.get(0);
         }
@@ -239,8 +237,8 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
     }
 
     @Override
-    public void run() {
-        execute();
+    public View getView(boolean create) {
+        return this;
     }
 
     public final void execute() {
@@ -265,7 +263,7 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
         if(getCaption() == null || getCaption().trim().isEmpty()) {
             throw new RuntimeException("Caption not set!");
         }
-        if(this.parent != null && parent != null) {
+        if(this.parent != null && parent != null && this.parent != parent) {
             return;
         }
         this.parent = parent;
@@ -281,7 +279,7 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
         return aborted;
     }
 
-    public void returnedFrom(View parent) {
+    public void returnedFrom(@SuppressWarnings("unused") View parent) {
     }
 
     public void close() {
@@ -304,15 +302,14 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
         }
         getApplication().close(this);
         if(detachParent && parent != null) {
+            detachParent = false;
             View p = parent;
             parent = null;
             getApplication().close(p);
+        } else {
+            parent = null;
         }
         doFocus = true;
-    }
-
-    public void trackValueChange(HasValue<?, ?> field) {
-        field.addValueChangeListener(this);
     }
 
     @Override
@@ -321,21 +318,5 @@ public class View implements ClickHandler, ValueChangeHandler, Runnable {
 
     @Override
     public void valueChanged(ChangedValues changedValues) {
-    }
-
-    public void warning(Object message) {
-        Application.warning(message);
-    }
-
-    public static void tray(Object message) {
-        Application.tray(message);
-    }
-
-    public static void message(Object message) {
-        Application.message(message);
-    }
-
-    public static void error(Object message) {
-        Application.error(message);
     }
 }

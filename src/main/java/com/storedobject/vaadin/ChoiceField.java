@@ -1,17 +1,14 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.ComboBox;
+import com.storedobject.vaadin.util.BasicComboBox;
 import com.storedobject.vaadin.util.TranslatedField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
-public class ChoiceField extends TranslatedField<Integer, String, ComboBox<String>> {
-
-    private static final Integer EMPTY = -1;
+public class ChoiceField extends TranslatedField<Integer, String, BasicComboBox<String>> implements ValueRequired {
 
     public ChoiceField(String choices) {
         this(null, choices);
@@ -38,7 +35,7 @@ public class ChoiceField extends TranslatedField<Integer, String, ComboBox<Strin
     }
 
     public ChoiceField(String label, Collection<String> list) {
-        super(-1, new ComboBox<String>(sanitize(list)), (f, s) -> f.getIndex(s), (f, i) -> f.getValue(i));
+        super(-1, new BasicComboBox<>(sanitize(list)), ComboField::getIndex, ComboField::getValue);
         setValue(0);
         setLabel(label);
     }

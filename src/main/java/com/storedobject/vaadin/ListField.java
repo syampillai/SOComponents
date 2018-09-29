@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.BasicListField;
 import com.storedobject.vaadin.util.CompositeField;
 import com.vaadin.flow.component.AbstractField;
 
@@ -7,14 +8,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class ListField<T> extends
-        CompositeField.SingleField<T, ListField<T>, com.storedobject.vaadin.util.ListField<T>, AbstractField.ComponentValueChangeEvent<com.storedobject.vaadin.util.ListField<T>, T>> {
+        CompositeField.SingleField<T, ListField<T>, BasicListField<T>, AbstractField.ComponentValueChangeEvent<BasicListField<T>, T>> {
 
     public ListField(Collection<T> items) {
         this(null, items);
     }
 
     public ListField(String label, Collection<T> items) {
-        super(new com.storedobject.vaadin.util.ListField<>(items), getDefault(items));
+        super(new BasicListField<>(items), getDefault(items));
         setLabel(label);
     }
 

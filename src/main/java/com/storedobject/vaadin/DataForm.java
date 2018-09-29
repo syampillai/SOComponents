@@ -3,7 +3,6 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.util.stream.Stream;
@@ -52,7 +51,7 @@ public abstract class DataForm extends AbstractDataForm {
     }
 
     private HasComponents createDefaultButtonLayout() {
-        return new HorizontalLayout();
+        return new ButtonLayout();
     }
 
     protected abstract void buildFields();
@@ -77,7 +76,6 @@ public abstract class DataForm extends AbstractDataForm {
             if(process()) {
                 close();
             }
-            return;
         }
     }
 

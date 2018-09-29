@@ -2,12 +2,11 @@ package com.storedobject.vaadin.util;
 
 import com.storedobject.vaadin.Alert;
 import com.storedobject.vaadin.Form;
+import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.data.binder.*;
-import com.vaadin.flow.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +56,7 @@ public class Data extends HashMap<String, Object> {
         return addField(null, field, null, null);
     }
 
+    @SuppressWarnings("unchecked")
     public String addField(String fieldName, HasValue<?, ?> field, Supplier<?> get, Consumer<?> set) {
         if(field == null) {
             return null;
@@ -98,6 +98,9 @@ public class Data extends HashMap<String, Object> {
                 }
             }
         }
+        if(field instanceof ValueRequired && ((ValueRequired)field).isRequired()) {
+            setRequired(field, true, null);
+        }
         return fieldName;
     }
 
@@ -117,24 +120,24 @@ public class Data extends HashMap<String, Object> {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         if(readOnly) {
-            fields.entrySet().forEach(s -> {
-                s.getValue().setReadOnly(readOnly);
-                setVisible(s.getKey(), s.getValue());
+            fields.forEach((key, value) -> {
+                value.setReadOnly(true);
+                setVisible(key, value);
             });
             return;
         }
-        fields.entrySet().forEach(s -> {
+        fields.forEach((key, value) -> {
             boolean ro = false;
-            if(valueHandler.canHandle(s.getKey())) {
-                ro = !valueHandler.canSet(s.getKey());
+            if (valueHandler.canHandle(key)) {
+                ro = !valueHandler.canSet(key);
             }
-            if(!ro) {
-                ro = !valueHandler.isEditable(s.getValue());
+            if (!ro) {
+                ro = !valueHandler.isEditable(value);
             }
-            if(!ro) {
-                ro = !valueHandler.isEditable(s.getKey());
+            if (!ro) {
+                ro = !valueHandler.isEditable(key);
             }
-            s.getValue().setReadOnly(ro);
+            value.setReadOnly(ro);
         });
     }
 
@@ -187,8 +190,9 @@ public class Data extends HashMap<String, Object> {
         setReadOnly(!readOnly);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean saveValues() {
-        if(binder.getStatusLabel().equals(errorText)) {
+        if(errorText.equals(binder.getStatusLabel().orElse(null))) {
             errorText.close();
         }
         extraErrors = false;
@@ -196,10 +200,10 @@ public class Data extends HashMap<String, Object> {
             return false;
         }
         if(!valueHandler.isBasic()) {
-            fields.entrySet().forEach(s -> {
-                if (valueHandler.canHandle(s.getKey()) && !valueHandler.canSet(s.getKey())) {
-                    HasValue<?, Object> field = (HasValue<?, Object>) s.getValue();
-                    field.setValue(valueHandler.getValue(s.getKey()));
+            fields.forEach((key, value) -> {
+                if (valueHandler.canHandle(key) && !valueHandler.canSet(key)) {
+                    HasValue<?, Object> field = (HasValue<?, Object>) value;
+                    field.setValue(valueHandler.getValue(key));
                 }
             });
         }
@@ -212,21 +216,21 @@ public class Data extends HashMap<String, Object> {
     }
 
     public void clearErrors() {
-        fields.values().forEach(hv -> Form.clearError(hv));
-        if(binder.getStatusLabel().equals(errorText)) {
+        fields.values().forEach(Form::clearError);
+        if(errorText.equals(binder.getStatusLabel().orElse(null))) {
             errorText.close();
         }
     }
 
     public void clearFields() {
-        fields.values().forEach(hv -> hv.clear());
+        fields.values().forEach(HasValue::clear);
     }
 
     public <T> void addValidator(HasValue<?, T> field, Function<T, Boolean> validator, String errorMessage) {
         if(field == null) {
             return;
         }
-        validator(field).add(new DataValidator<T>(form, validator, errorMessage));
+        validator(field).add(new DataValidator<>(form, validator, errorMessage));
     }
 
     public void setRequired(HasValue<?, ?> field, boolean required, String errorMessage) {
@@ -284,8 +288,8 @@ public class Data extends HashMap<String, Object> {
 
         @Override
         public ValidationResult apply(Data data, ValueContext valueContext) {
-            HasValue<?, ?> field = valueContext.getHasValue().get();
-            if(!field.isEmpty()) {
+            HasValue<?, ?> field = valueContext.getHasValue().orElse(null);
+            if(field == null || !field.isEmpty()) {
                 return OK;
             }
             String m = errorMessage;
@@ -316,9 +320,10 @@ public class Data extends HashMap<String, Object> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public ValidationResult apply(Data data, ValueContext valueContext) {
-            HasValue<?, T> field = (HasValue<?, T>)valueContext.getHasValue().get();
-            if(validator.apply(field.getValue())) {
+            HasValue<?, T> field = (HasValue<?, T>)valueContext.getHasValue().orElse(null);
+            if(field != null && validator.apply(field.getValue())) {
                 return OK;
             }
             String m = errorMessage;
@@ -329,7 +334,7 @@ public class Data extends HashMap<String, Object> {
                     m = form.getLabel(id) + ": " + m;
                 }
             }
-            return ValidationResult.error(errorMessage == null ? INVALID : errorMessage);
+            return ValidationResult.error(m);
         }
     }
 
@@ -350,7 +355,7 @@ public class Data extends HashMap<String, Object> {
                     break;
                 }
             }
-            HasValue<?, ?> field = this.valueContext.getHasValue().get();
+            HasValue<?, ?> field = this.valueContext.getHasValue().orElse(null);
             if(vr.getErrorLevel().isPresent()) {
                 Form.markError(field);
             } else {

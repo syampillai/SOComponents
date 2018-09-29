@@ -46,7 +46,7 @@ public abstract class AbstractDataForm extends View {
         return null;
     }
 
-    protected HasValue<?, ?> createField(String fieldName) {
+    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName) {
         return null;
     }
 
@@ -154,27 +154,29 @@ public abstract class AbstractDataForm extends View {
         form.setReadOnly(readOnly);
     }
 
-    public boolean isFieldVisible(String fieldName) {
-        return form.isFieldVisible(fieldName);
+    public boolean isFieldVisible(@SuppressWarnings("unused") String fieldName) {
+        return true;
     }
 
-    public boolean isFieldVisible(HasValue<?, ?> field) {
-        return form.isFieldVisible(field);
+    public boolean isFieldVisible(@SuppressWarnings("unused") HasValue<?, ?> field) {
+        return true;
     }
 
-    public boolean isFieldEditable(String fieldName) {
-        return form.isFieldEditable(fieldName);
+    public boolean isFieldEditable(@SuppressWarnings("unused") String fieldName) {
+        return true;
     }
 
-    public boolean isFieldEditable(HasValue<?, ?> field) {
-        return form.isFieldEditable(field);
+    public boolean isFieldEditable(@SuppressWarnings("unused") HasValue<?, ?> field) {
+        return true;
     }
 
-    protected void attachField(String fieldName, HasValue<?, ?> field) {
+    protected void attachField(@SuppressWarnings("unused") String fieldName,
+                               @SuppressWarnings("unused") HasValue<?, ?> field) {
         throw FIELD_ERROR;
     }
 
-    protected void detachField(String fieldName, HasValue<?, ?> field) {
+    protected void detachField(@SuppressWarnings("unused") String fieldName,
+                               @SuppressWarnings("unused") HasValue<?, ?> field) {
         throw FIELD_ERROR;
     }
 

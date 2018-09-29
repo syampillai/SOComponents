@@ -4,56 +4,29 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.RequestHandler;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.*;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.*;
 
-@Theme(value = Lumo.class, variant = Lumo.LIGHT)
-public abstract class Application extends UI implements RequestHandler {
+public abstract class Application implements RequestHandler {
 
     private ApplicationEnvironment environment;
-    private String link;
     private ViewManager viewManager;
-    private boolean error;
+    private ApplicationUI ui;
+    private ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
 
-    @Override
-    protected void init(VaadinRequest request) {
-        addDetachListener(e -> close());
-        VaadinSession vs = getSession();
-        vs.addRequestHandler(this);
-        String link = request.getContextPath();
-        if (link != null && link.length() > 1 && link.startsWith("/")) {
-            link = link.substring(1);
-        } else {
-            link = null;
-        }
-        this.link = link;
-        link = request.getPathInfo();
-        if(link != null && !link.equals("/")) {
-            showNotification("Unknown application '" + (this.link == null ? "" : this.link) + link +
-                    "'.\nPlease use the correct link.");
-            error = true;
-            unableToCreate();
-        }
-    }
-
-    public final boolean isError() {
-        return error;
-    }
-
-    protected void unableToCreate() {
-        error = true;
+    protected boolean init(@SuppressWarnings("unused") String link) {
+        return true;
     }
 
     protected abstract ApplicationLayout createLayout();
@@ -73,21 +46,58 @@ public abstract class Application extends UI implements RequestHandler {
     }
 
     @Override
-    public boolean handleRequest(VaadinSession vaadinSession, VaadinRequest vaadinRequest, VaadinResponse vaadinResponse) throws IOException {
+    public boolean handleRequest(VaadinSession vaadinSession, VaadinRequest vaadinRequest, VaadinResponse vaadinResponse) {
         return false;
     }
 
-    @Override
     public void close() {
-        super.close();
-        VaadinSession vs = getSession();
+        if(ui != null && !ui.isClosing()) {
+            ui.close();
+        }
+        while(resources.size() > 0) {
+            Closeable resource = resources.remove(0).get();
+            if(resource != null) {
+                try {
+                    resource.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        VaadinSession vs = VaadinSession.getCurrent();
         if(vs != null) {
             vs.close();
         }
     }
 
     public static Application get() {
-        return (Application)UI.getCurrent();
+        return get(VaadinSession.getCurrent());
+    }
+
+    static Application get(VaadinSession vs) {
+        return vs == null ? null : (Application)vs.getAttribute("_SOApp_");
+    }
+
+    static Application create() {
+        VaadinSession vs = VaadinSession.getCurrent();
+        Application a = get(vs);
+        if(a == null) {
+            try {
+                SOServlet sos = (SOServlet) VaadinServlet.getCurrent();
+                a = sos.createApplication();
+                if(a != null) {
+                    a.ui = (ApplicationUI) UI.getCurrent();
+                    if(a.ui.getError() == null) {
+                        if(!a.init(a.ui.getLink())) {
+                            return null;
+                        }
+                        vs.addRequestHandler(a);
+                    }
+                    vs.setAttribute("_SOApp_", a);
+                }
+            } catch(Throwable ignored) {
+            }
+        }
+        return a;
     }
 
     public static void warning(Object message) {
@@ -95,7 +105,7 @@ public abstract class Application extends UI implements RequestHandler {
     }
 
     public static void tray(Object message) {
-        notification(message, 1, Notification.Position.BOTTOM_END);
+        notification(message, 1, Notification.Position.BOTTOM_END, false);
     }
 
     public static void message(Object message) {
@@ -113,22 +123,6 @@ public abstract class Application extends UI implements RequestHandler {
 
     private static void notification(Object message, int messageType) {
         notification(message, messageType, null, true);
-    }
-
-    private static void notification(String caption, Object message, int messageType) {
-        notification(caption, message, messageType, null, true);
-    }
-
-    private static void notification(Object message, int messageType, Notification.Position position) {
-        notification(message, messageType, position, false);
-    }
-
-    private static void notification(Object message, int messageType, boolean log) {
-        notification(null, message, messageType, null, log);
-    }
-
-    private static void notification(String caption, Object message, int messageType, boolean log) {
-        notification(caption, message, messageType, null, log);
     }
 
     private static void notification(Object message, int messageType, Notification.Position position, boolean log) {
@@ -162,7 +156,7 @@ public abstract class Application extends UI implements RequestHandler {
         if(m == null) {
             m = a == null ? message.toString() : a.getEnvironment().toDisplay(message);
         }
-        Alert n = new Alert(m);
+        Alert n = new Alert(caption, m);
         if(position != null) {
             n.setPosition(position);
         }
@@ -198,15 +192,15 @@ public abstract class Application extends UI implements RequestHandler {
     }
 
     public String getLinkName() {
-        return link;
+        return ((ApplicationUI)UI.getCurrent()).getLink();
     }
 
     public int getDeviceHeight() {
-        return getSession().getBrowser().getScreenHeight();
+        return VaadinSession.getCurrent().getBrowser().getScreenHeight();
     }
 
     public int getDeviceWidth() {
-        return getSession().getBrowser().getScreenWidth();
+        return VaadinSession.getCurrent().getBrowser().getScreenWidth();
     }
 
     public void showNotification(String text) {
@@ -214,7 +208,7 @@ public abstract class Application extends UI implements RequestHandler {
     }
 
     public void showNotification(String caption, String text) {
-        notification(caption, text, 2, false);
+        notification(caption, text, 2, Notification.Position.BOTTOM_END,false);
     }
 
     public void showNotification(Throwable error) {
@@ -222,15 +216,14 @@ public abstract class Application extends UI implements RequestHandler {
     }
 
     public void showNotification(String caption, Throwable error) {
-        notification(caption, "<BR/>Error: " + getEnvironment().toDisplay(error), 2, false);
+        notification(caption, "<BR/>Error: " + getEnvironment().toDisplay(error),
+                2, Notification.Position.BOTTOM_END,false);
     }
 
-    final void setMainView(ApplicationLayout applicationLayout) {
+    final void setMainView(ApplicationView applicationView) {
         if(this.viewManager == null) {
-            viewManager = new ViewManager(applicationLayout);
-            if(!error) {
-                login();
-            }
+            viewManager = new ViewManager(applicationView);
+            login();
         }
     }
 
@@ -239,19 +232,19 @@ public abstract class Application extends UI implements RequestHandler {
     }
 
     public String getIPAddress() {
-        return getSession().getBrowser().getAddress();
+        return VaadinSession.getCurrent().getBrowser().getAddress();
     }
 
     public String getIdentifier() {
-        return getSession().getBrowser().getBrowserApplication();
+        return VaadinSession.getCurrent().getBrowser().getBrowserApplication();
     }
 
     public int getMajorVersion() {
-        return getSession().getBrowser().getBrowserMajorVersion();
+        return VaadinSession.getCurrent().getBrowser().getBrowserMajorVersion();
     }
 
     public int getMinorVersion() {
-        return getSession().getBrowser().getBrowserMinorVersion();
+        return VaadinSession.getCurrent().getBrowser().getBrowserMinorVersion();
     }
 
     void execute(View view, boolean doNotLock, View parentBox) {
@@ -276,18 +269,19 @@ public abstract class Application extends UI implements RequestHandler {
     private static class ViewManager {
 
         private final ApplicationMenu menu;
-        private final ApplicationLayout layout;
+        private final ApplicationView applicationView;
         private List<View> stack = new ArrayList<>();
         private Map<View, MenuItem> contentMenu = new HashMap<>();
         private Map<View, View> parents = new HashMap<>();
 
-        public ViewManager(ApplicationLayout layout) {
-            this.layout = layout;
-            this.menu = layout.getMenu();
+        public ViewManager(ApplicationView applicationView) {
+            this.applicationView = applicationView;
+            this.menu = applicationView.layout.getMenu();
         }
 
         public void loggedin(Application application) {
-            layout.drawMenu(application);
+            applicationView.layout.loggedin(application);
+            applicationView.layout.drawMenu(application);
         }
 
         public void attach(View view, boolean doNotLock, View parent) {
@@ -312,7 +306,7 @@ public abstract class Application extends UI implements RequestHandler {
                 hideAllContent(null);
             }
             stack.add(view);
-            layout.addView(view);
+            applicationView.layout.addView(view);
             view.setVisible(true);
             MenuItem m = MenuItem.create(view.getCaption(), () -> select(view));
             menu.insert(0, m);
@@ -321,30 +315,26 @@ public abstract class Application extends UI implements RequestHandler {
         }
 
         public void detach(View view) {
-            MenuItem m = contentMenu.get(view);
-            if(m == null) {
+            View child = child(view);
+            if(child != null) {
+                child.detachParentOnClose();
+                select(child);
+                child.abort();
                 return;
             }
-            View child;
-            while (true) {
-                child = child(view);
-                if(child == null) {
-                    break;
-                }
-                if(!child.executing()) {
-                    child.detachParentOnClose();
-                    select(child);
-                    child.abort();
-                    return;
-                }
-
+            MenuItem m = contentMenu.get(view);
+            if(m != null) {
+                menu.remove(m);
             }
-            menu.remove(m);
             contentMenu.remove(view);
             view.getComponent().getElement().removeFromParent();
             stack.remove(view);
             View parent = parents.remove(view);
             if(parent != null) {
+                m = contentMenu.get(parent);
+                if(m != null) {
+                    m.setEnabled(true);
+                }
                 select(parent);
                 parent.returnedFrom(view);
             } else {
@@ -371,6 +361,9 @@ public abstract class Application extends UI implements RequestHandler {
             MenuItem m = contentMenu.get(view);
             if(m == null) {
                 return false;
+            }
+            if(!m.isEnabled()) {
+                return true;
             }
             hideAllContent(view);
             hilite(m);
@@ -404,13 +397,35 @@ public abstract class Application extends UI implements RequestHandler {
         @Override
         protected void onAttach(AttachEvent attachEvent) {
             super.onAttach(attachEvent);
-            Application.get().setMainView(layout);
+            if(layout != null) {
+                Application.get().setMainView(this);
+            }
         }
 
         @Override
         protected Component initContent() {
             if(layout == null) {
-                layout = Application.get().createLayout();
+                Application a = Application.get(VaadinSession.getCurrent());
+                if(a != null) {
+                    Notification.show("Logged out");
+                    a.close();
+                    a = null;
+                } else {
+                    a = Application.create();
+                    if(a != null) {
+                        String error = a.ui.getError();
+                        if (error != null) {
+                            Notification.show(error);
+                            a = null;
+                        }
+                    } else {
+                        Notification.show("Unable to initialize application");
+                    }
+                }
+                if(a == null) {
+                    return new Div();
+                }
+                layout = a.createLayout();
             }
             return layout.getComponent();
         }

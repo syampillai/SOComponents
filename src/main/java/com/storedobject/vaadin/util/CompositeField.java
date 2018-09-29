@@ -8,6 +8,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.templatemodel.TemplateModel;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends HasValue.ValueChangeEvent<T>, M extends CompositeField.MultiField<E, T>>
@@ -56,15 +57,16 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
 
     public void setWidth(String width) {
         createField();
-        ((HasSize)field).setWidth(width);
+        field.setWidth(width);
     }
 
     public void setHeight(String height) {
         createField();
-        ((HasSize)field).setHeight(height);
+        field.setHeight(height);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected M getField() {
         return (M)super.getField();
     }
@@ -215,8 +217,8 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
 
         @Override
         public final Type getValue() {
-            getContent();
-            value = saveValue(value);
+            //getContent();
+            //value = saveValue(value);
             return value;
         }
 
@@ -272,14 +274,14 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
                 ((Focusable) container).blur();
                 return;
             }
-            container.getChildren().forEach(c -> blur(c));
+            container.getChildren().forEach(MultiField::blur);
         }
 
         private static Focusable<?> focus(Component container) {
             if (container instanceof Focusable) {
                 return (Focusable<?>) container;
             }
-            return container.getChildren().map(c -> focus(c)).filter(f -> f != null).findFirst().orElse(null);
+            return container.getChildren().map(MultiField::focus).filter(Objects::nonNull).findFirst().orElse(null);
         }
 
         @Override
@@ -338,7 +340,7 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
             extends CompositeField<T, S, E, SField<T, C, E>> {
 
         protected SingleField(C field, T defaultValue) {
-            super(new SField<T, C, E>(field), defaultValue);
+            super(new SField<>(field), defaultValue);
         }
 
         public C getInnerField() {

@@ -19,10 +19,12 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public ObjectForm<T> getForm() {
         return (ObjectForm<T>) super.getForm();
     }
 
+    @SuppressWarnings("unchecked")
     public Class<T> getObjectClass() {
         return ((ObjectForm<T>)form).getObjectClass();
     }
@@ -31,15 +33,15 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         throw FIELD_ERROR;
     }
 
-    protected Method getFieldGetMethod(String fieldName) {
+    protected Method getFieldGetMethod(@SuppressWarnings("unused") String fieldName) {
         throw FIELD_ERROR;
     }
 
-    protected Method getFieldSetMethod(String fieldName, Method getMethod) {
+    protected Method getFieldSetMethod(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") Method getMethod) {
         throw FIELD_ERROR;
     }
 
-    protected boolean includeField(String fieldName) {
+    protected boolean includeField(@SuppressWarnings("unused") String fieldName) {
         throw FIELD_ERROR;
     }
 
@@ -47,15 +49,19 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         throw FIELD_ERROR;
     }
 
-    protected HasValue<?, ?> createField(String fieldName, Class<?> type, String label) {
+    protected HasValue<?, ?> createField(String fieldName, @SuppressWarnings("unused") Class<?> type, @SuppressWarnings("unused") String label) {
+        HasValue<?, ?> field = createField(fieldName);
+        if(field != null) {
+            return field;
+        }
         throw FIELD_ERROR;
     }
 
-    protected String getLabel(String fieldName) {
+    protected String getLabel(@SuppressWarnings("unused") String fieldName) {
         throw FIELD_ERROR;
     }
 
-    protected int getFieldOrder(String fieldName) {
+    protected int getFieldOrder(@SuppressWarnings("unused") String fieldName) {
         throw FIELD_ERROR;
     }
 
@@ -63,16 +69,26 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         throw FIELD_ERROR;
     }
 
+    @SuppressWarnings("unchecked")
     public T getObject() {
         return ((ObjectForm<T>)form).getObject();
     }
 
+    @SuppressWarnings("unchecked")
     public void setObject(T object) {
         ((ObjectForm<T>)form).setObject(object);
     }
 
+    @SuppressWarnings("unchecked")
     public void setObject(T object, boolean load) {
         ((ObjectForm<T>)form).setObject(object, load);
+    }
+
+    protected boolean handleValueSetError(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") HasValue<?, ?> field,
+                                          @SuppressWarnings("unused") Object fieldValue,
+                                          @SuppressWarnings("unused") Object objectValue,
+                                          @SuppressWarnings("unused") Throwable error) {
+        return true;
     }
 
     protected class DForm extends ObjectForm<T> {
@@ -90,7 +106,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         @Override
         protected void generateFieldNames() {
             try {
-                AbstractDataEditor.this.getFieldNames().filter(n -> includeField(n)).forEach(n -> addField(n, getFieldGetMethod(n), null));
+                AbstractDataEditor.this.getFieldNames().filter(this::includeField).forEach(n -> addField(n, getFieldGetMethod(n), null));
             } catch (FieldError e) {
                 super.generateFieldNames();
             }
@@ -100,15 +116,15 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         protected Method getFieldGetMethod(String fieldName) {
             try {
                 return AbstractDataEditor.this.getFieldGetMethod(fieldName);
-            } catch (FieldError e) {
+            } catch (FieldError ignored) {
             }
             try {
                 return AbstractDataEditor.this.getClass().getMethod("get" + fieldName);
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException ignored) {
             }
             try {
                 return AbstractDataEditor.this.getClass().getMethod("is" + fieldName);
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException ignored) {
             }
             return super.getFieldGetMethod(fieldName);
         }
@@ -117,12 +133,12 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         protected Method getFieldSetMethod(String fieldName, Method getMethod) {
             try {
                 return AbstractDataEditor.this.getFieldSetMethod(fieldName, getMethod);
-            } catch (FieldError e) {
+            } catch (FieldError ignored) {
             }
             Class[] params = new Class[] { getMethod.getReturnType() };
             try {
                 return AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException ignored) {
             }
             return super.getFieldSetMethod(fieldName, getMethod);
         }
@@ -197,6 +213,31 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
             } catch (FieldError e) {
                 super.customizeField(fieldName, field);
             }
+        }
+
+        @Override
+        protected boolean handleValueSetError(String fieldName, HasValue<?, ?> field, Object fieldValue, Object objectValue, Throwable error) {
+            return AbstractDataEditor.this.handleValueSetError(fieldName, field, fieldValue, objectValue, error);
+        }
+
+        @Override
+        public boolean isFieldVisible(String fieldName) {
+            return AbstractDataEditor.this.isFieldVisible(fieldName);
+        }
+
+        @Override
+        public boolean isFieldVisible(HasValue<?, ?> field) {
+            return AbstractDataEditor.this.isFieldVisible(field);
+        }
+
+        @Override
+        public boolean isFieldEditable(String fieldName) {
+            return AbstractDataEditor.this.isFieldEditable(fieldName);
+        }
+
+        @Override
+        public boolean isFieldEditable(HasValue<?, ?> field) {
+            return AbstractDataEditor.this.isFieldEditable(field);
         }
     }
 }

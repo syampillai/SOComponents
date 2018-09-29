@@ -1,7 +1,6 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.dialog.Dialog;
 
@@ -14,6 +13,9 @@ public interface ApplicationLayout {
     ApplicationMenu getMenu();
 
     void drawMenu(Application application);
+
+    default void loggedin(@SuppressWarnings("unused") Application application) {
+    }
 
     default void addView(View view) {
         Component c = view.getComponent();

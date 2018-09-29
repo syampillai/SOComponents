@@ -1,6 +1,6 @@
 package com.storedobject.vaadin.util;
 
-public abstract class CompositeTextField<T> extends CompositeSingleField<String, TextField, CompositeTextField<T>, T> {
+public abstract class CompositeTextField<T> extends CompositeSingleField<String, BasicTextField, CompositeTextField<T>, T> {
 
     protected CompositeTextField(T defaultValue) {
         super(defaultValue);
@@ -18,11 +18,11 @@ public abstract class CompositeTextField<T> extends CompositeSingleField<String,
     }
 
     @Override
-    public TextField getField() {
-        return (TextField)super.getField();
+    public BasicTextField getField() {
+        return (BasicTextField)super.getField();
     }
 
-    protected void customizeTextField(TextField textField) {
+    protected void customizeTextField(@SuppressWarnings("unused") BasicTextField textField) {
     }
 
     @Override
@@ -30,7 +30,7 @@ public abstract class CompositeTextField<T> extends CompositeSingleField<String,
         return value == null ? "" : value.toString();
     }
 
-    private static class TF extends com.vaadin.flow.component.textfield.TextField implements TextField {
+    private static class TF extends com.vaadin.flow.component.textfield.TextField implements BasicTextField {
 
         @Override
         public void setReadOnly(boolean readOnly) {

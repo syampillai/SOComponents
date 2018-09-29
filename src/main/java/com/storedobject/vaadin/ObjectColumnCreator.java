@@ -1,11 +1,12 @@
 package com.storedobject.vaadin;
 
+import java.lang.reflect.Method;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface ObjectColumnCreator<T> {
 
-    default ObjectColumnCreator<T> create(DataGrid<T> dataGrid) {
+    default ObjectColumnCreator<T> create(@SuppressWarnings("unused") DataGrid<T> dataGrid) {
         return this;
     }
 
@@ -13,15 +14,19 @@ public interface ObjectColumnCreator<T> {
         return null;
     }
 
-    default Function<T, ?> getColumnFunction(String columnName) {
+    default Method getColumnMethod(@SuppressWarnings("unused") String columnName) {
         return null;
     }
 
-    default int getColumnOrder(String columnName) {
+    default Function<T, ?> getColumnFunction(@SuppressWarnings("unused") String columnName) {
+        return null;
+    }
+
+    default int getColumnOrder(@SuppressWarnings("unused") String columnName) {
         return Integer.MAX_VALUE;
     }
 
-    default String getHeader(String columnName) {
+    default String getHeader(@SuppressWarnings("unused") String columnName) {
         return ApplicationEnvironment.get().createLabel(columnName);
     }
 

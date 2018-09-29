@@ -1,9 +1,6 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.dialog.Dialog;
 
 public interface ApplicationMenu extends HasComponents {
 

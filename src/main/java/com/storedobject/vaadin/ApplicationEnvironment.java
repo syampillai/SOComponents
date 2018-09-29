@@ -57,7 +57,7 @@ public interface ApplicationEnvironment {
 
     default String getIconName(String label) {
         if(label == null) {
-            return label;
+            return null;
         }
         switch (label.toLowerCase()) {
             case "save":
@@ -71,7 +71,7 @@ public interface ApplicationEnvironment {
         return label;
     }
 
-    public static ApplicationEnvironment get() {
+    static ApplicationEnvironment get() {
         return Application.get().getEnvironment();
     }
 }

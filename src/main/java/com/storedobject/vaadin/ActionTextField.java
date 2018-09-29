@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 public class ActionTextField extends TextField {
 
     private Consumer<String> action;
+    private boolean ignoreProgrammaticChanges = false;
     private String text = null;
     private int transform = 0;
 
@@ -32,7 +33,16 @@ public class ActionTextField extends TextField {
     private void init(Consumer<String> action) {
         this.action = action;
         addKeyPressListener(Key.ENTER, e -> act());
-        addValueChangeListener(e -> act());
+        addValueChangeListener(e -> {
+            if(ignoreProgrammaticChanges && !e.isFromClient()) {
+                return;
+            }
+            act();
+        });
+    }
+
+    public void setIgnoreProgrammaticChanges(boolean ignore) {
+        this.ignoreProgrammaticChanges = ignore;
     }
 
     public void setAction(Consumer<String> action) {
@@ -43,7 +53,7 @@ public class ActionTextField extends TextField {
         return action;
     }
 
-    private synchronized void act() {
+    synchronized void act() {
         String t = getValue();
         if((transform & 1) == 1) {
             t = t.trim();

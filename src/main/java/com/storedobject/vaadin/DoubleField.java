@@ -76,7 +76,7 @@ public class DoubleField extends NumericField<Double> {
     }
 
     public DoubleField(String label, int width, int decimals, boolean grouping, boolean allowNegative) {
-        this(null, null, width, decimals, grouping, allowNegative);
+        this(label, null, width, decimals, grouping, allowNegative);
     }
 
     public DoubleField(String label, Double initialValue, int width, int decimals, boolean grouping, boolean allowNegative) {
@@ -97,10 +97,10 @@ public class DoubleField extends NumericField<Double> {
 
     @Override
     protected String getPresentationValue(Double value) {
-        if(!isGrouping()) {
-            return value.toString();
+        if(isGrouping()) {
+            return format(value);
         }
-        return format(value);
+        return value.toString();
     }
 
     public void setLength(int width) {

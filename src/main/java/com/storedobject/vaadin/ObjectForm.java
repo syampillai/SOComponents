@@ -2,14 +2,9 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.textfield.TextField;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,6 +41,7 @@ public class ObjectForm<T> extends Form {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private ObjectFieldCreator fc() {
         if(fCreator == null) {
             fCreator = ((ObjectFieldCreator<T>)ApplicationEnvironment.get().getObjectFieldCreator()).create(this);
@@ -53,6 +49,7 @@ public class ObjectForm<T> extends Form {
         return fCreator;
     }
 
+    @SuppressWarnings("unchecked")
     public void setMethodHandlerHost(Object host) {
         ((FieldHandler)data.getFieldValueHandler()).setHost(host);
     }
@@ -67,7 +64,7 @@ public class ObjectForm<T> extends Form {
 
     protected void addField(String... fieldNames) {
         for(String fieldName: fieldNames) {
-            addField(fieldName, (Method)null, (Method)null);
+            addField(fieldName, null, (Method)null);
         }
     }
 
@@ -80,27 +77,31 @@ public class ObjectForm<T> extends Form {
             return;
         }
         if(valueGetter == null && valueSetter == null) {
-            addField(fieldName, (Method)null, (Method)null);
+            addField(fieldName, null, (Method)null);
             return;
         }
-        Method m = null;
+        Method m;
         if(valueGetter == null) {
             m = getFieldGetMethod(fieldName);
-            if(m != null) {
-                getM.put(fieldName, m);
-            } else {
+            if(m == null) {
                 return;
             }
-        } else {
-            getF.put(fieldName, valueGetter);
+            getM.put(fieldName, m);
+            setF.put(fieldName, valueSetter);
+            return;
         }
+        getF.put(fieldName, valueGetter);
         if(valueSetter != null) {
             setF.put(fieldName, valueSetter);
-        } else if(m != null) {
-            m = getFieldSetMethod(fieldName, m);
-            if(m != null) {
-                setM.put(fieldName, m);
-            }
+            return;
+        }
+        m = getFieldGetMethod(fieldName);
+        if(m == null) {
+            return;
+        }
+        m = getFieldSetMethod(fieldName, m);
+        if(m != null) {
+            setM.put(fieldName, m);
         }
     }
 
@@ -131,19 +132,19 @@ public class ObjectForm<T> extends Form {
     protected Method getFieldGetMethod(String fieldName) {
         try {
             return this.getClass().getMethod("get" + fieldName);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
         try {
             return this.getClass().getMethod("is" + fieldName);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
         try {
             return objectClass.getMethod("get" + fieldName);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
         try {
             return objectClass.getMethod("is" + fieldName);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
         return null;
     }
@@ -152,11 +153,11 @@ public class ObjectForm<T> extends Form {
         Class[] params = new Class[] { getMethod.getReturnType() };
         try {
             return this.getClass().getMethod("set" + fieldName, params);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
         try {
             return objectClass.getMethod("set" + fieldName, params);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
         return null;
     }
@@ -171,6 +172,7 @@ public class ObjectForm<T> extends Form {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private Stream<Method> getFieldGetMethods() {
         Stream<Method> stream = fc().getFieldGetMethods();
         return stream == null ? Arrays.stream(objectClass.getMethods()) : stream;
@@ -207,6 +209,7 @@ public class ObjectForm<T> extends Form {
         return fc().getLabel(fieldName);
     }
 
+    @SuppressWarnings("unchecked")
     protected HasValue<?, ?> createField(String fieldName, Class<?> fieldType, String label) {
         return fc().createField(fieldName, fieldType, label);
     }
@@ -217,8 +220,7 @@ public class ObjectForm<T> extends Form {
     protected T createObjectInstance() {
         try {
             return objectClass.newInstance();
-        } catch (InstantiationException e) {
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException ignored) {
         }
         return null;
     }
@@ -285,14 +287,13 @@ public class ObjectForm<T> extends Form {
             try {
                 Method m = getM.get(fieldName);
                 return m.invoke(actOn(m));
-            } catch (NullPointerException e) {
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
+            } catch (NullPointerException | IllegalAccessException | InvocationTargetException ignored) {
             }
             return null;
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void setValue(String fieldName, Object value) {
             Consumer<?> set = setF.get(fieldName);
             if(set != null) {
@@ -306,7 +307,7 @@ public class ObjectForm<T> extends Form {
             Method m = setM.get(fieldName);
             if(m != null) {
                 try {
-                    m.invoke(actOn(m), new Object[] { value });
+                    m.invoke(actOn(m), value);
                 } catch (Throwable e) {
                     handleValueSetError(fieldName, getField(fieldName), value, getValue(fieldName), e);
                 }

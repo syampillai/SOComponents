@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 
 import java.util.HashMap;
@@ -29,10 +30,27 @@ public class ButtonLayout extends FlexLayout {
         }
         for(Component c: components) {
             super.add(c);
+            if(isBL(c)) {
+                continue;
+            }
             Gap g = new Gap();
             super.add(g);
             gaps.put(c, g);
         }
+    }
+
+    private static boolean isBL(Component c) {
+        if(c instanceof ButtonLayout) {
+            return true;
+        }
+        if(c instanceof Composite) {
+            return isBL(((Composite) c).getContent());
+        }
+        Component inner = c.getChildren().reduce((c1, c2) -> c2).orElse(null);
+        if(inner != null) {
+            return isBL(inner);
+        }
+        return false;
     }
 
     @Override
@@ -43,7 +61,10 @@ public class ButtonLayout extends FlexLayout {
         for(Component c: components) {
             if(c != null) {
                 super.remove(c);
-                super.remove(gaps.remove(c));
+                c = gaps.remove(c);
+                if(c != null) {
+                    super.remove(c);
+                }
             }
         }
     }
@@ -54,7 +75,11 @@ public class ButtonLayout extends FlexLayout {
         gaps.clear();
     }
 
-    private class Gap extends ELabel {
+    public Component getGap(Component component) {
+        return gaps.get(component);
+    }
+
+    private class Gap extends StyledText {
 
         private Gap() {
             super("&nbsp;&nbsp;");

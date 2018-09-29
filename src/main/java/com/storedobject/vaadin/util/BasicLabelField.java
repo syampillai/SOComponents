@@ -4,27 +4,24 @@ import com.storedobject.vaadin.Box;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-public class LabelField<T> extends Div
-        implements HasValueAndElement<AbstractField.ComponentValueChangeEvent<LabelField<T>, T>, T> {
+public class BasicLabelField<T> extends Div
+        implements HasValueAndElement<AbstractField.ComponentValueChangeEvent<BasicLabelField<T>, T>, T> {
 
     private List<T> items;
     private int index = -1;
-    private ElementClick click;
     private Listeners listeners = new ValueChangeListeners();
 
-    public LabelField(List<T> items) {
+    public BasicLabelField(List<T> items) {
         Box b = new Box(this);
         b.setStyle("background", "var(--lumo-contrast-20pct)");
         b.setStyle("cursor", "pointer");
         b.setBorderWidth(0);
-        click = new ElementClick(this);
+        ElementClick click = new ElementClick(this);
         click.addClickListener(e -> {
             setIndex(index + 1, true);
             T v = getValue();
@@ -33,6 +30,7 @@ public class LabelField<T> extends Div
         setItems(items);
     }
 
+    @SuppressWarnings("unchecked")
     public void setItems(List<T> items) {
         T oldValue = getValue();
         this.items = items;
@@ -49,20 +47,17 @@ public class LabelField<T> extends Div
 
     @Override
     public void setValue(T value) {
-        setValue(value, false);
-    }
-
-    private void setValue(T value, boolean fromClient) {
         if(items == null || items.isEmpty()) {
             return;
         }
-        setIndex(items.indexOf(value), fromClient);
+        setIndex(items.indexOf(value), false);
     }
 
     public void setIndex(int newIndex) {
         setIndex(newIndex, false);
     }
 
+    @SuppressWarnings("unchecked")
     private void setIndex(int newIndex, boolean fromClient) {
         if(index == newIndex) {
             return;
@@ -84,8 +79,7 @@ public class LabelField<T> extends Div
 
     @Override
     public T getValue() {
-        getIndex();
-        if(index < 0) {
+        if(getIndex() < 0) {
             return null;
         }
         return items.get(index);
@@ -122,7 +116,7 @@ public class LabelField<T> extends Div
     }
 
     @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super AbstractField.ComponentValueChangeEvent<LabelField<T>, T>> listener) {
+    public Registration addValueChangeListener(ValueChangeListener<? super AbstractField.ComponentValueChangeEvent<BasicLabelField<T>, T>> listener) {
         return listeners.add(listener);
     }
 }

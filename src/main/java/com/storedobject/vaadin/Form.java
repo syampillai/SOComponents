@@ -27,7 +27,7 @@ public class Form {
         data.setFieldValueHandler(new ValueHandler());
     }
 
-    protected Form(HasComponents container, Object dummy) {
+    protected Form(HasComponents container, @SuppressWarnings("unused") Object dummy) {
         this.data = new Data(this);
         this.container = container;
     }

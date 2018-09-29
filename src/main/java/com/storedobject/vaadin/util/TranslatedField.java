@@ -23,6 +23,7 @@ public class TranslatedField<T, P, F extends Field<P>>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected F getField() {
         return (F)super.getField();
     }

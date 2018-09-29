@@ -5,9 +5,12 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 
+import java.util.function.BooleanSupplier;
+
 public class ConfirmBox extends DataForm {
 
     private Runnable actionYes, actionNo;
+    private BooleanSupplier preconfirm;
 
     public ConfirmBox(String message, Runnable action) {
         this(null, message, action, null, null, null);
@@ -106,5 +109,17 @@ public class ConfirmBox extends DataForm {
             actionYes.run();
         }
         return true;
+    }
+
+    public void setPreconfirm(BooleanSupplier preconfirm) {
+        this.preconfirm = preconfirm;
+    }
+
+    @Override
+    protected void execute(View parent, boolean doNotLock) {
+        if(preconfirm != null && !preconfirm.getAsBoolean()) {
+            return;
+        }
+        super.execute(parent, doNotLock);
     }
 }

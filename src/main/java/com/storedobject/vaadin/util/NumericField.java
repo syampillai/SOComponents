@@ -2,7 +2,6 @@ package com.storedobject.vaadin.util;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public abstract class NumericField<T extends Number> extends CompositeTextField<T> {
 
