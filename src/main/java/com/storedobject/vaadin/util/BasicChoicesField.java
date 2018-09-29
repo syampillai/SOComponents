@@ -38,7 +38,7 @@ public class BasicChoicesField extends CompositeField.MultiField<HasValue.ValueC
 
     @Override
     protected HasValue[] fieldList() {
-        return (HasValue[]) list.toArray();
+        return list.toArray(new HasValue[list.size()]);
     }
 
     @Override
