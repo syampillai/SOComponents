@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.Data;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
@@ -13,12 +14,15 @@ public abstract class AbstractDataForm extends View {
     protected static final FieldError FIELD_ERROR = new FieldError();
     protected Form form;
 
-    public AbstractDataForm(Application a) {
-        super(a);
-    }
-
     public Form getForm() {
         return form;
+    }
+
+    protected void formConstructed() {
+    }
+
+    protected final Data getData() {
+        return form.data;
     }
 
     @Override
@@ -92,6 +96,10 @@ public abstract class AbstractDataForm extends View {
 
     public HasValue<?, ?> getField(String fieldName) {
         return form.getField(fieldName);
+    }
+
+    public String getFieldName(HasValue<?, ?> field) {
+        return form.getFieldName(field);
     }
 
     public void setRequired(HasValue<?, ?> field) {

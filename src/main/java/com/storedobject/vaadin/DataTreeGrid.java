@@ -3,14 +3,16 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.function.ValueProvider;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Enhancement to Vaadin's Grid to handle Java Beans in a specialized way. Please note that this is not supporting the functionality supported
- * by Vaadin's Bean Grid but has similar functionality. The main difference in use is that instead of addColumn methods, one should use the
+ * Enhancement to Vaadin's TreeGrid to handle Java Beans in a specialized way. Please note that this is not supporting the functionality supported
+ * by Vaadin's Bean TreeGrid but has similar functionality. The main difference in use is that instead of addColumn methods, one should use the
  * createColumn methods. createColumn methods just return whether column can be created or not but, columns are created at a later stage
  * when all columns are defined and the ordinality of columns are determined. If you want to customize any Column, it can be done in
  * customizeColumn method or by invoking methods provided in this claas. Each column has a "column name" and it gets mapped to the Bean's getXXX
@@ -22,7 +24,7 @@ import java.util.stream.Stream;
  * @author Syam
  */
 @HtmlImport("so-grid-styles.html")
-public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
+public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;
 
@@ -30,7 +32,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
      * Constructor that will generate columns from the Bean's properties.
      * @param objectClass Bean type
      */
-    public DataGrid(Class<T> objectClass) {
+    public DataTreeGrid(Class<T> objectClass) {
         this(objectClass, null);
     }
 
@@ -39,7 +41,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
      * @param objectClass Bean type
      * @param columns Column names
      */
-    public DataGrid(Class<T> objectClass, Iterable<String> columns) {
+    public DataTreeGrid(Class<T> objectClass, Iterable<String> columns) {
         soGrid = new SOGrid<>(this, objectClass, columns);
     }
 
@@ -91,6 +93,12 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
             return super.getColumnByKey(columnKey);
         }
         return soGrid.getColumnByKey(columnKey);
+    }
+
+    @Override
+    public Column<T> addHierarchyColumn(ValueProvider<T, ?> valueProvider) {
+        soGrid.treeBuilt();
+        return super.addHierarchyColumn(valueProvider);
     }
 
     /**

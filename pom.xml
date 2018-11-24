@@ -10,7 +10,7 @@
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>11.0.1</vaadin.version>
+        <vaadin.version>12.0.0.alpha5</vaadin.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -48,8 +48,6 @@
             <id>Vaadin prereleases</id>
             <url>http://maven.vaadin.com/vaadin-prereleases</url>
         </repository>
-        <!-- The bintray repository contain webjars immediately after generation. If the webjar is available
-             in Maven central, you do not need this repository -->
         <repository>
             <id>webjars</id>
             <url>https://dl.bintray.com/webjars/maven</url>
@@ -101,6 +99,7 @@
         </dependency>
     </dependencies>
 
+    <!--
     <build>
         <plugins>
 
@@ -128,20 +127,53 @@
                 <version>9.3.7.v20160115</version>
                 <configuration>
                     <scanIntervalSeconds>-1</scanIntervalSeconds>
-                    <!-- Use test scope because the UI/demo classes are in
-                        the test package. -->
                     <useTestScope>true</useTestScope>
                     <webAppConfig>
-                        <!-- This is only needed to be able to unzip webjars
-                            directly into src/test/webjar-debug and modify them for testing -->
                         <resourceBase>src/test/webjar-debug/META-INF/resources</resourceBase>
                     </webAppConfig>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    -->
 
     <profiles>
+        <profile>
+            <id>test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <archive>
+                                <index>true</index>
+                                <manifest>
+                                    <addClasspath>false</addClasspath>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                                <manifestEntries>
+                                    <Vaadin-Package-Version>1</Vaadin-Package-Version>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>9.4.11.v20180605</version>
+                        <configuration>
+                            <scanIntervalSeconds>1</scanIntervalSeconds>
+                            <useTestScope>true</useTestScope>
+                            <webAppConfig>
+                                <resourceBase>src/test/webjar-debug/META-INF/resources</resourceBase>
+                            </webAppConfig>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>directory</id>
             <build>

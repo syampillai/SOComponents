@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public class View implements ExecutableView {
 
-    private final Application application;
     private Component component;
     private String caption;
     private boolean aborted = false;
@@ -24,16 +23,15 @@ public class View implements ExecutableView {
     private boolean doFocus = true;
     private Component postFocus;
 
-    public View(Application a) {
-        this(a, null);
+    public View() {
+        this(null);
     }
 
-    public View(Application a, String caption) {
-        this(a, null, caption);
+    public View(String caption) {
+        this(null, caption);
     }
 
-    public View(Application a, Component component, String caption) {
-        this.application = a;
+    public View(Component component, String caption) {
         setCaption(caption);
         if(component != null) {
             setComponent(component);
@@ -65,10 +63,6 @@ public class View implements ExecutableView {
 
 
     protected void initUI() {
-    }
-
-    public Application getApplication() {
-        return application;
     }
 
     public final void setComponent(Component component) {
@@ -268,7 +262,11 @@ public class View implements ExecutableView {
         }
         this.parent = parent;
         aborted = false;
-        getApplication().execute(this, doNotLock, parent);
+        getApp().execute(this, doNotLock, parent);
+    }
+
+    private Application getApp() {
+        return Application.get();
     }
 
     public final boolean executing() {
@@ -300,12 +298,12 @@ public class View implements ExecutableView {
             windowMonitor.remove();
             windowMonitor = null;
         }
-        getApplication().close(this);
+        getApp().close(this);
         if(detachParent && parent != null) {
             detachParent = false;
             View p = parent;
             parent = null;
-            getApplication().close(p);
+            getApp().close(p);
         } else {
             parent = null;
         }

@@ -4,18 +4,22 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 public abstract class AbstractDataEditor<T> extends AbstractDataForm {
 
-    public AbstractDataEditor(Application a, Class<T> objectClass) {
-        this(a, objectClass, null);
+    private HashMap<Method, Object> fixedValues = new HashMap<>();
+
+    public AbstractDataEditor(Class<T> objectClass) {
+        this(objectClass, null);
     }
 
-    public AbstractDataEditor(Application a, Class<T> objectClass, String caption) {
-        super(a);
+    public AbstractDataEditor(Class<T> objectClass, String caption) {
         this.form = new DForm(objectClass);
-        setCaption(caption == null || caption.isEmpty() ? a.getEnvironment().createLabel(getObjectClass()) : caption);
+        setCaption(caption == null || caption.isEmpty() ? Application.get().getEnvironment().createLabel(getObjectClass()) : caption);
     }
 
     @Override
@@ -57,6 +61,20 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         throw FIELD_ERROR;
     }
 
+    /**
+     * Construct a field for the given field name.
+     * @param fieldName Field name
+     * @return Field
+     */
+    protected final HasValue<?, ?> constructField(String fieldName) {
+        return getForm().createField(fieldName);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected ObjectFieldCreator<T> getFieldCreator() {
+        return ((ObjectForm<T>)form).getFieldCreator();
+    }
+
     protected String getLabel(@SuppressWarnings("unused") String fieldName) {
         throw FIELD_ERROR;
     }
@@ -84,6 +102,22 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
         ((ObjectForm<T>)form).setObject(object, load);
     }
 
+    public void setFixedValue(String fieldName, Object value) {
+        Arrays.stream(getObjectClass().getMethods()).filter(m -> checkSetMethod(m, fieldName, value)).forEach(m -> fixedValues.put(m, value));
+    }
+
+    private static boolean checkSetMethod(Method m, String fieldName, Object value) {
+        if(!m.getName().equals("set" + fieldName) || m.getParameterCount() != 1 || !Modifier.isPublic(m.getModifiers()) ||
+                Modifier.isStatic(m.getModifiers())) {
+            return false;
+        }
+        return value == null || m.getParameterTypes()[0].isAssignableFrom(value.getClass());
+    }
+
+    public void setFixedValue(HasValue<?, ?> field, Object value) {
+        setFixedValue(getFieldName(field), value);
+    }
+
     protected boolean handleValueSetError(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") HasValue<?, ?> field,
                                           @SuppressWarnings("unused") Object fieldValue,
                                           @SuppressWarnings("unused") Object objectValue,
@@ -95,7 +129,14 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
 
         public DForm(Class<T> objectClass) {
             super(objectClass);
+            setView(AbstractDataEditor.this);
             setMethodHandlerHost(AbstractDataEditor.this);
+        }
+
+        @Override
+        protected void constructed() {
+            formConstructed();
+            super.constructed();
         }
 
         @Override
@@ -190,11 +231,22 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
 
         @Override
         protected T createObjectInstance() {
+            T object;
             try {
-                return AbstractDataEditor.this.createObjectInstance();
+                object = AbstractDataEditor.this.createObjectInstance();
             } catch (FieldError e) {
-                return super.createObjectInstance();
+                object = super.createObjectInstance();
             }
+            T o = object;
+            if(object != null) {
+                fixedValues.forEach((m, v) -> {
+                    try {
+                        m.invoke(o, v);
+                    } catch (Exception ignored) {
+                    }
+                });
+            }
+            return object;
         }
 
         @Override
@@ -232,6 +284,9 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
 
         @Override
         public boolean isFieldEditable(String fieldName) {
+            if(fixedValues.keySet().stream().anyMatch(m -> m.getName().equals("set" + fieldName))) {
+                return false;
+            }
             return AbstractDataEditor.this.isFieldEditable(fieldName);
         }
 

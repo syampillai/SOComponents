@@ -1,6 +1,7 @@
 package com.storedobject.vaadin.demo;
 
 import com.storedobject.vaadin.*;
+import com.storedobject.vaadin.util.IronAutogrowTextArea;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.notification.Notification;
@@ -11,8 +12,14 @@ import java.util.ArrayList;
 
 public class MiscTest extends View {
 
-    public MiscTest(Application application) {
-        super(application, "Misc. Tests");
+    private ETextArea ta;
+    private IntegerField nf;
+
+    public MiscTest() {
+        super("Misc. Tests");
+        if(Application.get() == null) {
+            return;
+        }
         FormLayout form = new FormLayout();
         ListBox<String> test = new ListBox<>();
         HorizontalLayout h = new HorizontalLayout();
@@ -33,7 +40,11 @@ public class MiscTest extends View {
             dataForm.load();
             alert("Loaded");
         }));
-        h.add(new ActionTextField(e -> alert("It works! " + e)));
+        h.add(new Button("Dump Values", e -> dataForm.dumpValues()));
+        h.add(new ActionTextField(e -> {
+            alert("It works! " + e);
+            ta.setValue(e);
+        }));
         form.add(h);
         ArrayList<String> a = new ArrayList<>();
         for(int i = 0; i < 5; i++) {
@@ -48,10 +59,11 @@ public class MiscTest extends View {
         ListField<String> lb = new ListField<>("List", a);
         form.add(lb);
         lb.addValueChangeListener(e -> Notification.show("Changed List!"));
-        ETextArea ta = new ETextArea("Text");
+        ta = new ETextArea("Text", "Hello World");
         ta.setMinRows(5);
         ta.setMaxRows(10);
         dataForm.addField(ta);
+        dataForm.addField(nf = new IntegerField("Number"));
         dataForm.setRequired(ta, "Enter somethine in multi-line Text Field");
         form.add(new ChoicesField("Choose", new String[] { "One", "Two", "Three" }));
         TextField tf = new TextField("Hello");

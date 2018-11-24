@@ -5,9 +5,14 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.page.BodySize;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.server.VaadinServlet;
+import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinServletConfiguration;
+import com.vaadin.flow.shared.communication.PushMode;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -54,21 +59,19 @@ public class Demo extends Application {
         @Override
         public void drawMenu(Application application) {
             getMenuPane().add(new HtmlComponent("hr"));
-            add(MenuItem.create("Edit Person Details", new PersonEditor(application)));
-            add(MenuItem.create("Veiw Sample PDF", new PDFTest(application)));
-            add(MenuItem.create("Test Alert Component", new AlertTest(application)));
-            add(MenuItem.create("Misc. Test", new MiscTest(application)));
-            add(MenuItem.create("Test Grid", new GridTest(application)));
-            add(MenuItem.create("Test Parent/Child", new ParentChildTest(application)));
+            add(MenuItem.create("Edit Person Details", new PersonEditor()));
+            add(MenuItem.create("Veiw Sample PDF", new PDFTest()));
+            add(MenuItem.create("Test Alert Component", "vaadin:user", new AlertTest()));
+            add(MenuItem.create("Misc. Test", new MiscTest()));
+            add(MenuItem.create("Test Grid", new GridTest()));
+            add(MenuItem.create("Test Parent/Child", new ParentChildTest()));
             add(MenuItem.create("Test Dashboard", new DashboardTest()));
         }
     }
 
-    private class SimpleMenu extends Div implements ApplicationMenu {
-    }
-
-    @WebServlet(urlPatterns = "/*", name = "SOServlet", asyncSupported = true, loadOnStartup = 0)
-    public static class MyServlet extends SOServlet {
+    @WebServlet(urlPatterns = "/*", name = "DemoServlet", asyncSupported = true, loadOnStartup = 0)
+    @VaadinServletConfiguration(ui = ApplicationUI.class, productionMode = false, closeIdleSessions = true)
+    public static class DemoServlet extends ApplicationServlet {
         @Override
         protected Application createApplication() {
             return new Demo();
@@ -77,11 +80,18 @@ public class Demo extends Application {
 
     private class PDFTest extends View {
 
-        public PDFTest(Application a) {
-            super(a, "PDF");
+        public PDFTest() {
+            super("PDF");
             PDFViewer pdfViewer = new PDFViewer("http://www.cambridgeenglish.org/images/young-learners-sample-papers-2018-vol1.pdf");
             pdfViewer.setHeight("700px");
             setComponent(pdfViewer);
         }
+    }
+
+    @Route("")
+    @Push(PushMode.MANUAL)
+    @BodySize(height = "100vh", width = "100vw")
+    @Theme(value = Lumo.class, variant = Lumo.LIGHT)
+    public static class DemoView extends ApplicationView {
     }
 }

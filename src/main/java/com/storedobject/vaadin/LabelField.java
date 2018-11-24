@@ -16,6 +16,7 @@ public class LabelField<T> extends
     public LabelField(String label, List<T> items) {
         super(new BasicLabelField<>(items), getDefault(items));
         setLabel(label);
+        setValue(null);
     }
 
     private static <O> O getDefault(List<O> items) {

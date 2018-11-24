@@ -9,9 +9,15 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
 
     protected Field<P> field;
     private boolean trackers = false;
+    private final boolean simpleValue;
 
     protected CompositeSingleField(T defaultValue) {
+        this(defaultValue, false);
+    }
+
+    protected CompositeSingleField(T defaultValue, boolean simpleValue) {
         super(defaultValue);
+        this.simpleValue = simpleValue;
     }
 
     @Override
@@ -33,7 +39,9 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
                     } catch (Throwable error) {
                         value = getEmptyValue();
                     }
-                    setPresentationValue(value);
+                    if(!simpleValue) {
+                        setPresentationValue(value);
+                    }
                     setModelValue(value, true);
                 });
             }

@@ -17,7 +17,11 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
     private SOField<T, E, M> soField;
 
     protected CompositeField(M field, T defaultValue) {
-        super(defaultValue);
+        this(field, defaultValue, false);
+    }
+
+    protected CompositeField(M field, T defaultValue, boolean simpleValue) {
+        super(defaultValue, simpleValue);
         this.field = field;
     }
 
@@ -52,7 +56,9 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
             return;
         }
         getField().getContent();
-        soField = new SOField<>(getField());
+        if(UI.getCurrent() != null) {
+            soField = new SOField<>(getField());
+        }
     }
 
     public void setWidth(String width) {
@@ -94,6 +100,9 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
     }
 
     public void setLabel(String label) {
+        if(getSOField() == null) {
+            return;
+        }
         getSOField().setLabel(label);
     }
 
@@ -217,18 +226,17 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
 
         @Override
         public final Type getValue() {
-            //getContent();
-            //value = saveValue(value);
             return value;
         }
 
         @Override
         public final void setValue(Type value) {
+            if(value == null) {
+                value = getEmptyValue();
+            }
             this.value = value;
             getContent();
-            if (value == null) {
-                clear();
-            } else {
+            if (value != null) {
                 loadValue(value);
             }
         }
@@ -340,11 +348,20 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
             extends CompositeField<T, S, E, SField<T, C, E>> {
 
         protected SingleField(C field, T defaultValue) {
-            super(new SField<>(field), defaultValue);
+            this(field, defaultValue, false);
+        }
+
+        protected SingleField(C field, T defaultValue, boolean simpleValue) {
+            super(new SField<>(field), defaultValue, simpleValue);
         }
 
         public C getInnerField() {
             return getField().getField();
+        }
+
+        @Override
+        public T getValue() {
+            return getInnerField().getValue();
         }
     }
 }

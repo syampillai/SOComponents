@@ -12,57 +12,57 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
     protected HasComponents buttonPanel;
     private Consumer<T> saveAction, cancelAction;
 
-    public DataEditor(Application a, Class<T> objectClass) {
-        this(a, objectClass, null, null, (Consumer<T>)null, null);
+    public DataEditor(Class<T> objectClass) {
+        this(objectClass, null, null, (Consumer<T>)null, null);
     }
 
-    public DataEditor(Application a, Class<T> objectClass, String caption) {
-        this(a, objectClass, caption, null, null, null, null);
+    public DataEditor(Class<T> objectClass, String caption) {
+        this(objectClass, caption, null, null, null, null);
     }
 
-    public DataEditor(Application a, Class<T> objectClass, String labelSave, String labelCancel) {
-        this(a, objectClass, labelSave, labelCancel, (Consumer<T>)null, null);
+    public DataEditor(Class<T> objectClass, String labelSave, String labelCancel) {
+        this(objectClass, labelSave, labelCancel, (Consumer<T>)null, null);
     }
 
-    public DataEditor(Application a, Class<T> objectClass, String caption, String labelSave, String labelCancel) {
-        this(a, objectClass, caption, labelSave, labelCancel, null, null);
-    }
-
-
-    public DataEditor(Application a, Class<T> objectClass, Consumer<T> saveAction) {
-        this(a, objectClass, null, null, saveAction, null);
-    }
-
-    public DataEditor(Application a, Class<T> objectClass, String caption, Consumer<T> saveAction) {
-        this(a, objectClass, caption, null, null, saveAction, null);
-    }
-
-    public DataEditor(Application a, Class<T> objectClass, String labelSave, String labelCancel, Consumer<T> saveAction) {
-        this(a, objectClass, labelSave, labelCancel, saveAction, null);
-    }
-
-    public DataEditor(Application a, Class<T> objectClass, String caption, String labelSave, String labelCancel, Consumer<T> saveAction) {
-        this(a, objectClass, caption, labelSave, labelCancel, saveAction, null);
+    public DataEditor(Class<T> objectClass, String caption, String labelSave, String labelCancel) {
+        this(objectClass, caption, labelSave, labelCancel, null, null);
     }
 
 
-    public DataEditor(Application a, Class<T> objectClass, Consumer<T> saveAction, Consumer<T> cancelAction) {
-        super(a, objectClass);
+    public DataEditor(Class<T> objectClass, Consumer<T> saveAction) {
+        this(objectClass, null, null, saveAction, null);
+    }
+
+    public DataEditor(Class<T> objectClass, String caption, Consumer<T> saveAction) {
+        this(objectClass, caption, null, null, saveAction, null);
+    }
+
+    public DataEditor(Class<T> objectClass, String labelSave, String labelCancel, Consumer<T> saveAction) {
+        this(objectClass, labelSave, labelCancel, saveAction, null);
+    }
+
+    public DataEditor(Class<T> objectClass, String caption, String labelSave, String labelCancel, Consumer<T> saveAction) {
+        this(objectClass, caption, labelSave, labelCancel, saveAction, null);
+    }
+
+
+    public DataEditor(Class<T> objectClass, Consumer<T> saveAction, Consumer<T> cancelAction) {
+        super(objectClass);
         init(null, null, saveAction, cancelAction);
     }
 
-    public DataEditor(Application a, Class<T> objectClass, String caption, Consumer<T> saveAction, Consumer<T> cancelAction) {
-        super(a, objectClass, caption);
+    public DataEditor(Class<T> objectClass, String caption, Consumer<T> saveAction, Consumer<T> cancelAction) {
+        super(objectClass, caption);
         init(null, null, saveAction, cancelAction);
     }
 
-    public DataEditor(Application a, Class<T> objectClass, String labelSave, String labelCancel, Consumer<T> saveAction, Consumer<T> cancelAction) {
-        super(a, objectClass);
+    public DataEditor(Class<T> objectClass, String labelSave, String labelCancel, Consumer<T> saveAction, Consumer<T> cancelAction) {
+        super(objectClass);
         init(labelSave, labelCancel, saveAction, cancelAction);
     }
 
-    public DataEditor(Application a, Class<T> objectClass, String caption, String labelSave, String labelCancel, Consumer<T> saveAction, Consumer<T> cancelAction) {
-        super(a, objectClass, caption);
+    public DataEditor(Class<T> objectClass, String caption, String labelSave, String labelCancel, Consumer<T> saveAction, Consumer<T> cancelAction) {
+        super(objectClass, caption);
         init(labelSave, labelCancel, saveAction, cancelAction);
     }
 

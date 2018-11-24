@@ -13,8 +13,8 @@ public class AbstractTest extends View {
     protected StyledText status;
     protected int state = -1;
 
-    public AbstractTest(Application a, String caption) {
-        super(a, caption);
+    public AbstractTest(String caption) {
+        super(caption);
         layout = new VerticalLayout();
         buttons = new ButtonLayout();
         layout.add(buttons);

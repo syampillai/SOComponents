@@ -3,10 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 
-@Theme(value = Lumo.class, variant = Lumo.LIGHT)
 public class ApplicationUI extends UI {
 
     private String link;

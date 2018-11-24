@@ -73,7 +73,7 @@ public class ConfirmBox extends DataForm {
     }
 
     public ConfirmBox(String caption, Component message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
-        super(Application.get(), caption == null ? "Confirm" : caption, labelYes == null ? "Yes" : labelYes, labelNo == null ? "No" : labelNo);
+        super(caption == null ? "Confirm" : caption, labelYes == null ? "Yes" : labelYes, labelNo == null ? "No" : labelNo);
         this.actionYes = actionYes;
         this.actionNo = actionNo;
         getForm().add(message);

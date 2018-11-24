@@ -1,16 +1,14 @@
 package com.storedobject.vaadin.demo;
 
-import com.storedobject.vaadin.Application;
 import com.storedobject.vaadin.DataEditor;
-import com.storedobject.vaadin.demo.Person;
 import com.vaadin.flow.component.HasValue;
 
 import java.time.LocalDate;
 
 public class PersonEditor extends DataEditor<Person> {
 
-    public PersonEditor(Application a) {
-        super(a, Person.class);
+    public PersonEditor() {
+        super(Person.class);
     }
 
     @Override
@@ -27,6 +25,7 @@ public class PersonEditor extends DataEditor<Person> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void customizeField(String fieldName, HasValue<?, ?> field) {
         switch (fieldName) {
             case "FirstName":
@@ -34,7 +33,8 @@ public class PersonEditor extends DataEditor<Person> {
                 return;
             case "DateOfBirth":
                 setRequired(field);
-                addValidator((HasValue<?, LocalDate>)field, d -> d != null && d.getYear() <= LocalDate.now().getYear());
+                HasValue<?, LocalDate> f = (HasValue<?, LocalDate>) field;
+                addValidator(f, d -> d != null && d.getYear() <= LocalDate.now().getYear());
                 return;
         }
         super.customizeField(fieldName, field);

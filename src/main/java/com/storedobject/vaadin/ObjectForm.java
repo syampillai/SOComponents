@@ -5,12 +5,9 @@ import com.vaadin.flow.component.HasValue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class ObjectForm<T> extends Form {
@@ -18,8 +15,8 @@ public class ObjectForm<T> extends Form {
     private final Class<T> objectClass;
     private final Map<String, Method> getM = new HashMap<>();
     private final Map<String, Method> setM = new HashMap<>();
-    private final Map<String, Supplier<?>> getF = new HashMap<>();
-    private final Map<String, Consumer<?>> setF = new HashMap<>();
+    private final Map<String, Function<T, ?>> getF = new HashMap<>();
+    private final Map<String, BiConsumer<T, ?>> setF = new HashMap<>();
     private T objectData;
     private ObjectFieldCreator<T> fCreator;
 
@@ -42,9 +39,9 @@ public class ObjectForm<T> extends Form {
     }
 
     @SuppressWarnings("unchecked")
-    private ObjectFieldCreator fc() {
+    ObjectFieldCreator<T> getFieldCreator() {
         if(fCreator == null) {
-            fCreator = ((ObjectFieldCreator<T>)ApplicationEnvironment.get().getObjectFieldCreator()).create(this);
+            fCreator = ((ObjectFieldCreator<T>) Objects.requireNonNull(ApplicationEnvironment.get()).getObjectFieldCreator()).create(this);
         }
         return fCreator;
     }
@@ -63,16 +60,28 @@ public class ObjectForm<T> extends Form {
     }
 
     protected void addField(String... fieldNames) {
+        Function<T, ?> valueGetter;
+        BiConsumer<T, ?> valueSetter;
         for(String fieldName: fieldNames) {
-            addField(fieldName, null, (Method)null);
+            valueGetter = getFieldCreator().getValueGetter(fieldName);
+            if(valueGetter != null) {
+                getF.put(fieldName, valueGetter);
+            }
+            valueSetter = getFieldCreator().getValueSetter(fieldName);
+            if(valueSetter != null) {
+                setF.put(fieldName, valueSetter);
+            }
+            if(valueGetter == null && valueSetter == null) {
+                addField(fieldName, null, (Method) null);
+            }
         }
     }
 
-    protected void addField(String fieldName, Supplier<?> valueGetter) {
+    protected void addField(String fieldName, Function<T, ?> valueGetter) {
         addField(fieldName, valueGetter, null);
     }
 
-    protected void addField(String fieldName, Supplier<?> valueGetter, Consumer<?> valueSetter) {
+    protected void addField(String fieldName, Function<T, ?> valueGetter, BiConsumer<T, ?> valueSetter) {
         if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
             return;
         }
@@ -165,16 +174,20 @@ public class ObjectForm<T> extends Form {
     @Override
     protected void generateFieldNames() {
         getFieldGetMethods().forEach(m -> {
-            String name = fc().getFieldName(m);
+            String name = getFieldCreator().getFieldName(m);
             if(name != null && includeField(name)) {
                 addField(name, m, null);
             }
         });
+        Stream<String> additionalNames = getFieldCreator().getFieldNames();
+        if(additionalNames != null) {
+            additionalNames.filter(Objects::nonNull).filter(this::includeField).forEach(this::addField);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private Stream<Method> getFieldGetMethods() {
-        Stream<Method> stream = fc().getFieldGetMethods();
+        Stream<Method> stream = getFieldCreator().getFieldGetMethods();
         return stream == null ? Arrays.stream(objectClass.getMethods()) : stream;
     }
 
@@ -184,7 +197,7 @@ public class ObjectForm<T> extends Form {
     }
 
     protected int getFieldOrder(String fieldName) {
-        return fc().getFieldOrder(fieldName);
+        return getFieldCreator().getFieldOrder(fieldName);
     }
 
     protected boolean includeField(String fieldName) {
@@ -193,11 +206,12 @@ public class ObjectForm<T> extends Form {
 
     @Override
     protected final HasValue<?, ?> createField(String fieldName) {
+        Class<?> returnType = null;
         Method m = getM.get(fieldName);
-        if(m == null) {
-            return null;
+        if(m != null) {
+            returnType = m.getReturnType();
         }
-        HasValue<?, ?> field = createField(fieldName, m.getReturnType(), getLabel(fieldName));
+        HasValue<?, ?> field = createField(fieldName, returnType, getLabel(fieldName));
         if(field != null) {
             customizeField(fieldName, field);
         }
@@ -206,12 +220,12 @@ public class ObjectForm<T> extends Form {
 
     @Override
     public String getLabel(String fieldName) {
-        return fc().getLabel(fieldName);
+        return getFieldCreator().getLabel(fieldName);
     }
 
     @SuppressWarnings("unchecked")
     protected HasValue<?, ?> createField(String fieldName, Class<?> fieldType, String label) {
-        return fc().createField(fieldName, fieldType, label);
+        return getFieldCreator().createField(fieldName, fieldType, label);
     }
 
     protected void customizeField(String fieldName, HasValue<?, ?> field) {
@@ -270,19 +284,19 @@ public class ObjectForm<T> extends Form {
 
         @Override
         public boolean canHandle(String fieldName) {
-            return getM.containsKey(fieldName);
+            return getM.containsKey(fieldName) || getF.containsKey(fieldName);
         }
 
         @Override
         public boolean canSet(String fieldName) {
-            return setM.containsKey(fieldName);
+            return setM.containsKey(fieldName) || setF.containsKey(fieldName);
         }
 
         @Override
         public Object getValue(String fieldName) {
-            Supplier<?> get = getF.get(fieldName);
+            Function<T, ?> get = getF.get(fieldName);
             if(get != null) {
-                return get.get();
+                return get.apply(getObject());
             }
             try {
                 Method m = getM.get(fieldName);
@@ -295,10 +309,10 @@ public class ObjectForm<T> extends Form {
         @Override
         @SuppressWarnings("unchecked")
         public void setValue(String fieldName, Object value) {
-            Consumer<?> set = setF.get(fieldName);
+            BiConsumer<T, ?> set = setF.get(fieldName);
             if(set != null) {
                 try {
-                    ((Consumer<Object>)set).accept(value);
+                    ((BiConsumer<T, Object>)set).accept(getObject(), value);
                 } catch (Throwable e) {
                     handleValueSetError(fieldName, getField(fieldName), value, getValue(fieldName), e);
                 }
@@ -322,7 +336,19 @@ public class ObjectForm<T> extends Form {
             if(dc == ObjectForm.this.getClass()) {
                 return ObjectForm.this;
             }
-            return host;
+            if(host != null && dc == host.getClass()) {
+                return host;
+            }
+            if(dc.isAssignableFrom(getObjectClass())) {
+                return getObject();
+            }
+            if(dc.isAssignableFrom(ObjectForm.this.getClass())) {
+                return ObjectForm.this;
+            }
+            if(host != null && dc.isAssignableFrom(host.getClass())) {
+                return host;
+            }
+            return null;
         }
 
         private void handleValueSetError(String fieldName, HasValue<?, ?> field, Object fieldValue, Object objectValue, Throwable error) {

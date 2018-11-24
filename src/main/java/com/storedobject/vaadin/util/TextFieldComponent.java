@@ -83,16 +83,16 @@ public abstract class TextFieldComponent<C extends AbstractField<C, String>> ext
      * Is this field read only?
      * @return True or false
      */
-    public boolean isReadonly() {
+    public boolean isReadOnly() {
         return this.getElement().getProperty("readonly", false);
     }
 
     /**
      * Set 'read only' flag
-     * @param readonly True or false
+     * @param readOnly True or false
      */
-    public void setReadonly(boolean readonly) {
-        this.getElement().setProperty("readonly", readonly);
+    public void setReadOnly(boolean readOnly) {
+        this.getElement().setProperty("readonly", readOnly);
     }
 
     /**

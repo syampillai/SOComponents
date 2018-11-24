@@ -8,7 +8,7 @@ public class BooleanField
         extends CompositeField.SingleField<Boolean, BooleanField, Checkbox, AbstractField.ComponentValueChangeEvent<Checkbox, Boolean>> {
 
     public BooleanField() {
-        super(new Checkbox(), false);
+        super(new Checkbox(), false, true);
         createField();
     }
 

@@ -50,7 +50,9 @@ public class Button extends com.vaadin.flow.component.button.Button {
         }
         addClickHanlder(clickHandler);
         getElement().getStyle().set("cursor", "pointer");
-        getElement().setAttribute("theme", "small");
+        if(text == null) {
+            addTheme("icon");
+        }
     }
 
     /**

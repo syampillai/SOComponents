@@ -9,6 +9,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.dom.Element;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -17,6 +18,7 @@ public class Form {
     protected HasComponents container;
     protected final Data data;
     private boolean loadPending = false;
+    private View view;
 
     public Form() {
         this(null);
@@ -70,7 +72,7 @@ public class Form {
     }
 
     private void addFieldInt(String fieldName, HasValue<?, ?> field) {
-        data.addField(fieldName, field, null, null);
+        data.addField(fieldName, field);
         attachF(fieldName, field);
     }
 
@@ -161,8 +163,16 @@ public class Form {
         return data.saveValues();
     }
 
-    public HasValue<?, ?> getField(String fieldName) {
+    public void dumpValues() {
+        data.forEach((k, v) -> System.err.println(k + " = " + v));
+    }
+
+    public final HasValue<?, ?> getField(String fieldName) {
         return data.getField(fieldName);
+    }
+
+    public final String getFieldName(HasValue<?, ?> field) {
+        return data.getName(field);
     }
 
     public void setRequired(HasValue<?, ?> field) {
@@ -252,7 +262,15 @@ public class Form {
     }
 
     public String getLabel(String fieldName) {
-        return ApplicationEnvironment.get().createLabel(fieldName);
+        return Objects.requireNonNull(ApplicationEnvironment.get()).createLabel(fieldName);
+    }
+
+    public void setView(View view) {
+        this.view = view;
+    }
+
+    public View getView() {
+        return view;
     }
 
     protected class ValueHandler implements FieldValueHandler {

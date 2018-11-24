@@ -12,8 +12,8 @@ public class ParentChildTest extends View {
     private Button child, close;
     private View cv;
 
-    public ParentChildTest(Application a) {
-        super(a, "Parent");
+    public ParentChildTest() {
+        super("Parent");
         FormLayout form = new FormLayout();
         form.add(new StyledText("This is the parent"));
         form.add(child = new Button("Child", this));
@@ -25,7 +25,7 @@ public class ParentChildTest extends View {
     public void clicked(Component c) {
         if(c == child) {
             if(cv == null) {
-                cv = new Child(getApplication());
+                cv = new Child();
             }
             cv.invoke(this);
             return;
@@ -39,8 +39,8 @@ public class ParentChildTest extends View {
 
     private class Child extends View {
 
-        public Child(Application a) {
-            super(a, "Child");
+        public Child() {
+            super("Child");
             FormLayout form = new FormLayout();
             form.add(new StyledText("This is the child"));
             form.add(new Button("Close", this));

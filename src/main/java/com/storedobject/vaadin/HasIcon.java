@@ -24,7 +24,10 @@ public interface HasIcon extends HasElement {
             icon = "vaadin:vaadin-h";
         }
         if(!icon.contains(":")) {
-            icon = ApplicationEnvironment.get().getIconName(icon);
+            ApplicationEnvironment ae = ApplicationEnvironment.get();
+            if(ae != null) {
+                icon = ae.getIconName(icon);
+            }
         }
         if(iconCollection != null && !iconCollection.trim().isEmpty() && !icon.contains(":")) {
             icon = iconCollection.trim() + ":" + icon;

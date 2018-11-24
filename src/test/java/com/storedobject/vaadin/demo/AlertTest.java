@@ -1,14 +1,13 @@
 package com.storedobject.vaadin.demo;
 
 import com.storedobject.vaadin.Alert;
-import com.storedobject.vaadin.Application;
 
 public class AlertTest extends AbstractTest {
 
     private Alert alert;
 
-    public AlertTest(Application a) {
-        super(a, "Alert Test");
+    public AlertTest() {
+        super("Alert Test");
         alert = new Alert("Alert");
     }
 

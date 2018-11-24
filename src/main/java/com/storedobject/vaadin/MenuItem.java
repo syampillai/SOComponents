@@ -13,7 +13,7 @@ public class MenuItem implements Runnable, ClickNotifier {
     private Runnable action;
     private Clickable click;
 
-    private MenuItem(String label, Component item, Runnable action) {
+    MenuItem(String label, Component item, Runnable action) {
         this.label = label;
         this.item = item;
         item.getElement().setAttribute("tabindex", "-1");
@@ -72,10 +72,6 @@ public class MenuItem implements Runnable, ClickNotifier {
     }
 
     public static MenuItem create(String menuLabel, String iconCollection, String icon, Runnable action) {
-        icon = icon.toLowerCase();
-        if(!icon.contains(":") && iconCollection != null && !iconCollection.isEmpty()) {
-            icon = iconCollection.toLowerCase() + ":" + icon;
-        }
         return new MenuItem(menuLabel, new IconItem(menuLabel, iconCollection, icon), action);
     }
 
@@ -112,9 +108,9 @@ public class MenuItem implements Runnable, ClickNotifier {
 
     @Tag("paper-item")
     @HtmlImport("frontend://bower_components/paper-item/paper-item.html")
-    private static class Item extends Component {
+    static class Item extends Component {
 
-        private Item(String menu) {
+        Item(String menu) {
             getElement().setText(menu);
         }
     }
@@ -122,11 +118,11 @@ public class MenuItem implements Runnable, ClickNotifier {
     @Tag("paper-icon-item")
     @HtmlImport("frontend://bower_components/iron-icons/iron-icons.html")
     @HtmlImport("frontend://bower_components/paper-item/paper-icon-item.html")
-    private static class IconItem extends Component implements IconElement {
+    static class IconItem extends Component implements IconElement {
 
         private Element ironIcon;
 
-        private IconItem(String menu, String iconCollection, String icon) {
+        IconItem(String menu, String iconCollection, String icon) {
             ironIcon = new Element("iron-icon");
             setIcon(ironIcon, iconCollection, icon);
             ironIcon.setAttribute("slot", "item-icon");
@@ -152,7 +148,7 @@ public class MenuItem implements Runnable, ClickNotifier {
         }
     }
 
-    private static void setIcon(Element element, String collection, String icon) {
+    static void setIcon(Element element, String collection, String icon) {
         if(icon.contains(":") || collection == null || collection.trim().isEmpty()) {
             icon = icon.toLowerCase();
         } else {

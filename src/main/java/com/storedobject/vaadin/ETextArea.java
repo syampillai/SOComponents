@@ -3,12 +3,13 @@ package com.storedobject.vaadin;
 import com.storedobject.vaadin.util.CompositeField;
 import com.storedobject.vaadin.util.IronAutogrowTextArea;
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.HasValue;
 
 public class ETextArea
         extends CompositeField.SingleField<String, ETextArea, IronAutogrowTextArea, AbstractField.ComponentValueChangeEvent<IronAutogrowTextArea, String>> {
 
     public ETextArea() {
-        super(new IronAutogrowTextArea(), "");
+        super(new IronAutogrowTextArea(), "", true);
         createField();
     }
 
@@ -56,5 +57,11 @@ public class ETextArea
      */
     public void setMinRows(int rows) {
         getField().getField().setMinRows(rows);
+    }
+
+    @Override
+    public void setValue(String value) {
+        super.setValue(value);
+        getInnerField().setValue(value);
     }
 }

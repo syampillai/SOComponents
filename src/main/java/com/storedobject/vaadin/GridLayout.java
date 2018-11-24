@@ -2,6 +2,12 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.*;
 
+/**
+ * A layout for arraging components in a grid style. Only columns (just the count or sizes) can be specified.
+ * When more components are added, it will wrap to the next rows if the column count exceeds the specified limit.
+ *
+ * @author Syam
+ */
 @Tag("div")
 public class GridLayout extends Component implements HasOrderedComponents<Component>, HasStyle, HasSize {
 

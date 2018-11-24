@@ -10,10 +10,10 @@ import com.vaadin.flow.data.binder.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Data extends HashMap<String, Object> {
 
@@ -22,8 +22,9 @@ public class Data extends HashMap<String, Object> {
     private static long id = 0L;
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
-    private final Map<HasValue<?, ?>, String>fieldNames = new HashMap<>();
+    private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
     private final Map<HasValue<?, ?>, DataValidators> validators = new HashMap<>();
+    private final List<HasValue<?, ?>> readOnlyFields = new ArrayList<>();
     private Binder<Data> binder;
     private boolean readOnly;
     private final Form form;
@@ -53,11 +54,11 @@ public class Data extends HashMap<String, Object> {
     }
 
     public String addField(HasValue<?, ?> field) {
-        return addField(null, field, null, null);
+        return addField(null, field);
     }
 
     @SuppressWarnings("unchecked")
-    public String addField(String fieldName, HasValue<?, ?> field, Supplier<?> get, Consumer<?> set) {
+    public String addField(String fieldName, HasValue<?, ?> field) {
         if(field == null) {
             return null;
         }
@@ -76,26 +77,14 @@ public class Data extends HashMap<String, Object> {
         final String name = fieldName;
         final HasValue<?, Object> f = (HasValue<?, Object>)field;
         binder.withValidator(validator);
-        if(get != null) {
-            if(set != null) {
-                binder.bind(f, x -> get.get(), (d, v) -> ((Consumer<Object>)set).accept(v));
-            } else {
-                if(!valueHandler.isBasic() && valueHandler.canHandle(name) && valueHandler.canSet(name)) {
-                    binder.bind(f, x -> get.get(), (d, v) -> valueHandler.setValue(name, v));
-                } else {
-                    binder.bind(f, x -> get.get(), null);
-                }
-            }
+        if (valueHandler.isBasic() || !valueHandler.canHandle(name)) {
+            setValue(fieldName, field.getValue());
+            binder.bind(f, x -> getValue(name), (d, v) -> setValue(name, v));
         } else {
-            if (valueHandler.isBasic() || !valueHandler.canHandle(name)) {
-                setValue(fieldName, field.getValue());
-                binder.bind(f, x -> getValue(name), (d, v) -> setValue(name, v));
+            if (valueHandler.canSet(name)) {
+                binder.bind(f, x -> valueHandler.getValue(name), (d, v) -> valueHandler.setValue(name, v));
             } else {
-                if (valueHandler.canSet(name)) {
-                    binder.bind(f, x -> valueHandler.getValue(name), (d, v) -> valueHandler.setValue(name, v));
-                } else {
-                    binder.bind(f, x -> valueHandler.getValue(name), null);
-                }
+                binder.bind(f, x -> valueHandler.getValue(name), null);
             }
         }
         if(field instanceof ValueRequired && ((ValueRequired)field).isRequired()) {
@@ -118,17 +107,25 @@ public class Data extends HashMap<String, Object> {
     }
 
     public void setReadOnly(boolean readOnly) {
+        boolean collectROs = readOnly && (this.readOnly != readOnly);
+        if(collectROs) {
+            readOnlyFields.clear();
+        }
         this.readOnly = readOnly;
         if(readOnly) {
             fields.forEach((key, value) -> {
-                value.setReadOnly(true);
+                if(collectROs && value.isReadOnly()) {
+                    readOnlyFields.add(value);
+                } else {
+                    value.setReadOnly(true);
+                }
                 setVisible(key, value);
             });
             return;
         }
         fields.forEach((key, value) -> {
-            boolean ro = false;
-            if (valueHandler.canHandle(key)) {
+            boolean ro = readOnlyFields.contains(value);
+            if (!ro && valueHandler.canHandle(key)) {
                 ro = !valueHandler.canSet(key);
             }
             if (!ro) {
@@ -184,6 +181,18 @@ public class Data extends HashMap<String, Object> {
         return fields.get(fieldName);
     }
 
+    public int getFieldCount() {
+        return fields.size();
+    }
+
+    public Stream<String> getFieldNames() {
+        return fields.keySet().stream();
+    }
+
+    public Stream<HasValue<?, ?>> getFields() {
+        return fieldNames.keySet().stream();
+    }
+
     public void loadValues() {
         binder.readBean(this);
         setReadOnly(!readOnly);
@@ -236,6 +245,13 @@ public class Data extends HashMap<String, Object> {
     public void setRequired(HasValue<?, ?> field, boolean required, String errorMessage) {
         if(field == null) {
             return;
+        }
+        Object value = field.getValue();
+        if(value != null) {
+            Class<?> valueClass = value.getClass();
+            if(valueClass == boolean.class || valueClass == Boolean.class) {
+                return;
+            }
         }
         field.setRequiredIndicatorVisible(required);
         DataValidators dv = validator(field);

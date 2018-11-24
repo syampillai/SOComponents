@@ -1,12 +1,15 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.grid.Grid;
+
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface ObjectColumnCreator<T> {
 
-    default ObjectColumnCreator<T> create(@SuppressWarnings("unused") DataGrid<T> dataGrid) {
+    default ObjectColumnCreator<T> create(@SuppressWarnings("unused") HasColumns<T> grid) {
         return this;
     }
 
@@ -27,7 +30,7 @@ public interface ObjectColumnCreator<T> {
     }
 
     default String getHeader(@SuppressWarnings("unused") String columnName) {
-        return ApplicationEnvironment.get().createLabel(columnName);
+        return Objects.requireNonNull(ApplicationEnvironment.get()).createLabel(columnName);
     }
 
     default void close() {

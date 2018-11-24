@@ -13,12 +13,11 @@ public abstract class DataForm extends AbstractDataForm {
     protected HasComponents buttonPanel;
     private boolean buttonsOnTop = false;
 
-    public DataForm(Application a, String caption) {
-        this(a, caption, null, null);
+    public DataForm(String caption) {
+        this(caption, null, null);
     }
 
-    public DataForm(Application a, String caption, String labelOK, String labelCancel) {
-        super(a);
+    public DataForm(String caption, String labelOK, String labelCancel) {
         this.form = new DForm();
         setErrorDisplay(null);
         setCaption(caption);
@@ -84,6 +83,10 @@ public abstract class DataForm extends AbstractDataForm {
     }
 
     private class DForm extends Form {
+
+        public DForm() {
+            setView(DataForm.this);
+        }
 
         @Override
         public Stream<String> getFieldNames() {

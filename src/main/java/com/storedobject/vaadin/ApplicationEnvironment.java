@@ -24,8 +24,8 @@ public interface ApplicationEnvironment {
         if(any == null) {
             return "";
         }
-        if(any.getClass() == Exception.class) {
-            return ((Exception)any).getMessage();
+        if(Exception.class.isAssignableFrom(any.getClass())) {
+            return toDisplay(((Exception)any).getMessage());
         }
         return toString(any);
     }
@@ -72,6 +72,7 @@ public interface ApplicationEnvironment {
     }
 
     static ApplicationEnvironment get() {
-        return Application.get().getEnvironment();
+        Application a = Application.get();
+        return a == null ? null : a.getEnvironment();
     }
 }

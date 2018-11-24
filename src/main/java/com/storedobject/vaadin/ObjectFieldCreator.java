@@ -7,6 +7,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface ObjectFieldCreator<T> {
@@ -19,7 +22,14 @@ public interface ObjectFieldCreator<T> {
         return null;
     }
 
+    default Stream<String> getFieldNames() {
+        return null;
+    }
+
     default HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, Class<?> fieldType, String label) {
+        if(fieldType == null) {
+            return null;
+        }
         if(fieldType == String.class) {
             return new TextField(label);
         }
@@ -60,12 +70,20 @@ public interface ObjectFieldCreator<T> {
         return null;
     }
 
+    default Function<T, ?> getValueGetter(@SuppressWarnings("unused") String fieldName) {
+        return null;
+    }
+
+    default BiConsumer<T, ?> getValueSetter(@SuppressWarnings("unused") String fieldName) {
+        return null;
+    }
+
     default int getFieldOrder(@SuppressWarnings("unused") String fieldName) {
         return Integer.MAX_VALUE;
     }
 
     default String getLabel(String fieldName) {
-        return ApplicationEnvironment.get().createLabel(fieldName);
+        return Objects.requireNonNull(ApplicationEnvironment.get()).createLabel(fieldName);
     }
 
     default void close() {

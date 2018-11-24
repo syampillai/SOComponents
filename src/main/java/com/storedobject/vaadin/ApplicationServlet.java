@@ -6,14 +6,10 @@ import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.RouteNotFoundError;
 import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.VaadinServletConfiguration;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(urlPatterns = "/*", name = "SOServlet", asyncSupported = true, loadOnStartup = 0)
-@VaadinServletConfiguration(ui = ApplicationUI.class, productionMode = false, closeIdleSessions = true)
-public abstract class SOServlet extends VaadinServlet {
+public abstract class ApplicationServlet extends VaadinServlet {
 
     protected abstract Application createApplication();
 

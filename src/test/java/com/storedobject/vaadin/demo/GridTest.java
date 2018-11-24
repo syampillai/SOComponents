@@ -1,14 +1,13 @@
 package com.storedobject.vaadin.demo;
 
-import com.storedobject.vaadin.Application;
 import com.storedobject.vaadin.StyledText;
 import com.storedobject.vaadin.GridLayout;
 import com.storedobject.vaadin.View;
 
 public class GridTest extends View {
 
-    public GridTest(Application a) {
-        super(a, "Grid Test");
+    public GridTest() {
+        super("Grid Test");
         createGrid();
     }
 

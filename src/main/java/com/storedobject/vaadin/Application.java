@@ -1,17 +1,10 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.page.BodySize;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.*;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -69,6 +62,10 @@ public abstract class Application implements RequestHandler {
         }
     }
 
+    public ApplicationUI getUI() {
+        return ui;
+    }
+
     public static Application get() {
         return get(VaadinSession.getCurrent());
     }
@@ -82,7 +79,7 @@ public abstract class Application implements RequestHandler {
         Application a = get(vs);
         if(a == null) {
             try {
-                SOServlet sos = (SOServlet) VaadinServlet.getCurrent();
+                ApplicationServlet sos = (ApplicationServlet) VaadinServlet.getCurrent();
                 a = sos.createApplication();
                 if(a != null) {
                     a.ui = (ApplicationUI) UI.getCurrent();
@@ -229,6 +226,10 @@ public abstract class Application implements RequestHandler {
 
     protected void login() {
         loggedin();
+    }
+
+    public void push() {
+        UI.getCurrent().push();
     }
 
     public String getIPAddress() {
@@ -381,53 +382,6 @@ public abstract class Application implements RequestHandler {
                     mi.getComponent().getElement().getStyle().set("background-color", "transparent");
                 }
             });
-        }
-    }
-
-    @Route("")
-    @BodySize(height = "100vh", width = "100vw")
-    @Theme(value = Lumo.class, variant = Lumo.LIGHT)
-    public static class ApplicationView extends Composite<Component> {
-
-        private ApplicationLayout layout;
-
-        public ApplicationView() {
-        }
-
-        @Override
-        protected void onAttach(AttachEvent attachEvent) {
-            super.onAttach(attachEvent);
-            if(layout != null) {
-                Application.get().setMainView(this);
-            }
-        }
-
-        @Override
-        protected Component initContent() {
-            if(layout == null) {
-                Application a = Application.get(VaadinSession.getCurrent());
-                if(a != null) {
-                    Notification.show("Logged out");
-                    a.close();
-                    a = null;
-                } else {
-                    a = Application.create();
-                    if(a != null) {
-                        String error = a.ui.getError();
-                        if (error != null) {
-                            Notification.show(error);
-                            a = null;
-                        }
-                    } else {
-                        Notification.show("Unable to initialize application");
-                    }
-                }
-                if(a == null) {
-                    return new Div();
-                }
-                layout = a.createLayout();
-            }
-            return layout.getComponent();
         }
     }
 }

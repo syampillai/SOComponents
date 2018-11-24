@@ -125,7 +125,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
             view = createView();
         }
         if(view == null && create) {
-            view = new View(getApplication(), this, getCaption());
+            view = new View(this, getCaption());
         }
         return view;
     }
@@ -136,14 +136,6 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
      */
     protected View createView() {
         return null;
-    }
-
-    /**
-     * Get the Application
-     * @return The Application instance
-     */
-    public Application getApplication() {
-        return Application.get();
     }
 
     /**
