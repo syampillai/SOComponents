@@ -11,12 +11,38 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-public abstract class Application implements RequestHandler {
+public abstract class Application extends UI implements RequestHandler {
 
     private ApplicationEnvironment environment;
     private ViewManager viewManager;
-    private ApplicationUI ui;
     private ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
+    private String link;
+    String error;
+
+    @Override
+    protected void init(VaadinRequest request) {
+        addDetachListener(e -> close());
+        String link = request.getContextPath();
+        if (link != null && link.length() > 1 && link.startsWith("/")) {
+            link = link.substring(1);
+        } else {
+            link = null;
+        }
+        this.link = link;
+        link = request.getPathInfo();
+        if (link != null && !link.equals("/")) {
+            error = "Unknown application '" + (this.link == null ? "" : this.link) + link + "'.\nPlease use the correct link.";
+        } else {
+            if(createLayout() == null) {
+                error = "Layout missing";
+            }
+        }
+        if(error == null) {
+            if(!init(link)) {
+                error = "Initialization failed";
+            }
+        }
+    }
 
     protected boolean init(@SuppressWarnings("unused") String link) {
         return true;
@@ -44,9 +70,6 @@ public abstract class Application implements RequestHandler {
     }
 
     public void close() {
-        if(ui != null && !ui.isClosing()) {
-            ui.close();
-        }
         while(resources.size() > 0) {
             Closeable resource = resources.remove(0).get();
             if(resource != null) {
@@ -60,41 +83,11 @@ public abstract class Application implements RequestHandler {
         if(vs != null) {
             vs.close();
         }
-    }
-
-    public ApplicationUI getUI() {
-        return ui;
+        super.close();
     }
 
     public static Application get() {
-        return get(VaadinSession.getCurrent());
-    }
-
-    static Application get(VaadinSession vs) {
-        return vs == null ? null : (Application)vs.getAttribute("_SOApp_");
-    }
-
-    static Application create() {
-        VaadinSession vs = VaadinSession.getCurrent();
-        Application a = get(vs);
-        if(a == null) {
-            try {
-                ApplicationServlet sos = (ApplicationServlet) VaadinServlet.getCurrent();
-                a = sos.createApplication();
-                if(a != null) {
-                    a.ui = (ApplicationUI) UI.getCurrent();
-                    if(a.ui.getError() == null) {
-                        if(!a.init(a.ui.getLink())) {
-                            return null;
-                        }
-                        vs.addRequestHandler(a);
-                    }
-                    vs.setAttribute("_SOApp_", a);
-                }
-            } catch(Throwable ignored) {
-            }
-        }
-        return a;
+        return (Application)UI.getCurrent();
     }
 
     public static void warning(Object message) {
@@ -189,7 +182,7 @@ public abstract class Application implements RequestHandler {
     }
 
     public String getLinkName() {
-        return ((ApplicationUI)UI.getCurrent()).getLink();
+        return link;
     }
 
     public int getDeviceHeight() {

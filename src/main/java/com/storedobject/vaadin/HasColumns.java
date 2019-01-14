@@ -92,7 +92,7 @@ public interface HasColumns<T> extends ExecutableView {
         return getSOGrid().getColumnCount();
     }
 
-    default Class<T> getObjectClass() {
+    default Class<T> getDataClass() {
         return getSOGrid().objectClass;
     }
 
@@ -648,11 +648,11 @@ public interface HasColumns<T> extends ExecutableView {
                 }
             }
             try {
-                return this.getClass().getMethod("get" + columnName, params);
+                return grid.getClass().getMethod("get" + columnName, params);
             } catch (NoSuchMethodException ignore) {
             }
             try {
-                return this.getClass().getMethod("is" + columnName, params);
+                return grid.getClass().getMethod("is" + columnName, params);
             } catch (NoSuchMethodException ignore) {
             }
             return null;
@@ -778,13 +778,8 @@ public interface HasColumns<T> extends ExecutableView {
                 return false;
             }
             buildTree = false;
-            Grid.Column<T> column = ((DataTreeGrid<T>)grid).addHierarchyColumn(t -> {
-                try {
-                    return m.invoke(t);
-                } catch (IllegalAccessException | InvocationTargetException ignored) {
-                }
-                return "?";
-            });
+            Function<T, ?> function = getMethodFunction(m);
+            Grid.Column<T> column = ((DataTreeGrid<T>)grid).addHierarchyColumn(function::apply);
             acceptColumn(column, columnName);
             return true;
         }
@@ -807,7 +802,8 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private Function<T, ?> getMethodFunction(Method method) {
-            if(methodHandlerHost != null && method.getDeclaringClass() == methodHandlerHost.getClass()) {
+            method.setAccessible(true);
+            if(methodHandlerHost != null && method.getDeclaringClass().isAssignableFrom(methodHandlerHost.getClass())) {
                 return (Function<T, Object>) t -> {
                     try {
                         return method.invoke(methodHandlerHost, t);
@@ -816,7 +812,7 @@ public interface HasColumns<T> extends ExecutableView {
                     return null;
                 };
             }
-            if(method.getDeclaringClass() == grid.getClass()) {
+            if(method.getDeclaringClass().isAssignableFrom(grid.getClass())) {
                 return (Function<T, Object>) t -> {
                     try {
                         return method.invoke(grid, t);
@@ -890,7 +886,8 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private String getHeader(String columnName) {
-            return cc().getHeader(columnName);
+            String h = hc.getHeader(columnName);
+            return h == null ? cc().getHeader(columnName) : h;
         }
 
         private View getView(boolean create) {

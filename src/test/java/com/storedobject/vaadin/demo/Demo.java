@@ -9,6 +9,7 @@ import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletConfiguration;
 import com.vaadin.flow.shared.communication.PushMode;
 import com.vaadin.flow.theme.Theme;
@@ -70,12 +71,8 @@ public class Demo extends Application {
     }
 
     @WebServlet(urlPatterns = "/*", name = "DemoServlet", asyncSupported = true, loadOnStartup = 0)
-    @VaadinServletConfiguration(ui = ApplicationUI.class, productionMode = false, closeIdleSessions = true)
-    public static class DemoServlet extends ApplicationServlet {
-        @Override
-        protected Application createApplication() {
-            return new Demo();
-        }
+    @VaadinServletConfiguration(ui = Application.class, productionMode = false, closeIdleSessions = true)
+    public static class DemoServlet extends VaadinServlet {
     }
 
     private class PDFTest extends View {

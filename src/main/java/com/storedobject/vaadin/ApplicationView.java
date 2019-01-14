@@ -8,7 +8,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.server.VaadinSession;
 
-@JavaScript("so-body.js")
 public abstract class ApplicationView extends Composite<Component> {
 
     ApplicationLayout layout;
@@ -27,21 +26,13 @@ public abstract class ApplicationView extends Composite<Component> {
     @Override
     protected Component initContent() {
         if(layout == null) {
-            Application a = Application.get(VaadinSession.getCurrent());
-            if(a != null) {
+            Application a = Application.get();
+            if(a == null) {
                 Notification.show("Logged out");
-                a.close();
-                a = null;
             } else {
-                a = Application.create();
-                if(a != null) {
-                    String error = a.getUI().getError();
-                    if (error != null) {
-                        Notification.show(error);
-                        a = null;
-                    }
-                } else {
-                    Notification.show("Unable to initialize application");
+                if (a.error != null) {
+                    Notification.show(a.error);
+                    a = null;
                 }
             }
             if(a == null) {

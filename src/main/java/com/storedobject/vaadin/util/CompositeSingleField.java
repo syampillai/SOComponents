@@ -9,7 +9,7 @@ public abstract class CompositeSingleField<P, F extends Field<P>, S extends Comp
 
     protected Field<P> field;
     private boolean trackers = false;
-    private final boolean simpleValue;
+    protected final boolean simpleValue;
 
     protected CompositeSingleField(T defaultValue) {
         this(defaultValue, false);

@@ -363,5 +363,13 @@ public class CompositeField<T, S extends CompositeField<T, S, E, M>, E extends H
         public T getValue() {
             return getInnerField().getValue();
         }
+
+        @Override
+        public void setValue(T value) {
+            super.setValue(value);
+            if(simpleValue) {
+                getInnerField().setValue(value);
+            }
+        }
     }
 }

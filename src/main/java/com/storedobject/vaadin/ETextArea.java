@@ -58,10 +58,4 @@ public class ETextArea
     public void setMinRows(int rows) {
         getField().getField().setMinRows(rows);
     }
-
-    @Override
-    public void setValue(String value) {
-        super.setValue(value);
-        getInnerField().setValue(value);
-    }
 }
