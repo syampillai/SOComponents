@@ -107,6 +107,9 @@ public class BigDecimalField extends NumericField<BigDecimal> {
 
     @Override
     protected String getPresentationValue(BigDecimal value) {
+        if(value == null) {
+            value = BigDecimal.ZERO;
+        }
         if(isGrouping()) {
             return format(value.doubleValue());
         }

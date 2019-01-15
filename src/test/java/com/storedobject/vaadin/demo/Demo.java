@@ -71,18 +71,8 @@ public class Demo extends Application {
     }
 
     @WebServlet(urlPatterns = "/*", name = "DemoServlet", asyncSupported = true, loadOnStartup = 0)
-    @VaadinServletConfiguration(ui = Application.class, productionMode = false, closeIdleSessions = true)
+    @VaadinServletConfiguration(ui = Demo.class, productionMode = false, closeIdleSessions = true)
     public static class DemoServlet extends VaadinServlet {
-    }
-
-    private class PDFTest extends View {
-
-        public PDFTest() {
-            super("PDF");
-            PDFViewer pdfViewer = new PDFViewer("http://www.cambridgeenglish.org/images/young-learners-sample-papers-2018-vol1.pdf");
-            pdfViewer.setHeight("700px");
-            setComponent(pdfViewer);
-        }
     }
 
     @Route("")

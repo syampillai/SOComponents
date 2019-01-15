@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * when all columns are defined and the ordinality of columns are determined. If you want to customize any Column, it can be done in
  * customizeColumn method or by invoking methods provided in this claas. Each column has a "column name" and it gets mapped to the Bean's getXXX
  * method just like in Vaadin's Bean Grid. However, if a getXXX method is available in the DataGrid itself, that will be used for sourcing the
- * data for the respective column. Each column uses its respective column name as the key.</BR>
+ * data for the respective column. Each column uses its respective column name as the key.
  * Public/protected methods that do not have documentation are self-explanatory from the method names itself.
  *
  * @param <T> Bean type

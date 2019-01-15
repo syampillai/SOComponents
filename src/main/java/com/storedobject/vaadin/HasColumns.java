@@ -147,7 +147,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Crate a column that uses one or more functions to generate its column value. The output is formatted using the "template" passed. The template
-     * can contain any HTML text and placeholders such as <1>, <2>, <3> ... These placeholders will be replaced from the output from the functions.
+     * can contain any HTML text and placeholders such as &lt;1&gt;, &lt;2&gt;, &lt;3&gt; ... These placeholders will be replaced from the output from the functions.
      * @param columnName Column name.
      * @param template Template
      * @param functions Functions that take object as a parameter and returns some sort of value. Values are stringified before displaying.
