@@ -7,6 +7,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.GregorianCalendar;
 
+/**
+ * A field to edit {@link Date}.
+ *
+ * @author Syam
+ */
 public class DateField extends TranslatedField<Date, LocalDate, BasicDateField> {
 
     private static Date today = null;

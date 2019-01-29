@@ -6,6 +6,13 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 
+/**
+ * <p>WARNING: This class may be restructured or redesigned.</p>
+ * Class that represents a "menu item".
+ * @see Application
+ * @see ApplicationMenu
+ * @author Syam
+ */
 public class MenuItem implements Runnable, ClickNotifier {
 
     private Component item;
@@ -13,6 +20,12 @@ public class MenuItem implements Runnable, ClickNotifier {
     private Runnable action;
     private Clickable click;
 
+    /**
+     * Constructor (for internal use only).
+     * @param label Label
+     * @param item Item
+     * @param action Action
+     */
     MenuItem(String label, Component item, Runnable action) {
         this.label = label;
         this.item = item;
@@ -22,59 +35,128 @@ public class MenuItem implements Runnable, ClickNotifier {
         this.click = new Clickable<>(item, e -> run());
     }
 
+    /**
+     * Highlight this menu item.
+     */
     public void hilite() {
         item.getElement().getStyle().set("background-color", "white");
     }
 
 
+    /**
+     * Get the component of the menu item.
+     * @return Component
+     */
     public Component getComponent() {
         return item;
     }
 
+    /**
+     * Get the label of the menu item.
+     * @return Label
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Set the visibility of the menu item.
+     * @param visible True or false
+     */
     public void setVisible(boolean visible) {
         item.setVisible(visible);
     }
 
+    /**
+     * Check if the menu item is visible or not.
+     * @return True ot false.
+     */
     public boolean isVisible() {
         return item.isVisible();
     }
 
+    /**
+     * Emable or disable the menu item.
+     * @param enabled True or false
+     */
     public void setEnabled(boolean enabled) {
         item.getElement().setEnabled(enabled);
     }
 
+    /**
+     * Check if this is enabled or not.
+     * @return True or false.
+     */
     public boolean isEnabled() {
         return item.getElement().isEnabled();
     }
 
+    /**
+     * Create a menu item.
+     * @param menuLabel Label
+     * @return Menu item.
+     */
     public static MenuItem create(String menuLabel) {
         return create(menuLabel, (Runnable)null);
     }
 
+    /**
+     * Create a menu item.
+     * @param menuLabel Label
+     * @param action Action associated with the menu item
+     * @return Menu item.
+     */
     public static MenuItem create(String menuLabel, Runnable action) {
         return new MenuItem(menuLabel, new Item(menuLabel), action);
     }
 
+    /**
+     * Create a menu item.
+     * @param menuLabel Label
+     * @param icon Icon name
+     * @return Menu item.
+     */
     public static MenuItem create(String menuLabel, String icon) {
         return create(menuLabel, null, icon);
     }
 
+    /**
+     * Create a menu item.
+     * @param menuLabel Label
+     * @param iconCollection Name of the icon collection
+     * @param icon Icon name
+     * @return Menu item.
+     */
     public static MenuItem create(String menuLabel, String iconCollection, String icon) {
         return create(menuLabel, iconCollection, icon, null);
     }
 
+    /**
+     * Create a menu item.
+     * @param menuLabel Label
+     * @param icon Icon name
+     * @param action Action associated with the menu item
+     * @return Menu item.
+     */
     public static MenuItem create(String menuLabel, String icon, Runnable action) {
         return create(menuLabel, null, icon, action);
     }
 
+    /**
+     * Create a menu item.
+     * @param menuLabel Label
+     * @param iconCollection Name of the icon collection
+     * @param icon Icon name
+     * @param action Action associated with the menu item
+     * @return Menu item.
+     */
     public static MenuItem create(String menuLabel, String iconCollection, String icon, Runnable action) {
         return new MenuItem(menuLabel, new IconItem(menuLabel, iconCollection, icon), action);
     }
 
+    /**
+     * Invoke the action associated with the menu item.
+     */
     @Override
     public void run() {
         if(action != null) {
@@ -88,10 +170,18 @@ public class MenuItem implements Runnable, ClickNotifier {
         }
     }
 
+    /**
+     * Set the action for this menu item.
+     * @param action Action
+     */
     public void setRunnable(Runnable action) {
         this.action = action;
     }
 
+    /**
+     * Get the action associated with this menu item.
+     * @return Action
+     */
     public Runnable getRunnable() {
         return action;
     }
@@ -138,10 +228,19 @@ public class MenuItem implements Runnable, ClickNotifier {
         }
     }
 
+    /**
+     * Set icon for this menu item.
+     * @param icon Icon name
+     */
     public void setIcon(String icon) {
         setIcon(null, icon);
     }
 
+    /**
+     * Set icon for this menu item.
+     * @param collection Name of the icon collection
+     * @param icon Icon name
+     */
     public void setIcon(String collection, String icon) {
         if(item instanceof IconElement) {
             setIcon(((IconElement) item).getIconElement(), collection, icon);

@@ -3,15 +3,24 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.server.VaadinSession;
 
+/**
+ * The class that defines the content view of the {@link Application}. An implementation of this class (with all the necessary
+ * annotations) is required for using {@link Application} class. There is no need to override or implement and methods.
+ * @see Application
+ */
 public abstract class ApplicationView extends Composite<Component> {
 
+    /**
+     * The application layout.
+     */
     ApplicationLayout layout;
 
+    /**
+     * Default constructor.
+     */
     public ApplicationView() {
     }
 

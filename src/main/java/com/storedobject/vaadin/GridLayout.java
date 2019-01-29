@@ -11,16 +11,29 @@ import com.vaadin.flow.component.*;
 @Tag("div")
 public class GridLayout extends Component implements HasOrderedComponents<Component>, HasStyle, HasSize {
 
+    /**
+     * Constructor.
+     * @param numberOfColumns Number of equally sized columns
+     */
     public GridLayout(int numberOfColumns) {
         init();
         setColumnSizes(sizes(numberOfColumns, 0));
     }
 
+    /**
+     * Constructor.
+     * @param columnSizes Sizes of proportionately sized columns (A zero value set the size to "auto" meaning the size will be
+     *                    automatically determined from the component's size)
+     */
     public GridLayout(int... columnSizes) {
         init();
         setColumnSizes(columnSizes);
     }
 
+    /**
+     * Constructor.
+     * @param columnSizes Sizes of columns
+     */
     public GridLayout(String... columnSizes) {
         init();
         setColumnSizes(columnSizes);
@@ -33,6 +46,10 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
         style("transition", "all 1s");
     }
 
+    /**
+     * Set column sizes.
+     * @param sizes Sizes of columns
+     */
     public void setColumnSizes(String... sizes) {
         if(sizes == null || sizes.length == 0) {
             return;
@@ -57,6 +74,11 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
         style("grid-template-columns", s.toString());
     }
 
+    /**
+     * Set column sizes.
+     * @param sizes Sizes of proportionately sized columns (A zero value set the size to "auto" meaning the size will be
+     *              automatically determined from the component's size)
+     */
     public void setColumnSizes(int... sizes) {
         if(sizes == null || sizes.length == 0) {
             return;
@@ -71,10 +93,18 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
         style("grid-template-columns", s.toString());
     }
 
+    /**
+     * Set gap between columns.
+     * @param size Gap
+     */
     public void setColumnGap(String size) {
         style("grid-column-gap", size == null ? "1px" : size);
     }
 
+    /**
+     * Set gap between rows.
+     * @param size Gap
+     */
     public void setRowGap(String size) {
         style("grid-row-gap", size == null ? "1px" : size);
     }
@@ -83,6 +113,12 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
         getStyle().set(styleName, styleValue);
     }
 
+    /**
+     * For internal use only.
+     * @param numberOfColumns Number of columns
+     * @param value Value
+     * @return An integer array with "number of columns" as size and each element set to "value".
+     */
     static int[] sizes(int numberOfColumns, int value) {
         if(numberOfColumns <= 1) {
             numberOfColumns = 4;

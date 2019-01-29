@@ -2,6 +2,11 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.NumericField;
 
+/**
+ * A field to edit {@link Double}.
+ *
+ * @author Syam
+ */
 public class DoubleField extends NumericField<Double> {
 
     private static final Double ZERO = 0d;

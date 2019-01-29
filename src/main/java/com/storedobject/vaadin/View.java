@@ -11,6 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * View represents an independent piece of information (typically a "data entry form" or some information dashboard) to be displayed
+ * in the content area of the {@link Application}. View implements {@link Runnable} interface. So, it can be associated with a {@link MenuItem}.
+ * When a {@link MenuItem} is clicked, the {@link Runnable#run()} method of the view is invoked and we say the "view is executed". When a
+ * view is executed, its component (specified using the {@link View#setComponent(Component)}) is displayed in the "content" area of the application.
+ * @author Syam
+ */
 public class View implements ExecutableView {
 
     private Component component;
@@ -23,14 +30,26 @@ public class View implements ExecutableView {
     private boolean doFocus = true;
     private Component postFocus;
 
+    /**
+     * Create a View with no caption.
+     */
     public View() {
         this(null);
     }
 
+    /**
+     * Create a view with a caption.
+     * @param caption Caption
+     */
     public View(String caption) {
         this(null, caption);
     }
 
+    /**
+     * Create a view of the specific component with a caption
+     * @param component Component to display
+     * @param caption Caption
+     */
     public View(Component component, String caption) {
         setCaption(caption);
         if(component != null) {
@@ -38,14 +57,28 @@ public class View implements ExecutableView {
         }
     }
 
+    /**
+     * Specifiy the scrollable attribute of the view. Scrollable views will scroll within the "content" area of the application.
+     * @param scrollable Scrollable
+     */
     public void setScrollable(boolean scrollable) {
         new Scrollable(getContent(), scrollable);
     }
 
+    /**
+     * See if this view is scrollable or not.
+     * @return True or false.
+     */
     public boolean isScrollable() {
         return Scrollable.isScrollable(getContent());
     }
 
+    /**
+     * Get the component that represents the "content" of the view. It may be different from the actual component displayed by the
+     * application. For example, if a view may be displayed as a {@link Dialog} and in such cases, the "content" of the {@link Dialog} is
+     * the "content" of the view.
+     * @return The "content" as a component.
+     */
     public Component getContent() {
         Component c = getComponent();
         if(!(c instanceof Dialog)) {
@@ -61,10 +94,17 @@ public class View implements ExecutableView {
         return oc.get();
     }
 
-
+    /**
+     * This method is invoked when the view wants to determine its "content" to be displayed and nothing exists at that moment.
+     * {@link #setComponent(Component)} may be called from within this method.
+     */
     protected void initUI() {
     }
 
+    /**
+     * Set the "content" of the view.
+     * @param component Component to be displayed.
+     */
     public final void setComponent(Component component) {
         if(component == this.component || component == null) {
             return;
@@ -85,6 +125,10 @@ public class View implements ExecutableView {
         return component == null ? null : component.getElement().getParent();
     }
 
+    /**
+     * Get the "content" component of the view.
+     * @return Component
+     */
     public final Component getComponent() {
         if(component == null) {
             initUI();
@@ -124,6 +168,10 @@ public class View implements ExecutableView {
         }
     }
 
+    /**
+     * For internal use only.
+     * @param visible Visibility of the view
+     */
     void setVisible(boolean visible) {
         if(component instanceof Dialog) {
             if(visible) {
@@ -148,16 +196,28 @@ public class View implements ExecutableView {
         }
     }
 
+    /**
+     * For internal use only.
+     * @param component Component to set the focus to.
+     */
     void setPostFocus(Component component) {
         this.postFocus = component;
     }
 
+    /**
+     * Focus this view by finding the first focusable component.
+     */
     public void focus() {
         if(!focus(getContent())) {
             focusAny(getContent());
         }
     }
 
+    /**
+     * Focus a component (or its focusable child component).
+     * @param component Component to focus
+     * @return False if no focusable component exists (must be a field ({@link HasValue}), must be "visible" and should not be "read only").
+     */
     public static boolean focus(Component component) {
         if(component instanceof HasComponents) {
             return component.getChildren().anyMatch(View::focus);
@@ -170,6 +230,11 @@ public class View implements ExecutableView {
         return false;
     }
 
+    /**
+     * Focus a component (or its focusable child component).
+     * @param component Component to focus
+     * @return False if no focusable component exists (must be "visible").
+     */
     public static boolean focusAny(Component component) {
         if(component instanceof HasComponents) {
             return component.getChildren().anyMatch(View::focusAny);
@@ -182,18 +247,35 @@ public class View implements ExecutableView {
         return false;
     }
 
+    /**
+     * Set caption for this view. Caption is displayed as a {@link MenuItem} by the {@link Application} so that the view can be selected
+     * (only one view is displayed at a time) by clicking it.
+     * @param caption Caption
+     */
     public void setCaption(String caption) {
         this.caption = caption;
     }
 
+    /**
+     * Get the caption.
+     * @return Caption.
+     */
     public String getCaption() {
         return caption;
     }
 
+    /**
+     * See if this view is in a "window mode" (means its content is displayed as a {@link Dialog}).
+     * @return Window mode.
+     */
     public boolean isWindowMode() {
         return component instanceof Dialog;
     }
 
+    /**
+     * Set the "window mode". Content of the view will be wrapped in a {@link Dialog} for "window mode".
+     * @param windowOn Window mode
+     */
     public void setWindowMode(boolean windowOn) {
         getComponent();
         if(windowMonitor != null) {
@@ -230,26 +312,45 @@ public class View implements ExecutableView {
         setComponent(nc);
     }
 
+    /**
+     * Implementation of {@link ExecutableView#getView(boolean)}.
+     * @param create Whether to create or not.
+     * @return Always return this view.
+     */
     @Override
     public View getView(boolean create) {
         return this;
     }
 
+    /**
+     * Execute this view.
+     */
     public final void execute() {
         execute(null, true);
     }
 
+    /**
+     * Execute this view by locking another view (the locked view will not be selectable until this view is closed).
+     * The locked view acts as its "parent" and it will automatically get selected when this view closes.
+     * @param lock View to be locked.
+     */
     public final void execute(View lock) {
         execute(lock, false);
     }
 
-    public final void invoke(View lock) {
-        execute(lock, true);
+    /**
+     * Execute this view and set its parent too. (In this case, parent view is not locked). The paent view is automatically selected
+     * when this view closes.
+     * @param parent Parent view to be set
+     */
+    public final void invoke(View parent) {
+        execute(parent, true);
     }
 
     /**
      * Override this if you want to do something before the View comes up on the screen.
      * Call super.execute(parent, doNotLock) to make the View appear on the screen.
+     * Parent view is automatically selected when this view closes.
      * @param parent Parent view to lock
      * @param doNotLock True if parent should not be locked
      */
@@ -269,26 +370,48 @@ public class View implements ExecutableView {
         return Application.get();
     }
 
+    /**
+     * Is if this view is currently being displayed.
+     * @return True or false.
+     */
     public final boolean executing() {
         return parent() != null;
     }
 
+    /**
+     * See if this view was aborted.
+     * @see #abort()
+     * @return True or false.
+     */
     public final boolean aborted() {
         return aborted;
     }
 
+    /**
+     * This method is invoked whenever a view is automatically selected becasue its parent was closed.
+     * @param parent Parent view that was closed.
+     */
     public void returnedFrom(@SuppressWarnings("unused") View parent) {
     }
 
+    /**
+     * Close this view.
+     */
     public void close() {
         closeInt();
     }
 
+    /**
+     * Abort this view. Default implentation sets an "abort flag" and closes the view.
+     */
     public void abort() {
         aborted = true;
         closeInt();
     }
 
+    /**
+     * For internal use only.
+     */
     void detachParentOnClose() {
         detachParent = true;
     }

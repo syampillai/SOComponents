@@ -6,61 +6,153 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.util.function.Consumer;
 
+/**
+ * A {@link View} that is used for creating a "data entry form" with "Save"/"Cancel" buttons.
+ * @param <T> Type of the object to edit
+ * @author Syam
+ */
 public class DataEditor<T> extends AbstractDataEditor<T> {
 
-    protected Button save, cancel;
+    /**
+     * The "save" button.
+     */
+    protected Button save;
+    /**
+     * The "cancel" button.
+     */
+    protected Button cancel;
+    /**
+     * The button panel where the buttons are painted.
+     */
     protected HasComponents buttonPanel;
     private Consumer<T> saveAction, cancelAction;
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     */
     public DataEditor(Class<T> objectClass) {
         this(objectClass, null, null, (Consumer<T>)null, null);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param caption Caption
+     */
     public DataEditor(Class<T> objectClass, String caption) {
         this(objectClass, caption, null, null, null, null);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param labelSave Label for "save" button
+     * @param labelCancel Label for "cancel" button
+     */
     public DataEditor(Class<T> objectClass, String labelSave, String labelCancel) {
         this(objectClass, labelSave, labelCancel, (Consumer<T>)null, null);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param caption Caption
+     * @param labelSave Label for "save" button
+     * @param labelCancel Label for "cancel" button
+     */
     public DataEditor(Class<T> objectClass, String caption, String labelSave, String labelCancel) {
         this(objectClass, caption, labelSave, labelCancel, null, null);
     }
 
-
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     */
     public DataEditor(Class<T> objectClass, Consumer<T> saveAction) {
         this(objectClass, null, null, saveAction, null);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param caption Caption
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     */
     public DataEditor(Class<T> objectClass, String caption, Consumer<T> saveAction) {
         this(objectClass, caption, null, null, saveAction, null);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param labelSave Label for "save" button
+     * @param labelCancel Label for "cancel" button
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     */
     public DataEditor(Class<T> objectClass, String labelSave, String labelCancel, Consumer<T> saveAction) {
         this(objectClass, labelSave, labelCancel, saveAction, null);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param caption Caption
+     * @param labelSave Label for "save" button
+     * @param labelCancel Label for "cancel" button
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     */
     public DataEditor(Class<T> objectClass, String caption, String labelSave, String labelCancel, Consumer<T> saveAction) {
         this(objectClass, caption, labelSave, labelCancel, saveAction, null);
     }
 
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     * @param cancelAction Cancel action (Will be called when the "cancel" button is pressed)
+     */
     public DataEditor(Class<T> objectClass, Consumer<T> saveAction, Consumer<T> cancelAction) {
         super(objectClass);
         init(null, null, saveAction, cancelAction);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param caption Caption
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     * @param cancelAction Cancel action (Will be called when the "cancel" button is pressed)
+     */
     public DataEditor(Class<T> objectClass, String caption, Consumer<T> saveAction, Consumer<T> cancelAction) {
         super(objectClass, caption);
         init(null, null, saveAction, cancelAction);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param labelSave Label for "save" button
+     * @param labelCancel Label for "cancel" button
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     * @param cancelAction Cancel action (Will be called when the "cancel" button is pressed)
+     */
     public DataEditor(Class<T> objectClass, String labelSave, String labelCancel, Consumer<T> saveAction, Consumer<T> cancelAction) {
         super(objectClass);
         init(labelSave, labelCancel, saveAction, cancelAction);
     }
 
+    /**
+     * Constructor.
+     * @param objectClass Object class
+     * @param caption Caption
+     * @param labelSave Label for "save" button
+     * @param labelCancel Label for "cancel" button
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     * @param cancelAction Cancel action (Will be called when the "cancel" button is pressed)
+     */
     public DataEditor(Class<T> objectClass, String caption, String labelSave, String labelCancel, Consumer<T> saveAction, Consumer<T> cancelAction) {
         super(objectClass, caption);
         init(labelSave, labelCancel, saveAction, cancelAction);
@@ -96,10 +188,17 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
         return new ButtonLayout();
     }
 
+    /**
+     * Build the buttons. Button "save" and "cancel" are already created. This method add those to the {@link #buttonPanel}.
+     * You can add additional custom buttons and components to the {@link #buttonPanel}.
+     */
     protected void buildButtons() {
         buttonPanel.add(save, cancel);
     }
 
+    /**
+     * This method is invoked to carry out the "cancel". By default it processes the "cancel action" if defined.
+     */
     protected void cancel() {
         abort();
         if(cancelAction != null) {
@@ -107,6 +206,9 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
         }
     }
 
+    /**
+     * This method is invoked to carry out the "save". By default it processes the "save action" if defined.
+     */
     protected void save() {
         close();
         if(saveAction != null) {
@@ -114,6 +216,11 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
         }
     }
 
+    /**
+     * Validate data. This method is invoked when the "save" button is pressed. {@link #save()} will be invoked only if this
+     * method did not raise any exception.
+     * @throws Exception Exception raised will be displayed as a warning message and "data entry form" will not be closed.
+     */
     protected void validateData() throws Exception {
     }
 

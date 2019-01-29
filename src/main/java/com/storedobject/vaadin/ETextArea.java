@@ -3,20 +3,38 @@ package com.storedobject.vaadin;
 import com.storedobject.vaadin.util.CompositeField;
 import com.storedobject.vaadin.util.IronAutogrowTextArea;
 import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.HasValue;
 
+/**
+ * A auto-expanding multi-line text field. The height of the field will be automatically increased (up to the value of maximum rows set)
+ * when it contains more lines of text. By default, no value is set for the maximum rows and height will increase without any limit.
+ * Similarly, value for minimum numner of rows can also be set.
+ *
+ * @author Syam
+ */
 public class ETextArea
         extends CompositeField.SingleField<String, ETextArea, IronAutogrowTextArea, AbstractField.ComponentValueChangeEvent<IronAutogrowTextArea, String>> {
 
+    /**
+     * Constructor.
+     */
     public ETextArea() {
         super(new IronAutogrowTextArea(), "", true);
         createField();
     }
 
+    /**
+     * Constructor.
+     * @param label Label
+     */
     public ETextArea(String label) {
         this(label, null);
     }
 
+    /**
+     * Constructor.
+     * @param label Label
+     * @param initialValue Initial value
+     */
     public ETextArea(String label, String initialValue) {
         this();
         setLabel(label);

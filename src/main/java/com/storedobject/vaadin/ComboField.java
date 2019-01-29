@@ -6,6 +6,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * A thin wrapper around Vaadin's {@link ComboBox}.
+ * @param <T> Type of the field's value.
+ * @author Syam
+ */
 public class ComboField<T> extends ComboBox<T> implements Field<T> {
 
     private Collection<T> list;

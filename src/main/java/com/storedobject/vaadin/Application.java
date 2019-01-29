@@ -11,6 +11,81 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+/**
+ * Application is an extension to Vaadin's UI class for creating 'single page' web applications. The 'single page' should be defined
+ * by extending {@link com.storedobject.vaadin.ApplicationView} class.
+ * <pre>
+ * <code>
+ * public class Demo extends Application {
+ *
+ *    {@literal @}Override
+ *     protected ApplicationLayout createLayout() {
+ *         return new MyLayout();
+ *     }
+ *
+ *    {@literal @}WebServlet(urlPatterns = "/*", name = "DemoServlet", asyncSupported = true, loadOnStartup = 0)
+ *    {@literal @}VaadinServletConfiguration(ui = Demo.class, productionMode = false, closeIdleSessions = true)
+ *     public static class DemoServlet extends VaadinServlet {
+ *     }
+ *
+ *    {@literal @}Route("")
+ *    {@literal @}Push(PushMode.MANUAL)
+ *    {@literal @}BodySize(height = "100vh", width = "100vw")
+ *    {@literal @}Theme(value = Lumo.class, variant = Lumo.LIGHT)
+ *     public static class DemoView extends ApplicationView {
+ *     }
+ * }
+ *
+ * public class MyLayout extends SplitLayout implements ApplicationLayout, ApplicationMenu {
+ *
+ *     public MyLayout() {
+ *         super(new Div(), new Div());
+ *         setSplitterPosition(15);
+ *         setHeight("100vh");
+ *         setWidth("100vw");
+ *         getPrimaryComponent().getElement().getStyle().set("background-color", "lightblue");
+ *     }
+ *
+ *    {@literal @}Override
+ *     public Component getComponent() {
+ *         return this;
+ *     }
+ *
+ *    {@literal @}Override
+ *     public ApplicationMenu getMenu() {
+ *         return this;
+ *     }
+ *
+ *    {@literal @}Override
+ *     public HasComponents getMenuPane() {
+ *         return (Div)getPrimaryComponent();
+ *     }
+ *
+ *    {@literal @}Override
+ *     public Component getContent() {
+ *         return getSecondaryComponent();
+ *     }
+ *
+ *    {@literal @}Override
+ *     public void drawMenu(Application application) {
+ *         getMenuPane().add(new HtmlComponent("hr"));
+ *         add(MenuItem.create(...));
+ *         add(MenuItem.create(...));
+ *         add(MenuItem.create(...));
+ *     }
+ * }
+ * </code>
+ * </pre>
+ * The 'single page' can be any layout component that implements the interface {@link com.storedobject.vaadin.ApplicationLayout}. The layout
+ * typically contains a 'menu' area and 'content' area. One can use Vaadin's <code>AppLayout</code> or similar components as the base for this.
+ * The 'menu' area will contain {@link com.storedobject.vaadin.MenuItem} instances and when a 'menu item' is clicked, the <code>Runnable</code>
+ * action associated with it will be executed. One may associate any <code>Runnable</code> action with a 'menu item' such as generating a report or
+ * invkoing a {@link com.storedobject.vaadin.View}. If a {@link com.storedobject.vaadin.View} is invoked, its associated 'view component' is
+ * displayed in the 'content' area and its 'caption' is inserted as a new 'menu item' in the 'menu' area. The 'content' area displays only the 'active
+ * view' (currently selected or executed view) and hides all previously displayed 'views' but any those 'views' can be made active again
+ * by licking on its respective 'menu item' created from its 'caption'.
+ * @author Syam
+ */
 public abstract class Application extends UI implements RequestHandler {
 
     private ApplicationEnvironment environment;
@@ -19,6 +94,11 @@ public abstract class Application extends UI implements RequestHandler {
     private String link;
     String error;
 
+    /**
+     * This method is invoked as documented in Vaadin Flow's documentation. If you want to override this method, make sure that <code>super</code>
+     * is called.
+     * @param request Vaadin Request
+     */
     @Override
     protected void init(VaadinRequest request) {
         addDetachListener(e -> close());
@@ -44,16 +124,34 @@ public abstract class Application extends UI implements RequestHandler {
         }
     }
 
+    /**
+     * This method is invoked when the applicationn comes up.
+     * @param link The context path of the application.
+     * @return True if application can go ahead. Otherwise, an "Initialization failed" message is displayed. Default return value is <code>true</code>.
+     */
     protected boolean init(@SuppressWarnings("unused") String link) {
         return true;
     }
 
+    /**
+     * This method is invoked only once to determine the layout of the application.
+     * @return Application layout.
+     */
     protected abstract ApplicationLayout createLayout();
 
+    /**
+     * An "application environment" may be created to specifiy certain behaviours of the applicaion. If this method returns <code>null</code>, a default
+     * "environment" will be created.
+     * @return Returns null by default.
+     */
     protected ApplicationEnvironment createEnvironment() {
         return null;
     }
 
+    /**
+     * Get the current "application environment".
+     * @return Application environment.
+     */
     public final ApplicationEnvironment getEnvironment() {
         if(environment == null) {
             environment = createEnvironment();
@@ -64,11 +162,21 @@ public abstract class Application extends UI implements RequestHandler {
         return environment;
     }
 
+    /**
+     * Vaadin's request handler implementation. (For future use).
+     * @param vaadinSession Vaadin's session
+     * @param vaadinRequest Vaadin's request
+     * @param vaadinResponse Vaadin's response
+     * @return True if the request is handled.
+     */
     @Override
     public boolean handleRequest(VaadinSession vaadinSession, VaadinRequest vaadinRequest, VaadinResponse vaadinResponse) {
         return false;
     }
 
+    /**
+     * Close the application by closing all registered "resources". If the associated session is not closed, it will also be closed.
+     */
     public void close() {
         while(resources.size() > 0) {
             Closeable resource = resources.remove(0).get();
@@ -86,17 +194,45 @@ public abstract class Application extends UI implements RequestHandler {
         super.close();
     }
 
+    /**
+     * Register a "resource" that will be closed when the application is shutdown.
+     * @param resource Resource to close.
+     */
+    public void registerResource(Closeable resource) {
+        resources.add(new WeakReference<>(resource));
+    }
+
+    /**
+     * Get the current application.
+     * @return Current application.
+     */
     public static Application get() {
         return (Application)UI.getCurrent();
     }
 
+    /**
+     * Show a warning message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     * @param message Message.
+     */
     public static void warning(Object message) {
         notification(message, 1);
     }
 
+    /**
+     * Show a message on the tray from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     * @param message Message.
+     */
     public static void tray(Object message) {
         notification(message, 1, Notification.Position.BOTTOM_END, false);
     }
+
+    /**
+     * Show a message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     * @param message Message.
+     */
 
     public static void message(Object message) {
         if(message instanceof Throwable) {
@@ -105,6 +241,12 @@ public abstract class Application extends UI implements RequestHandler {
             notification(message, 0);
         }
     }
+
+    /**
+     * Show an error message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     * @param message Message.
+     */
 
     public static void error(Object message) {
         notification(message, 2);
@@ -165,51 +307,101 @@ public abstract class Application extends UI implements RequestHandler {
         n.open();
     }
 
+    /**
+     * Log the error (by printing a stack trace).
+     * @param error Error to log
+     */
     public static void logError(Throwable error) {
         error.printStackTrace();
     }
 
+    /**
+     * Log a message by printing it to the System.err.
+     * @param message Message to log.
+     */
     public static void logMessage(String message) {
         System.err.println(message);
     }
 
+    /**
+     * Log an error. Default implementation invokes the {@link #logError(Throwable)} method.
+     * @param error Error to log
+     */
     public void log(Throwable error) {
         logError(error);
     }
 
+    /**
+     * Log a message. Default implementation invokes the {@link #logMessage(String)} method.
+     * @param message Message to log
+     */
     public void log(String message) {
         logMessage(message);
     }
 
+    /**
+     * Get the "context path" of the application.
+     * @return Context path
+     */
     public String getLinkName() {
         return link;
     }
 
+    /**
+     * Get the device (broswer) height.
+     * @return Device height.
+     */
     public int getDeviceHeight() {
         return VaadinSession.getCurrent().getBrowser().getScreenHeight();
     }
 
+    /**
+     * Get the device (broswer) width.
+     * @return Device width.
+     */
     public int getDeviceWidth() {
         return VaadinSession.getCurrent().getBrowser().getScreenWidth();
     }
 
+    /**
+     * Show a notification on the screen.
+     * @param text Text of the notification
+     */
     public void showNotification(String text) {
         showNotification(null, text);
     }
 
+    /**
+     * Show a notification on the screen.
+     * @param caption Caption of the notification
+     * @param text Text of the notification
+     */
     public void showNotification(String caption, String text) {
         notification(caption, text, 2, Notification.Position.BOTTOM_END,false);
     }
 
+    /**
+     * Show error notification,
+     * @param error Error
+     */
     public void showNotification(Throwable error) {
         showNotification(null, error);
     }
 
+    /**
+     * Show error notification.
+     * @param caption Caption to be displayed
+     * @param error Error
+     */
     public void showNotification(String caption, Throwable error) {
         notification(caption, "<BR/>Error: " + getEnvironment().toDisplay(error),
                 2, Notification.Position.BOTTOM_END,false);
     }
 
+    /**
+     * For internal use only.
+     * @param applicationView Application view.
+     */
     final void setMainView(ApplicationView applicationView) {
         if(this.viewManager == null) {
             viewManager = new ViewManager(applicationView);
@@ -217,46 +409,79 @@ public abstract class Application extends UI implements RequestHandler {
         }
     }
 
+    /**
+     * This method can be overriden to accept login credentials and {@link #loggedin()} must be called if successfully logged in.
+     */
     protected void login() {
         loggedin();
     }
 
-    public void push() {
-        UI.getCurrent().push();
-    }
-
+    /**
+     * Get the IP address of the application.
+     * @return IP address.
+     */
     public String getIPAddress() {
         return VaadinSession.getCurrent().getBrowser().getAddress();
     }
 
+    /**
+     * Get an identifier of the application (can be used for logging etc.).
+     * @return Ab identifier derived from the browser information.
+     */
     public String getIdentifier() {
         return VaadinSession.getCurrent().getBrowser().getBrowserApplication();
     }
 
+    /**
+     * Get the major version number (from browser information).
+     * @return Major version number.
+     */
     public int getMajorVersion() {
         return VaadinSession.getCurrent().getBrowser().getBrowserMajorVersion();
     }
 
+    /**
+     * Get the minor version number (from browser information).
+     * @return Minor version number.
+     */
     public int getMinorVersion() {
         return VaadinSession.getCurrent().getBrowser().getBrowserMinorVersion();
     }
 
+    /**
+     * For internal use only. (Execute a "view").
+     * @param view View to execute
+     * @param doNotLock Whether to lock the parent or not
+     * @param parentBox Parent view if any, otherwise <code>null</code>
+     */
     void execute(View view, boolean doNotLock, View parentBox) {
         viewManager.attach(view, doNotLock, parentBox);
     }
 
+    /**
+     * For internal use only. (Close a "view").
+     * @param view View to close
+     */
     void close(View view) {
         viewManager.detach(view);
     }
 
+    /**
+     * This method must be called from {@link #login()} when login credentials are verified.
+     */
     protected final void loggedin() {
         viewManager.loggedin(this);
     }
 
+    /**
+     * Set a component to be focused later when the current "view" is selected again. This is useful in situations like bringing back to
+     * the current "data entry" screen to a particular field.
+     * @param component Component to be focused later.
+     */
     public void setPostFocus(Component component) {
-        View db = viewManager.getActiveView();
-        if(db != null) {
-            db.setPostFocus(component);
+        View v = viewManager.getActiveView();
+        if(v != null) {
+            v.setPostFocus(component);
         }
     }
 

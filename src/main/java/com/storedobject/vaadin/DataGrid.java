@@ -13,10 +13,11 @@ import java.util.stream.Stream;
  * by Vaadin's Bean Grid but has similar functionality. The main difference in use is that instead of addColumn methods, one should use the
  * createColumn methods. createColumn methods just return whether column can be created or not but, columns are created at a later stage
  * when all columns are defined and the ordinality of columns are determined. If you want to customize any Column, it can be done in
- * customizeColumn method or by invoking methods provided in this claas. Each column has a "column name" and it gets mapped to the Bean's getXXX
+ * {@link #customizeColumn(String, Column)} method or by invoking methods provided in this class
+ * (See the interface implemented {@link HasColumns}).
+ * Each column has a "column name" and it gets mapped to the Bean's getXXX
  * method just like in Vaadin's Bean Grid. However, if a getXXX method is available in the DataGrid itself, that will be used for sourcing the
  * data for the respective column. Each column uses its respective column name as the key.
- * Public/protected methods that do not have documentation are self-explanatory from the method names itself.
  *
  * @param <T> Bean type
  * @author Syam
@@ -43,6 +44,10 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
         soGrid = new SOGrid<>(this, objectClass, columns);
     }
 
+    /**
+     * For internal use only.
+     * @return The embedded SO Grid.
+     */
     @Override
     public final SOGrid<T> getSOGrid() {
         return soGrid;
@@ -96,7 +101,8 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
     /**
      * This method is invoked to find out the names of the columns to be generated. However, this will not be invoked if the column names
      * are already passed in the constructor. The default implementation returns null (however, this behaviour can be changed by setting up an
-     * appropriate Application Environment) and in that case, columns names will be determined
+     * appropriate {@link ApplicationEnvironment} that can create a customized {@link ObjectColumnCreator#getColumnNames()})
+     * and in that case, columns names will be determined
      * through getXXX and isXXX methods of the Bean type.
      * @return Column names to be constructed.
      */
@@ -106,11 +112,13 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     /**
      * Return the method for generating column data from the Bean. By default, getXXX and isXXX methods are tried.
-     * However, this method is invoked only if no getXXX or isXXX method is defined in the grid itself. (Also note that getColumnFunction
+     * However, this method is invoked only if no getXXX or isXXX method is defined in the grid itself. (Also note that
+     * {@link #getColumnFunction(String)}
      * is invoked before that and thus, this will not be invoked if data is already available through a Function returned by
-     * the getColumnFunction method.
+     * the {@link #getColumnFunction(String)} method.
      * @param columnName Column name
-     * @return method if available, otherwise null. Firslty, it sees if this can be retrieved from the Applucation Environment.
+     * @return method if available, otherwise null. Firstly, it sees if this can be retrieved from the
+     * {@link ObjectColumnCreator#getColumnMethod(String)} returned by the {@link ApplicationEnvironment}.
      */
     protected Method getColumnMethod(String columnName) {
         return soGrid.getColumnMethod(columnName);
@@ -119,7 +127,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
     /**
      * This mehod is invoked when the column is actually constructed.
      * @param columnName Column name
-     * @param column Grid column that may be customized.
+     * @param column Grid column that may be customized
      */
     protected void customizeColumn(@SuppressWarnings("unused") String columnName,
                                    @SuppressWarnings("unused") Grid.Column<T> column) {
@@ -128,7 +136,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     /**
      * Create a View to display the grid when executed. If this method returns null, a default View will be created.
-     * @return A View with this grid as the component.
+     * @return A View with this grid as the component. Default implementaion returns <code>null</code>.
      */
     protected View createView() {
         return null;

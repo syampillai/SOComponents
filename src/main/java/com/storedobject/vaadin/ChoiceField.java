@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * A {@link com.vaadin.flow.component.combobox.ComboBox} style field wihth an {@link Integer} value type.
+ * @author Syam
+ */
 public class ChoiceField extends TranslatedField<Integer, String, BasicComboBox<String>> implements ValueRequired {
 
     public ChoiceField(String choices) {

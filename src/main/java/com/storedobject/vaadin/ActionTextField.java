@@ -4,6 +4,10 @@ import com.vaadin.flow.component.Key;
 
 import java.util.function.Consumer;
 
+/**
+ * A TextField that triggers a Consumer action (when value changed or "Enter" key is pressed).
+ * @author Syam
+ */
 public class ActionTextField extends TextField {
 
     private Consumer<String> action;
@@ -11,20 +15,42 @@ public class ActionTextField extends TextField {
     private String text = null;
     private int transform = 0;
 
+    /**
+     * Constructor.
+     * @param action Action to be executed when value changed or "Enter" key is pressed
+     */
     public ActionTextField(Consumer<String> action) {
         init(action);
     }
 
+    /**
+     * Constructor.
+     * @param label Label
+     * @param action Action to be executed when value changed or "Enter" key is pressed
+     */
     public ActionTextField(String label, Consumer<String> action) {
         super(label);
         init(action);
     }
 
+    /**
+     * Constructor.
+     * @param label Label
+     * @param placeholder Placeholder
+     * @param action Action to be executed when value changed or "Enter" key is pressed
+     */
     public ActionTextField(String label, String placeholder, Consumer<String> action) {
         super(label, placeholder);
         init(action);
     }
 
+    /**
+     * Constructor.
+     * @param label Label
+     * @param initialValue Initial value
+     * @param placeholder Placeholder
+     * @param action Action to be executed when value changed or "Enter" key is pressed
+     */
     public ActionTextField(String label, String initialValue, String placeholder, Consumer<String> action) {
         super(label, initialValue, placeholder);
         init(action);
@@ -41,18 +67,33 @@ public class ActionTextField extends TextField {
         });
     }
 
+    /**
+     * Flag to ignore programmatic changes. By default, all value changes will trigger the action.
+     * @param ignore Whether to ignore programmatic changes or not
+     */
     public void setIgnoreProgrammaticChanges(boolean ignore) {
         this.ignoreProgrammaticChanges = ignore;
     }
 
+    /**
+     * Set the action.
+     * @param action Action
+     */
     public void setAction(Consumer<String> action) {
         this.action = action;
     }
 
+    /**
+     * Get the action.
+     * @return Action.
+     */
     public Consumer<String> getAction() {
         return action;
     }
 
+    /**
+     * Action is carried out in this method.
+     */
     synchronized void act() {
         String t = getValue();
         if((transform & 1) == 1) {
@@ -75,17 +116,29 @@ public class ActionTextField extends TextField {
         focus();
     }
 
+    /**
+     * If this method is used, values will be trimmed before action is carried out.
+     * @return This (for chained use).
+     */
     public ActionTextField trim() {
         transform |= 1;
         return this;
     }
 
+    /**
+     * If this method is used, values will be converted to uppercase before action is carried out.
+     * @return This (for chained use).
+     */
     public ActionTextField toUpperCase() {
         transform |= 2;
         transform &= ~4;
         return this;
     }
 
+    /**
+     * If this method is used, values will be converted to lowercase before action is carried out.
+     * @return This (for chained use).
+     */
     public ActionTextField toLowerCase() {
         transform |= 4;
         transform &= ~2;

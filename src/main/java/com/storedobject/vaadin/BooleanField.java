@@ -4,6 +4,10 @@ import com.storedobject.vaadin.util.CompositeField;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.checkbox.Checkbox;
 
+/**
+ * Field to edit {@link Boolean} values.
+ * @author Syam
+ */
 public class BooleanField
         extends CompositeField.SingleField<Boolean, BooleanField, Checkbox, AbstractField.ComponentValueChangeEvent<Checkbox, Boolean>> {
 

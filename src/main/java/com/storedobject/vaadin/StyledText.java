@@ -5,6 +5,10 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.Span;
 
+/**
+ * A component to show HTML text.
+ * @author Syam
+ */
 public class StyledText extends Composite<Span> implements HasText {
 
     private Span content = new Span();
@@ -19,6 +23,7 @@ public class StyledText extends Composite<Span> implements HasText {
         return content;
     }
 
+    @Override
     public void setText(String htmlText) {
         if(htmlText == null) {
             htmlText = "";
@@ -31,6 +36,7 @@ public class StyledText extends Composite<Span> implements HasText {
         content.add(new Html("<span>" + htmlText + "</span>"));
     }
 
+    @Override
     public String getText() {
         return text;
     }

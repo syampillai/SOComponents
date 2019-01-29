@@ -4,10 +4,16 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 
+/**
+ * Enhancements to Vaadin {@link com.vaadin.flow.component.button.Button}.
+ * Main features are: (1) A {@link ClickHandler} can e defined as the action when button is clicked. (2) From the text on the button,
+ * it will try to create an {@link Icon} (unless an icon is already specified).
+ * @author Syam
+ */
 public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
-     * Constructor
+     * Constructor.
      * @param text Text label to display and the respective icon will be used
      * @param clickHandler Click handler
      */
@@ -16,7 +22,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param icon Icon
      * @param clickHandler Click handler
      */
@@ -25,7 +31,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param text Text label to display
      * @param icon Name of the icon to use
      * @param clickHandler Click handler
@@ -35,7 +41,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param text Text label to display
      * @param icon Icon to use
      * @param clickHandler Click handler
@@ -56,7 +62,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param icon Icon to use
      * @param clickHandler Click handler
      */
@@ -65,7 +71,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param text Text label to display
      * @param icon Icon to use
      * @param clickHandler Click handler
@@ -75,9 +81,9 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Add a click handler
+     * Add a click handler.
      * @param clickHandler Click handler to add
-     * @return Registration
+     * @return Registration.
      */
     public Registration addClickHanlder(ClickHandler clickHandler) {
         if(clickHandler == null) {
@@ -87,8 +93,8 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Mark this Button as Primary
-     * @return Self reference
+     * Mark this Button as Primary.
+     * @return Self reference.
      */
     public Button asPrimary() {
         addTheme("primary");
@@ -96,8 +102,8 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
-     * Make the button Small
-     * @return Self reference
+     * Make the button Small.
+     * @return Self reference.
      */
     public Button asSmall() {
         addTheme("small");

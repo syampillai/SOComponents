@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 /**
  * Common interface for DataGrid and DataTreeGrid.
+ *
  * @param <T> Bean type of the Gird/TreeGrid.
  * @author Syam
  */
@@ -47,26 +48,56 @@ public interface HasColumns<T> extends ExecutableView {
     default void render(@SuppressWarnings("unused") T object) {
     }
 
+    /**
+     * Set the resizable artribute of a given column.
+     * @param columnName Name of the column
+     * @param resizable Whether resizable or not
+     */
     default void setColumnResizable(String columnName, boolean resizable) {
         getSOGrid().setColumnResizable(columnName, resizable);
     }
 
+    /**
+     * Check the resizable artribute of a given column.
+     * @param columnName Name of the column
+     * @return Whether resizable or not
+     */
     default boolean isColumnResizable(String columnName) {
         return getSOGrid().isColumnResizable(columnName);
     }
 
+    /**
+     * Set the visibility artribute of a given column.
+     * @param columnName Name of the column
+     * @param visible Whether visible or not
+     */
     default void setColumnVisible(String columnName, boolean visible) {
         getSOGrid().setColumnVisible(columnName, visible);
     }
 
+    /**
+     * Check the viibility artribute of a given column.
+     * @param columnName Name of the column
+     * @return Whether visble or not
+     */
     default boolean isColumnVisible(String columnName) {
         return getSOGrid().isColumnVisible(columnName);
     }
 
+    /**
+     * Set the frozen artribute of a given column.
+     * @param columnName Name of the column
+     * @param frozen Whether frozen or not
+     */
     default void setColumnFrozen(String columnName, boolean frozen) {
         getSOGrid().setColumnFrozen(columnName, frozen);
     }
 
+    /**
+     * Check the frozen artribute of a given column.
+     * @param columnName Name of the column
+     * @return Whether frozen or not
+     */
     default boolean isColumnFrozen(String columnName) {
         return getSOGrid().isColumnFrozen(columnName);
     }
@@ -80,18 +111,35 @@ public interface HasColumns<T> extends ExecutableView {
         return getSOGrid().getConfigureButton();
     }
 
+    /**
+     * Set the minimum width of the grid.
+     * @param width Width
+     */
     default void setMinWidth(String width) {
         getSOGrid().setMinWidth(width);
     }
 
+    /**
+     * Set the minimum/maximum width of the column.
+     * @param perColumnWidthInPixels Minimum width (in pixels) per column
+     * @param maxWidthInPixels Maximum width of the grid in pixels
+     */
     default void setMinWidth(int perColumnWidthInPixels, int maxWidthInPixels) {
         getSOGrid().setMinWidth(perColumnWidthInPixels, maxWidthInPixels);
     }
 
+    /**
+     * Get the column count of the grid.
+     * @return Number of columns.
+     */
     default int getColumnCount() {
         return getSOGrid().getColumnCount();
     }
 
+    /**
+     * Get the data class of the grid.
+     * @return Data class.
+     */
     default Class<T> getDataClass() {
         return getSOGrid().objectClass;
     }

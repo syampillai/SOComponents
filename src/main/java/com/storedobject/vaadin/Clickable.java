@@ -5,14 +5,30 @@ import com.storedobject.vaadin.util.ElementClick;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.shared.Registration;
 
+/**
+ * A wrapped class to make any Vaadin component "clickable".
+ * <p>Example: Component c; new Clickable(c);</p>
+ * @param <T> Component type
+ * @author Syam
+ */
 public class Clickable<T extends Component> extends Composite<T> implements ClickNotifier {
 
     private T component;
     private ElementClick click;
 
-    public Clickable(@SuppressWarnings("unused") T component) {
+    /**
+     * Constructor.
+     * @param component Component to make it clickable
+     */
+    public Clickable(T component) {
+        this(component, null);
     }
 
+    /**
+     * Constructor.
+     * @param component Component to make it clickable
+     * @param listener Listener
+     */
     public Clickable(T component, ComponentEventListener<ClickEvent<Component>> listener) {
         this.component = component;
         click = new ElementClick(component);

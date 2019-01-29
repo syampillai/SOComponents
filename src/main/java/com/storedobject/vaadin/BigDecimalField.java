@@ -4,6 +4,10 @@ import com.storedobject.vaadin.util.NumericField;
 
 import java.math.BigDecimal;
 
+/**
+ * Field to edit {@link BigDecimal} values.
+ * @author Syam
+ */
 public class BigDecimalField extends NumericField<BigDecimal> {
 
     private int decimals;
