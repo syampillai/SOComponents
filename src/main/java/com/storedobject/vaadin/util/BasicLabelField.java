@@ -8,6 +8,7 @@ import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class BasicLabelField<T> extends Div
         implements HasValueAndElement<AbstractField.ComponentValueChangeEvent<BasicLabelField<T>, T>, T> {
@@ -15,6 +16,7 @@ public class BasicLabelField<T> extends Div
     private List<T> items;
     private int index = -1;
     private Listeners listeners = new ValueChangeListeners();
+    private Function<T, String> labelGenerator;
 
     public BasicLabelField(List<T> items) {
         Box b = new Box(this);
@@ -25,7 +27,7 @@ public class BasicLabelField<T> extends Div
         click.addClickListener(e -> {
             setIndex(index + 1, true);
             T v = getValue();
-            setText(v == null ? "" : v.toString());
+            setText(toString(v));
         });
         setItems(items);
     }
@@ -39,7 +41,7 @@ public class BasicLabelField<T> extends Div
             index = 0;
             newValue = getValue();
         }
-        setText(newValue == null ? "" : newValue.toString());
+        setText(toString(newValue));
         if(!Objects.equals(oldValue, newValue)) {
             listeners.fire(new AbstractField.ComponentValueChangeEvent(this, this, oldValue, false));
         }
@@ -72,7 +74,7 @@ public class BasicLabelField<T> extends Div
         if(newIndex != oldIndex) {
             T oldValue = getValue();
             index = newIndex;
-            setText(items.get(newIndex).toString());
+            setText(toString(items.get(newIndex)));
             listeners.fire(new AbstractField.ComponentValueChangeEvent(this, this, oldValue, fromClient));
         }
     }
@@ -118,5 +120,13 @@ public class BasicLabelField<T> extends Div
     @Override
     public Registration addValueChangeListener(ValueChangeListener<? super AbstractField.ComponentValueChangeEvent<BasicLabelField<T>, T>> listener) {
         return listeners.add(listener);
+    }
+
+    private String toString(T value) {
+        return labelGenerator != null ? labelGenerator.apply(value) : (value == null ? "" : value.toString());
+    }
+
+    public void setLabelGenerator(Function<T, String> labelGenerator) {
+        this.labelGenerator = labelGenerator;
     }
 }

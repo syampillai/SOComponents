@@ -2,6 +2,11 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.NumericField;
 
+/**
+ * Field to edit {@link Long}.
+ *
+ * @author Syam
+ */
 public class LongField extends NumericField<Long> {
 
     private static final Long ZERO = 0L;

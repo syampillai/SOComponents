@@ -6,6 +6,7 @@ import com.storedobject.vaadin.util.PatternField;
  * Field to accept valid MAC address.
  * <p>It uses a regular expression pattern:
  * "^(?:(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}))$"</p>
+ *
  * @author Syam
  */
 public class MACAddressField extends PatternField {

@@ -8,6 +8,7 @@ import com.vaadin.flow.component.dependency.HtmlImport;
  * Vaadin Flow wrapper around
  * <a href="https://github.com/IngressoRapidoWebComponents/pdf-browser-viewer" target="_blank">PDF Browser Viewer</a>
  * <p>Note: Vaadin has plans to include a PDF viewer as a standard component and in that case, this will be removed in the future versions.</p>
+ *
  * @author Syam
  */
 @Tag("pdf-browser-viewer")

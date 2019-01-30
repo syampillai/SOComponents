@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 /**
  * An text field that can be used for triggering search action. Search action is triggered when "Enter" key
  * is pressed, text value change happened or the embedded button is pressed.
+ *
  * @author Syam
  */
 public class SearchField extends ActionTextField {

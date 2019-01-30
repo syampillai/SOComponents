@@ -4,7 +4,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dialog.Dialog;
 
 /**
- * A slightly enhanced version of Dialog that can not be closed by pressing Esc key or clicking outside.
+ * A slightly enhanced version of {@link Dialog} that can not be closed by pressing Esc key or clicking outside.
+ *
  * @author Syam
  */
 public class Window extends Dialog {

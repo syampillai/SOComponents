@@ -1,7 +1,8 @@
 package com.storedobject.vaadin;
 
 /**
- * Element that has an Icon
+ * Element that has an Icon.
+ *
  * @author Syam
  */
 public interface HasIcon extends HasElement {
@@ -17,7 +18,7 @@ public interface HasIcon extends HasElement {
     /**
      * Set the icon from a specific collection
      * @param iconCollection Name of the icon collection
-     * @param icon nameof the Iron icon to set
+     * @param icon Name of the Iron icon to set
      */
     default void setIcon(String iconCollection, String icon) {
         if(icon == null || icon.trim().isEmpty()) {

@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 /**
  * Interface for "Value Required" feature of a field ({@link com.vaadin.flow.component.HasValue}).
+ *
  * @author Syam
  */
 public interface ValueRequired {

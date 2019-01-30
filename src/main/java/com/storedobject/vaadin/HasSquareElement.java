@@ -3,7 +3,8 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.HasSize;
 
 /**
- * Element that has a square shape (equal width and height)
+ * Element that has a square shape (equal width and height).
+ *
  * @author Syam
  */
 public interface HasSquareElement extends HasElement, HasSize {

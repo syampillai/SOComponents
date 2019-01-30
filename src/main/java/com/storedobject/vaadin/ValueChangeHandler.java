@@ -5,6 +5,7 @@ import com.vaadin.flow.component.HasValue;
 /**
  * Enahancemet to {@link HasValue.ValueChangeListener} that wraps the changed field ({@link HasValue} and its value into {@link ChangedValues}
  * and invoke (default implementation) {@link #valueChanged(ChangedValues)}.
+ *
  * @author Syam
  */
 @FunctionalInterface

@@ -7,6 +7,7 @@ import com.vaadin.flow.component.html.Span;
 
 /**
  * A component to show HTML text.
+ *
  * @author Syam
  */
 public class StyledText extends Composite<Span> implements HasText {

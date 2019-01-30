@@ -16,6 +16,7 @@ import java.util.Optional;
  * in the content area of the {@link Application}. View implements {@link Runnable} interface. So, it can be associated with a {@link MenuItem}.
  * When a {@link MenuItem} is clicked, the {@link Runnable#run()} method of the view is invoked and we say the "view is executed". When a
  * view is executed, its component (specified using the {@link View#setComponent(Component)}) is displayed in the "content" area of the application.
+ *
  * @author Syam
  */
 public class View implements ExecutableView {

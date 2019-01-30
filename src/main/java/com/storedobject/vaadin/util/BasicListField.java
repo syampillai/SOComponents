@@ -11,6 +11,7 @@ import com.vaadin.flow.shared.Registration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class BasicListField<T> extends Div
         implements HasValueAndElement<AbstractField.ComponentValueChangeEvent<BasicListField<T>, T>, T>, HasItems<T> {
@@ -18,6 +19,7 @@ public class BasicListField<T> extends Div
     private Listeners listeners = new ValueChangeListeners();
     private CList comboList;
     private Div text;
+    private Function<T, String> labelGenerator;
 
     @SafeVarargs
     public BasicListField(T... list) {
@@ -48,11 +50,7 @@ public class BasicListField<T> extends Div
     }
 
     private void v(T v) {
-        if(v == null) {
-            text.setText("");
-            return;
-        }
-        String s = v.toString();
+        String s = toString(v);
         text.setText(s == null ? "" : s);
     }
 
@@ -119,6 +117,14 @@ public class BasicListField<T> extends Div
         comboList.height = height;
         comboList.minimumItems = minimumItemCount;
         comboList.setVisible(comboList.isVisible());
+    }
+
+    private String toString(T value) {
+        return labelGenerator != null ? labelGenerator.apply(value) : (value == null ? "" : value.toString());
+    }
+
+    public void setLabelGenerator(Function<T, String> labelGenerator) {
+        this.labelGenerator = labelGenerator;
     }
 
     private class CList extends BasicComboList<T> {

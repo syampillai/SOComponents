@@ -6,6 +6,7 @@ import com.vaadin.flow.component.Composite;
 /**
  * Make any Vaadin component scrollable.
  * <p>Example: Component c; new Scrollable(c);</p>
+ *
  * @author Syam
  */
 public class Scrollable extends Composite {

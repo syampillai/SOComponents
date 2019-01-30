@@ -39,6 +39,7 @@ import java.util.stream.Stream;
  * <p>An "object form" is not used directly in most cases. Instead, a {@link View} derived from {@link AbstractDataEditor} or
  * {@link DataEditor} is used where an "object form" is already embedded. All overridable methods in the form can be defined in these
  * "views" too.</p>
+ *
  * @param <T> Type of object to be edited
  * @author Syam
  */

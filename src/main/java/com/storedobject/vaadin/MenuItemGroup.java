@@ -8,6 +8,7 @@ import com.vaadin.flow.dom.Element;
 /**
  * This class is a special "menu item" that keeps a group of other "menu items". The action associated with this
  * toggles the visibility of "menu items" under it.
+ *
  * @author Syam
  */
 public class MenuItemGroup extends MenuItem {

@@ -9,6 +9,7 @@ import com.vaadin.flow.shared.Registration;
 /**
  * <p>WARNING: This class may be restructured or redesigned.</p>
  * Class that represents a "menu item".
+ *
  * @see Application
  * @see ApplicationMenu
  * @author Syam

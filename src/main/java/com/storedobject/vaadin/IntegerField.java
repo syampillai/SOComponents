@@ -2,6 +2,11 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.NumericField;
 
+/**
+ * Field to edit {@link Integer}.
+ *
+ * @author Syam
+ */
 public class IntegerField extends NumericField<Integer> {
 
     private static final Integer ZERO = 0;

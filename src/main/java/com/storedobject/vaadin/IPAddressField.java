@@ -2,6 +2,11 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.PatternField;
 
+/**
+ * Field to edit IP addresses using the pattern "^(?:(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])(\\.(?!$)|$)){4}$".
+ *
+ * @author Syam
+ */
 public class IPAddressField extends PatternField {
 
     private static String pattern = "^(?:(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])(\\.(?!$)|$)){4}$";
