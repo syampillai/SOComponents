@@ -13,8 +13,8 @@ import java.util.stream.Stream;
  * by Vaadin's Bean Grid but has similar functionality. The main difference in use is that instead of addColumn methods, one should use the
  * createColumn methods. createColumn methods just return whether column can be created or not but, columns are created at a later stage
  * when all columns are defined and the ordinality of columns are determined. If you want to customize any Column, it can be done in
- * {@link #customizeColumn(String, Column)} method or by invoking methods provided in this class
- * (See the interface implemented {@link HasColumns}).
+ * customizeColumn(String, Column) method or by invoking methods provided in this class
+ * (See the implentation of the interface {@link HasColumns}).
  * Each column has a "column name" and it gets mapped to the Bean's getXXX
  * method just like in Vaadin's Bean Grid. However, if a getXXX method is available in the DataGrid itself, that will be used for sourcing the
  * data for the respective column. Each column uses its respective column name as the key.

@@ -1,6 +1,7 @@
 # SO Components
 A set of Vaadin Flow Components and Abstractions
 
+
 ## Use Cases
 There are 2 different ways of using this add-on.
 
@@ -9,6 +10,13 @@ It can be used to utilize the components (especially "fields" and "forms") avail
 
 The "form" concept here supports a mechanism that doesn't require direct use of Vaadin'n "Binder" classes to create data entry forms.
 A hidden binder does all the tricks.
+
+Also, there are two notable classes: DataGrid and TreeDataGrid. These clsses are enhanced
+versions of Vaadin's Grid and TreeGrid respectively.
+
+Two layout classes are worth mentioning: ButtonLayout and GridLayout.
+
+A crude version of Dashboard is also available.
 
 ### Single Page Application
 This is the 2nd use case. Single page applications typically use an "application layout"
@@ -19,3 +27,7 @@ sort of chart or a dashboard. This add-on contains certain classes to create dif
 
 Please see the documentation of the Application class to get an idea how to create a single-page
 application.
+
+### Documentation
+Most classes are documented with some explanation about its use. Please see the API
+documentation.
