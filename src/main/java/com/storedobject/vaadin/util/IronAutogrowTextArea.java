@@ -4,7 +4,10 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.HtmlImport;
 
 /**
- * Vaadin Flow wrapper around the Web Component: <a href="https://github.com/PolymerElements/iron-autogrow-textarea" target="_blank">Iron Autogrow TextArea</a>
+ * Vaadin Flow wrapper around the Web Component:
+ * <a href="https://github.com/PolymerElements/iron-autogrow-textarea" target="_blank">Iron Autogrow TextArea</a>
+ * (<a href="https://github.com/PolymerElements/iron-autogrow-textarea/graphs/contributors" target="_blank">Authors</a>)
+ *
  * @author Syam
  */
 @Tag("iron-autogrow-textarea")

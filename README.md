@@ -1,6 +1,7 @@
 # SO Components
 A set of Vaadin Flow Components and Abstractions
 
+(Sample screenshots are from a commercial application under development that uses this add-on)
 
 ## Use Cases
 There are 2 different ways of using this add-on.
@@ -28,6 +29,9 @@ sort of chart or a dashboard. This add-on contains certain classes to create dif
 Please see the documentation of the Application class to get an idea how to create a single-page
 application.
 
-### Documentation
-Most classes are documented with some explanation about its use. Please see the API
+## Documentation
+Most classes are documented with some explanation about its usage. Please see the API
 documentation.
+
+## Source code
+Available at https://github.com/syampillai/SOComponents

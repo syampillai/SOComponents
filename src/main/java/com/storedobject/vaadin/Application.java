@@ -86,7 +86,7 @@ import java.util.*;
  * by licking on its respective 'menu item' created from its 'caption'.
  * @author Syam
  */
-public abstract class Application extends UI implements RequestHandler {
+public abstract class Application extends UI {
 
     private ApplicationEnvironment environment;
     private ViewManager viewManager;
@@ -160,18 +160,6 @@ public abstract class Application extends UI implements RequestHandler {
             environment = new ApplicationEnvironment() {};
         }
         return environment;
-    }
-
-    /**
-     * Vaadin's request handler implementation. (For future use).
-     * @param vaadinSession Vaadin's session
-     * @param vaadinRequest Vaadin's request
-     * @param vaadinResponse Vaadin's response
-     * @return True if the request is handled.
-     */
-    @Override
-    public boolean handleRequest(VaadinSession vaadinSession, VaadinRequest vaadinRequest, VaadinResponse vaadinResponse) {
-        return false;
     }
 
     /**
@@ -485,6 +473,15 @@ public abstract class Application extends UI implements RequestHandler {
         }
     }
 
+    /**
+     * Get the view in which a particular component is currently appearing.
+     * @param component Component to be checked
+     * @return View in which the component is appearing or <code>null</code> if it's not displayed in any of the views.
+     */
+    public View getViewFor(Component component) {
+        return viewManager == null ? null : viewManager.getViewFor(component);
+    }
+
     private static class ViewManager {
 
         private final ApplicationMenu menu;
@@ -501,6 +498,25 @@ public abstract class Application extends UI implements RequestHandler {
         public void loggedin(Application application) {
             applicationView.layout.loggedin(application);
             applicationView.layout.drawMenu(application);
+        }
+
+        private View getViewFor(Component c) {
+            for(View v: stack) {
+                if(isViewFor(c, v)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+        private static boolean isViewFor(Component c, View v) {
+            if(c == null) {
+                return false;
+            }
+            if(v.getComponent() == c) {
+                return true;
+            }
+            return isViewFor(c.getParent().orElse(null), v);
         }
 
         public void attach(View view, boolean doNotLock, View parent) {
@@ -527,7 +543,12 @@ public abstract class Application extends UI implements RequestHandler {
             stack.add(view);
             applicationView.layout.addView(view);
             view.setVisible(true);
-            MenuItem m = MenuItem.create(view.getCaption(), () -> select(view));
+            MenuItem m;
+            if(view instanceof CloseableView) {
+                m = CloseableMenuItem.create(view.getCaption(), () -> select(view), view);
+            } else {
+                m = MenuItem.create(view.getCaption(), () -> select(view));
+            }
             menu.insert(0, m);
             contentMenu.put(view, m);
             hilite(m);

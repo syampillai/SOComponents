@@ -17,12 +17,7 @@ public class MenuItemGroup extends MenuItem {
     private Div layout;
     private IconItemGroup header;
 
-    /**
-     * For internal use only.
-     * @param label Label
-     * @param header Header
-     */
-    MenuItemGroup(String label, IconItemGroup header) {
+    private MenuItemGroup(String label, IconItemGroup header) {
         super(label, header, null);
         this.header = header;
         layout = new Div();

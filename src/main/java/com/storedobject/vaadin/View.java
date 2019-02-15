@@ -403,11 +403,19 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Abort this view. Default implentation sets an "abort flag" and closes the view.
+     * Abort this view. Default implementation sets an "abort flag" and closes the view.
      */
     public void abort() {
         aborted = true;
         closeInt();
+    }
+
+    /**
+     * Close resources if any that are left opened.
+     * This method is invoked when the view is removed from the {@link Application}.
+     * The default implementation does nothing.
+     */
+    public void clean() {
     }
 
     /**
@@ -432,6 +440,7 @@ public class View implements ExecutableView {
             parent = null;
         }
         doFocus = true;
+        clean();
     }
 
     @Override

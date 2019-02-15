@@ -21,9 +21,14 @@ public class MiscTest extends View {
             return;
         }
         FormLayout form = new FormLayout();
+        TokenField<String> tokenField = new TokenField<>("Choose");
+        tokenField.addValueChangeListener(e -> System.err.println(e.getOldValue().size() + " to " + e.getValue().size() + " " + (e.isFromClient() ? "Client" : "Server")));
+        tokenField.setItems("One", "Two", "Three", "Four");
         ListBox<String> test = new ListBox<>();
         HorizontalLayout h = new HorizontalLayout();
         Form dataForm = new Form();
+        dataForm.add(tokenField);
+        dataForm.add(new Button("V Test", e -> tokenField.setValue("Three", "One")));
         h.add(new ButtonIcon("device", "bluetooth", e -> {
             test.setVisible(!test.isVisible());
             alert("Bluetooh clicked! Visibility of 'Item List' toggled!!");

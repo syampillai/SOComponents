@@ -2,11 +2,16 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.server.StreamRegistration;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.StreamResourceRegistry;
+import com.vaadin.flow.server.VaadinSession;
 
 /**
  * A PDF viewer component that uses browser's native PDF viewer.
- * Vaadin Flow wrapper around
+ * This is written as a Vaadin Flow wrapper around
  * <a href="https://github.com/IngressoRapidoWebComponents/pdf-browser-viewer" target="_blank">PDF Browser Viewer</a>
+ * (Author: Andrew Silva Movile)
  * <p>Note: Vaadin has plans to include a PDF viewer as a standard component and in that case, this will be removed in the future versions.</p>
  *
  * @author Syam
@@ -15,60 +20,103 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 @HtmlImport("bower_components/pdf-browser-viewer/pdf-browser-viewer.html")
 public class PDFViewer extends Component implements HasSize {
 
+    private StreamRegistration streamRegistration;
+    private StreamResource streamResource;
+
     /**
-     * Default constructor
+     * Default constructor.
      */
     public PDFViewer() {
-        this(null);
+        this((String)null);
     }
 
     /**
-     * Constructor with file to view
-     * @param fileURL URL of the file to view
+     * Constructor with file to view.
+     * @param fileURI URI of the file to view
      */
-    public PDFViewer(String fileURL) {
-        if(fileURL != null) {
-            setFileURL(fileURL);
+    public PDFViewer(String fileURI) {
+        if(fileURI != null) {
+            setURI(fileURI);
         }
+        setSizeFull();
     }
 
     /**
-     * Set the file to view
+     * Constructor with a stream resource to view.
+     * @param streamResource Stream resource
+     */
+    public PDFViewer(StreamResource streamResource) {
+        if(streamResource != null) {
+            setSource(streamResource);
+        }
+        setSizeFull();
+    }
+
+    /**
+     * Set the file to view.
      * @param fileURL URL of the file to view
      */
-    public void setFileURL(String fileURL) {
-        if(fileURL == null) {
+    public void setSource(String fileURL) {
+        if (streamRegistration != null) {
+            streamRegistration.unregister();
+            streamRegistration = null;
+        }
+        streamResource = null;
+        setURI(fileURL);
+    }
+
+    private void setURI(String url) {
+        if(url == null) {
             getElement().removeAttribute("file");
             clear();
         } else {
-            getElement().setAttribute("file", fileURL);
+            getElement().setAttribute("file", url);
         }
     }
 
     /**
-     * Clear the current content
+     * Set the file to view from a {@link StreamResource}.
+     * @param streamResource Stream source
+     */
+    public void setSource(StreamResource streamResource) {
+        if(streamResource == null) {
+            setSource((String)null);
+            return;
+        }
+        if(streamRegistration != null) {
+            streamRegistration.unregister();
+        }
+        this.streamResource = streamResource;
+        streamRegistration = VaadinSession.getCurrent().getResourceRegistry().registerResource(streamResource);
+        setURI(StreamResourceRegistry.getURI(streamResource).toASCIIString());
+    }
+
+    /**
+     * Clear the current content.
      */
     public void clear() {
         getElement().callFunction("clear");
+        if (streamRegistration != null) {
+            streamRegistration.unregister();
+            streamRegistration = null;
+        }
+        streamResource = null;
     }
 
     @Override
-    public void setWidth(String width) {
-        getElement().setAttribute("width", width);
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        if(streamResource != null && streamRegistration == null) {
+            setSource(streamResource);
+        }
     }
 
     @Override
-    public String getWidth() {
-        return getElement().getAttribute("width");
-    }
-
-    @Override
-    public void setHeight(String height) {
-        getElement().setAttribute("height", height);
-    }
-
-    @Override
-    public String getHeight() {
-        return getElement().getAttribute("height");
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+        if (streamRegistration != null) {
+            streamRegistration.unregister();
+            streamRegistration = null;
+        }
     }
 }

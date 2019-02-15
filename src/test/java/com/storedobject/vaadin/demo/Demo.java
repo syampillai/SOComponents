@@ -16,6 +16,7 @@ import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
 import javax.servlet.annotation.WebServlet;
+import java.io.IOException;
 
 public class Demo extends Application {
 
@@ -60,6 +61,18 @@ public class Demo extends Application {
         @Override
         public void drawMenu(Application application) {
             getMenuPane().add(new HtmlComponent("hr"));
+            UploadProcessor u = new UploadProcessor("Upload", "Upload File", (in, ct) -> {
+                try {
+                    while (in.read() != -1) {
+                        System.err.print('.');
+                    }
+                    System.err.println();
+                } catch (IOException ignore) {
+                    System.err.print('x');
+                }
+            });
+            u.setMaxFiles(2);
+            add(MenuItem.create("Upload Processor Test", u));
             add(MenuItem.create("Edit Person Details", new PersonEditor()));
             add(MenuItem.create("Veiw Sample PDF", new PDFTest()));
             add(MenuItem.create("Test Alert Component", "vaadin:user", new AlertTest()));

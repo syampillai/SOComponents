@@ -35,6 +35,7 @@ public class ImageButton extends Icon {
     public ImageButton(String iconName, String iconCollection, ClickHandler clickHandler) {
         super(iconName, iconCollection);
         init(clickHandler);
+        setAttribute("title", iconName);
     }
 
     /**
@@ -43,8 +44,19 @@ public class ImageButton extends Icon {
      * @param clickHandler Click handler
      */
     public ImageButton(VaadinIcon icon, ClickHandler clickHandler) {
+        this(null, icon, clickHandler);
+    }
+
+    /**
+     * Constructor.
+     * @param title Title (to be shown as tooltip)
+     * @param icon Icon
+     * @param clickHandler Click handler
+     */
+    public ImageButton(String title, VaadinIcon icon, ClickHandler clickHandler) {
         super(icon);
         init(clickHandler);
+        setAttribute("title", title);
     }
 
     private void init(ClickHandler clickHandler) {

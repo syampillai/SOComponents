@@ -6,6 +6,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 
 /**
  * Field to edit {@link Boolean} values.
+ *
  * @author Syam
  */
 public class BooleanField
