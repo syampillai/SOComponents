@@ -11,7 +11,7 @@ import java.util.List;
  * @param <T> Type of the field's value.
  * @author Syam
  */
-public class ComboField<T> extends ComboBox<T> implements Field<T> {
+public class ComboField<T> extends ComboBox<T> {
 
     private Collection<T> list;
 
@@ -32,26 +32,6 @@ public class ComboField<T> extends ComboBox<T> implements Field<T> {
     public ComboField(String label, Collection<T> list) {
         super(label, list);
         this.list = list;
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return super.isReadOnly();
-    }
-
-    @Override
-    public void focus() {
-        super.focus();
-    }
-
-    @Override
-    public void blur() {
-        super.blur();
     }
 
     public int getIndex(T item) {

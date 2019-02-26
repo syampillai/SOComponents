@@ -1,20 +1,19 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.CompositeField;
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.customfield.CustomField;
 
 /**
  * Field to edit {@link Boolean} values.
  *
  * @author Syam
  */
-public class BooleanField
-        extends CompositeField.SingleField<Boolean, BooleanField, Checkbox, AbstractField.ComponentValueChangeEvent<Checkbox, Boolean>> {
+public class BooleanField extends CustomField<Boolean> {
+
+    private Checkbox checkbox = new Checkbox();
 
     public BooleanField() {
-        super(new Checkbox(), false, true);
-        createField();
+        this(null, null);
     }
 
     public BooleanField(String label) {
@@ -26,12 +25,23 @@ public class BooleanField
     }
 
     public BooleanField(String label, Boolean initialValue) {
-        this();
         setLabel(label);
-        if(initialValue == null) {
-            setPresentationValue(getEmptyValue());
-        } else {
-            setValue(initialValue);
-        }
+        add(checkbox);
+        setValue(initialValue);
+    }
+
+    @Override
+    public void setValue(Boolean value) {
+        super.setValue(value == null ? false : value);
+    }
+
+    @Override
+    protected Boolean generateModelValue() {
+        return checkbox.getValue();
+    }
+
+    @Override
+    protected void setPresentationValue(Boolean value) {
+        checkbox.setValue(value);
     }
 }

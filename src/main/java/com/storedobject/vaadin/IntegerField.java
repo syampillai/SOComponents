@@ -60,15 +60,12 @@ public class IntegerField extends NumericField<Integer> {
 
     @Override
     protected Integer getModelValue(String string) {
-        return Integer.parseInt(string.replace(",", ""));
-    }
-
-    @Override
-    protected String getPresentationValue(Integer value) {
-        if(isGrouping()) {
-            return format(value);
+        try {
+            return Integer.parseInt(string.replace(",", ""));
+        } catch(NumberFormatException e) {
+            setPresentationValue(ZERO);
+            return ZERO;
         }
-        return value.toString();
     }
 
     public void setLength(int width) {
@@ -91,5 +88,10 @@ public class IntegerField extends NumericField<Integer> {
         p = "^" + p + "$";
         getField().setPattern(p);
         setPresentationValue(getValue());
+    }
+
+    @Override
+    public Integer getEmptyValue() {
+        return ZERO;
     }
 }

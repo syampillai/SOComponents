@@ -1,9 +1,11 @@
 package com.storedobject.vaadin.util;
 
+import com.storedobject.vaadin.CustomTextField;
+
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-public abstract class NumericField<T extends Number> extends CompositeTextField<T> {
+public abstract class NumericField<T extends Number> extends CustomTextField<T> {
 
     protected boolean grouping;
     protected boolean allowNegative;
@@ -31,6 +33,14 @@ public abstract class NumericField<T extends Number> extends CompositeTextField<
         setPattern();
     }
 
+    @Override
+    public void setValue(T value) {
+        if(value == null) {
+            value = getEmptyValue();
+        }
+        super.setValue(value);
+    }
+
     public final int getLength() {
         return width;
     }
@@ -46,7 +56,23 @@ public abstract class NumericField<T extends Number> extends CompositeTextField<
 
     protected abstract void setPattern();
 
-    protected String format(double value) {
+    protected abstract T getModelValue(String string);
+
+    @Override
+    protected T generateModelValue() {
+        return getModelValue(getField().getValue());
+    }
+
+    @Override
+    protected void setPresentationValue(T value) {
+        getField().setValue(format(value));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected String format(T value) {
+        if(value == null) {
+            value = (T)new Integer(0);
+        }
         DecimalFormat format = (DecimalFormat) DecimalFormat.getNumberInstance();
         format.setMaximumIntegerDigits(30);
         format.setRoundingMode(RoundingMode.HALF_UP);

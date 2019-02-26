@@ -1,9 +1,7 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.CompositeField;
-import com.storedobject.vaadin.util.NullField;
-import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.customfield.CustomField;
 
 /**
  * A field that always returns its value as <code>null</code>. However, it's painted as a {@link ButtonLayout} and thus,
@@ -11,26 +9,34 @@ import com.vaadin.flow.component.Component;
  *
  * @author Syam
  */
-public class CompoundField
-        extends CompositeField.SingleField<String, CompoundField, NullField, AbstractField.ComponentValueChangeEvent<NullField, String>> {
+public class CompoundField extends CustomField<String> {
+
+    private ButtonLayout layout = new ButtonLayout();
 
     public CompoundField() {
         this(null);
     }
 
     public CompoundField(String label, Component... components) {
-        super(new NullField(), null);
+        super.add(layout);
         add(components);
-        if(label != null) {
-            setLabel(label);
-        }
+        setLabel(label);
+    }
+
+    @Override
+    protected String generateModelValue() {
+        return null;
+    }
+
+    @Override
+    protected void setPresentationValue(String value) {
     }
 
     public void add(Component... components) {
-        getInnerField().add(components);
+        layout.add(components);
     }
 
     public void remove(Component... components) {
-        getInnerField().remove(components);
+        layout.remove(components);
     }
 }

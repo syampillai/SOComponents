@@ -1,7 +1,8 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.TranslatedField;
+import com.vaadin.flow.data.binder.HasItems;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author Syam
  */
-public class LabelChoiceField extends TranslatedField<Integer, String, LabelField<String>> {
+public class LabelChoiceField extends TranslatedField<Integer, String> implements HasItems<String> {
 
     /**
      * Constructor.
@@ -28,22 +29,16 @@ public class LabelChoiceField extends TranslatedField<Integer, String, LabelFiel
      */
     @SuppressWarnings("unchecked")
     public LabelChoiceField(String label, List<String> items) {
-        super(getDefault(items), new LabelField(items), LabelField::getIndex, LabelField::getValue);
+        super(new LabelField<>(items), (f, v) -> ((LabelField<String>)f).getIndex(v), (f, i) -> ((LabelField<String>)f).getValue(i));
         setLabel(label);
-    }
-
-    private static Integer getDefault(List<String> items) {
-        if (items == null || items.isEmpty()) {
-            return -1;
-        }
-        return 0;
     }
 
     /**
      * Set item list.
      * @param items List of text
      */
-    public void setItems(List<String> items) {
-        getField().setItems(items);
+    @SuppressWarnings("unchecked")
+    public void setItems(Collection<String> items) {
+        ((HasItems<String>)getField()).setItems(items);
     }
 }

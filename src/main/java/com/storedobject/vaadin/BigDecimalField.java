@@ -16,6 +16,11 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         this(null);
     }
 
+    @Override
+    protected BigDecimal generateModelValue() {
+        return toBigDecimal(getField().getValue(), decimals);
+    }
+
     public BigDecimalField(String label) {
         this(label, null);
     }
@@ -109,17 +114,6 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         return toBigDecimal(string, decimals);
     }
 
-    @Override
-    protected String getPresentationValue(BigDecimal value) {
-        if(value == null) {
-            value = BigDecimal.ZERO;
-        }
-        if(isGrouping()) {
-            return format(value.doubleValue());
-        }
-        return value.toString();
-    }
-
     public void setLength(int width) {
         int min = 1;
         if(allowNegative) {
@@ -149,7 +143,7 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         }
         p = "^" + p + "$";
         getField().setPattern(p);
-        setPresentationValue(getValue());
+        setValue(getValue());
     }
 
     private static BigDecimal toBigDecimal(Object value) {
@@ -181,5 +175,10 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         } catch(Throwable ignored) {
         }
         return null;
+    }
+
+    @Override
+    public BigDecimal getEmptyValue() {
+        return BigDecimal.ZERO;
     }
 }

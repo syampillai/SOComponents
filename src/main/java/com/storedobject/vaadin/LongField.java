@@ -59,15 +59,12 @@ public class LongField extends NumericField<Long> {
 
     @Override
     protected Long getModelValue(String string) {
-        return Long.parseLong(string.replace(",", ""));
-    }
-
-    @Override
-    protected String getPresentationValue(Long value) {
-        if(isGrouping()) {
-            return format(value);
+        try {
+            return Long.parseLong(string.replace(",", ""));
+        } catch(NumberFormatException e) {
+            setPresentationValue(ZERO);
+            return ZERO;
         }
-        return value.toString();
     }
 
     public void setLength(int width) {
@@ -90,5 +87,10 @@ public class LongField extends NumericField<Long> {
         p = "^" + p + "$";
         getField().setPattern(p);
         setPresentationValue(getValue());
+    }
+
+    @Override
+    public Long getEmptyValue() {
+        return ZERO;
     }
 }

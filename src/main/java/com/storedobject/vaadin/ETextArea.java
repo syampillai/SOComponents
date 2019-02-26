@@ -1,8 +1,7 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.CompositeField;
 import com.storedobject.vaadin.util.IronAutogrowTextArea;
-import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.customfield.CustomField;
 
 /**
  * A auto-expanding multi-line text field. The height of the field will be automatically increased (up to the value of maximum rows set)
@@ -15,15 +14,16 @@ import com.vaadin.flow.component.AbstractField;
  *
  * @author Syam
  */
-public class ETextArea
-        extends CompositeField.SingleField<String, ETextArea, IronAutogrowTextArea, AbstractField.ComponentValueChangeEvent<IronAutogrowTextArea, String>> {
+public class ETextArea extends CustomField<String> {
+
+    private IronAutogrowTextArea field;
 
     /**
      * Constructor.
      */
     public ETextArea() {
-        super(new IronAutogrowTextArea(), "", true);
-        createField();
+        field = new IronAutogrowTextArea();
+        add(field);
     }
 
     /**
@@ -34,6 +34,16 @@ public class ETextArea
         this(label, null);
     }
 
+    @Override
+    protected String generateModelValue() {
+        return field.getValue();
+    }
+
+    @Override
+    protected void setPresentationValue(String value) {
+        field.setValue(value);
+    }
+
     /**
      * Constructor.
      * @param label Label
@@ -42,11 +52,17 @@ public class ETextArea
     public ETextArea(String label, String initialValue) {
         this();
         setLabel(label);
-        if(initialValue == null) {
-            setPresentationValue(getEmptyValue());
-        } else {
-            setValue(initialValue);
-        }
+        setValue(initialValue);
+    }
+
+    @Override
+    public void setValue(String value) {
+        super.setValue(value == null ? "" : value);
+    }
+
+    @Override
+    public String getEmptyValue() {
+        return "";
     }
 
     /**
@@ -54,7 +70,7 @@ public class ETextArea
      * @return Maximum visible rows
      */
     public int getMaxRows() {
-        return getField().getField().getMaxRows();
+        return field.getMaxRows();
     }
 
     /**
@@ -62,7 +78,7 @@ public class ETextArea
      * @param maxRows Maximim visible rows
      */
     public void setMaxRows(int maxRows) {
-        getField().getField().setMaxRows(maxRows);
+        field.setMaxRows(maxRows);
     }
 
     /**
@@ -70,7 +86,7 @@ public class ETextArea
      * @return Minimum visible rows
      */
     public int getMinRows() {
-        return getField().getField().getMinRows();
+        return field.getMinRows();
     }
 
     /**
@@ -78,6 +94,6 @@ public class ETextArea
      * @param rows Minimum visible rows
      */
     public void setMinRows(int rows) {
-        getField().getField().setMinRows(rows);
+        field.setMinRows(rows);
     }
 }

@@ -112,14 +112,6 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Set the minimum width of the grid.
-     * @param width Width
-     */
-    default void setMinWidth(String width) {
-        getSOGrid().setMinWidth(width);
-    }
-
-    /**
      * Set the minimum/maximum width of the column.
      * @param perColumnWidthInPixels Minimum width (in pixels) per column
      * @param maxWidthInPixels Maximum width of the grid in pixels

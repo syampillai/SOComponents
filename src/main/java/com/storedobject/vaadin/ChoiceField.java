@@ -1,7 +1,6 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.BasicComboBox;
-import com.storedobject.vaadin.util.TranslatedField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +11,7 @@ import java.util.List;
  * A {@link com.vaadin.flow.component.combobox.ComboBox} style field wihth an {@link Integer} value type.
  * @author Syam
  */
-public class ChoiceField extends TranslatedField<Integer, String, BasicComboBox<String>> implements ValueRequired {
+public class ChoiceField extends TranslatedField<Integer, String> implements ValueRequired {
 
     public ChoiceField(String choices) {
         this(null, choices);
@@ -38,8 +37,10 @@ public class ChoiceField extends TranslatedField<Integer, String, BasicComboBox<
         this(label, createList(list));
     }
 
+    @SuppressWarnings("unchecked")
     public ChoiceField(String label, Collection<String> list) {
-        super(-1, new BasicComboBox<>(sanitize(list)), ComboField::getIndex, ComboField::getValue);
+        super(new BasicComboBox<>(sanitize(list)), (f, s) -> ((BasicComboBox<String>)f).getIndex(s),
+                (f, v) -> ((BasicComboBox<String>)f).getValue(v));
         setValue(0);
         setLabel(label);
     }

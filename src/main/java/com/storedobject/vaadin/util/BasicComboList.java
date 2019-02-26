@@ -2,13 +2,14 @@ package com.storedobject.vaadin.util;
 
 import com.vaadin.flow.component.listbox.ListBox;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class BasicComboList<T> extends ListBox<T> {
 
-    protected Collection<T> list;
+    protected List<T> list;
 
     @SafeVarargs
     public BasicComboList(T... list) {
@@ -16,22 +17,22 @@ public class BasicComboList<T> extends ListBox<T> {
     }
 
     public BasicComboList(Collection<T> list) {
-        this.list = list;
         setItems(list);
     }
 
     @Override
     public void setItems(Collection<T> items) {
         if(items == null) {
+            setItems(new ArrayList<>());
             return;
         }
-        this.list = items;
-        super.setItems(items);
+        this.list = new ArrayList<>(items);
+        super.setItems(this.list);
         setFirstValue();
     }
 
-    void setFirstValue() {
-        setValue((list instanceof List) ? ((List<T>) list).get(0) : list.stream().findFirst().orElse(null));
+    protected void setFirstValue() {
+        setValue(list.size() > 0 ? list.get(0) : null);
     }
 
     public int getIndex() {
@@ -39,37 +40,11 @@ public class BasicComboList<T> extends ListBox<T> {
     }
 
     public int getIndex(T item) {
-        if(item == null) {
-            return -1;
-        }
-        if(list instanceof List) {
-            return ((List<T>) list).indexOf(item);
-        }
-        int i = 0;
-        for(T loop: list) {
-            if(loop.equals(item)) {
-                return i;
-            }
-            ++i;
-        }
-        return -1;
+        return list.indexOf(item);
     }
 
     public T getValue(int index) {
-        if(index < 0 || index >= list.size()) {
-            return null;
-        }
-        if(list instanceof List) {
-            return ((List<T>) list).get(index);
-        }
-        int i = 0;
-        for(T loop: list) {
-            if(i == index) {
-                return loop;
-            }
-            ++i;
-        }
-        return null;
+        return index < 0 || index >= list.size() ? null : list.get(index);
     }
 
     @Override

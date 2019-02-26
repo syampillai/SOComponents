@@ -1,9 +1,12 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.BasicLabelField;
-import com.storedobject.vaadin.util.CompositeField;
-import com.vaadin.flow.component.AbstractField;
+import com.storedobject.vaadin.util.ElementClick;
+import com.vaadin.flow.component.customfield.CustomField;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.data.binder.HasItems;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -15,8 +18,12 @@ import java.util.function.Function;
  * @param <T> Value type of the field
  * @author Syam
  */
-public class LabelField<T> extends
-        CompositeField.SingleField<T, LabelField<T>, BasicLabelField<T>, AbstractField.ComponentValueChangeEvent<BasicLabelField<T>, T>> {
+public class LabelField<T> extends CustomField<T> implements HasItems<T> {
+
+    private Div container = new Div();
+    private List<T> items;
+    private int index = -1;
+    private Function<T, String> labelGenerator;
 
     /**
      * Constructor.
@@ -34,26 +41,69 @@ public class LabelField<T> extends
      * @param items List items
      */
     public LabelField(String label, List<T> items) {
-        super(new BasicLabelField<>(items), getDefault(items));
+        add(container);
+        Box b = new Box(container);
+        b.setStyle("background", "var(--lumo-contrast-20pct)");
+        b.setStyle("cursor", "pointer");
+        b.setBorderWidth(0);
+        ElementClick click = new ElementClick(this);
+        click.addClickListener(e -> setIndex(index + 1, true));
+        setItems(items);
         setLabel(label);
-        setValue(null);
+        setIndex(0);
     }
 
-    private static <O> O getDefault(List<O> items) {
-        if (items == null || items.isEmpty()) {
-            return null;
+    @Override
+    public void setItems(Collection<T> items) {
+        this.items = new ArrayList<>(items);
+        T newValue = getValue();
+        if(newValue == null && index < 0) {
+            index = 0;
+            newValue = generateModelValue();
         }
-        return items.get(0);
+        container.setText(toString(newValue));
+        updateValue();
     }
 
     /**
-     * Get index of an item.
-     *
-     * @param value Item for which index needs to determined
-     * @return Index of the item.
+     * Set a new value.
+     * @param newIndex Index of the label value to be set
      */
-    public int getIndex(T value) {
-        return getField().getField().getIndex(value);
+    public void setIndex(int newIndex) {
+        setIndex(newIndex, false);
+    }
+
+    private void setIndex(int newIndex, boolean fromClient) {
+        if(index == newIndex) {
+            return;
+        }
+        if(items == null || items.isEmpty()) {
+            return;
+        }
+        if(newIndex >= items.size()) {
+            newIndex = 0;
+        }
+        int oldIndex = index;
+        if(newIndex != oldIndex) {
+            index = newIndex;
+            container.setText(toString(items.get(newIndex)));
+            setModelValue(generateModelValue(), fromClient);
+        }
+    }
+
+    /**
+     * Get the index of the currently displayed label.
+     * @return Index of the current label.
+     */
+    public int getIndex() {
+        if((index < 0 || items == null || items.isEmpty())) {
+            index = -1;
+            return index;
+        }
+        if(index >= items.size()) {
+            index = items.size() % index;
+        }
+        return index;
     }
 
     /**
@@ -63,19 +113,56 @@ public class LabelField<T> extends
      * @return Item at the index.
      */
     public T getValue(int index) {
-        return getField().getField().getValue(index);
+        if(index < 0 || items == null || items.isEmpty() || index >= items.size()) {
+            return null;
+        }
+        return items.get(index);
     }
 
-
-    public void setItems(List<T> items) {
-        getField().getField().setItems(items);
+    /**
+     * Get index of an item.
+     *
+     * @param value Item for which index needs to determined
+     * @return Index of the item.
+     */
+    public int getIndex(T value) {
+        if(value == null || items == null || items.isEmpty()) {
+            return -1;
+        }
+        for(int i = 0; i < items.size(); i++) {
+            if(items.get(i).equals(value)) {
+                return i;
+            }
+        }
+        return -1;
     }
+
+    private String toString(T value) {
+        return labelGenerator != null ? labelGenerator.apply(value) : (value == null ? "" : value.toString());
+    }
+
+    @Override
+    protected T generateModelValue() {
+        if(getIndex() < 0) {
+            return null;
+        }
+        return items.get(index);
+    }
+
+    @Override
+    protected void setPresentationValue(T value) {
+        if(items == null || items.isEmpty()) {
+            return;
+        }
+        setIndex(items.indexOf(value));
+    }
+
 
     /**
      * Set a label generator to convert item values into displayable labels.
      * @param labelGenerator Label generator
      */
     public void setLabelGenerator(Function<T, String> labelGenerator) {
-        getField().getField().setLabelGenerator(labelGenerator);
+        this.labelGenerator = labelGenerator;
     }
 }

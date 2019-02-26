@@ -97,15 +97,12 @@ public class DoubleField extends NumericField<Double> {
 
     @Override
     protected Double getModelValue(String string) {
-        return Double.parseDouble(string.replace(",", ""));
-    }
-
-    @Override
-    protected String getPresentationValue(Double value) {
-        if(isGrouping()) {
-            return format(value);
+        try {
+            return Double.parseDouble(string.replace(",", ""));
+        } catch(NumberFormatException e) {
+            setPresentationValue(ZERO);
+            return ZERO;
         }
-        return value.toString();
     }
 
     public void setLength(int width) {
@@ -147,5 +144,10 @@ public class DoubleField extends NumericField<Double> {
         p = "^" + p + "$";
         getField().setPattern(p);
         setPresentationValue(getValue());
+    }
+
+    @Override
+    public Double getEmptyValue() {
+        return ZERO;
     }
 }
