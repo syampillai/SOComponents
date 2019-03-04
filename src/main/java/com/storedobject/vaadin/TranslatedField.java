@@ -2,8 +2,6 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.customfield.CustomField;
-
 import java.util.function.BiFunction;
 
 /**
@@ -27,12 +25,15 @@ public class TranslatedField<T, I> extends CustomField<T> {
      */
     public TranslatedField(HasValue<?, I> field, BiFunction<HasValue<?, I>, I, T> convertToValue,
                            BiFunction<HasValue<?, I>, T, I> convertToInternalValue) {
+        super(convertToValue.apply(field, field.getEmptyValue()));
         this.field = field;
         this.convertT2I = convertToInternalValue;
         this.convertI2T = convertToValue;
         if (field instanceof Component) {
             add((Component)field);
         }
+        setPresentationValue(getEmptyValue());
+        field.addValueChangeListener(e -> setModelValue(this.generateModelValue(), e.isFromClient()));
     }
 
     @Override
@@ -48,11 +49,6 @@ public class TranslatedField<T, I> extends CustomField<T> {
     @Override
     protected void setPresentationValue(T value) {
         field.setValue(convertT2I.apply(field, value));
-    }
-
-    @Override
-    public T getEmptyValue() {
-        return convertI2T.apply(field, field.getEmptyValue());
     }
 
     public HasValue<?, I> getField() {

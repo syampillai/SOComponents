@@ -145,9 +145,4 @@ public class DoubleField extends NumericField<Double> {
         getField().setPattern(p);
         setPresentationValue(getValue());
     }
-
-    @Override
-    public Double getEmptyValue() {
-        return ZERO;
-    }
 }

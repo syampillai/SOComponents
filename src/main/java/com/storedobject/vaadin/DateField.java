@@ -11,7 +11,8 @@ import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 
 /**
- * A field to edit {@link Date}.
+ * A field to edit {@link Date}. Even though developers should start using {@link LocalDate}, almost all databases are still
+ * using {@link Date}.
  *
  * @author Syam
  */
@@ -34,17 +35,18 @@ public class DateField extends TranslatedField<Date, LocalDate> {
     public DateField(String label, Date initialValue) {
         this();
         setLabel(label);
-        if(initialValue != null) {
-            setValue(initialValue);
-        } else {
-            setValue(today());
-        }
+        setValue(initialValue);
+    }
+
+    @Override
+    public void setValue(Date value) {
+        super.setValue(value == null ? today() : value);
     }
 
     private static Date today() {
         if(today == null) {
-            GregorianCalendar c = new GregorianCalendar();
-            today = new Date(c.getTimeInMillis());
+            LocalDate d = LocalDate.now();
+            today = create(d.getYear(), d.getMonthValue(), d.getDayOfMonth());
         }
         return today;
     }
@@ -54,10 +56,16 @@ public class DateField extends TranslatedField<Date, LocalDate> {
     }
 
     public static Date create(LocalDate date) {
+        if(date == null) {
+            return today();
+        }
         return create(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
     }
 
     public static <D extends java.util.Date> LocalDate create(D date) {
+        if(date == null) {
+            return LocalDate.now();
+        }
         return LocalDate.of(getYear(date), getMonth(date), getDay(date));
     }
 
@@ -82,10 +90,5 @@ public class DateField extends TranslatedField<Date, LocalDate> {
     private static Date create(int year, int month, int day) {
         GregorianCalendar c = new GregorianCalendar(year, month - 1, day);
         return new Date(c.getTimeInMillis());
-    }
-
-    @Override
-    public Date getEmptyValue() {
-        return today();
     }
 }

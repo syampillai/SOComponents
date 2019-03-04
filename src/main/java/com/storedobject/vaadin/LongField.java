@@ -88,9 +88,4 @@ public class LongField extends NumericField<Long> {
         getField().setPattern(p);
         setPresentationValue(getValue());
     }
-
-    @Override
-    public Long getEmptyValue() {
-        return ZERO;
-    }
 }

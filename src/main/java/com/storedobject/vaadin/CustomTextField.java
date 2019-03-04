@@ -3,8 +3,9 @@ package com.storedobject.vaadin;
 import com.storedobject.vaadin.util.HasTextValue;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
+
+import java.util.Objects;
 
 /**
  * A "custom field" where the value is represented as a "text" using an internal text field.
@@ -81,14 +82,26 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         super.onAttach(attachEvent);
     }
 
-    /**
-     * Set the presentation value. Default implementation just set the stringified value.
-     *
-     * @param value Value to be set
-     */
+    protected abstract T getModelValue(String string);
+
+    @Override
+    protected T generateModelValue() {
+        String fv1 = getField().getValue();
+        T v = getModelValue(getField().getValue());
+        String fv2 = format(v);
+        if(!Objects.equals(fv1, fv2)) {
+            getField().setValue(fv2);
+        }
+        return v;
+    }
+
     @Override
     protected void setPresentationValue(T value) {
-        getField().setValue(value == null ? "" : value.toString());
+        getField().setValue(format(value));
+    }
+
+    protected String format(T value) {
+        return value == null ? "" : value.toString();
     }
 
     @Override

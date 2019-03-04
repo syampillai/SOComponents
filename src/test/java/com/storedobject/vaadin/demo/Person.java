@@ -35,6 +35,10 @@ public class Person {
         return LocalDate.now().getYear() - dateOfBirth.getYear();
     }
 
+    public String getAnother() {
+        return "Test";
+    }
+
     public void validateData() throws Exception {
         if(dateOfBirth == null) {
             throw new Exception("Date of Birth can not be empty");

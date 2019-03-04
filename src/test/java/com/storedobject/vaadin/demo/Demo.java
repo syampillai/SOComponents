@@ -71,6 +71,7 @@ public class Demo extends Application {
                     System.err.print('x');
                 }
             });
+            add(MenuItem.create("Test Custom Field", new TestCustomField()));
             u.setMaxFiles(2);
             add(MenuItem.create("Upload Processor Test", u));
             add(MenuItem.create("Edit Person Details", new PersonEditor()));

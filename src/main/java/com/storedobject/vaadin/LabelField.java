@@ -1,19 +1,18 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.ElementClick;
-import com.vaadin.flow.component.customfield.CustomField;
+import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.binder.HasItems;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * A field that displays one item from a list. Item selection can be changed by clicking on it.
  * <p>By default, toString() method is used to convert the item into its displayable text unless a function is set
- * for this purpose using {@link LabelField#setLabelGenerator(Function)}.</p>
+ * for this purpose using {@link LabelField#setItemLabelGenerator(ItemLabelGenerator)}.</p>
  *
  * @param <T> Value type of the field
  * @author Syam
@@ -23,7 +22,7 @@ public class LabelField<T> extends CustomField<T> implements HasItems<T> {
     private Div container = new Div();
     private List<T> items;
     private int index = -1;
-    private Function<T, String> labelGenerator;
+    private ItemLabelGenerator<T> labelGenerator;
 
     /**
      * Constructor.
@@ -41,6 +40,7 @@ public class LabelField<T> extends CustomField<T> implements HasItems<T> {
      * @param items List items
      */
     public LabelField(String label, List<T> items) {
+        super(items.get(0));
         add(container);
         Box b = new Box(container);
         b.setStyle("background", "var(--lumo-contrast-20pct)");
@@ -162,7 +162,7 @@ public class LabelField<T> extends CustomField<T> implements HasItems<T> {
      * Set a label generator to convert item values into displayable labels.
      * @param labelGenerator Label generator
      */
-    public void setLabelGenerator(Function<T, String> labelGenerator) {
+    public void setItemLabelGenerator(ItemLabelGenerator<T> labelGenerator) {
         this.labelGenerator = labelGenerator;
     }
 }

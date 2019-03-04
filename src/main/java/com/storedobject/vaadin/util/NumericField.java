@@ -4,6 +4,7 @@ import com.storedobject.vaadin.CustomTextField;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 public abstract class NumericField<T extends Number> extends CustomTextField<T> {
 
@@ -56,22 +57,9 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
 
     protected abstract void setPattern();
 
-    protected abstract T getModelValue(String string);
-
-    @Override
-    protected T generateModelValue() {
-        return getModelValue(getField().getValue());
-    }
-
-    @Override
-    protected void setPresentationValue(T value) {
-        getField().setValue(format(value));
-    }
-
-    @SuppressWarnings("unchecked")
     protected String format(T value) {
         if(value == null) {
-            value = (T)new Integer(0);
+            value = getEmptyValue();
         }
         DecimalFormat format = (DecimalFormat) DecimalFormat.getNumberInstance();
         format.setMaximumIntegerDigits(30);

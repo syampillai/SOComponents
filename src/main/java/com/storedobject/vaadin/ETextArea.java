@@ -1,7 +1,6 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.IronAutogrowTextArea;
-import com.vaadin.flow.component.customfield.CustomField;
 
 /**
  * A auto-expanding multi-line text field. The height of the field will be automatically increased (up to the value of maximum rows set)
@@ -22,6 +21,7 @@ public class ETextArea extends CustomField<String> {
      * Constructor.
      */
     public ETextArea() {
+        super("");
         field = new IronAutogrowTextArea();
         add(field);
     }
@@ -58,11 +58,6 @@ public class ETextArea extends CustomField<String> {
     @Override
     public void setValue(String value) {
         super.setValue(value == null ? "" : value);
-    }
-
-    @Override
-    public String getEmptyValue() {
-        return "";
     }
 
     /**

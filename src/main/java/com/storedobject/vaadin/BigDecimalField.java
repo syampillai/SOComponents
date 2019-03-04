@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  */
 public class BigDecimalField extends NumericField<BigDecimal> {
 
-    private int decimals;
+    private final int decimals;
 
     public BigDecimalField() {
         this(null);
@@ -175,10 +175,5 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         } catch(Throwable ignored) {
         }
         return null;
-    }
-
-    @Override
-    public BigDecimal getEmptyValue() {
-        return BigDecimal.ZERO;
     }
 }

@@ -1,7 +1,5 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.BasicComboBox;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,8 +37,8 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
 
     @SuppressWarnings("unchecked")
     public ChoiceField(String label, Collection<String> list) {
-        super(new BasicComboBox<>(sanitize(list)), (f, s) -> ((BasicComboBox<String>)f).getIndex(s),
-                (f, v) -> ((BasicComboBox<String>)f).getValue(v));
+        super(new ListField<>(sanitize(list)), (f, s) -> ((ListField<String>)f).getIndex(s),
+                (f, v) -> ((ListField<String>)f).getValue(v));
         setValue(0);
         setLabel(label);
     }

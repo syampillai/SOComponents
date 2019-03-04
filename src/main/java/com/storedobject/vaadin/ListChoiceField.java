@@ -39,14 +39,4 @@ public class ListChoiceField extends TranslatedField<Integer, String> implements
     public void setItems(Collection<String> items) {
         ((ListField<String>)getField()).setItems(items);
     }
-
-    /**
-     * Set the scroll height of the list shown.
-     * @param height Height
-     * @param minimumItemCount Minimum number of items to be displayed anyway
-     */
-    @SuppressWarnings("unchecked")
-    public void setScrollHeight(String height, int minimumItemCount) {
-        ((ListField<String>)getField()).setScrollHeight(height, minimumItemCount);
-    }
 }

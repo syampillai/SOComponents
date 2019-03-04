@@ -89,9 +89,4 @@ public class IntegerField extends NumericField<Integer> {
         getField().setPattern(p);
         setPresentationValue(getValue());
     }
-
-    @Override
-    public Integer getEmptyValue() {
-        return ZERO;
-    }
 }

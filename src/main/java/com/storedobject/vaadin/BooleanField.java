@@ -1,7 +1,6 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.customfield.CustomField;
 
 /**
  * Field to edit {@link Boolean} values.
@@ -25,6 +24,7 @@ public class BooleanField extends CustomField<Boolean> {
     }
 
     public BooleanField(String label, Boolean initialValue) {
+        super(false);
         setLabel(label);
         add(checkbox);
         setValue(initialValue);

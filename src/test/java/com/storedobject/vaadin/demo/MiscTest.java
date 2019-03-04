@@ -2,10 +2,13 @@ package com.storedobject.vaadin.demo;
 
 import com.storedobject.vaadin.*;
 import com.storedobject.vaadin.util.IronAutogrowTextArea;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.util.ArrayList;
@@ -21,10 +24,15 @@ public class MiscTest extends View {
             return;
         }
         FormLayout form = new FormLayout();
+        IntegerField integerField = new IntegerField("Integer");
+        form.add(integerField);
+        integerField.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
+        form.add(new EmailField("Email"));
+        form.add(new Select<>("Select 1", "Select 2", "Select 3"));
         DateField df = new DateField("Date");
         df.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
         form.add(df);
-        ChoiceField cf = new ChoiceField("Choose", new String[] {"One", "Two", "Three"});
+        ChoiceField cf = new ChoiceField("Choose X", new String[] {"One", "Two", "Three"});
         cf.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
         form.add(cf);
         BooleanField b = new BooleanField("Boolean");
@@ -68,6 +76,7 @@ public class MiscTest extends View {
         ListField<String> lb = new ListField<>("List", a);
         form.add(lb);
         lb.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
+        dataForm.add(new TextField("Hello"));
         ta = new ETextArea("Text", "Hello World");
         ta.setMinRows(5);
         ta.setMaxRows(10);
