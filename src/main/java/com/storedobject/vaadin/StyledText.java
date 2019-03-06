@@ -10,7 +10,7 @@ import com.vaadin.flow.component.html.Span;
  *
  * @author Syam
  */
-public class StyledText extends Composite<Span> implements HasText {
+public class StyledText extends Composite<Span> implements HasText, HasSize {
 
     private Span content = new Span();
     private String text;

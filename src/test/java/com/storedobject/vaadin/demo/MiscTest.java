@@ -1,8 +1,6 @@
 package com.storedobject.vaadin.demo;
 
 import com.storedobject.vaadin.*;
-import com.storedobject.vaadin.util.IronAutogrowTextArea;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.notification.Notification;
@@ -24,6 +22,13 @@ public class MiscTest extends View {
             return;
         }
         FormLayout form = new FormLayout();
+        ArrayList<String> list = new ArrayList<String>() {{ add("One"); add("Two"); add("Three"); }};
+        RadioField<String> rf = new RadioField("Radio", list);
+        form.add(rf);
+        rf.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
+        RadioChoiceField rbg = new RadioChoiceField("Radio", list);
+        form.add(rbg);
+        rbg.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
         IntegerField integerField = new IntegerField("Integer");
         form.add(integerField);
         integerField.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));

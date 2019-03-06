@@ -21,12 +21,13 @@ public class UploadProcessor extends CloseableView {
     private Upload upload;
     private int fileCount = 0, maxFileCount = 1;
     private BiConsumer<InputStream, String> processor;
+    private String fileName;
 
     /**
      * Constructor.
      * @param caption Caption
      * @param message Message to be shown
-     * @param processor Processor to process the content
+     * @param processor Processor to process the content (Parameters: content, mime type)
      */
     public UploadProcessor(String caption, String message, BiConsumer<InputStream, String> processor) {
         this(caption, new StyledText(message), processor);
@@ -36,7 +37,7 @@ public class UploadProcessor extends CloseableView {
      * Constructor.
      * @param caption Caption
      * @param message Message to be shown
-     * @param processor Processor to process the content
+     * @param processor Processor to process the content (Parameters: content, mime type)
      */
     public UploadProcessor(String caption, Component message, BiConsumer<InputStream, String> processor) {
         super(caption);
@@ -63,7 +64,8 @@ public class UploadProcessor extends CloseableView {
         return upload;
     }
 
-    private OutputStream createStream(String fileName, @SuppressWarnings("unused") String contentType) {
+    private OutputStream createStream(String fileName, String mimeType) {
+        this.fileName = fileName;
         if(processor == null) {
             return new OutputStream() {
                 @Override
@@ -75,7 +77,7 @@ public class UploadProcessor extends CloseableView {
         try {
             PipedInputStream in = new PipedInputStream(out);
             new Thread(() -> {
-                processor.accept(in, fileName);
+                processor.accept(in, mimeType);
                 try {
                     out.close();
                 } catch (IOException ignore) {
@@ -88,6 +90,14 @@ public class UploadProcessor extends CloseableView {
         } catch (IOException ignored) {
         }
         return out;
+    }
+
+    /**
+     * Get name of the file that is being processed. This could be called from within the "processor" if required.
+     * @return File name
+     */
+    public String getFileName() {
+        return fileName;
     }
 
     /**

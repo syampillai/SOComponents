@@ -1,7 +1,6 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.customfield.CustomField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,33 +18,66 @@ public class ChoicesField extends CustomField<Integer> {
     private ArrayList<Checkbox> list = new ArrayList<>();
     private Box box;
 
+    /**
+     * Constructor.
+     * @param choices Choices delimited by comma
+     */
     public ChoicesField(String choices) {
         this(null, choices);
     }
 
+    /**
+     * Constructor.
+     * @param label Label
+     * @param choices Choices delimited by comma
+     */
     public ChoicesField(String label, String choices) {
         this(label, Arrays.asList(choices.split(",")));
     }
 
+    /**
+     * Constructor.
+     * @param choices Choices
+     */
     public ChoicesField(String choices[]) {
         this(null, choices);
     }
 
+    /**
+     * Constructor.
+     * @param label Label
+     * @param choices Choices
+     */
     public ChoicesField(String label, String choices[]) {
         this(label, Arrays.asList(choices));
     }
 
-    public ChoicesField(Iterable<?> list) {
-        this(null, list);
+    /**
+     * Constructor.
+     * @param choices Choices
+     */
+    public ChoicesField(Iterable<?> choices) {
+        this(null, choices);
     }
 
-    public ChoicesField(String label, Iterable<?> list) {
-        this(label, createList(list));
+    /**
+     * Constructor.
+     * @param label Label
+     * @param choices Choices
+     */
+    public ChoicesField(String label, Iterable<?> choices) {
+        this(label, createList(choices));
     }
 
-    public ChoicesField(String label, Collection<String> list) {
+    /**
+     * Constructor.
+     * @param label Label
+     * @param choices Choices
+     */
+    public ChoicesField(String label, Collection<String> choices) {
+        super(ZERO);
         ButtonLayout container = new ButtonLayout();
-        sanitize(list).forEach(item -> {
+        sanitize(choices).forEach(item -> {
             Checkbox cb = new Checkbox(item);
             this.list.add(cb);
             container.add(cb);
@@ -125,10 +157,5 @@ public class ChoicesField extends CustomField<Integer> {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         box.setEnabled(enabled);
-    }
-
-    @Override
-    public Integer getEmptyValue() {
-        return ZERO;
     }
 }

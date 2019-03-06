@@ -51,6 +51,10 @@ public class TranslatedField<T, I> extends CustomField<T> {
         field.setValue(convertT2I.apply(field, value));
     }
 
+    /**
+     * Get the embedded field.
+     * @return The internal field.
+     */
     public HasValue<?, I> getField() {
         return field;
     }

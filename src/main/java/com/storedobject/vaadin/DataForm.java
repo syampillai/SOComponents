@@ -9,14 +9,16 @@ import java.util.stream.Stream;
 
 /**
  * This class is used to accept some quick data from the users. It has an "Ok" and a "Cancel" button. By default, is is displayed
- * as a {@link com.vaadin.flow.component.dialog.Dialog} box (you can switch off this feature using {@link #setWindowMode(boolean)}).
+ * as a {@link com.vaadin.flow.component.dialog.Dialog} box.
+ *
  * @author Syam
  */
 public abstract class DataForm extends AbstractDataForm {
 
     protected Button ok, cancel;
     protected HasComponents buttonPanel;
-    private boolean buttonsOnTop = false;
+    private boolean buttonsAtTop = false;
+    private final boolean windowMode;
 
     /**
      * Constructor.
@@ -29,15 +31,36 @@ public abstract class DataForm extends AbstractDataForm {
     /**
      * Constructor.
      * @param caption Caption
+     * @param windowMode True if the view to be displayed as a window/dialog
+     */
+    public DataForm(String caption, boolean windowMode) {
+        this(caption, null, null, windowMode);
+    }
+
+    /**
+     * Constructor.
+     * @param caption Caption
      * @param labelOK "Ok" label
      * @param labelCancel "Cancel" label
      */
     public DataForm(String caption, String labelOK, String labelCancel) {
+        this(caption, labelOK, labelCancel, true);
+    }
+
+    /**
+     * Constructor.
+     * @param caption Caption
+     * @param labelOK "Ok" label
+     * @param labelCancel "Cancel" label
+     * @param windowMode True if the view to be displayed as a window/dialog
+     */
+    public DataForm(String caption, String labelOK, String labelCancel, boolean windowMode) {
         this.form = new DForm();
         setErrorDisplay(null);
         setCaption(caption);
         ok = new Button(labelOK == null ? "Ok" : labelOK, "ok", this).asPrimary();
         cancel = new Button(labelCancel == null ? "Cancel" : labelCancel, "cancel", this);
+        this.windowMode = windowMode;
     }
 
     @Override
@@ -50,14 +73,18 @@ public abstract class DataForm extends AbstractDataForm {
         if(v == null) {
             v = createDefaultLayout();
         }
-        if(buttonsOnTop) {
+        if(buttonsAtTop) {
             v.add((Component)buttonPanel, getForm().getComponent());
         } else {
             v.add(getForm().getComponent(), (Component)buttonPanel);
         }
         buildFields();
         buildButtons();
-        setComponent(new Window((Component)v));
+        if(windowMode) {
+            setComponent(new Window((Component) v));
+        } else {
+            setComponent((Component)v);
+        }
     }
 
     private HasComponents createDefaultLayout() {
@@ -119,10 +146,10 @@ public abstract class DataForm extends AbstractDataForm {
 
     /**
      * Button panel is normally shown at the bottom. This method makes it appear at the top.
-     * @param buttonsOnTop Whether the button panel should be shown at the top or not
+     * @param buttonsAtTop Whether the button panel should be shown at the top or not
      */
-    public void setButtonsOnTop(boolean buttonsOnTop) {
-        this.buttonsOnTop = buttonsOnTop;
+    public void setButtonsAtTop(boolean buttonsAtTop) {
+        this.buttonsAtTop = buttonsAtTop;
     }
 
     /**
