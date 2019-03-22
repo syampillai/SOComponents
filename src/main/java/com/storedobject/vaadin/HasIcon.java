@@ -33,7 +33,7 @@ public interface HasIcon extends HasElement {
         if(iconCollection != null && !iconCollection.trim().isEmpty() && !icon.contains(":")) {
             icon = iconCollection.trim() + ":" + icon;
         }
-        getElement().setAttribute("icon", icon.trim().toLowerCase());
+        getElement().setAttribute("icon", icon.trim().toLowerCase().replace('_', '-'));
     }
 
     /**

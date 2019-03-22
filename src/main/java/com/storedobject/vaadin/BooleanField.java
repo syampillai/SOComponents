@@ -44,4 +44,16 @@ public class BooleanField extends CustomField<Boolean> {
     protected void setPresentationValue(Boolean value) {
         checkbox.setValue(value);
     }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        checkbox.setReadOnly(readOnly);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        checkbox.setEnabled(enabled);
+    }
 }

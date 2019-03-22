@@ -87,7 +87,7 @@ public class Data extends HashMap<String, Object> {
                 binder.bind(f, x -> valueHandler.getValue(name), null);
             }
         }
-        if(field instanceof ValueRequired && ((ValueRequired)field).isRequired()) {
+        if(field instanceof ValueRequired && ((ValueRequired)field).isRequired() && valueHandler.canSet(fieldName)) {
             setRequired(field, true, null);
         }
         return fieldName;
@@ -279,12 +279,12 @@ public class Data extends HashMap<String, Object> {
                 dv.remove(0);
             }
         }
-        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(form, errorMessage));
+        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(form, this, errorMessage));
     }
 
     private Required requiredCache() {
         if(requiredCache == null) {
-            requiredCache = new Required(form, null);
+            requiredCache = new Required(form, this,null);
         }
         return requiredCache;
     }
@@ -294,9 +294,11 @@ public class Data extends HashMap<String, Object> {
         private static final String CAN_NOT_BE_EMPTY = "Can not be empty";
         private String errorMessage;
         private Form form;
+        private Data data;
 
-        private Required(Form form, String errorMessage) {
+        private Required(Form form, Data data, String errorMessage) {
             this.form = form;
+            this.data = data;
             if(errorMessage != null && !errorMessage.isEmpty()) {
                 this.errorMessage = errorMessage;
             }
@@ -306,6 +308,10 @@ public class Data extends HashMap<String, Object> {
         public ValidationResult apply(Data data, ValueContext valueContext) {
             HasValue<?, ?> field = valueContext.getHasValue().orElse(null);
             if(field == null || !field.isEmpty()) {
+                return OK;
+            }
+            String fieldName = data.getName(field);
+            if(fieldName != null && data.valueHandler.canHandle(fieldName) && !data.valueHandler.canSet(fieldName)) {
                 return OK;
             }
             String m = errorMessage;

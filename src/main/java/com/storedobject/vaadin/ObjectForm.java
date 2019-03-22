@@ -93,7 +93,7 @@ public class ObjectForm<T> extends Form {
     }
 
     /**
-     * Set the method handler host. (See the documenation of the this class to get any idea).
+     * Set the method handler host. (See the documenation of the this class to get an idea).
      * @param host Method handler host
      */
     @SuppressWarnings("unchecked")
@@ -132,17 +132,32 @@ public class ObjectForm<T> extends Form {
     protected void addField(String... fieldNames) {
         Function<T, ?> valueGetter;
         BiConsumer<T, ?> valueSetter;
+        Method valueGetterM, valueSetterM;
         for(String fieldName: fieldNames) {
-            valueGetter = getFieldCreator().getValueGetter(fieldName);
-            if(valueGetter != null) {
-                getF.put(fieldName, valueGetter);
+            valueGetterM = getGetMethodFromHost(fieldName);
+            valueSetterM = valueGetterM == null ? null : getSetMethodFromHost(fieldName, valueGetterM);
+            if(valueGetterM == null) {
+                valueGetter = getFieldCreator().getValueGetter(fieldName);
+                if (valueGetter != null) {
+                    getF.put(fieldName, valueGetter);
+                }
+            } else {
+                valueGetter = null;
             }
-            valueSetter = getFieldCreator().getValueSetter(fieldName);
-            if(valueSetter != null) {
-                setF.put(fieldName, valueSetter);
+            if(valueSetterM == null) {
+                valueSetter = getFieldCreator().getValueSetter(fieldName);
+                if (valueSetter != null) {
+                    setF.put(fieldName, valueSetter);
+                    if(valueGetterM != null) {
+                        getM.put(fieldName, valueGetterM);
+                        continue;
+                    }
+                }
+            } else {
+                valueSetter = null;
             }
             if(valueGetter == null && valueSetter == null) {
-                addField(fieldName, null, (Method) null);
+                addField(fieldName, valueGetterM, valueSetterM);
             }
         }
     }
@@ -230,6 +245,35 @@ public class ObjectForm<T> extends Form {
         setM.put(fieldName, setMethod);
     }
 
+    private Method getGetMethodFromHost(String fieldName) {
+        Object host = getHost();
+        if(host == null) {
+            return null;
+        }
+        try {
+            return host.getClass().getMethod("get" + fieldName);
+        } catch (NoSuchMethodException ignored) {
+        }
+        try {
+            return host.getClass().getMethod("is" + fieldName);
+        } catch (NoSuchMethodException ignored) {
+        }
+        return null;
+    }
+
+    private Method getSetMethodFromHost(String fieldName, Method getMethod) {
+        Object host = getHost();
+        if(host == null) {
+            return null;
+        }
+        Class[] params = new Class[] { getMethod.getReturnType() };
+        try {
+            return host.getClass().getMethod("set" + fieldName, params);
+        } catch (NoSuchMethodException ignored) {
+        }
+        return null;
+    }
+
     /**
      * Get the field's "get" method. The default implementation checks for both getXXX and isXXX methods.
      * @param fieldName Name of the field
@@ -282,7 +326,8 @@ public class ObjectForm<T> extends Form {
         getFieldGetMethods().forEach(m -> {
             String name = getFieldCreator().getFieldName(m);
             if(name != null && includeField(name)) {
-                addField(name, m, null);
+                Method hm = getGetMethodFromHost(name);
+                addField(name, hm == null ? m : hm, null);
             }
         });
         Stream<String> additionalNames = getFieldCreator().getFieldNames();
@@ -291,7 +336,6 @@ public class ObjectForm<T> extends Form {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Stream<Method> getFieldGetMethods() {
         Stream<Method> stream = getFieldCreator().getFieldGetMethods();
         return stream == null ? Arrays.stream(objectClass.getMethods()) : stream;
@@ -364,7 +408,6 @@ public class ObjectForm<T> extends Form {
      * @param label Label
      * @return Field
      */
-    @SuppressWarnings("unchecked")
     protected HasValue<?, ?> createField(String fieldName, Class<?> fieldType, String label) {
         return getFieldCreator().createField(fieldName, fieldType, label);
     }
@@ -446,6 +489,11 @@ public class ObjectForm<T> extends Form {
      */
     protected boolean handleValueSetError(String fieldName, HasValue<?, ?> field, Object fieldValue, Object objectValue, Throwable error) {
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object getHost() {
+        return ((FieldHandler)data.getFieldValueHandler()).host;
     }
 
     private class FieldHandler extends ValueHandler {

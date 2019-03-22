@@ -61,14 +61,21 @@ public class Demo extends Application {
         @Override
         public void drawMenu(Application application) {
             getMenuPane().add(new HtmlComponent("hr"));
-            UploadProcessor u = new UploadProcessor("Upload", "Upload File", (in, ct) -> {
+            UploadProcessor u = new UploadProcessor("Upload", "Upload File");
+            u.setProcessor((in, ct) -> {
+                long count = 0;
                 try {
                     while (in.read() != -1) {
-                        System.err.print('.');
+                        u.setMessage("Read " + (++count) + " bytes");
+                        try {
+                            if(count % 10 == 0) {
+                                Thread.sleep(1000);
+                            }
+                        } catch (InterruptedException e) {
+                        }
                     }
-                    System.err.println();
                 } catch (IOException ignore) {
-                    System.err.print('x');
+                    u.setMessage("Error reading data");
                 }
             });
             add(MenuItem.create("Test Custom Field", new TestCustomField()));

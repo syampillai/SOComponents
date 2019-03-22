@@ -30,6 +30,7 @@ public class View implements ExecutableView {
     private boolean internalWindowAction = false;
     private boolean doFocus = true;
     private Component postFocus;
+    private Focusable<?> firstFocus;
 
     /**
      * Create a View with no caption.
@@ -206,9 +207,22 @@ public class View implements ExecutableView {
     }
 
     /**
+     * Sett the fist focusable component. (If this is not set, it will try to find out the first focusable comoonent by traversing the
+     * component tree).
+     * @param firstFocus Component to be focused
+     */
+    public void setFirstFocus(Focusable<?> firstFocus) {
+        this.firstFocus = firstFocus;
+    }
+
+    /**
      * Focus this view by finding the first focusable component.
      */
     public void focus() {
+        if(firstFocus != null) {
+            firstFocus.focus();
+            return;
+        }
         if(!focus(getContent())) {
             focusAny(getContent());
         }
@@ -321,6 +335,14 @@ public class View implements ExecutableView {
     @Override
     public View getView(boolean create) {
         return this;
+    }
+
+    /**
+     * Select this as the active view of the application.
+     * @return True if the view is set as the active view of the application.
+     */
+    public boolean select() {
+        return getApp().select(this);
     }
 
     /**

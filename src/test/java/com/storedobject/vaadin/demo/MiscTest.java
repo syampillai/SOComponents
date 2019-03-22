@@ -7,6 +7,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ public class MiscTest extends View {
             return;
         }
         FormLayout form = new FormLayout();
+        NumberField numberField = new NumberField("Number Field");
+        numberField.setRequiredIndicatorVisible(true);
+        form.add(numberField);
         ArrayList<String> list = new ArrayList<String>() {{ add("One"); add("Two"); add("Three"); }};
         RadioField<String> rf = new RadioField("Radio", list);
         form.add(rf);

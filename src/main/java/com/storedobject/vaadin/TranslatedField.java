@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasValue;
 import java.util.function.BiFunction;
 
@@ -57,5 +58,19 @@ public class TranslatedField<T, I> extends CustomField<T> {
      */
     public HasValue<?, I> getField() {
         return field;
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        field.setReadOnly(readOnly);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if(field instanceof HasEnabled) {
+            ((HasEnabled) field).setEnabled(enabled);
+        }
     }
 }

@@ -89,6 +89,7 @@ import java.util.*;
 public abstract class Application extends UI {
 
     private ApplicationEnvironment environment;
+    private Map<Object, Integer> pollIntervals = new HashMap<>();
     private ViewManager viewManager;
     private ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
     private String link;
@@ -455,6 +456,15 @@ public abstract class Application extends UI {
     }
 
     /**
+     * For internal use only. (Select a view)
+     * @param view View to be selected
+     * @return Whether the view was selected or not.
+     */
+    boolean select(View view) {
+        return viewManager.select(view);
+    }
+
+    /**
      * This method must be called from {@link #login()} when login credentials are verified.
      */
     protected final void loggedin() {
@@ -471,6 +481,74 @@ public abstract class Application extends UI {
         if(v != null) {
             v.setPostFocus(component);
         }
+    }
+
+    @Override
+    public void setPollInterval(int intervalInMillis) {
+        setPollInterval(this, intervalInMillis);
+    }
+
+    /**
+     * Set polling interval. Several owners may be requesting it and the value actually set will the lowest value. It is
+     * the owner's responsibility to release polling by invoking stopPolling when polling is
+     * no more required.
+     * @param owner Object that is invoking the request
+     * @param intervalInMillis Interval in milliseconds
+     * @see #stopPolling(Object)
+     */
+    public void setPollInterval(Object owner, int intervalInMillis) {
+        if(owner == null) {
+            return;
+        }
+        if(intervalInMillis <= 0) {
+            intervalInMillis = -1;
+        }
+        Integer pi = pollIntervals.get(owner);
+        if(pi == null) {
+            if(intervalInMillis == -1) {
+                return;
+            }
+            pollIntervals.put(owner, intervalInMillis);
+            setPoll();
+            return;
+        }
+        if(pi == intervalInMillis) {
+            return;
+        }
+        if(intervalInMillis == -1) {
+            pollIntervals.remove(owner);
+            setPoll();
+            return;
+        }
+        pollIntervals.put(owner, intervalInMillis);
+        if(intervalInMillis < pi) {
+            if (intervalInMillis <= getPollInterval()) {
+                super.setPollInterval(intervalInMillis);
+            }
+            return;
+        }
+        setPoll();
+    }
+
+    private void setPoll() {
+        int pi = pollIntervals.values().stream().min(Comparator.comparing(Integer::valueOf)).orElse(-1);
+        access(() -> super.setPollInterval(pi));
+    }
+
+    /**
+     * Start polling by setting the interval to 1000 milliseconds.
+     * @param owner Object that is invoking the request
+     */
+    public void startPolling(Object owner) {
+        setPollInterval(owner, 1000);
+    }
+
+    /**
+     * Stop polling. Polling will not be stopped if requests are there from other owners.
+     * @param owner Owner who requested for polling earlier
+     */
+    public void stopPolling(Object owner) {
+        setPollInterval(owner, -1);
     }
 
     /**

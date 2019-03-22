@@ -1,68 +1,56 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasValue;
 
-@Tag("vaadin-custom-field")
-@HtmlImport("frontend://bower_components/vaadin-custom-field/src/vaadin-custom-field.html")
-public abstract class CustomField<T> extends AbstractField<CustomField<T>, T> implements HasComponents, HasSize, HasValidation, Focusable<CustomField> {
+/**
+ * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.customfield.CustomField}.
+ *
+ * @param <T> Value type
+ * @author Syam
+ */
+public abstract class CustomField<T> extends com.vaadin.flow.component.customfield.CustomField<T> {
 
+    /**
+     * Constructor.
+     *
+     * @param defaultValue Default value (getEmptyValue() will return this)
+     */
     public CustomField(T defaultValue) {
         super(defaultValue);
-        getElement().addEventListener("change", (e) -> setModelValue(this.generateModelValue(), true));
     }
 
+    /**
+     * Add fields to the custom field. Any change in the field values will fire a value change event.
+     *
+     * @param fields Fields to be added
+     */
     public void addField(HasValue<?, ?>... fields) {
-        addField(this, fields);
+        addField(null, fields);
     }
 
+    /**
+     * Add fields to the container (that may have already added to it earlier) of the custom field.
+     * Any change in the field values will fire a value change event.
+     *
+     * @param container Container to which fields must be added
+     * @param fields Fields to be added
+     */
     public void addField(HasComponents container, HasValue<?, ?>... fields) {
         for(HasValue<?, ?> field: fields) {
             if(field instanceof Component) {
-                container.add((Component)field);
+                if(container == null) {
+                    add((Component)field);
+                } else {
+                    container.add((Component) field);
+                }
             }
             field.addValueChangeListener(e -> {
                 if(e.isFromClient()) {
-                    setModelValue(this.generateModelValue(), true);
+                    updateValue();
                 }
             });
         }
-    }
-
-    protected abstract T generateModelValue();
-
-    protected abstract void setPresentationValue(T var1);
-
-    protected void updateValue() {
-        this.setModelValue(this.generateModelValue(), false);
-    }
-
-    @Synchronize(
-            property = "invalid",
-            value = {"invalid-changed"}
-    )
-    public boolean isInvalid() {
-        return this.getElement().getProperty("invalid", false);
-    }
-
-    public void setInvalid(boolean invalid) {
-        this.getElement().setProperty("invalid", invalid);
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.getElement().setProperty("errorMessage", errorMessage);
-    }
-
-    public String getErrorMessage() {
-        return this.getElement().getProperty("errorMessage");
-    }
-
-    public String getLabel() {
-        return this.getElement().getProperty("label", null);
-    }
-
-    public void setLabel(String label) {
-        this.getElement().setProperty("label", label);
     }
 }

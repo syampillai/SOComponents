@@ -3,6 +3,8 @@ package com.storedobject.vaadin;
 import com.storedobject.vaadin.util.HasTextValue;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasEnabled;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
 
 import java.util.Objects;
@@ -16,6 +18,7 @@ import java.util.Objects;
 public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix {
 
     private HasTextValue field;
+    private String emptyDisplay;
 
     /**
      * Constructor.
@@ -88,7 +91,7 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
     protected T generateModelValue() {
         String fv1 = getField().getValue();
         T v = getModelValue(getField().getValue());
-        String fv2 = format(v);
+        String fv2 = (emptyDisplay == null || !Objects.equals(getEmptyValue(), v)) ? format(v) : emptyDisplay;
         if(!Objects.equals(fv1, fv2)) {
             getField().setValue(fv2);
         }
@@ -102,6 +105,21 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
 
     protected String format(T value) {
         return value == null ? "" : value.toString();
+    }
+
+    /**
+     * Set text to be displayed when the value of the field is empty.
+     * @param emptyDisplay Text to be displayed
+     */
+    public void setEmptyValue(String emptyDisplay) {
+        this.emptyDisplay = emptyDisplay;
+        if(emptyDisplay == null) {
+            return;
+        }
+        if(Objects.equals(getValue(), getEmptyValue()) && emptyDisplay.equals(getField().getValue())) {
+            return;
+        }
+        getField().setValue(emptyDisplay);
     }
 
     @Override
@@ -126,6 +144,22 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
     @Override
     public Component getSuffixComponent() {
         return field instanceof HasPrefixAndSuffix ? ((HasPrefixAndSuffix)field).getSuffixComponent() : null;
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        if(field instanceof HasValue) {
+            ((HasValue)field).setReadOnly(readOnly);
+        }
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if(field instanceof HasEnabled) {
+            ((HasEnabled)field).setEnabled(enabled);
+        }
     }
 
     private static class TF extends com.vaadin.flow.component.textfield.TextField implements HasTextValue {
