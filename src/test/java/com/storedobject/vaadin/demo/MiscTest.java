@@ -23,6 +23,7 @@ public class MiscTest extends View {
             return;
         }
         FormLayout form = new FormLayout();
+        form.add(new UploadField("Upload"));
         NumberField numberField = new NumberField("Number Field");
         numberField.setRequiredIndicatorVisible(true);
         form.add(numberField);

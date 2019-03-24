@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -93,6 +94,7 @@ public abstract class Application extends UI {
     private ViewManager viewManager;
     private ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
     private String link;
+    private int deviceWidth = -1, deviceHeight = -1;
     String error;
 
     /**
@@ -336,12 +338,25 @@ public abstract class Application extends UI {
         return link;
     }
 
+    @ClientCallable
+    private void deviceSize(int width, int height) {
+        this.deviceWidth = width;
+        this.deviceHeight = height;
+    }
+
+    private void receiveSize() {
+        getPage().executeJavaScript("document.body.$server.deviceSize(document.body.clientWidth, document.body.clientHeight);");
+    }
+
     /**
      * Get the device (broswer) height.
      * @return Device height.
      */
     public int getDeviceHeight() {
-        return VaadinSession.getCurrent().getBrowser().getScreenHeight();
+        if(deviceHeight < 0) {
+            receiveSize();
+        }
+        return deviceHeight;
     }
 
     /**
@@ -349,7 +364,10 @@ public abstract class Application extends UI {
      * @return Device width.
      */
     public int getDeviceWidth() {
-        return VaadinSession.getCurrent().getBrowser().getScreenWidth();
+        if(deviceWidth < 0) {
+            receiveSize();
+        }
+        return deviceWidth;
     }
 
     /**
@@ -394,6 +412,7 @@ public abstract class Application extends UI {
     final void setMainView(ApplicationView applicationView) {
         if(this.viewManager == null) {
             viewManager = new ViewManager(applicationView);
+            receiveSize();
             login();
         }
     }

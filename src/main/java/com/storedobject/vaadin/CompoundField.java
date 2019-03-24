@@ -5,7 +5,6 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.customfield.CustomField;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

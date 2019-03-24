@@ -61,26 +61,6 @@ public class Demo extends Application {
         @Override
         public void drawMenu(Application application) {
             getMenuPane().add(new HtmlComponent("hr"));
-            UploadProcessor u = new UploadProcessor("Upload", "Upload File");
-            u.setProcessor((in, ct) -> {
-                long count = 0;
-                try {
-                    while (in.read() != -1) {
-                        u.setMessage("Read " + (++count) + " bytes");
-                        try {
-                            if(count % 10 == 0) {
-                                Thread.sleep(1000);
-                            }
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                } catch (IOException ignore) {
-                    u.setMessage("Error reading data");
-                }
-            });
-            add(MenuItem.create("Test Custom Field", new TestCustomField()));
-            u.setMaxFiles(2);
-            add(MenuItem.create("Upload Processor Test", u));
             add(MenuItem.create("Edit Person Details", new PersonEditor()));
             add(MenuItem.create("Veiw Sample PDF", new PDFTest()));
             add(MenuItem.create("Test Alert Component", "vaadin:user", new AlertTest()));
@@ -88,6 +68,7 @@ public class Demo extends Application {
             add(MenuItem.create("Test Grid", new GridTest()));
             add(MenuItem.create("Test Parent/Child", new ParentChildTest()));
             add(MenuItem.create("Test Dashboard", new DashboardTest()));
+            add(MenuItem.create("Test Form", new FormTest()));
         }
     }
 

@@ -29,6 +29,18 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         super(defaultValue);
     }
 
+    @Override
+    public void setWidth(String width) {
+        super.setWidth(width);
+        ((HasSize)field).setWidth(width);
+    }
+
+    @Override
+    public void setHeight(String height) {
+        super.setHeight(height);
+        ((HasSize)field).setHeight(height);
+    }
+
     /**
      * Create the internal text field. By default, it creates a {@link com.vaadin.flow.component.textfield.TextField}.
      *
@@ -162,6 +174,6 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         }
     }
 
-    private static class TF extends com.vaadin.flow.component.textfield.TextField implements HasTextValue {
+    private static class TF extends com.vaadin.flow.component.textfield.TextField implements HasSize, HasTextValue {
     }
 }
