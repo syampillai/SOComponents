@@ -113,5 +113,11 @@ public class MenuItemGroup extends MenuItem {
             expandIcon.setAttribute("icon", "vaadin:angle-right");
             getElement().appendChild(expandIcon);
         }
+
+        @Override
+        public void setLabel(String label) {
+            super.setLabel(label);
+            getElement().appendChild(expandIcon);
+        }
     }
 }

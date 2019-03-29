@@ -400,6 +400,16 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
+     * Get the current Application.
+     *
+     * @return Current Application.
+     */
+    @SuppressWarnings("unchecked")
+    default <A extends Application> A getApplication() {
+        return (A)getSOGrid().getApplication();
+    }
+
+    /**
      * For internal use only.
      * @return SO Grid
      */
@@ -425,6 +435,7 @@ public interface HasColumns<T> extends ExecutableView {
         private T objectRendered;
         private View view;
         private boolean buildTree;
+        private Application application;
 
         @SuppressWarnings("unchecked")
         SOGrid(Grid<T> grid, Class<T> objectClass, Iterable<String> columns) {
@@ -435,6 +446,7 @@ public interface HasColumns<T> extends ExecutableView {
             this.columns = columns;
             grid.addAttachListener(e -> init());
             grid.getElement().getClassList().add("so-grid");
+            getApplication();
         }
 
         private void constructed() {
@@ -482,6 +494,17 @@ public interface HasColumns<T> extends ExecutableView {
 
         private void compact() {
             grid.getElement().setAttribute("theme", "compact row-stripes wrap-cell-content");
+        }
+
+        private Application getApplication() {
+            if(application == null) {
+                application = Application.get();
+            }
+            if(application == null) {
+                //noinspection ConstantConditions
+                application = (Application)grid.getUI().orElseGet(null);
+            }
+            return application;
         }
 
         private void setRO(T object) {

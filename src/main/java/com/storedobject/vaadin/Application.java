@@ -5,12 +5,18 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.server.*;
+import com.vaadin.flow.server.Command;
+import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.VaadinSession;
 
+import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Application is an extension to Vaadin's UI class for creating 'single page' web applications. The 'single page' should be defined
@@ -95,6 +101,8 @@ public abstract class Application extends UI {
     private ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
     private String link;
     private int deviceWidth = -1, deviceHeight = -1;
+    private final ArrayList<Command> commands = new ArrayList<>();
+    private transient boolean closed = false;
     String error;
 
     /**
@@ -124,6 +132,24 @@ public abstract class Application extends UI {
             if(!init(link)) {
                 error = "Initialization failed";
             }
+        }
+        if(error == null) {
+            new Thread(() -> {
+                while (!closed) {
+                    synchronized (commands) {
+                        if(!commands.isEmpty()) {
+                            super.access(commands.remove(0));
+                            if(!commands.isEmpty()) {
+                                continue;
+                            }
+                        }
+                        try {
+                            commands.wait();
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                }
+            }).start();
         }
     }
 
@@ -168,7 +194,9 @@ public abstract class Application extends UI {
     /**
      * Close the application by closing all registered "resources". If the associated session is not closed, it will also be closed.
      */
-    public void close() {
+    @Override
+    public synchronized void close() {
+        closed = true;
         while(resources.size() > 0) {
             Closeable resource = resources.remove(0).get();
             if(resource != null) {
@@ -183,6 +211,9 @@ public abstract class Application extends UI {
             vs.close();
         }
         super.close();
+        synchronized (commands) {
+            commands.notifyAll();
+        }
     }
 
     /**
@@ -502,6 +533,16 @@ public abstract class Application extends UI {
         }
     }
 
+    /**
+     * Get menu item for a particular view (For internal use only).
+     *
+     * @param view View
+     * @return Menu item if exists, otherwise <code>null</code>.
+     */
+    MenuItem getMenuItem(View view) {
+        return viewManager.getMenuItem(view);
+    }
+
     @Override
     public void setPollInterval(int intervalInMillis) {
         setPollInterval(this, intervalInMillis);
@@ -707,6 +748,10 @@ public abstract class Application extends UI {
             stack.remove(view);
             stack.add(view);
             return true;
+        }
+
+        private MenuItem getMenuItem(View view) {
+            return contentMenu.get(view);
         }
 
         private void hilite(MenuItem menuItem) {

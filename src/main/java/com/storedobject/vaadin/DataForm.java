@@ -61,6 +61,9 @@ public abstract class DataForm extends AbstractDataForm {
         ok = new Button(labelOK == null ? "Ok" : labelOK, "ok", this).asPrimary();
         cancel = new Button(labelCancel == null ? "Cancel" : labelCancel, "cancel", this);
         this.windowMode = windowMode;
+        if(windowMode) {
+            setColumns(1);
+        }
     }
 
     @Override

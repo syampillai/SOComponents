@@ -419,4 +419,42 @@ public abstract class AbstractDataForm extends View {
      */
     protected static class FieldError extends RuntimeException {
     }
+
+    /**
+     * Set number of responsive columns for the form.
+     *
+     * @param columns Number of responsive columns required
+     */
+    public void setColumns(int columns) {
+        form.setColumns(columns);
+    }
+
+    /**
+     * Get number of responsive columns for the form.
+     *
+     * @return Number of responsive columns of the form.
+     */
+    public final int getColumns() {
+        return form.getColumns();
+    }
+
+    /**
+     * Set number of columns to span for a particular component.
+     *
+     * @param component Component for which column span to be set
+     * @param columnSpan Number of columns to span
+     */
+    public void setColumnSpan(Component component, int columnSpan) {
+        form.setColumnSpan(component, columnSpan);
+    }
+
+    /**
+     * Get the column span of a component.
+     *
+     * @param component omponent for which column span to be retrieved
+     * @return Column span for the component.
+     */
+    public int getColumnSpan(Component component) {
+        return form.getColumnSpan(component);
+    }
 }

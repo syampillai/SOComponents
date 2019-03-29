@@ -61,6 +61,18 @@ public class MenuItem implements Runnable, ClickNotifier {
     }
 
     /**
+     * Set thhe label of the menu item.
+     *
+     * @param label New label value
+     */
+    public void setLabel(String label) {
+        this.label = label;
+        if(item instanceof HasLabel) {
+            ((HasLabel) item).setLabel(label);
+        }
+    }
+
+    /**
      * Set the visibility of the menu item.
      * @param visible True or false
      */
@@ -197,19 +209,31 @@ public class MenuItem implements Runnable, ClickNotifier {
         click.removeClickListener(listener);
     }
 
+    interface HasLabel {
+        void setLabel(String label);
+    }
+
     @Tag("paper-item")
     @HtmlImport("frontend://bower_components/paper-item/paper-item.html")
-    static class Item extends Component {
+    static class Item extends Component implements HasLabel {
 
         Item(String menu) {
             getElement().setText(menu);
+        }
+
+        @Override
+        public void setLabel(String label) {
+            getElement().removeAllChildren();
+            if(label != null) {
+                getElement().appendChild(Element.createText(label));
+            }
         }
     }
 
     @Tag("paper-icon-item")
     @HtmlImport("frontend://bower_components/iron-icons/iron-icons.html")
     @HtmlImport("frontend://bower_components/paper-item/paper-icon-item.html")
-    static class IconItem extends Component implements IconElement {
+    static class IconItem extends Component implements IconElement, HasLabel {
 
         private Element ironIcon;
 
@@ -226,6 +250,15 @@ public class MenuItem implements Runnable, ClickNotifier {
         @Override
         public Element getIconElement() {
             return ironIcon;
+        }
+
+        @Override
+        public void setLabel(String label) {
+            getElement().removeAllChildren();
+            getElement().appendChild(ironIcon);
+            if(label != null) {
+                getElement().appendChild(Element.createText(label));
+            }
         }
     }
 

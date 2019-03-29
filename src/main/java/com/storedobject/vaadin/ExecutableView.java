@@ -10,6 +10,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Show a warning message. Default implementation is to invoke {@link Application#warning(Object)}.
+     *
      * @param message Warning
      */
     default void warning(Object message) {
@@ -18,6 +19,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Show a warning message n the "tray area" of the application. Default implementation is to invoke {@link Application#tray(Object)}.
+     *
      * @param message Message to show in the tray.
      */
     default void tray(Object message) {
@@ -26,6 +28,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Show a message. Default implementation is to invoke {@link Application#message(Object)}.
+     *
      * @param message Message
      */
     default void message(Object message) {
@@ -42,6 +45,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Get the currently active View. It could be null.
+     *
      * @return Currently active view.
      */
     default View getView() {
@@ -50,6 +54,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Get the View. Create it if it doesn't exist.
+     *
      * @param create Whether to create or not.
      * @return View.
      */
@@ -81,6 +86,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Set the caption
+     *
      * @param caption Caption
      */
     void setCaption(String caption);
@@ -88,10 +94,22 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     /**
      * Track value changes of a field {@link HasValue}. Whenever a value is changed, {@link #valueChanged(HasValue.ValueChangeEvent)}
      * method is invoked (and that in turn, will invoke {@link #valueChanged(ChangedValues)} becasue that is the default implementation).
+     *
      * @param field Field to be tracked.
      */
     @SuppressWarnings("unchecked")
     default void trackValueChange(HasValue<?, ?> field) {
         field.addValueChangeListener(this);
+    }
+
+    /**
+     * Get the current Application.
+     *
+     * @param <A> Application type
+     * @return Current Application.
+     */
+    @SuppressWarnings("unchecked")
+    default <A extends Application> A getApplication() {
+        return (A)Application.get();
     }
 }

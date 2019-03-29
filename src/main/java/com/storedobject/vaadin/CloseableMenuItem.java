@@ -34,12 +34,14 @@ public class CloseableMenuItem extends MenuItem {
     @HtmlImport("frontend://bower_components/paper-item/paper-item-body.html")
     static class CloseableIconItem extends Item {
 
+        private Div label;
+
         CloseableIconItem(String menu, final View view) {
             super(null);
             Element body = new Element("paper-item-body");
-            Div d = new Div();
-            d.setText(menu);
-            body.appendChild(d.getElement());
+            label = new Div();
+            label.setText(menu);
+            body.appendChild(label.getElement());
             getElement().appendChild(body);
             Element closeIcon = new Element("iron-icon");
             closeIcon.setAttribute("icon", "vaadin:close");
@@ -47,6 +49,11 @@ public class CloseableMenuItem extends MenuItem {
             getElement().appendChild(closeIcon);
             ElementClick click = new ElementClick(this, closeIcon);
             click.addClickListener(e -> view.close());
+        }
+
+        @Override
+        public void setLabel(String label) {
+            this.label.setText(label);
         }
     }
 }

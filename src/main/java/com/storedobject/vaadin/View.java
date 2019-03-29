@@ -31,6 +31,7 @@ public class View implements ExecutableView {
     private boolean doFocus = true;
     private Component postFocus;
     private Focusable<?> firstFocus;
+    private Application application;
 
     /**
      * Create a View with no caption.
@@ -53,6 +54,7 @@ public class View implements ExecutableView {
      * @param caption Caption
      */
     public View(Component component, String caption) {
+        getApplication();
         setCaption(caption);
         if(component != null) {
             setComponent(component);
@@ -269,6 +271,13 @@ public class View implements ExecutableView {
      */
     public void setCaption(String caption) {
         this.caption = caption;
+        Application a = getApplication();
+        if(a != null) {
+            MenuItem menuItem = a.getMenuItem(this);
+            if(menuItem != null) {
+                menuItem.setLabel(caption);
+            }
+        }
     }
 
     /**
@@ -342,7 +351,7 @@ public class View implements ExecutableView {
      * @return True if the view is set as the active view of the application.
      */
     public boolean select() {
-        return getApp().select(this);
+        return getApplication().select(this);
     }
 
     /**
@@ -374,6 +383,7 @@ public class View implements ExecutableView {
      * Override this if you want to do something before the View comes up on the screen.
      * Call super.execute(parent, doNotLock) to make the View appear on the screen.
      * Parent view is automatically selected when this view closes.
+     *
      * @param parent Parent view to lock
      * @param doNotLock True if parent should not be locked
      */
@@ -386,15 +396,25 @@ public class View implements ExecutableView {
         }
         this.parent = parent;
         aborted = false;
-        getApp().execute(this, doNotLock, parent);
+        getApplication().execute(this, doNotLock, parent);
     }
 
-    private Application getApp() {
-        return Application.get();
+    /**
+     * Get the application that's tied to this View.
+     *
+     * @return The Application.
+     */
+    @SuppressWarnings("unchecked")
+    public <A extends Application> A getApplication() {
+        if(application == null) {
+            application = Application.get();
+        }
+        return (A)application;
     }
 
     /**
      * Is if this view is currently being displayed.
+     *
      * @return True or false.
      */
     public final boolean executing() {
@@ -452,12 +472,12 @@ public class View implements ExecutableView {
             windowMonitor.remove();
             windowMonitor = null;
         }
-        getApp().close(this);
+        getApplication().close(this);
         if(detachParent && parent != null) {
             detachParent = false;
             View p = parent;
             parent = null;
-            getApp().close(p);
+            getApplication().close(p);
         } else {
             parent = null;
         }

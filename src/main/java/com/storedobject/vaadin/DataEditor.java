@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 /**
  * A {@link View} that is used for creating a "data entry form" with "Save"/"Cancel" buttons.
+ *
  * @param <T> Type of the object to edit
  * @author Syam
  */

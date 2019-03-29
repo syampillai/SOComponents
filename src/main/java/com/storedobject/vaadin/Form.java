@@ -6,7 +6,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.dom.Element;
 
 import java.util.Objects;
@@ -32,6 +31,7 @@ public class Form {
     protected final Data data;
     private boolean loadPending = false;
     private View view;
+    private int columns = 2;
 
     /**
      * Construct a form.
@@ -97,6 +97,7 @@ public class Form {
                     }
                 });
             }
+            setColumns(columns);
             constructed();
             if(loadPending) {
                 load();
@@ -246,6 +247,54 @@ public class Form {
      */
     public void removeAll() {
         getContainer().removeAll();
+    }
+
+    /**
+     * Set number of responsive columns for the form. (This will work only when the container is of type {@link FormLayout}).
+     *
+     * @param columns Number of responsive columns required
+     */
+    public void setColumns(int columns) {
+        if(container instanceof FormLayout) {
+            ((FormLayout) container).setColumns(columns);
+        }
+        this.columns = columns;
+    }
+
+    /**
+     * Get number of responsive columns for the form. (This will work only when the container is of type {@link FormLayout}).
+     *
+     * @return Number of responsive columns of the form.
+     */
+    public final int getColumns() {
+        if(container instanceof FormLayout) {
+            return ((FormLayout) container).getColumns();
+        }
+        return columns;
+    }
+
+    /**
+     * Set number of columns to span for a particular component. (This will work only when the container is of type {@link FormLayout}).
+     *
+     * @param component Component for which column span to be set
+     * @param columnSpan Number of columns to span
+     */
+    public void setColumnSpan(Component component, int columnSpan) {
+        component.getElement().setAttribute("colspan", "" + Math.min(Math.max(1, columnSpan), getColumns()));
+    }
+
+    /**
+     * Get the column span of a component. (This will work only when the container is of type {@link FormLayout}).
+     *
+     * @param component omponent for which column span to be retrieved
+     * @return Column span for the component.
+     */
+    public int getColumnSpan(Component component) {
+        try {
+            return Integer.valueOf(component.getElement().getAttribute("colspan"));
+        } catch (Throwable error) {
+            return 1;
+        }
     }
 
     /**
