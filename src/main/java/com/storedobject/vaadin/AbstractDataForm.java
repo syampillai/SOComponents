@@ -6,6 +6,8 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -23,6 +25,8 @@ public abstract class AbstractDataForm extends View {
      * Form embedded in this view.
      */
     protected Form form;
+    private List<String> readOnly = new ArrayList<>(), hidden = new ArrayList<>();
+    private List<HasValue<?, ?>> readOnlyFields = new ArrayList<>(), hiddenFields = new ArrayList<>();
 
     /**
      * Get the form embedded in this view.
@@ -60,7 +64,7 @@ public abstract class AbstractDataForm extends View {
      * Default implementation creates a {@link com.vaadin.flow.component.formlayout.FormLayout}.
      * @return Field container created.
      */
-    protected HasComponents createContainer() {
+    protected HasComponents createFieldContainer() {
         return null;
     }
 
@@ -343,44 +347,217 @@ public abstract class AbstractDataForm extends View {
      * @return True or false.
      */
     public boolean isFieldVisible(@SuppressWarnings("unused") String fieldName) {
-        return true;
+        return !hidden.contains(fieldName);
     }
 
     /**
      * This method is invoked to determine if a field needs to be made visible or not.
+     *
      * @param field Field
      * @return True or false.
      */
     public boolean isFieldVisible(@SuppressWarnings("unused") HasValue<?, ?> field) {
-        return true;
+        return !hiddenFields.contains(field);
+    }
+
+    /**
+     * Set fields visible. (By default fields are visible).
+     *
+     * @param fieldNames Field names
+     */
+    public void setFieldVisible(String... fieldNames) {
+        if(fieldNames == null || fieldNames.length == 0) {
+            return;
+        }
+        for(String fieldName: fieldNames) {
+            hidden.remove(fieldName);
+            hiddenFields.remove(form.getField(fieldName));
+        }
+    }
+
+    /**
+     * Set fields visible. (By default fields are visible).
+     *
+     * @param fields Fields
+     */
+    public void setFieldVisible(HasValue<?, ?>... fields) {
+        if(fields == null || fields.length == 0) {
+            return;
+        }
+        for(HasValue<?, ?> field: fields) {
+            hidden.remove(form.getFieldName(field));
+            hiddenFields.remove(field);
+        }
+    }
+
+    /**
+     * Set fields hidden. (By default fields are visible).
+     *
+     * @param fieldNames Field names
+     */
+    public void setFieldHidden(String... fieldNames) {
+        if(fieldNames == null || fieldNames.length == 0) {
+            return;
+        }
+        HasValue<?, ?> field;
+        for(String fieldName: fieldNames) {
+            if(fieldName == null || fieldName.isEmpty()) {
+                continue;
+            }
+            hidden.add(fieldName);
+            field = form.getField(fieldName);
+            if(field != null) {
+                hiddenFields.add(field);
+            }
+        }
+    }
+
+    /**
+     * Set fields hidden. (By default fields are visible).
+     *
+     * @param fields Fields
+     */
+    public void setFieldHidden(HasValue<?, ?>... fields) {
+        if(fields == null || fields.length == 0) {
+            return;
+        }
+        String fieldName;
+        for(HasValue<?, ?> field: fields) {
+            if(field == null || field.isEmpty()) {
+                continue;
+            }
+            fieldName = form.getFieldName(field);
+            if(fieldName != null) {
+                readOnly.add(fieldName);
+            }
+            readOnlyFields.add(field);
+        }
     }
 
     /**
      * This method is invoked to determine if a field needs to be made editable or not.
+     *
      * @param fieldName Name of the field
      * @return True or false.
      */
     public boolean isFieldEditable(@SuppressWarnings("unused") String fieldName) {
-        return true;
+        return !readOnly.contains(fieldName);
     }
 
     /**
      * This method is invoked to determine if a field needs to be made editable or not.
+     *
      * @param field Field
      * @return True or false.
      */
     public boolean isFieldEditable(@SuppressWarnings("unused") HasValue<?, ?> field) {
-        return true;
+        return !readOnlyFields.contains(field);
+    }
+
+    /**
+     * Set fields editable. (By default fields are editable).
+     *
+     * @param fieldNames Field names
+     */
+    public void setFieldEditable(String... fieldNames) {
+        if(fieldNames == null || fieldNames.length == 0) {
+            return;
+        }
+        for(String fieldName: fieldNames) {
+            readOnly.remove(fieldName);
+            readOnlyFields.remove(form.getField(fieldName));
+        }
+    }
+
+    /**
+     * Set fields editable. (By default fields are editable).
+     *
+     * @param fields Fields
+     */
+    public void setFieldEditable(HasValue<?, ?>... fields) {
+        if(fields == null || fields.length == 0) {
+            return;
+        }
+        for(HasValue<?, ?> field: fields) {
+            readOnly.remove(form.getFieldName(field));
+            readOnlyFields.remove(field);
+        }
+    }
+
+    /**
+     * Set fields read only. (By default fields are editable).
+     *
+     * @param fieldNames Field names
+     */
+    public void setFieldReadOnly(String... fieldNames) {
+        if(fieldNames == null || fieldNames.length == 0) {
+            return;
+        }
+        HasValue<?, ?> field;
+        for(String fieldName: fieldNames) {
+            if(fieldName == null || fieldName.isEmpty()) {
+                continue;
+            }
+            readOnly.add(fieldName);
+            field = form.getField(fieldName);
+            if(field != null) {
+                readOnlyFields.add(field);
+            }
+        }
+    }
+
+    /**
+     * Set fields read only. (By default fields are editable).
+     *
+     * @param fields Fields
+     */
+    public void setFieldReadOnly(HasValue<?, ?>... fields) {
+        if(fields == null || fields.length == 0) {
+            return;
+        }
+        String fieldName;
+        for(HasValue<?, ?> field: fields) {
+            if(field == null || field.isEmpty()) {
+                continue;
+            }
+            fieldName = form.getFieldName(field);
+            if(fieldName != null) {
+                readOnly.add(fieldName);
+            }
+            readOnlyFields.add(field);
+        }
     }
 
     /**
      * This method is invoked to determine the label used for dislaying the field. The default implementation determine it by invoking
      * {@link ApplicationEnvironment#createLabel(String)}.
+     *
      * @param fieldName Name of the field
      * @return Label
      */
     protected String getLabel(@SuppressWarnings("unused") String fieldName) {
         throw FIELD_ERROR;
+    }
+
+
+    /**
+     * Set label for a specific field. Label will be set only if the field has a setLabel(String) method.
+     *
+     * @param fieldName Name of the field for which label needs to be set
+     * @param label Label to set
+     */
+    public void setFieldLabel(String fieldName, String label) {
+        form.setFieldLabel(fieldName, label);
+    }
+
+    /**
+     * Set label for a specific field. Label will be set only if the field has a setLabel(String) method.
+     *
+     * @param field Field for which label needs to be set
+     * @param label Label to set
+     */
+    public void setFieldLabel(HasValue<?, ?> field, String label) {
+        form.setFieldLabel(field, label);
     }
 
     /**

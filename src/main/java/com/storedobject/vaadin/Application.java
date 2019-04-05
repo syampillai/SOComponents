@@ -229,7 +229,8 @@ public abstract class Application extends UI {
      * @return Current application.
      */
     public static Application get() {
-        return (Application)UI.getCurrent();
+        UI ui = UI.getCurrent();
+        return ui instanceof Application ? (Application)ui : null;
     }
 
     /**

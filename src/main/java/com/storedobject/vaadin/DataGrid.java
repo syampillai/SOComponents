@@ -29,6 +29,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     /**
      * Constructor that will generate columns from the Bean's properties.
+     *
      * @param objectClass Bean type
      */
     public DataGrid(Class<T> objectClass) {
@@ -36,7 +37,8 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
     }
 
     /**
-     * Constructor that will generate columns from the column names passed
+     * Constructor that will generate columns from the column names passed.
+     *
      * @param objectClass Bean type
      * @param columns Column names
      */
@@ -46,6 +48,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     /**
      * For internal use only.
+     *
      * @return The embedded SO Grid.
      */
     @Override
@@ -62,6 +65,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
     /**
      * You can have a "header row" (as the first row) that covers the whole grid. Typically, such a row is to show your own buttons or components to
      * customize the grid. The default implentation returns null and thus, no such row is created.
+     *
      * @return Component to be used as the "header row".
      */
     protected Component createHeader() {
@@ -104,6 +108,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
      * appropriate {@link ApplicationEnvironment} that can create a customized {@link ObjectColumnCreator#getColumnNames()})
      * and in that case, columns names will be determined
      * through getXXX and isXXX methods of the Bean type.
+     *
      * @return Column names to be constructed.
      */
     protected Stream<String> getColumnNames() {
@@ -116,6 +121,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
      * {@link #getColumnFunction(String)}
      * is invoked before that and thus, this will not be invoked if data is already available through a Function returned by
      * the {@link #getColumnFunction(String)} method.
+     *
      * @param columnName Column name
      * @return method if available, otherwise null. Firstly, it sees if this can be retrieved from the
      * {@link ObjectColumnCreator#getColumnMethod(String)} returned by the {@link ApplicationEnvironment}.
@@ -126,6 +132,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     /**
      * This mehod is invoked when the column is actually constructed.
+     *
      * @param columnName Column name
      * @param column Grid column that may be customized
      */
@@ -136,6 +143,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     /**
      * Create a View to display the grid when executed. If this method returns null, a default View will be created.
+     *
      * @return A View with this grid as the component. Default implementaion returns <code>null</code>.
      */
     protected View createView() {

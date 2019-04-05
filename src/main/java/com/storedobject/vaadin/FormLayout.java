@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 
 /**
  * Enhanced version of Vaadin's {@link com.vaadin.flow.component.formlayout.FormLayout}.

@@ -8,62 +8,87 @@ import com.vaadin.flow.component.html.Span;
 import java.util.function.BooleanSupplier;
 
 /**
- * Confirm box is used to confirm some action by the user by displaying a message and Yes/No buttons.
+ * Action form is used to execute some action if the user confirms it by pressing a "Yes" button.
  *
  * @author Syam
  */
-public class ConfirmBox extends DataForm {
+public class ActionForm extends DataForm {
 
     private Runnable actionYes, actionNo;
     private BooleanSupplier preconfirm;
 
     /**
+     * Constructor with out any action (can be set later).
+     *
+     * @param message Message to be shown
+     */
+    public ActionForm(String message) {
+        this(null, message, null, null, null, null);
+    }
+
+    /**
      * Constructor.
+     *
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      */
-    public ConfirmBox(String message, Runnable action) {
+    public ActionForm(String message, Runnable action) {
         this(null, message, action, null, null, null);
     }
 
     /**
      * Constructor.
+     *
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      */
-    public ConfirmBox(Component message, Runnable action) {
+    public ActionForm(Component message, Runnable action) {
         this(null, message, action, null, null, null);
     }
 
     /**
      * Constructor.
+     *
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(String message, Runnable action, String labelYes, String labelNo) {
+    public ActionForm(String message, Runnable action, String labelYes, String labelNo) {
         this(null, message, action, null, labelYes, labelNo);
     }
 
     /**
      * Constructor.
+     *
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(Component message, Runnable action, String labelYes, String labelNo) {
+    public ActionForm(Component message, Runnable action, String labelYes, String labelNo) {
         this(null, message, action, null, labelYes, labelNo);
     }
 
     /**
      * Constructor.
+     *
      * @param message Message to be shown
      * @param actionYes Action when "Yes" button is pressed
      * @param actionNo Action when "No" button is pressed
      */
-    public ConfirmBox(String message, Runnable actionYes, Runnable actionNo) {
+    public ActionForm(String message, Runnable actionYes, Runnable actionNo) {
+        this(null, message, actionYes, actionNo, null, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param message Message to be shown
+     * @param actionYes Action when "Yes" button is pressed
+     * @param actionNo Action when "No" button is pressed
+     */
+    public ActionForm(Component message, Runnable actionYes, Runnable actionNo) {
         this(null, message, actionYes, actionNo, null, null);
     }
 
@@ -72,103 +97,101 @@ public class ConfirmBox extends DataForm {
      * @param message Message to be shown
      * @param actionYes Action when "Yes" button is pressed
      * @param actionNo Action when "No" button is pressed
-     */
-    public ConfirmBox(Component message, Runnable actionYes, Runnable actionNo) {
-        this(null, message, actionYes, actionNo, null, null);
-    }
-
-    /**
-     * Constructor.
-     * @param message Message to be shown
-     * @param actionYes Action when "Yes" button is pressed
-     * @param actionNo Action when "No" button is pressed
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(String message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
+    public ActionForm(String message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
         this(null, createLabel(message), actionYes, actionNo, labelYes, labelNo);
     }
 
     /**
      * Constructor.
+     *
      * @param message Message to be shown
      * @param actionYes Action when "Yes" button is pressed
      * @param actionNo Action when "No" button is pressed
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(Component message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
+    public ActionForm(Component message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
         this(null, message, actionYes, actionNo, labelYes, labelNo);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      */
-    public ConfirmBox(String caption, String message, Runnable action) {
+    public ActionForm(String caption, String message, Runnable action) {
         this(caption, message, action, null, null, null);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      */
-    public ConfirmBox(String caption, Component message, Runnable action) {
+    public ActionForm(String caption, Component message, Runnable action) {
         this(caption, message, action, null, null, null);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(String caption, String message, Runnable action, String labelYes, String labelNo) {
+    public ActionForm(String caption, String message, Runnable action, String labelYes, String labelNo) {
         this(caption, message, action, null, labelYes, labelNo);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param action Action when "Yes" button is pressed
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(String caption, Component message, Runnable action, String labelYes, String labelNo) {
+    public ActionForm(String caption, Component message, Runnable action, String labelYes, String labelNo) {
         this(caption, message, action, null, labelYes, labelNo);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param actionYes Action when "Yes" button is pressed
      * @param actionNo Action when "No" button is pressed
      */
-    public ConfirmBox(String caption, String message, Runnable actionYes, Runnable actionNo) {
+    public ActionForm(String caption, String message, Runnable actionYes, Runnable actionNo) {
         this(caption, message, actionYes, actionNo, null, null);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param actionYes Action when "Yes" button is pressed
      * @param actionNo Action when "No" button is pressed
      */
-    public ConfirmBox(String caption, Component message, Runnable actionYes, Runnable actionNo) {
+    public ActionForm(String caption, Component message, Runnable actionYes, Runnable actionNo) {
         this(caption, message, actionYes, actionNo, null, null);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param actionYes Action when "Yes" button is pressed
@@ -176,12 +199,13 @@ public class ConfirmBox extends DataForm {
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(String caption, String message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
+    public ActionForm(String caption, String message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
         this(caption, createLabel(message), actionYes, actionNo, labelYes, labelNo);
     }
 
     /**
      * Constructor.
+     *
      * @param caption Caption to be displayed
      * @param message Message to be shown
      * @param actionYes Action when "Yes" button is pressed
@@ -189,11 +213,11 @@ public class ConfirmBox extends DataForm {
      * @param labelYes Label for "Yes" button
      * @param labelNo Label for "No" button
      */
-    public ConfirmBox(String caption, Component message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
+    public ActionForm(String caption, Component message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
         super(caption == null ? "Confirm" : caption, labelYes == null ? "Yes" : labelYes, labelNo == null ? "No" : labelNo);
-        this.actionYes = actionYes;
-        this.actionNo = actionNo;
-        getForm().add(message);
+        setConfirmAction(actionYes);
+        setCancelAction(actionNo);
+        add(message);
     }
 
     private static Component createLabel(String message) {
@@ -204,15 +228,52 @@ public class ConfirmBox extends DataForm {
 
     /**
      * A {@link Div} container is created.
+     *
      * @return {@link Div} container.
      */
     @Override
-    protected HasComponents createContainer() {
+    protected HasComponents createFieldContainer() {
         return new Div();
     }
 
     @Override
     protected void buildFields() {
+    }
+
+    /**
+     * Get the confirm action.
+     *
+     * @return Confirm action.
+     */
+    public Runnable getConfirmAction() {
+        return actionYes;
+    }
+
+    /**
+     * Set the confirm action.
+     *
+     * @param actionYes Action from "Yes" button is pressed
+     */
+    public void setConfirmAction(Runnable actionYes) {
+        this.actionYes = actionYes;
+    }
+
+    /**
+     * Get the cancel action.
+     *
+     * @return Cancel action.
+     */
+    public Runnable getCancelAction() {
+        return actionNo;
+    }
+
+    /**
+     * Set the cancel action.
+     *
+     * @param actionNo Action from "No" button is pressed
+     */
+    public void setCancelAction(Runnable actionNo) {
+        this.actionNo = actionNo;
     }
 
     /**
@@ -242,6 +303,7 @@ public class ConfirmBox extends DataForm {
     /**
      * Set a "preconfirm" check. If this is set, confirm box is displayed only if the "preconfirm" returns <code>true</code>
      * ({@link BooleanSupplier#getAsBoolean()}).
+     *
      * @param preconfirm Preconfirm
      */
     public void setPreconfirm(BooleanSupplier preconfirm) {
@@ -250,6 +312,7 @@ public class ConfirmBox extends DataForm {
 
     /**
      * Overriden to implement "preconfirm" check.
+     *
      * @see #setPreconfirm(BooleanSupplier)
      * @param parent Parent view to lock
      * @param doNotLock True if parent should not be locked
@@ -260,5 +323,25 @@ public class ConfirmBox extends DataForm {
             return;
         }
         super.execute(parent, doNotLock);
+    }
+
+    /**
+     * Execute an action if the user confirms it.
+     *
+     * @param message Message to be shown
+     * @param action Action to be executed
+     */
+    public static void execute(String message, Runnable action) {
+        new ActionForm(message, action).execute();
+    }
+
+    /**
+     * Execute an action if the user confirms it.
+     *
+     * @param message Message to be shown
+     * @param action Action to be executed
+     */
+    public static void execute(Component message, Runnable action) {
+        new ActionForm(message, action).execute();
     }
 }

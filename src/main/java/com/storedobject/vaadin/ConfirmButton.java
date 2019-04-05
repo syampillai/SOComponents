@@ -1,7 +1,9 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.shared.Registration;
 
 import java.util.function.BooleanSupplier;
 
@@ -13,20 +15,23 @@ import java.util.function.BooleanSupplier;
  */
 public class ConfirmButton extends Button {
 
-    private static final String SURE = ", are you sure?";
-    private CH handler;
+    private BooleanSupplier preconfirm;
+    private Yes yes;
+    private ContextMenu menu;
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param clickHandler Click handler
      */
     public ConfirmButton(String text, ClickHandler clickHandler) {
-        this(text, clickHandler, text + SURE);
+        this(text, clickHandler, null);
     }
 
     /**
      * Constructor.
+     *
      * @param icon Icon
      * @param clickHandler Click handler
      */
@@ -36,26 +41,29 @@ public class ConfirmButton extends Button {
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param icon Icon
      * @param clickHandler Click handler
      */
     public ConfirmButton(String text, String icon, ClickHandler clickHandler) {
-        this(text, icon, clickHandler, text + SURE);
+        this(text, icon, clickHandler, null);
     }
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param icon Icon
      * @param clickHandler Click handler
      */
     public ConfirmButton(String text, Component icon, ClickHandler clickHandler) {
-        this(text, icon, clickHandler, text + SURE);
+        this(text, icon, clickHandler, null);
     }
 
     /**
      * Constructor.
+     *
      * @param icon Icon
      * @param clickHandler Click handler
      */
@@ -65,16 +73,18 @@ public class ConfirmButton extends Button {
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param icon Icon
      * @param clickHandler Click handler
      */
     public ConfirmButton(String text, VaadinIcon icon, ClickHandler clickHandler) {
-        this(text, icon, clickHandler, text + SURE);
+        this(text, icon, clickHandler, null);
     }
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param clickHandler Click handler
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
@@ -86,6 +96,7 @@ public class ConfirmButton extends Button {
 
     /**
      * Constructor.
+     *
      * @param icon Icon
      * @param clickHandler Click handler
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
@@ -97,6 +108,7 @@ public class ConfirmButton extends Button {
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param icon Icon
      * @param clickHandler Click handler
@@ -109,6 +121,7 @@ public class ConfirmButton extends Button {
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param icon Icon
      * @param clickHandler Click handler
@@ -121,6 +134,7 @@ public class ConfirmButton extends Button {
 
     /**
      * Constructor.
+     *
      * @param icon Icon
      * @param clickHandler Click handler
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
@@ -132,6 +146,7 @@ public class ConfirmButton extends Button {
 
     /**
      * Constructor.
+     *
      * @param text Text on the button
      * @param icon Icon
      * @param clickHandler Click handler
@@ -143,42 +158,69 @@ public class ConfirmButton extends Button {
     }
 
     private void init(ClickHandler clickHandler, String message) {
-        handler = new CH(clickHandler, message);
-        addClickHanlder(handler);
+        getElement().appendChild(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL).getElement());
+        menu = new ContextMenu();
+        menu.setTarget(this);
+        menu.setOpenOnClick(true);
+        menu.addOpenedChangeListener(e -> {
+           if(e.isOpened()) {
+               if(preconfirm != null && !preconfirm.getAsBoolean()) {
+                   menu.close();
+               }
+           }
+        });
         getElement().getStyle().set("background", "var(--lumo-error-color-10pct)");
+        yes = new Yes(clickHandler);
+        menu.add(new StyledText(message == null ? "Are you sure?" : message));
+        ButtonLayout b = new ButtonLayout(new Button("No", e -> closePopup()).asSmall(), yes);
+        menu.addItem(b, null);
+    }
+
+    private void closePopup() {
+        if(menu.isOpened()) {
+            clickInClient();
+        }
+    }
+
+    @Override
+    public Registration addClickHanlder(ClickHandler clickHandler) {
+        if(clickHandler == null || yes == null) {
+            return null;
+        }
+        if(yes.handler == null) {
+            yes.handler = clickHandler;
+            return () -> yes.handler = null;
+        }
+        return super.addClickHanlder(clickHandler);
     }
 
     /**
      * Set a "preconfirm" check. If this is set, confirm box is displayed only if the "preconfirm" returns <code>true</code>
      * ({@link BooleanSupplier#getAsBoolean()}).
+     *
      * @param preconfirm Preconfirm
      */
     public void setPreconfirm(BooleanSupplier preconfirm) {
-        handler.confirmBox.setPreconfirm(preconfirm);
+        this.preconfirm = preconfirm;
     }
 
-    private static class CH implements ClickHandler {
+    private class Yes extends Button implements ClickHandler {
 
         private ClickHandler handler;
-        private ConfirmBox confirmBox;
-        private Component component;
 
-        private CH(ClickHandler hanlder, String message) {
-            if(message == null) {
-                message = "Are you sure?";
-            }
-            this.handler = hanlder;
-            confirmBox = new ConfirmBox(message, this::act);
+        public Yes(ClickHandler clickHandler) {
+            super("Yes", null);
+            this.handler = clickHandler;
+            addClickHanlder(this);
+            asSmall();
         }
 
         @Override
         public void clicked(Component c) {
-            this.component = c;
-            confirmBox.execute();
-        }
-
-        private void act() {
-            handler.clicked(component);
+            closePopup();
+            if(handler != null) {
+                handler.clicked(ConfirmButton.this);
+            }
         }
     }
 }

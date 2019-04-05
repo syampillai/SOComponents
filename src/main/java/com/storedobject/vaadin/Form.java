@@ -542,6 +542,32 @@ public class Form {
     }
 
     /**
+     * Set label for a specific field. Label will be set only if the field has a setLabel(String) method.
+     *
+     * @param fieldName Name of the field for which label needs to be set
+     * @param label Label to set
+     */
+    public void setFieldLabel(String fieldName, String label) {
+        setFieldLabel(getField(fieldName), label);
+    }
+
+    /**
+     * Set label for a specific field. Label will be set only if the field has a setLabel(String) method.
+     *
+     * @param field Field for which label needs to be set
+     * @param label Label to set
+     */
+    public void setFieldLabel(HasValue<?, ?> field, String label) {
+        if(field == null) {
+            return;
+        }
+        try {
+            field.getClass().getMethod("setLabel", String.class).invoke(field, label);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
      * Set an associated view for this form.
      * @param view View
      */

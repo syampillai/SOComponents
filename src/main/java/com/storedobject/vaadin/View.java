@@ -431,13 +431,6 @@ public class View implements ExecutableView {
     }
 
     /**
-     * This method is invoked whenever a view is automatically selected becasue its parent was closed.
-     * @param parent Parent view that was closed.
-     */
-    public void returnedFrom(@SuppressWarnings("unused") View parent) {
-    }
-
-    /**
      * Close this view.
      */
     public void close() {
@@ -483,13 +476,5 @@ public class View implements ExecutableView {
         }
         doFocus = true;
         clean();
-    }
-
-    @Override
-    public void clicked(Component c) {
-    }
-
-    @Override
-    public void valueChanged(ChangedValues changedValues) {
     }
 }

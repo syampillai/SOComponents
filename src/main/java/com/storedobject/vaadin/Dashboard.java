@@ -24,6 +24,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Constructor.
+     *
      * @param boxing Whether the sub-views should be shown inside a box or not
      */
     public Dashboard(boolean boxing) {
@@ -32,6 +33,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Constructor. Sub-views are shown in a box by default.
+     *
      * @param caption Caption
      */
     public Dashboard(String caption) {
@@ -40,6 +42,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Constructor.
+     *
      * @param caption Caption
      * @param boxing Whether the sub-views should be shown inside a box or not
      */
@@ -58,6 +61,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Set minimum width for the column. Default width is 250 pixels.
+     *
      * @param width Width
      */
     public void setMinimumColumnWidth(String width) {
@@ -74,6 +78,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     /**
      * Set the auto-arrange flag. If set, sub-views are arranged automatically to optimize space used. Default value for this is
      * <code>true</code>.
+     *
      * @param autoarrange Whether to auto-arrange sub-views or not
      */
     public void setAutoarrange(boolean autoarrange) {
@@ -81,7 +86,8 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     }
 
     /**
-     * Check the current value of au-arrange flag.
+     * Check the current value of auto-arrange flag.
+     *
      * @return Current auto-arrange flag
      * @see #setAutoarrange(boolean)
      */
@@ -91,6 +97,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Set the column-span for the particular sub-view. Minimum value is 1 and maximum allowed is 6.
+     *
      * @param component Sub-view
      * @param numberOfColumns Number of columns to span
      */
@@ -106,6 +113,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Set the column-span for the particular sub-view. Minimum value is 1 and maximum allowed is 6.
+     *
      * @param view Sub-view
      * @param numberOfColumns Number of columns to span
      */
@@ -115,6 +123,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Set the row-span for the particular sub-view. Minimum value is 1.
+     *
      * @param component Sub-view
      * @param numberOfRows Number of rows to span
      */
@@ -127,6 +136,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Set the row-span for the particular sub-view. Minimum value is 1.
+     *
      * @param view Sub-view
      * @param numberOfRows Number of rows to span
      */
@@ -136,6 +146,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Set gap between sub-views.
+     *
      * @param size Gap
      */
     public void setGap(String size) {
@@ -144,6 +155,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Add sub-views to the dashboard.
+     *
      * @param components Sub-views.
      */
     @Override
@@ -168,6 +180,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Add sub-views to the dashboard.
+     *
      * @param views Sub-views.
      */
     public void add(View... views) {
@@ -184,12 +197,9 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     public void clicked(Component c) {
     }
 
-    @Override
-    public void valueChanged(ChangedValues changedValues) {
-    }
-
     /**
      * Create a View to display the grid when executed.
+     *
      * @param create If true is passed, a view will be created if no current view exists
      * @return A View with this grid as the component.
      */
@@ -205,6 +215,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Create a View to display the grid when executed. If this method returns null, a default View will be created.
+     *
      * @return A View with this grid as the component.
      */
     protected View createView() {
@@ -213,6 +224,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Caption used when displaying it in a View. If no caption was set using setCaption method, "Dashboard" will be returned.
+     *
      * @return Caption
      */
     public String getCaption() {
@@ -241,6 +253,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
 
     /**
      * Set caption used when displaying the grid in a View.
+     *
      * @param caption Caption
      */
     public void setCaption(String caption) {

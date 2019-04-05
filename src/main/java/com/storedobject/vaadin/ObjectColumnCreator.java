@@ -70,7 +70,7 @@ public interface ObjectColumnCreator<T> {
      * @param columnName Name of the column
      * @return Header text. Default implementation returns the value from {@link ApplicationEnvironment#createLabel(String)}.
      */
-    default String getHeader(@SuppressWarnings("unused") String columnName) {
+    default String getColumnCaption(@SuppressWarnings("unused") String columnName) {
         return Objects.requireNonNull(ApplicationEnvironment.get()).createLabel(columnName);
     }
 

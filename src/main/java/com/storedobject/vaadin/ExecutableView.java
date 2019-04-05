@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 
 /**
@@ -93,13 +94,24 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Track value changes of a field {@link HasValue}. Whenever a value is changed, {@link #valueChanged(HasValue.ValueChangeEvent)}
-     * method is invoked (and that in turn, will invoke {@link #valueChanged(ChangedValues)} becasue that is the default implementation).
+     * method is invoked (and that in turn, will invoke {@link #valueChanged(ChangedValues)} because that is the default implementation).
      *
      * @param field Field to be tracked.
      */
     @SuppressWarnings("unchecked")
     default void trackValueChange(HasValue<?, ?> field) {
         field.addValueChangeListener(this);
+    }
+
+    /**
+     * This method has the same effect of {@link ExecutableView#trackValueChange(HasValue)}. If a field is made "clickable",
+     * its value will be tracked and {@link ExecutableView#valueChanged(ChangedValues)} whenever its value is changed.
+     *
+     * @see ExecutableView#trackValueChange(HasValue)
+     * @param field Field to be tracked.
+     */
+    default void setClickable(HasValue<?, ?> field) {
+        trackValueChange(field);
     }
 
     /**
@@ -111,5 +123,36 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     @SuppressWarnings("unchecked")
     default <A extends Application> A getApplication() {
         return (A)Application.get();
+    }
+
+    /**
+     * This method is invoked whenever this view is automatically selected because its parent was closed.
+     *
+     * @param parent Parent view that was closed
+     */
+    default void returnedFrom(View parent) {
+    }
+
+    /**
+     * This default implementation invokes the {@link ExecutableView#clicked(Component)} with the changed field
+     * as the parameter. However, nothing happens if the field is not a component.
+     *
+     * @param changedValues Change information (field and it value changes) wrapped into {@link ChangedValues}.
+     */
+    @Override
+    default void valueChanged(ChangedValues changedValues) {
+        HasValue<?, ?> field = changedValues.getChanged();
+        if(field instanceof Component) {
+            clicked((Component)field);
+        }
+    }
+
+    /**
+     * Default implementation, does nothing.
+     *
+     * @param c Component
+     */
+    @Override
+    default void clicked(Component c) {
     }
 }

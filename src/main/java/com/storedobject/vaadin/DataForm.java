@@ -176,7 +176,7 @@ public abstract class DataForm extends AbstractDataForm {
 
         @Override
         protected HasComponents createContainer() {
-            return DataForm.this.createContainer();
+            return DataForm.this.createFieldContainer();
         }
 
         @Override

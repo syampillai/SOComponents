@@ -10,7 +10,7 @@ import com.vaadin.flow.component.html.Span;
  *
  * @author Syam
  */
-public class StyledText extends Composite<Span> implements HasText, HasSize {
+public class StyledText extends Composite<Span> implements HasText, HasSize, HTMLGenerator {
 
     private Span content = new Span();
     private String text;
@@ -40,5 +40,10 @@ public class StyledText extends Composite<Span> implements HasText, HasSize {
     @Override
     public String getText() {
         return text;
+    }
+
+    @Override
+    public String getHTML() {
+        return text == null ? "" : text;
     }
 }

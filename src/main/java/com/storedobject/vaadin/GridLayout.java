@@ -3,7 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.*;
 
 /**
- * A layout for arraging components in a grid style. Only columns (just the count or sizes) can be specified.
+ * A layout for arragning components in a grid style. Only columns (just the count or sizes) can be specified.
  * When more components are added, it will wrap to the next rows if the column count exceeds the specified limit.
  *
  * @author Syam
@@ -11,13 +11,15 @@ import com.vaadin.flow.component.*;
 @Tag("div")
 public class GridLayout extends Component implements HasOrderedComponents<Component>, HasStyle, HasSize {
 
+    public enum Position { START, END, CENTER, STRETCH }
+
     /**
      * Constructor.
      * @param numberOfColumns Number of equally sized columns
      */
     public GridLayout(int numberOfColumns) {
         init();
-        setColumnSizes(sizes(numberOfColumns, 0));
+        setColumns(numberOfColumns);
     }
 
     /**
@@ -94,6 +96,15 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
     }
 
     /**
+     * Set equally sized columns.
+     *
+     * @param numberOfColumns Number of columns to set
+     */
+    public void setColumns(int numberOfColumns) {
+        setColumnSizes(sizes(numberOfColumns, 0));
+    }
+
+    /**
      * Set gap between columns.
      * @param size Gap
      */
@@ -120,13 +131,97 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
      * @return An integer array with "number of columns" as size and each element set to "value".
      */
     static int[] sizes(int numberOfColumns, int value) {
-        if(numberOfColumns <= 1) {
+        if(numberOfColumns < 1) {
             numberOfColumns = 4;
         }
-        int sizes[] = new int[numberOfColumns];
+        int[] sizes = new int[numberOfColumns];
         for(int i = 0; i < numberOfColumns; i++) {
             sizes[i] = value;
         }
         return sizes;
+    }
+
+    /**
+     * Set number of columns to span.
+     *
+     * @param component Component
+     * @param columns Columns to span
+     */
+    public void setColumnSpan(Component component, int columns) {
+        component.getElement().getStyle().set("grid-column", "span " + columns);
+    }
+
+    /**
+     * Get number of columns the component takes up.
+     *
+     * @param component Component
+     * @return Number of columns.
+     */
+    public int getColumnSpan(Component component) {
+        return getSpan(component, "column");
+    }
+
+    /**
+     * Set number of rows to span.
+     *
+     * @param component Component
+     * @param rows Rows to span
+     */
+    public void setRowSpan(Component component, int rows) {
+        component.getElement().getStyle().set("grid-row", "span " + rows);
+    }
+
+    /**
+     * Get number of rows the component takes up.
+     *
+     * @param component Component
+     * @return Number of rows.
+     */
+    public int getRowSpan(Component component) {
+        return getSpan(component, "row");
+    }
+
+    private int getSpan(Component component, String of) {
+        try {
+            return Integer.parseInt(component.getElement().getStyle().get("grid-" + of).replace(" ", "").replace("span", ""));
+        } catch (Throwable ignored) {
+        }
+        return 1;
+    }
+
+    /**
+     * Justfiy (horizontally) a component within its grid cell.
+     *
+     * @param component Component
+     * @param position Position
+     */
+    public void justify(Component component, Position position) {
+        if(position == null) {
+            position = Position.STRETCH;
+        }
+        component.getElement().getStyle().set("justify-self", position.toString().toLowerCase());
+    }
+
+    /**
+     * Align (vertically) a component within its grid cell.
+     *
+     * @param component Component
+     * @param position Position
+     */
+    public void align(Component component, Position position) {
+        if(position == null) {
+            position = Position.STRETCH;
+        }
+        component.getElement().getStyle().set("align-self", position.toString().toLowerCase());
+    }
+
+    /**
+     * Center (horizontally and vertically) a component within its grid cell.
+     *
+     * @param component Component
+     */
+    public void center(Component component) {
+        justify(component, Position.CENTER);
+        align(component, Position.CENTER);
     }
 }

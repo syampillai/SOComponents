@@ -304,7 +304,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
 
         @Override
         protected HasComponents createContainer() {
-            return AbstractDataEditor.this.createContainer();
+            return AbstractDataEditor.this.createFieldContainer();
         }
 
         @Override

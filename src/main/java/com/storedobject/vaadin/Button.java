@@ -14,6 +14,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Constructor.
+     *
      * @param text Text label to display and the respective icon will be used
      * @param clickHandler Click handler
      */
@@ -23,6 +24,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Constructor.
+     *
      * @param icon Icon
      * @param clickHandler Click handler
      */
@@ -32,6 +34,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Constructor.
+     *
      * @param text Text label to display
      * @param icon Name of the icon to use
      * @param clickHandler Click handler
@@ -42,6 +45,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Constructor.
+     *
      * @param text Text label to display
      * @param icon Icon to use
      * @param clickHandler Click handler
@@ -63,6 +67,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Constructor.
+     *
      * @param icon Icon to use
      * @param clickHandler Click handler
      */
@@ -72,6 +77,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Constructor.
+     *
      * @param text Text label to display
      * @param icon Icon to use
      * @param clickHandler Click handler
@@ -82,6 +88,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Add a click handler.
+     *
      * @param clickHandler Click handler to add
      * @return Registration.
      */
@@ -94,6 +101,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Mark this Button as Primary.
+     *
      * @return Self reference.
      */
     public Button asPrimary() {
@@ -103,6 +111,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
 
     /**
      * Make the button Small.
+     *
      * @return Self reference.
      */
     public Button asSmall() {
