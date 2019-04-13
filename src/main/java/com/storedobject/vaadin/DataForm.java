@@ -59,6 +59,7 @@ public abstract class DataForm extends AbstractDataForm {
         setErrorDisplay(null);
         setCaption(caption);
         ok = new Button(labelOK == null ? "Ok" : labelOK, "ok", this).asPrimary();
+        ok.setDisableOnClick(true);
         cancel = new Button(labelCancel == null ? "Cancel" : labelCancel, "cancel", this);
         this.windowMode = windowMode;
         if(windowMode) {
@@ -144,6 +145,8 @@ public abstract class DataForm extends AbstractDataForm {
                     close();
                 }
             }
+            ok.setEnabled(true);
+            ok.setDisableOnClick(true);
         }
     }
 
@@ -160,6 +163,7 @@ public abstract class DataForm extends AbstractDataForm {
      * method did not raise any exception.
      * @throws Exception Exception raised will be displayed as a warning message.
      */
+    @SuppressWarnings("RedundantThrows")
     protected void validateData() throws Exception {
     }
 

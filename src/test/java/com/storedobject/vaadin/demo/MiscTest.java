@@ -16,20 +16,22 @@ public class MiscTest extends View {
 
     private ETextArea ta;
     private IntegerField nf;
+    private int cols = 0;
 
     public MiscTest() {
         super("Misc. Tests");
         if(Application.get() == null) {
             return;
         }
+        ChoicesField csf;
         FormLayout form = new FormLayout();
-        form.add(new ConfirmButton("Hello", null));
+        form.add(new PopupTextField("Pop"));
         form.add(new UploadField("Upload"));
         NumberField numberField = new NumberField("Number Field");
         numberField.setRequiredIndicatorVisible(true);
         form.add(numberField);
         ArrayList<String> list = new ArrayList<String>() {{ add("One"); add("Two"); add("Three"); }};
-        RadioField<String> rf = new RadioField("Radio", list);
+        RadioField<String> rf = new RadioField<>("Radio", list);
         form.add(rf);
         rf.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
         RadioChoiceField rbg = new RadioChoiceField("Radio", list);
@@ -95,9 +97,9 @@ public class MiscTest extends View {
         ta.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
         dataForm.addField(nf = new IntegerField("Number"));
         dataForm.setRequired(ta, "Enter somethine in multi-line Text Field");
-        ChoicesField csf;
         form.add(csf = new ChoicesField("Choose", new String[] { "One", "Two", "Three" }));
         csf.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
+        form.add(new ConfirmButton("Hello", e -> { csf.setColumns(cols); ++cols; }));
         TextField tf = new TextField("Hello");
         dataForm.addField(tf);
         dataForm.setRequired(tf, "Text in the 'Hello' Text Field can not be empty!!!");

@@ -6,11 +6,13 @@ import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.data.binder.*;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.binder.Validator;
+import com.vaadin.flow.data.binder.ValueContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -24,7 +26,6 @@ public class Data extends HashMap<String, Object> {
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
     private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
     private final Map<HasValue<?, ?>, DataValidators> validators = new HashMap<>();
-    private final List<HasValue<?, ?>> readOnlyFields = new ArrayList<>();
     private Binder<Data> binder;
     private boolean readOnly;
     private final Form form;
@@ -107,25 +108,17 @@ public class Data extends HashMap<String, Object> {
     }
 
     public void setReadOnly(boolean readOnly) {
-        boolean collectROs = readOnly && (this.readOnly != readOnly);
-        if(collectROs) {
-            readOnlyFields.clear();
-        }
         this.readOnly = readOnly;
         if(readOnly) {
             fields.forEach((key, value) -> {
-                if(collectROs && value.isReadOnly()) {
-                    readOnlyFields.add(value);
-                } else {
-                    value.setReadOnly(true);
-                }
+                value.setReadOnly(true);
                 setVisible(key, value);
             });
             return;
         }
         fields.forEach((key, value) -> {
-            boolean ro = readOnlyFields.contains(value);
-            if (!ro && valueHandler.canHandle(key)) {
+            boolean ro = false;
+            if (valueHandler.canHandle(key)) {
                 ro = !valueHandler.canSet(key);
             }
             if (!ro) {
@@ -279,12 +272,12 @@ public class Data extends HashMap<String, Object> {
                 dv.remove(0);
             }
         }
-        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(form, this, errorMessage));
+        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(form, errorMessage));
     }
 
     private Required requiredCache() {
         if(requiredCache == null) {
-            requiredCache = new Required(form, this,null);
+            requiredCache = new Required(form,null);
         }
         return requiredCache;
     }
@@ -294,11 +287,9 @@ public class Data extends HashMap<String, Object> {
         private static final String CAN_NOT_BE_EMPTY = "Can not be empty";
         private String errorMessage;
         private Form form;
-        private Data data;
 
-        private Required(Form form, Data data, String errorMessage) {
+        private Required(Form form, String errorMessage) {
             this.form = form;
-            this.data = data;
             if(errorMessage != null && !errorMessage.isEmpty()) {
                 this.errorMessage = errorMessage;
             }

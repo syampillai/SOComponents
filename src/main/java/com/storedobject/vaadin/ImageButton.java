@@ -18,16 +18,21 @@ public class ImageButton extends Icon {
 
     /**
      * Constructor.
+     *
      * @param iconName Icon
      * @param clickHandler Click handler
      */
     public ImageButton(String iconName, ClickHandler clickHandler) {
         super(iconName);
         init(clickHandler);
+        if(iconName != null) {
+            setAttribute("title", iconName);
+        }
     }
 
     /**
      * Constructor.
+     *
      * @param iconName Icon
      * @param iconCollection Icon collection name
      * @param clickHandler Click handler
@@ -35,11 +40,14 @@ public class ImageButton extends Icon {
     public ImageButton(String iconName, String iconCollection, ClickHandler clickHandler) {
         super(iconName, iconCollection);
         init(clickHandler);
-        setAttribute("title", iconName);
+        if(iconName != null) {
+            setAttribute("title", iconName);
+        }
     }
 
     /**
      * Constructor.
+     *
      * @param icon Icon
      * @param clickHandler Click handler
      */
@@ -49,6 +57,7 @@ public class ImageButton extends Icon {
 
     /**
      * Constructor.
+     *
      * @param title Title (to be shown as tooltip)
      * @param icon Icon
      * @param clickHandler Click handler
@@ -56,7 +65,9 @@ public class ImageButton extends Icon {
     public ImageButton(String title, VaadinIcon icon, ClickHandler clickHandler) {
         super(icon);
         init(clickHandler);
-        setAttribute("title", title);
+        if(title != null) {
+            setAttribute("title", title);
+        }
     }
 
     private void init(ClickHandler clickHandler) {
@@ -67,6 +78,7 @@ public class ImageButton extends Icon {
 
     /**
      * Set click handler.
+     *
      * @param clickHandler Click handler
      */
     public void setClickHandler(ClickHandler clickHandler) {
@@ -79,6 +91,7 @@ public class ImageButton extends Icon {
 
     /**
      * Add click handler.
+     *
      * @param clickHandler Click handler
      */
     public void addClickHandler(ClickHandler clickHandler) {
@@ -87,6 +100,7 @@ public class ImageButton extends Icon {
 
     /**
      * Set size of the image.
+     *
      * @param sizeInPixels Size in pixels
      * @return Self reference.
      */
@@ -97,6 +111,7 @@ public class ImageButton extends Icon {
 
     /**
      * Set size to small (20 pixels).
+     *
      * @return Self reference.
      */
     public ImageButton asSmall() {

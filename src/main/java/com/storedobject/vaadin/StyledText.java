@@ -15,6 +15,10 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
     private Span content = new Span();
     private String text;
 
+    public StyledText() {
+        this(null);
+    }
+
     public StyledText(String htmlText) {
         setText(htmlText);
     }

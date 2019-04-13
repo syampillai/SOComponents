@@ -1,5 +1,7 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.checkbox.Checkbox;
 
 import java.util.ArrayList;
@@ -10,16 +12,20 @@ import java.util.List;
 /**
  * A field that allows you select mutliple values from a fixed list of Strings. The value is returned as
  * a bit pattern with its positional values set for the selected items. The first item in the list uses the least significant bit.
+ *
  * @author Syam
  */
 public class ChoicesField extends CustomField<Integer> {
 
     private static final Integer ZERO = 0;
+    private HasComponents container;
     private ArrayList<Checkbox> list = new ArrayList<>();
     private Box box;
+    private int mask;
 
     /**
      * Constructor.
+     *
      * @param choices Choices delimited by comma
      */
     public ChoicesField(String choices) {
@@ -28,6 +34,7 @@ public class ChoicesField extends CustomField<Integer> {
 
     /**
      * Constructor.
+     *
      * @param label Label
      * @param choices Choices delimited by comma
      */
@@ -37,18 +44,20 @@ public class ChoicesField extends CustomField<Integer> {
 
     /**
      * Constructor.
+     *
      * @param choices Choices
      */
-    public ChoicesField(String choices[]) {
+    public ChoicesField(String[] choices) {
         this(null, choices);
     }
 
     /**
      * Constructor.
+     *
      * @param label Label
      * @param choices Choices
      */
-    public ChoicesField(String label, String choices[]) {
+    public ChoicesField(String label, String[] choices) {
         this(label, Arrays.asList(choices));
     }
 
@@ -62,6 +71,7 @@ public class ChoicesField extends CustomField<Integer> {
 
     /**
      * Constructor.
+     *
      * @param label Label
      * @param choices Choices
      */
@@ -71,20 +81,23 @@ public class ChoicesField extends CustomField<Integer> {
 
     /**
      * Constructor.
+     *
      * @param label Label
      * @param choices Choices
      */
     public ChoicesField(String label, Collection<String> choices) {
         super(ZERO);
-        ButtonLayout container = new ButtonLayout();
+        int n = choices.size();
+        mask = 1;
+        while(n-- > 0) {
+            mask <<= 1;
+        }
+        --mask;
         sanitize(choices).forEach(item -> {
             Checkbox cb = new Checkbox(item);
             this.list.add(cb);
-            container.add(cb);
         });
-        box = new Box(container);
-        box.setReadOnly(false);
-        add(container);
+        createGrid(choices.size() > 4 ? 2 : 0, createContainer());
         setValue(ZERO);
         setLabel(label);
     }
@@ -116,6 +129,63 @@ public class ChoicesField extends CustomField<Integer> {
             }
         }
         return list;
+    }
+
+    /**
+     * Create the container for the check boxes to be shown.
+     *
+     * @return Default implementation creates an appropriate container based on the number of items.
+     */
+    protected HasComponents createContainer() {
+        return null;
+    }
+
+    private void createGrid(int columns, HasComponents c) {
+        if(c != null) {
+            container = c;
+        } else {
+            if (columns > 0) {
+                GridLayout layout = new GridLayout(columns);
+                if (list.size() > 4) {
+                    RadioChoiceField select = new RadioChoiceField(new String[]{"All", "None"});
+                    select.setValue(1);
+                    select.addValueChangeListener(e -> setValue(e.getValue() == 0 ? 0xFFFF : 0));
+                    ButtonLayout b = new ButtonLayout(new StyledText("Select: "), select);
+                    new Box(b);
+                    layout.add(b);
+                    layout.setColumnSpan(b, columns);
+                }
+                container = layout;
+            } else {
+                container = new ButtonLayout();
+            }
+            box = new Box((Component) container);
+            box.setReadOnly(false);
+        }
+        list.forEach(container::add);
+        add((Component)container);
+    }
+
+    /**
+     * Set number of columns to show the check boxes. Setting a value to zero will show it in a single row.
+     *
+     * @param columns Number of columns
+     */
+    public void setColumns(int columns) {
+        if(columns > list.size()) {
+            columns = list.size();
+        }
+        if(columns > 6) {
+            columns = 6;
+        }
+        this.container.removeAll();
+        remove((Component)this.container);
+        createGrid(columns, null);
+    }
+
+    @Override
+    public void setValue(Integer value) {
+        super.setValue(value & mask);
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 /**
  * A TextField that triggers a Consumer action (when value changed or "Enter" key is pressed).
+ *
  * @author Syam
  */
 public class ActionTextField extends TextField {
@@ -17,6 +18,7 @@ public class ActionTextField extends TextField {
 
     /**
      * Constructor.
+     *
      * @param action Action to be executed when value changed or "Enter" key is pressed
      */
     public ActionTextField(Consumer<String> action) {
@@ -25,6 +27,7 @@ public class ActionTextField extends TextField {
 
     /**
      * Constructor.
+     *
      * @param label Label
      * @param action Action to be executed when value changed or "Enter" key is pressed
      */
@@ -35,6 +38,7 @@ public class ActionTextField extends TextField {
 
     /**
      * Constructor.
+     *
      * @param label Label
      * @param placeholder Placeholder
      * @param action Action to be executed when value changed or "Enter" key is pressed
@@ -46,6 +50,7 @@ public class ActionTextField extends TextField {
 
     /**
      * Constructor.
+     *
      * @param label Label
      * @param initialValue Initial value
      * @param placeholder Placeholder
@@ -69,6 +74,7 @@ public class ActionTextField extends TextField {
 
     /**
      * Flag to ignore programmatic changes. By default, all value changes will trigger the action.
+     *
      * @param ignore Whether to ignore programmatic changes or not
      */
     public void setIgnoreProgrammaticChanges(boolean ignore) {
@@ -77,6 +83,7 @@ public class ActionTextField extends TextField {
 
     /**
      * Set the action.
+     *
      * @param action Action
      */
     public void setAction(Consumer<String> action) {
@@ -85,6 +92,7 @@ public class ActionTextField extends TextField {
 
     /**
      * Get the action.
+     *
      * @return Action.
      */
     public Consumer<String> getAction() {
@@ -118,6 +126,7 @@ public class ActionTextField extends TextField {
 
     /**
      * If this method is used, values will be trimmed before action is carried out.
+     *
      * @return This (for chained use).
      */
     public ActionTextField trim() {
@@ -127,6 +136,7 @@ public class ActionTextField extends TextField {
 
     /**
      * If this method is used, values will be converted to uppercase before action is carried out.
+     *
      * @return This (for chained use).
      */
     public ActionTextField toUpperCase() {
@@ -137,6 +147,7 @@ public class ActionTextField extends TextField {
 
     /**
      * If this method is used, values will be converted to lowercase before action is carried out.
+     *
      * @return This (for chained use).
      */
     public ActionTextField toLowerCase() {

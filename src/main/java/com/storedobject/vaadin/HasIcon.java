@@ -1,5 +1,7 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.icon.VaadinIcon;
+
 /**
  * Element that has an Icon.
  *
@@ -34,6 +36,15 @@ public interface HasIcon extends HasElement {
             icon = iconCollection.trim() + ":" + icon;
         }
         getElement().setAttribute("icon", icon.trim().toLowerCase().replace('_', '-'));
+    }
+
+    /**
+     * Set a Vaadin icon as the icon.
+     *
+     * @param icon Vaadin icon
+     */
+    default void setIcon(VaadinIcon icon) {
+        setIcon("vaadin", icon.name().toLowerCase().replace('_', '-'));
     }
 
     /**

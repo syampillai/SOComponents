@@ -19,6 +19,7 @@ public class Window extends Dialog {
 
     /**
      * Constructor.
+     *
      * @param components Components to add as content
      */
     public Window(Component... components) {

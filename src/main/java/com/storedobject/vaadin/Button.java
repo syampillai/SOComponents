@@ -100,6 +100,15 @@ public class Button extends com.vaadin.flow.component.button.Button {
     }
 
     /**
+     * Set a Vaadin icon as the icon for this button.
+     *
+     * @param icon Vaadin icon
+     */
+    public void setIcon(VaadinIcon icon) {
+        super.setIcon(new Icon(icon));
+    }
+
+    /**
      * Mark this Button as Primary.
      *
      * @return Self reference.

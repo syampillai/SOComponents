@@ -19,7 +19,11 @@ public class CompoundField extends CustomField<String> {
     private ButtonLayout layout = new ButtonLayout();
 
     public CompoundField() {
-        this(null);
+        this((String)null);
+    }
+
+    public CompoundField(Component... components) {
+        this(null, components);
     }
 
     public CompoundField(String label, Component... components) {

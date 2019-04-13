@@ -6,35 +6,75 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A {@link com.vaadin.flow.component.combobox.ComboBox} style field wihth an {@link Integer} value type.
+ * A {@link com.vaadin.flow.component.combobox.ComboBox} style field with an {@link Integer} value type.
+ *
  * @author Syam
  */
 public class ChoiceField extends TranslatedField<Integer, String> implements ValueRequired {
 
+    /**
+     * Constructor.
+     *
+     * @param choices Choices
+     */
     public ChoiceField(String choices) {
         this(null, choices);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label
+     * @param choices Choices
+     */
     public ChoiceField(String label, String choices) {
         this(label, Arrays.asList(choices.split(",")));
     }
 
-    public ChoiceField(String choices[]) {
+    /**
+     * Constructor.
+     *
+     * @param choices Choices
+     */
+    public ChoiceField(String[] choices) {
         this(null, choices);
     }
 
-    public ChoiceField(String label, String choices[]) {
+    /**
+     * Constructor.
+     *
+     * @param label Label
+     * @param choices Choices
+     */
+    public ChoiceField(String label, String[] choices) {
         this(label, Arrays.asList(choices));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param list Choices
+     */
     public ChoiceField(Iterable<?> list) {
         this(null, list);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label
+     * @param list Choices
+     */
     public ChoiceField(String label, Iterable<?> list) {
         this(label, createList(list));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label
+     * @param list Choices
+     */
     @SuppressWarnings("unchecked")
     public ChoiceField(String label, Collection<String> list) {
         super(new ListField<>(sanitize(list)), (f, s) -> ((ListField<String>)f).getIndex(s),
@@ -72,10 +112,20 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
         return list;
     }
 
+    /**
+     * Get the current choice.
+     *
+     * @return Current choice.
+     */
     public String getChoice() {
         return getField().getValue();
     }
 
+    /**
+     * Set the choice.
+     *
+     * @param value Choice to be set
+     */
     public void setChoice(String value) {
         getField().setValue(value);
     }
