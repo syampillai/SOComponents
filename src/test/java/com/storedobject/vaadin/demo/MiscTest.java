@@ -8,13 +8,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextField;
 
 import java.util.ArrayList;
 
 public class MiscTest extends View {
 
-    private ETextArea ta;
+    private TextArea ta;
     private IntegerField nf;
     private int cols = 0;
 
@@ -90,9 +89,8 @@ public class MiscTest extends View {
         form.add(lb);
         lb.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
         dataForm.add(new TextField("Hello"));
-        ta = new ETextArea("Text", "Hello World");
-        ta.setMinRows(5);
-        ta.setMaxRows(10);
+        ta = new TextArea("Text", "Hello World");
+        ta.setRows(5);
         dataForm.addField(ta);
         ta.addValueChangeListener(e -> Notification.show("Value: " + e.getOldValue() + " to " + e.getValue()));
         dataForm.addField(nf = new IntegerField("Number"));

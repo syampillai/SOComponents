@@ -10,16 +10,17 @@
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>13.0.3</vaadin.version>
-
+        <vaadin.version>13.0.4</vaadin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
     <organization>
         <name>Syam Pillai</name>
     </organization>
+
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -27,6 +28,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -97,11 +99,16 @@
             <artifactId>pdf-browser-viewer</artifactId>
             <version>1.0.6</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-all</artifactId>
-            <version>1.10</version>
-            <type>pom</type>
+            <artifactId>batik-svggen</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-dom</artifactId>
+            <version>1.11</version>
         </dependency>
 
     </dependencies>

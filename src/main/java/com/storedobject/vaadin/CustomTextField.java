@@ -121,17 +121,17 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
 
     /**
      * Set text to be displayed when the value of the field is empty.
-     * @param emptyDisplay Text to be displayed
+     * @param placeholder Text to be displayed
      */
-    public void setEmptyValue(String emptyDisplay) {
-        this.emptyDisplay = emptyDisplay;
-        if(emptyDisplay == null) {
+    public void setPlaceholder(String placeholder) {
+        this.emptyDisplay = placeholder;
+        if(placeholder == null) {
             return;
         }
-        if(Objects.equals(getValue(), getEmptyValue()) && emptyDisplay.equals(getField().getValue())) {
+        if(Objects.equals(getValue(), getEmptyValue()) && placeholder.equals(getField().getValue())) {
             return;
         }
-        getField().setValue(emptyDisplay);
+        getField().setValue(placeholder);
     }
 
     @Override
