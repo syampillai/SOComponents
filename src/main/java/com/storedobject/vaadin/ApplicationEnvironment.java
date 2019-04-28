@@ -114,6 +114,13 @@ public interface ApplicationEnvironment {
         return label;
     }
 
+    default ApplicationMenuItem createMenuItem(View view, String menuLabel, Runnable menuAction, boolean closeable) {
+        if(closeable) {
+            return CloseableMenuItem.create(menuLabel, menuAction, view);
+        }
+        return MenuItem.create(menuLabel, menuAction);
+    }
+
     /**
      * Create a default implementation.
      * @return A default implementation of the "application environment".

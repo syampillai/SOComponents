@@ -7,14 +7,13 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 
 /**
- * <p>WARNING: This class may be restructured or redesigned.</p>
- * Class that represents a "menu item".
+ * Default implementation of {@link ApplicationMenuItem}.
  *
  * @see Application
  * @see ApplicationMenu
  * @author Syam
  */
-public class MenuItem implements Runnable, ClickNotifier {
+public class MenuItem implements Runnable, ClickNotifier, ApplicationMenuItem {
 
     private Component item;
     private String label;
@@ -37,20 +36,22 @@ public class MenuItem implements Runnable, ClickNotifier {
     }
 
     /**
+     * Get the element that can be added somewhere to show this menu item.
+     *
+     * @return The root element.
+     */
+    @Override
+    public Element getElement() {
+        return item.getElement();
+    }
+
+    /**
      * Highlight this menu item.
      */
     public void hilite() {
         item.getElement().getStyle().set("background-color", "white");
     }
 
-
-    /**
-     * Get the component of the menu item.
-     * @return Component
-     */
-    public Component getComponent() {
-        return item;
-    }
 
     /**
      * Get the label of the menu item.

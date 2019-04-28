@@ -9,14 +9,10 @@ import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 
-import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Application is an extension to Vaadin's UI class for creating 'single page' web applications. The 'single page' should be defined
@@ -85,7 +81,7 @@ import java.util.concurrent.TimeoutException;
  * </pre>
  * The 'single page' can be any layout component that implements the interface {@link com.storedobject.vaadin.ApplicationLayout}. The layout
  * typically contains a 'menu' area and 'content' area. One can use Vaadin's <code>AppLayout</code> or similar components as the base for this.
- * The 'menu' area will contain {@link com.storedobject.vaadin.MenuItem} instances and when a 'menu item' is clicked, the <code>Runnable</code>
+ * The 'menu' area will contain {@link com.storedobject.vaadin.ApplicationMenuItem} instances and when a 'menu item' is clicked, the <code>Runnable</code>
  * action associated with it will be executed. One may associate any <code>Runnable</code> action with a 'menu item' such as generating a report or
  * invkoing a {@link com.storedobject.vaadin.View}. If a {@link com.storedobject.vaadin.View} is invoked, its associated 'view component' is
  * displayed in the 'content' area and its 'caption' is inserted as a new 'menu item' in the 'menu' area. The 'content' area displays only the 'active
@@ -129,7 +125,7 @@ public abstract class Application extends UI {
             }
         }
         if(error == null) {
-            if(!init(link)) {
+            if(!init(this.link)) {
                 error = "Initialization failed";
             }
         }
@@ -534,16 +530,6 @@ public abstract class Application extends UI {
         }
     }
 
-    /**
-     * Get menu item for a particular view (For internal use only).
-     *
-     * @param view View
-     * @return Menu item if exists, otherwise <code>null</code>.
-     */
-    MenuItem getMenuItem(View view) {
-        return viewManager.getMenuItem(view);
-    }
-
     @Override
     public void setPollInterval(int intervalInMillis) {
         setPollInterval(this, intervalInMillis);
@@ -626,7 +612,7 @@ public abstract class Application extends UI {
         private final ApplicationMenu menu;
         private final ApplicationView applicationView;
         private List<View> stack = new ArrayList<>();
-        private Map<View, MenuItem> contentMenu = new HashMap<>();
+        private Map<View, ApplicationMenuItem> contentMenu = new HashMap<>();
         private Map<View, View> parents = new HashMap<>();
 
         public ViewManager(ApplicationView applicationView) {
@@ -666,13 +652,16 @@ public abstract class Application extends UI {
             boolean window = c instanceof Dialog;
             if(window && parent == null && stack.size() > 0) {
                 parent = stack.get(stack.size() - 1);
+                if(parent.getComponent() instanceof Dialog) {
+                    parent = null;
+                }
             }
             if(parent != null) {
                 parents.put(view, parent);
                 if(!doNotLock) {
-                    MenuItem m = contentMenu.get(parent);
+                    ApplicationMenuItem m = contentMenu.get(parent);
                     if(m != null) {
-                        m.getComponent().getElement().setEnabled(false);
+                        m.getElement().setEnabled(false);
                     }
                 }
             }
@@ -682,12 +671,7 @@ public abstract class Application extends UI {
             stack.add(view);
             applicationView.layout.addView(view);
             view.setVisible(true);
-            MenuItem m;
-            if(view instanceof CloseableView) {
-                m = CloseableMenuItem.create(view.getCaption(), () -> select(view), view);
-            } else {
-                m = MenuItem.create(view.getCaption(), () -> select(view));
-            }
+            ApplicationMenuItem m = view.getMenuItem(() -> select(view));
             menu.insert(0, m);
             contentMenu.put(view, m);
             hilite(m);
@@ -701,7 +685,7 @@ public abstract class Application extends UI {
                 child.abort();
                 return;
             }
-            MenuItem m = contentMenu.get(view);
+            ApplicationMenuItem m = contentMenu.get(view);
             if(m != null) {
                 menu.remove(m);
             }
@@ -737,7 +721,7 @@ public abstract class Application extends UI {
         }
 
         private boolean select(View view) {
-            MenuItem m = contentMenu.get(view);
+            ApplicationMenuItem m = contentMenu.get(view);
             if(m == null) {
                 return false;
             }
@@ -751,17 +735,13 @@ public abstract class Application extends UI {
             return true;
         }
 
-        private MenuItem getMenuItem(View view) {
-            return contentMenu.get(view);
-        }
-
-        private void hilite(MenuItem menuItem) {
-            menuItem.getComponent().getElement().setEnabled(true);
+        private void hilite(ApplicationMenuItem menuItem) {
+            menuItem.getElement().setEnabled(true);
             contentMenu.values().forEach(mi -> {
                 if(mi == menuItem) {
                     mi.hilite();
                 } else {
-                    mi.getComponent().getElement().getStyle().set("background-color", "transparent");
+                    mi.getElement().getStyle().set("background-color", "transparent");
                 }
             });
         }

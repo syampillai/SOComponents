@@ -8,7 +8,7 @@ import com.vaadin.flow.component.notification.Notification;
 
 /**
  * The class that defines the content view of the {@link Application}. An implementation of this class (with all the necessary
- * annotations) is required for using {@link Application} class. There is no need to override or implement and methods.
+ * annotations) is required for using {@link Application} class. There is no need to override or implement any methods.
  * @see Application
  */
 public abstract class ApplicationView extends Composite<Component> {

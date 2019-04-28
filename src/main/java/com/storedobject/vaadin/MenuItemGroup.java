@@ -56,22 +56,23 @@ public class MenuItemGroup extends MenuItem {
     }
 
     /**
-     * Get the internal layout component of this menu item group.
-     * @return Component.
+     * Get the element that can be added somewhere to show this menu item.
+     *
+     * @return The root element.
      */
     @Override
-    public Component getComponent() {
-        return layout;
+    public Element getElement() {
+        return layout.getElement();
     }
 
     /**
      * Add a menu item to this.
      * @param menuItem Menu item
      */
-    public void add(MenuItem menuItem) {
-        layout.add(menuItem.getComponent());
+    public void add(ApplicationMenuItem menuItem) {
+        layout.getElement().appendChild(menuItem.getElement());
         setVisible(true);
-        menuItem.getComponent().setVisible(expanded);
+        menuItem.setVisible(expanded);
         menuItem.hilite();
     }
 
@@ -79,11 +80,11 @@ public class MenuItemGroup extends MenuItem {
      * Remove a menu item from this.
      * @param menuItem Menu item
      */
-    public void remove(MenuItem menuItem) {
-        if(layout.getChildren().noneMatch(c -> c == menuItem.getComponent())) {
+    public void remove(ApplicationMenuItem menuItem) {
+        if(layout.getElement().getChildren().noneMatch(e -> e == menuItem.getElement())) {
             return;
         }
-        layout.remove(menuItem.getComponent());
+        layout.getElement().removeChild(menuItem.getElement());
         setVisible(layout.getChildren().anyMatch(c -> c != header));
     }
 

@@ -7,6 +7,12 @@ public class Person {
     private String firstName, lastName;
     private LocalDate dateOfBirth;
 
+    public Person(String firstName, String lastName) {
+        setFirstName(firstName);
+        setLastName(lastName);
+        dateOfBirth = LocalDate.now();
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }

@@ -150,10 +150,9 @@ public class ChoicesField extends CustomField<Integer> {
                     RadioChoiceField select = new RadioChoiceField(new String[]{"All", "None"});
                     select.setValue(1);
                     select.addValueChangeListener(e -> setValue(e.getValue() == 0 ? 0xFFFF : 0));
-                    ButtonLayout b = new ButtonLayout(new StyledText("Select: "), select);
-                    new Box(b);
-                    layout.add(b);
-                    layout.setColumnSpan(b, columns);
+                    new Box(select);
+                    layout.add(select);
+                    layout.setColumnSpan(select, columns);
                 }
                 container = layout;
             } else {

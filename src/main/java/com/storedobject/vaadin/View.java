@@ -32,6 +32,7 @@ public class View implements ExecutableView {
     private Component postFocus;
     private Focusable<?> firstFocus;
     private Application application;
+    private ApplicationMenuItem menuItem;
 
     /**
      * Create a View with no caption.
@@ -42,6 +43,7 @@ public class View implements ExecutableView {
 
     /**
      * Create a view with a caption.
+     *
      * @param caption Caption
      */
     public View(String caption) {
@@ -50,6 +52,7 @@ public class View implements ExecutableView {
 
     /**
      * Create a view of the specific component with a caption
+     *
      * @param component Component to display
      * @param caption Caption
      */
@@ -62,7 +65,24 @@ public class View implements ExecutableView {
     }
 
     /**
+     * Create a {@link CloseableView}. A helper method to create a {@link View} that is closeable.
+     *
+     * @param component Compoment of the {@link View}
+     * @param caption Caption
+     * @return A closable view.
+     */
+    public static View createCloseableView(Component component, String caption) {
+        class V extends View implements CloseableView {
+            private V(Component component, String caption) {
+                super(component, caption);
+            }
+        }
+        return new V(component, caption);
+    }
+
+    /**
      * Specifiy the scrollable attribute of the view. Scrollable views will scroll within the "content" area of the application.
+     *
      * @param scrollable Scrollable
      */
     public void setScrollable(boolean scrollable) {
@@ -71,6 +91,7 @@ public class View implements ExecutableView {
 
     /**
      * See if this view is scrollable or not.
+     *
      * @return True or false.
      */
     public boolean isScrollable() {
@@ -81,6 +102,7 @@ public class View implements ExecutableView {
      * Get the component that represents the "content" of the view. It may be different from the actual component displayed by the
      * application. For example, if a view may be displayed as a {@link Dialog} and in such cases, the "content" of the {@link Dialog} is
      * the "content" of the view.
+     *
      * @return The "content" as a component.
      */
     public Component getContent() {
@@ -100,6 +122,7 @@ public class View implements ExecutableView {
 
     /**
      * This method is invoked when the view wants to determine its "content" to be displayed and nothing exists at that moment.
+     *
      * {@link #setComponent(Component)} may be called from within this method.
      */
     protected void initUI() {
@@ -107,6 +130,7 @@ public class View implements ExecutableView {
 
     /**
      * Set the "content" of the view.
+     *
      * @param component Component to be displayed.
      */
     public final void setComponent(Component component) {
@@ -131,6 +155,7 @@ public class View implements ExecutableView {
 
     /**
      * Get the "content" component of the view.
+     *
      * @return Component
      */
     public final Component getComponent() {
@@ -174,6 +199,7 @@ public class View implements ExecutableView {
 
     /**
      * For internal use only.
+     *
      * @param visible Visibility of the view
      */
     void setVisible(boolean visible) {
@@ -202,6 +228,7 @@ public class View implements ExecutableView {
 
     /**
      * For internal use only.
+     *
      * @param component Component to set the focus to.
      */
     void setPostFocus(Component component) {
@@ -211,6 +238,7 @@ public class View implements ExecutableView {
     /**
      * Sett the fist focusable component. (If this is not set, it will try to find out the first focusable comoonent by traversing the
      * component tree).
+     *
      * @param firstFocus Component to be focused
      */
     public void setFirstFocus(Focusable<?> firstFocus) {
@@ -232,6 +260,7 @@ public class View implements ExecutableView {
 
     /**
      * Focus a component (or its focusable child component).
+     *
      * @param component Component to focus
      * @return False if no focusable component exists (must be a field ({@link HasValue}), must be "visible" and should not be "read only").
      */
@@ -249,6 +278,7 @@ public class View implements ExecutableView {
 
     /**
      * Focus a component (or its focusable child component).
+     *
      * @param component Component to focus
      * @return False if no focusable component exists (must be "visible").
      */
@@ -265,23 +295,50 @@ public class View implements ExecutableView {
     }
 
     /**
+     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
+     * By default, this invokes {@link #createMenuItem(Runnable)} to create the menu item. If {@link #createMenuItem(Runnable)} returns <code>null</code>,
+     * method from the {@link ApplicationEnvironment#createMenuItem(View, String, Runnable, boolean)} is invoked.
+     *
+     * @param menuAction Action for the menu item to be created
+     * @return Menu item.
+     */
+    public final ApplicationMenuItem getMenuItem(Runnable menuAction) {
+        if(menuItem == null) {
+            menuItem = createMenuItem(menuAction);
+            if(menuItem == null) {
+                menuItem = getApplication().getEnvironment().createMenuItem(this, caption, menuAction, this instanceof CloseableView);
+            }
+        }
+        return menuItem;
+    }
+
+
+    /**
+     * Create the menu item for this view. This will be invoked by {@link #getMenuItem(Runnable)}. Default implementation returns <code>null</code>.
+     *
+     * @param menuAction Action for the menu item to be created
+     * @return Menu item.
+     */
+    protected ApplicationMenuItem createMenuItem(@SuppressWarnings("unused") Runnable menuAction) {
+        return null;
+    }
+
+    /**
      * Set caption for this view. Caption is displayed as a {@link MenuItem} by the {@link Application} so that the view can be selected
      * (only one view is displayed at a time) by clicking it.
+     *
      * @param caption Caption
      */
     public void setCaption(String caption) {
         this.caption = caption;
-        Application a = getApplication();
-        if(a != null) {
-            MenuItem menuItem = a.getMenuItem(this);
-            if(menuItem != null) {
-                menuItem.setLabel(caption);
-            }
+        if(menuItem != null) {
+            menuItem.setLabel(caption);
         }
     }
 
     /**
      * Get the caption.
+     *
      * @return Caption.
      */
     public String getCaption() {
@@ -290,6 +347,7 @@ public class View implements ExecutableView {
 
     /**
      * See if this view is in a "window mode" (means its content is displayed as a {@link Dialog}).
+     *
      * @return Window mode.
      */
     public boolean isWindowMode() {
@@ -298,6 +356,7 @@ public class View implements ExecutableView {
 
     /**
      * Set the "window mode". Content of the view will be wrapped in a {@link Dialog} for "window mode".
+     *
      * @param windowOn Window mode
      */
     public void setWindowMode(boolean windowOn) {
@@ -338,6 +397,7 @@ public class View implements ExecutableView {
 
     /**
      * Implementation of {@link ExecutableView#getView(boolean)}.
+     *
      * @param create Whether to create or not.
      * @return Always return this view.
      */
@@ -348,6 +408,7 @@ public class View implements ExecutableView {
 
     /**
      * Select this as the active view of the application.
+     *
      * @return True if the view is set as the active view of the application.
      */
     public boolean select() {
@@ -364,6 +425,7 @@ public class View implements ExecutableView {
     /**
      * Execute this view by locking another view (the locked view will not be selectable until this view is closed).
      * The locked view acts as its "parent" and it will automatically get selected when this view closes.
+     *
      * @param lock View to be locked.
      */
     public final void execute(View lock) {
@@ -373,6 +435,7 @@ public class View implements ExecutableView {
     /**
      * Execute this view and set its parent too. (In this case, parent view is not locked). The paent view is automatically selected
      * when this view closes.
+     *
      * @param parent Parent view to be set
      */
     public final void invoke(View parent) {
@@ -423,6 +486,7 @@ public class View implements ExecutableView {
 
     /**
      * See if this view was aborted.
+     *
      * @see #abort()
      * @return True or false.
      */
