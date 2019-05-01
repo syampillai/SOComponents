@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -37,7 +38,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      */
     public AbstractDataEditor(Class<T> objectClass, String caption) {
         this.form = new DForm(objectClass);
-        setCaption(caption == null || caption.isEmpty() ? Application.get().getEnvironment().createLabel(getObjectClass()) : caption);
+        setCaption(caption == null || caption.isEmpty() ? Objects.requireNonNull(Application.get()).getEnvironment().createLabel(getObjectClass()) : caption);
     }
 
     @Override
@@ -323,7 +324,10 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
             } catch (FieldError ignored) {
             }
             try {
-                return AbstractDataEditor.this.getClass().getMethod("get" + fieldName);
+                Method m = AbstractDataEditor.this.getClass().getMethod("get" + fieldName);
+                if(m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                    return m;
+                }
             } catch (NoSuchMethodException ignored) {
             }
             try {
@@ -339,9 +343,12 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
                 return AbstractDataEditor.this.getFieldSetMethod(fieldName, getMethod);
             } catch (FieldError ignored) {
             }
-            Class[] params = new Class[] { getMethod.getReturnType() };
+            Class[] params = new Class[]{getMethod.getReturnType()};
             try {
-                return AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
+                Method m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
+                if(m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                    return m;
+                }
             } catch (NoSuchMethodException ignored) {
             }
             return super.getFieldSetMethod(fieldName, getMethod);

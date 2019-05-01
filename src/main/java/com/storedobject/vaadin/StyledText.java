@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Html;
@@ -24,6 +25,12 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
     }
 
     @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        setText(text);
+        super.onAttach(attachEvent);
+    }
+
+    @Override
     protected Span initContent() {
         return content;
     }
@@ -33,12 +40,8 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
         if(htmlText == null) {
             htmlText = "";
         }
-        if(htmlText.equals(text)) {
-            return;
-        }
-        text = htmlText;
-        content.removeAll();
-        content.add(new Html("<span>" + htmlText + "</span>"));
+        this.text = htmlText;
+        content.getElement().executeJavaScript("this.innerHTML = $0", htmlText);
     }
 
     @Override
@@ -48,6 +51,6 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
 
     @Override
     public String getHTML() {
-        return text == null ? "" : text;
+        return getText();
     }
 }

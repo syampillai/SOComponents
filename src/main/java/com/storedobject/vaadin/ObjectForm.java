@@ -250,12 +250,19 @@ public class ObjectForm<T> extends Form {
         if(host == null) {
             return null;
         }
+        Method m;
         try {
-            return host.getClass().getMethod("get" + fieldName);
+            m = host.getClass().getMethod("get" + fieldName);
+            if(m != null && m.getDeclaringClass() == host.getClass()) {
+                return m;
+            }
         } catch (NoSuchMethodException ignored) {
         }
         try {
-            return host.getClass().getMethod("is" + fieldName);
+            m = host.getClass().getMethod("is" + fieldName);
+            if(m != null && m.getDeclaringClass() == host.getClass()) {
+                return m;
+            }
         } catch (NoSuchMethodException ignored) {
         }
         return null;
@@ -268,7 +275,10 @@ public class ObjectForm<T> extends Form {
         }
         Class[] params = new Class[] { getMethod.getReturnType() };
         try {
-            return host.getClass().getMethod("set" + fieldName, params);
+            Method m = host.getClass().getMethod("set" + fieldName, params);
+            if(m != null && m.getDeclaringClass() == host.getClass()) {
+                return m;
+            }
         } catch (NoSuchMethodException ignored) {
         }
         return null;

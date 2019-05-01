@@ -13,7 +13,7 @@ public class InvalidLinkError extends RouteNotFoundError {
     @Override
     public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<NotFoundException> parameter) {
         getElement().setText("");
-        Notification.show("Invalid application link");
+        Notification.show("Invalid application link - " + event.getLocation().getPath());
         return HttpServletResponse.SC_NOT_FOUND;
     }
 }

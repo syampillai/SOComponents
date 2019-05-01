@@ -282,6 +282,14 @@ public class Data extends HashMap<String, Object> {
         return requiredCache;
     }
 
+    private static String getLabel(HasValue<?, ?> field) {
+        try {
+            return (String) (field.getClass().getMethod("getLabel")).invoke(field);
+        } catch (Throwable ignored) {
+        }
+        return null;
+    }
+
     private static class Required implements Validator<Data> {
 
         private static final String CAN_NOT_BE_EMPTY = "Can not be empty";
@@ -307,10 +315,16 @@ public class Data extends HashMap<String, Object> {
             }
             String m = errorMessage;
             if(m == null) {
-                m = CAN_NOT_BE_EMPTY;
                 String id = data.getName(field);
                 if(!id.startsWith("_")) {
-                    m = form.getLabel(id) + ": " + m;
+                    m = form.getLabel(id);
+                } else {
+                    m = getLabel(field);
+                }
+                if(m == null) {
+                    m = CAN_NOT_BE_EMPTY;
+                } else {
+                    m += ": " + CAN_NOT_BE_EMPTY;
                 }
             }
             return ValidationResult.error(m);
@@ -341,10 +355,16 @@ public class Data extends HashMap<String, Object> {
             }
             String m = errorMessage;
             if(m == null) {
-                m = INVALID;
                 String id = data.getName(field);
                 if(!id.startsWith("_")) {
-                    m = form.getLabel(id) + ": " + m;
+                    m = form.getLabel(id);
+                } else {
+                    m = getLabel(field);
+                }
+                if(m == null) {
+                    m = INVALID;
+                } else {
+                    m += ": " + INVALID;
                 }
             }
             return ValidationResult.error(m);

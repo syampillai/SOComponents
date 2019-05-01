@@ -24,7 +24,7 @@ public class Demo extends Application {
     }
 
     @Override
-    protected ApplicationLayout createLayout() {
+    public ApplicationLayout createLayout() {
         return new SimpleLayout();
     }
 
@@ -68,7 +68,7 @@ public class Demo extends Application {
             add(MenuItem.create("Test Grid", new GridTest()));
             add(MenuItem.create("Test Parent/Child", new ParentChildTest()));
             add(MenuItem.create("Test Dashboard", new DashboardTest()));
-            add(MenuItem.create("Test Form", new FormTest()));
+            add(MenuItem.create("Test Form", new TestForm()));
         }
     }
 
@@ -77,7 +77,7 @@ public class Demo extends Application {
     public static class DemoServlet extends VaadinServlet {
     }
 
-    @Route("")
+    @Route("test")
     @Push(PushMode.MANUAL)
     @BodySize(height = "100vh", width = "100vw")
     @Theme(value = Lumo.class, variant = Lumo.LIGHT)

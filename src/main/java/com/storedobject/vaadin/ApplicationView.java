@@ -6,6 +6,8 @@ import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 
+import java.util.Objects;
+
 /**
  * The class that defines the content view of the {@link Application}. An implementation of this class (with all the necessary
  * annotations) is required for using {@link Application} class. There is no need to override or implement any methods.
@@ -28,7 +30,7 @@ public abstract class ApplicationView extends Composite<Component> {
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
         if(layout != null) {
-            Application.get().setMainView(this);
+            Objects.requireNonNull(Application.get()).setMainView(this);
         }
     }
 
