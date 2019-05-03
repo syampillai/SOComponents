@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 
@@ -52,5 +53,27 @@ public abstract class CustomField<T> extends com.vaadin.flow.component.customfie
                 }
             });
         }
+    }
+
+    @Override
+    public void focus() {
+        if(getChildren().noneMatch(CustomField::focus)) {
+            super.focus();
+        }
+    }
+
+    private static boolean focus(Component component) {
+        if(!component.isVisible() || (component instanceof HasValue && ((HasValue<?, ?>)component).isReadOnly())) {
+            return false;
+        }
+        if(component instanceof Focusable) {
+            Focusable focusable = (Focusable) component;
+            if(!focusable.isEnabled()) {
+                return false;
+            }
+            focusable.focus();
+            return true;
+        }
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -89,6 +90,11 @@ public abstract class DataForm extends AbstractDataForm {
         } else {
             setComponent((Component)v);
         }
+    }
+
+    @Override
+    public boolean skipFirstFocus(Focusable<?> skipFocus) {
+        return skipFocus == ok || skipFocus == cancel;
     }
 
     private HasComponents createDefaultLayout() {

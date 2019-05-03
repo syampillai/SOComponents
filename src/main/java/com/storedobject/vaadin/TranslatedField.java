@@ -20,13 +20,27 @@ public class TranslatedField<T, I> extends CustomField<T> {
 
     /**
      * Constructor.
+     *
      * @param field Internal field
      * @param convertToValue Function to convert internal value to value of the field
      * @param convertToInternalValue Function to convert value of the field to the internal value
      */
     public TranslatedField(HasValue<?, I> field, BiFunction<HasValue<?, I>, I, T> convertToValue,
                            BiFunction<HasValue<?, I>, T, I> convertToInternalValue) {
-        super(convertToValue.apply(field, field.getEmptyValue()));
+        this(field, convertToValue, convertToInternalValue, convertToValue.apply(field, field.getEmptyValue()));
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param field Internal field
+     * @param convertToValue Function to convert internal value to value of the field
+     * @param convertToInternalValue Function to convert value of the field to the internal value
+     * @param emptyValue Empty value for the field
+     */
+    public TranslatedField(HasValue<?, I> field, BiFunction<HasValue<?, I>, I, T> convertToValue,
+                           BiFunction<HasValue<?, I>, T, I> convertToInternalValue, T emptyValue) {
+        super(emptyValue);
         this.field = field;
         this.convertT2I = convertToInternalValue;
         this.convertI2T = convertToValue;
@@ -54,6 +68,7 @@ public class TranslatedField<T, I> extends CustomField<T> {
 
     /**
      * Get the embedded field.
+     *
      * @return The internal field.
      */
     public HasValue<?, I> getField() {

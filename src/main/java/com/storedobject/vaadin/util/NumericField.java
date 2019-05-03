@@ -4,7 +4,6 @@ import com.storedobject.vaadin.CustomTextField;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.Objects;
 
 public abstract class NumericField<T extends Number> extends CustomTextField<T> {
 
@@ -76,6 +75,6 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         if(grouping) {
             return s;
         }
-        return s.replace(".", "");
+        return s.replace(",", "");
     }
 }

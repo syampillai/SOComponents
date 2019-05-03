@@ -69,6 +69,9 @@ public class IntegerField extends NumericField<Integer> {
     }
 
     public void setLength(int width) {
+        if(width < 1) {
+            width = 8;
+        }
         int min = 1;
         if(allowNegative) {
             ++min;

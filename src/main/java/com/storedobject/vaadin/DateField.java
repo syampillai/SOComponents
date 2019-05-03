@@ -21,7 +21,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
     private static Date today = null;
 
     public DateField() {
-        super(new DatePicker(), (f, d) -> create(d), (f, d) -> create(d));
+        this(null, null);
     }
 
     public DateField(String label) {
@@ -33,7 +33,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
     }
 
     public DateField(String label, Date initialValue) {
-        this();
+        super(new DatePicker(), (f, d) -> create(d), (f, d) -> create(d), null);
         setLabel(label);
         setValue(initialValue);
     }
@@ -88,7 +88,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
     }
 
     private static Date create(int year, int month, int day) {
-        GregorianCalendar c = new GregorianCalendar(year, month - 1, day);
+        @SuppressWarnings("MagicConstant") GregorianCalendar c = new GregorianCalendar(year, month - 1, day);
         return new Date(c.getTimeInMillis());
     }
 }

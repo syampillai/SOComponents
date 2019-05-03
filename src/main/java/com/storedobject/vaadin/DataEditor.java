@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
@@ -179,6 +180,11 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
         v.add((Component)buttonPanel, getForm().getComponent());
         buildButtons();
         setComponent((Component)v);
+    }
+
+    @Override
+    public boolean skipFirstFocus(Focusable<?> skipFocus) {
+        return skipFocus == save || skipFocus == cancel;
     }
 
     private HasComponents createDefaultLayout() {

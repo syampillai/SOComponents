@@ -106,6 +106,9 @@ public class DoubleField extends NumericField<Double> {
     }
 
     public void setLength(int width) {
+        if(width < 1) {
+            width = 18;
+        }
         int min = 1;
         if(allowNegative) {
             ++min;

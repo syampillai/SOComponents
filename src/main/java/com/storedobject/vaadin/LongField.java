@@ -68,6 +68,9 @@ public class LongField extends NumericField<Long> {
     }
 
     public void setLength(int width) {
+        if(width < 1) {
+            width = 10;
+        }
         int min = 1;
         if(allowNegative) {
             ++min;

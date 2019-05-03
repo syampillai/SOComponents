@@ -106,6 +106,10 @@ public class View implements ExecutableView {
      * @return The "content" as a component.
      */
     public Component getContent() {
+        return getContentInt();
+    }
+
+    private Component getContentInt() {
         Component c = getComponent();
         if(!(c instanceof Dialog)) {
             return c;
@@ -218,7 +222,7 @@ public class View implements ExecutableView {
                 focus();
                 doFocus = false;
             } else if(postFocus != null) {
-                focus(postFocus);
+                focus(postFocus, false);
                 postFocus = null;
             } else {
                 focus();
@@ -236,7 +240,7 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Sett the fist focusable component. (If this is not set, it will try to find out the first focusable comoonent by traversing the
+     * Set the first focusable component. (If this is not set, it will try to find out the first focusable component by traversing the
      * component tree).
      *
      * @param firstFocus Component to be focused
@@ -246,16 +250,35 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Focus this view by finding the first focusable component.
+     * Check if this component to be skipped while traversing the component tree to find the first focusable component or not.
+     *
+     * @param skipFocus The focusable component
+     * @return False if it should not be skipped (Default implementation returns false).
+     */
+    public boolean skipFirstFocus(@SuppressWarnings("unused") Focusable<?> skipFocus) {
+        return false;
+    }
+
+    /**
+     * Focus this view by finding the first focusable component. The "first focus" is set, then it will be focused.
      */
     public void focus() {
         if(firstFocus != null) {
             firstFocus.focus();
+        }
+        if(focus(getContent())) {
             return;
         }
-        if(!focus(getContent())) {
-            focusAny(getContent());
+        if(focusAny(getContent(), true)) {
+            return;
         }
+        if(focusAny(getContentInt(), true)) {
+            return;
+        }
+        if(focusAny(getContent(), false)) {
+            return;
+        }
+        focusAny(getContentInt(), false);
     }
 
     /**
@@ -264,12 +287,21 @@ public class View implements ExecutableView {
      * @param component Component to focus
      * @return False if no focusable component exists (must be a field ({@link HasValue}), must be "visible" and should not be "read only").
      */
-    public static boolean focus(Component component) {
+    public boolean focus(Component component) {
+        return focus(component, true);
+    }
+
+    private boolean focus(Component component, boolean checkSkip) {
         if(component instanceof HasComponents) {
-            return component.getChildren().anyMatch(View::focus);
+            return component.getChildren().anyMatch(c -> focus(c, checkSkip));
         } else {
-            if(component instanceof HasValue && component instanceof Focusable && !((HasValue) component).isReadOnly() && component.isVisible()) {
-                ((Focusable) component).focus();
+            if(component instanceof HasValue && component instanceof Focusable &&
+                    !((HasValue) component).isReadOnly() && component.isVisible()) {
+                Focusable focusable = (Focusable) component;
+                if(!focusable.isEnabled() || (checkSkip && skipFirstFocus(focusable))) {
+                    return false;
+                }
+                focusable.focus();
                 return true;
             }
         }
@@ -282,12 +314,20 @@ public class View implements ExecutableView {
      * @param component Component to focus
      * @return False if no focusable component exists (must be "visible").
      */
-    public static boolean focusAny(Component component) {
+    public boolean focusAny(Component component) {
+        return focusAny(component, false);
+    }
+
+    private boolean focusAny(Component component, boolean checkSkip) {
         if(component instanceof HasComponents) {
-            return component.getChildren().anyMatch(View::focusAny);
+            return component.getChildren().anyMatch(c -> focusAny(c, checkSkip));
         } else {
             if(component instanceof Focusable && component.isVisible()) {
-                ((Focusable) component).focus();
+                Focusable focusable = (Focusable) component;
+                if(!focusable.isEnabled() || (checkSkip && skipFirstFocus(focusable))) {
+                    return false;
+                }
+                focusable.focus();
                 return true;
             }
         }
