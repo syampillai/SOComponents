@@ -346,12 +346,21 @@ public class View implements ExecutableView {
         if(menuItem == null) {
             menuItem = createMenuItem(menuAction);
             if(menuItem == null) {
-                menuItem = getApplication().getEnvironment().createMenuItem(this, caption, menuAction, this instanceof CloseableView);
+                menuItem = getApplication().getEnvironment().createMenuItem(this, caption, menuAction, isCloseable());
             }
         }
         return menuItem;
     }
 
+    /**
+     * Check if this view is closeable or not. If closeable, a "closeable" menu item will be created by {@link #getMenuItem(Runnable)}.
+     * This is checked only once when the "menu item" is created.
+     *
+     * @return True if closeable. By default, a view is closeable if it implements {@link CloseableView}.
+     */
+    public boolean isCloseable() {
+        return this instanceof CloseableView;
+    }
 
     /**
      * Create the menu item for this view. This will be invoked by {@link #getMenuItem(Runnable)}. Default implementation returns <code>null</code>.

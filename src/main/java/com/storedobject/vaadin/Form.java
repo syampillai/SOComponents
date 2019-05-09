@@ -17,6 +17,7 @@ import java.util.stream.Stream;
  * that keeps data for all the "fields" of the form.
  * <p>A form is not used directly in most cases. Instead, a {@link View} derived from {@link AbstractDataForm} is used where a form is
  * already embedded. All overridable methods in the form can be defined in {@link AbstractDataForm} too.</p>
+ *
  * @author Syam
  */
 public class Form {
@@ -42,6 +43,7 @@ public class Form {
 
     /**
      * Construct a form with a specified field container.
+     *
      * @param container Field container of the form.
      */
     public Form(HasComponents container) {
@@ -51,6 +53,7 @@ public class Form {
 
     /**
      * For internal use only.
+     *
      * @param container Field container of the form.
      * @param dummy Dummy value, not used
      */
@@ -66,6 +69,7 @@ public class Form {
     /**
      * Create the field container of this form. This will be invoked only if no container was already set.
      * Default implementation creates a {@link FormLayout}.
+     *
      * @return Field container created.
      */
     protected HasComponents createContainer() {
@@ -79,6 +83,7 @@ public class Form {
 
     /**
      * Get the field container of the form.
+     *
      * @return Field container.
      */
     public final HasComponents getContainer() {
@@ -119,6 +124,7 @@ public class Form {
 
     /**
      * Get the field container of the form as a component.
+     *
      * @return Field container as a component. <code>null</code> is returned if the field container is not a component.
      */
     public final Component getComponent() {
@@ -128,6 +134,7 @@ public class Form {
 
     /**
      * Get the field names. This is invoked to determine the fields to be created for constructing the form.
+     *
      * @return Stream of fields.
      */
     protected Stream<String> getFieldNames() {
@@ -136,6 +143,7 @@ public class Form {
 
     /**
      * Create the field for a particular "field name".
+     *
      * @param fieldName Field name
      * @return Field created.
      */
@@ -145,6 +153,7 @@ public class Form {
 
     /**
      * Add a field to the form. The field will not be having a "field name".
+     *
      * @param field Field to be added
      */
     public void addField(HasValue<?, ?> field) {
@@ -153,6 +162,7 @@ public class Form {
 
     /**
      * Add a field to the form.
+     *
      * @param fieldName Name associated with the field
      * @param field Field
      */
@@ -162,6 +172,7 @@ public class Form {
 
     /**
      * Remove a field from the form.
+     *
      * @param fieldName Name of the field to be removed
      */
     public void removeField(String fieldName) {
@@ -170,6 +181,7 @@ public class Form {
 
     /**
      * Remove fields from the form.
+     *
      * @param fieldNames Names of the field to be removed
      */
     public void removeField(String... fieldNames) {
@@ -180,6 +192,7 @@ public class Form {
 
     /**
      * Remove a field from the form.
+     *
      * @param field Field to be removed.
      */
     public void removeField(HasValue<?, ?> field) {
@@ -205,6 +218,7 @@ public class Form {
     /**
      * Attach a field to the form. This is invoked whenever a field is added to the form. The default implementation adds the component of
      * the field (if it is a component) to the field container.
+     *
      * @param fieldName Name of the field
      * @param field Field
      */
@@ -217,6 +231,7 @@ public class Form {
     /**
      * Detach a field from the form. This is invoked whenever a field is removed to the form. The default implementation removes the component of
      * the field (if it is a component) from the field container.
+     *
      * @param fieldName Name of the field
      * @param field Field
      */
@@ -228,6 +243,7 @@ public class Form {
 
     /**
      * Add components to the form's field container.
+     *
      * @param components Compoents to add
      */
     public void add(Component... components) {
@@ -236,6 +252,7 @@ public class Form {
 
     /**
      * Remove components from the form's field container.
+     *
      * @param components Compoents to remove
      */
     public void remove(Component... components) {
@@ -310,6 +327,7 @@ public class Form {
 
     /**
      * Save data from the fields to the internal data structure.
+     *
      * @return True if data is saved successfully.
      */
     public boolean commit() {
@@ -324,7 +342,17 @@ public class Form {
     }
 
     /**
+     * Get all fields. This may not
+     *
+     * @return Stream of fields.
+     */
+    public Stream<HasValue<?, ?>> getFields() {
+        return data.getFields();
+    }
+
+    /**
      * Get a field associated with a field name.
+     *
      * @param fieldName Name of the field
      * @return Field.
      */
@@ -334,6 +362,7 @@ public class Form {
 
     /**
      * Get a field name associated with a field.
+     *
      * @param field Field
      * @return Name of the field.
      */
@@ -344,6 +373,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      */
     public void setRequired(HasValue<?, ?> field) {
@@ -353,6 +383,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      */
     public void setRequired(String fieldName) {
@@ -362,6 +393,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      * @param errorMessage Error message to show when the field is empty
      */
@@ -372,6 +404,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      * @param errorMessage Error message to show when the field is empty
      */
@@ -382,6 +415,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      * @param required True or false
      */
@@ -392,6 +426,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      * @param required True or false
      */
@@ -402,6 +437,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      * @param required True or false
      * @param errorMessage Error message to show when the field is empty
@@ -413,6 +449,7 @@ public class Form {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      * @param required True or false
      * @param errorMessage Error message to show when the field is empty
@@ -423,6 +460,7 @@ public class Form {
 
     /**
      * Add a validator for the field. Validator should return <code>true</code> if the field is valid.
+     *
      * @param field Field
      * @param validator Validator
      * @param <T> Type of the field.
@@ -433,6 +471,7 @@ public class Form {
 
     /**
      * Add a validator for the field. Validator should return <code>true</code> if the field is valid.
+     *
      * @param field Field
      * @param validator Validator
      * @param errorMessage Error message to be displayed if the field is not valid
@@ -444,6 +483,7 @@ public class Form {
 
     /**
      * Mark a field as not valid.
+     *
      * @param field Field
      */
     public static void markError(HasValue<?, ?> field) {
@@ -452,6 +492,7 @@ public class Form {
 
     /**
      * Clear the error status associated with a field.
+     *
      * @param field Field
      */
     public static void clearError(HasValue<?, ?> field) {
@@ -481,6 +522,7 @@ public class Form {
     /**
      * Error messages of the form are typcially displayed using {@link com.vaadin.flow.component.notification.Notification}. However,
      * one can set any {@link HasText} for that.
+     *
      * @param display Error messages will be displayed on this
      */
     public void setErrorDisplay(HasText display) {
@@ -489,6 +531,7 @@ public class Form {
 
     /**
      * Set the form read only.
+     *
      * @param readOnly True or false
      */
     public void setReadOnly(boolean readOnly) {
@@ -497,6 +540,7 @@ public class Form {
 
     /**
      * This method is invoked to determine if a field needs to be made visible or not.
+     *
      * @param fieldName Name of the field
      * @return True or false.
      */
@@ -506,6 +550,7 @@ public class Form {
 
     /**
      * This method is invoked to determine if a field needs to be made visible or not.
+     *
      * @param field Field
      * @return True or false.
      */
@@ -515,6 +560,7 @@ public class Form {
 
     /**
      * This method is invoked to determine if a field needs to be made editable or not.
+     *
      * @param fieldName Name of the field
      * @return True or false.
      */
@@ -524,6 +570,7 @@ public class Form {
 
     /**
      * This method is invoked to determine if a field needs to be made editable or not.
+     *
      * @param field Field
      * @return True or false.
      */
@@ -534,6 +581,7 @@ public class Form {
     /**
      * This method is invoked to determine the label used for dislaying the field. The default implementation determine it by invoking
      * {@link ApplicationEnvironment#createLabel(String)}.
+     *
      * @param fieldName Name of the field
      * @return Label
      */
@@ -569,6 +617,7 @@ public class Form {
 
     /**
      * Set an associated view for this form.
+     *
      * @param view View
      */
     public void setView(View view) {
@@ -577,6 +626,7 @@ public class Form {
 
     /**
      * Get the associated view of thsi form.
+     *
      * @return View.
      */
     public View getView() {

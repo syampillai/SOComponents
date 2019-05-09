@@ -140,4 +140,11 @@ public class Box extends Composite {
     public void setEnabled(boolean enabled) {
         setStyle("background", enabled ? BACKGROUND : "white");
     }
+
+    /**
+     * Create a grey background style. Same as setting setReadonly(true).
+     */
+    public void grey() {
+        setReadOnly(false);
+    }
 }

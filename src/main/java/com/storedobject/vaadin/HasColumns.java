@@ -419,7 +419,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param html Whether the renderer function returns HTML text or not (For HTML texts, only one function will be available)
      * @param functions List of functions
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "unused"})
     default void setRendererFunctions(String columnName, boolean html, Function<T, ?>... functions) {
     }
 
@@ -751,10 +751,13 @@ public interface HasColumns<T> extends ExecutableView {
             columnName = getColumnMethodName(columnName);
             Method m;
             Class<?> objectClass = this.objectClass;
-            while (objectClass != Object.class) {
+            while (true) {
                 m = getOutsideMethod(columnName, objectClass);
                 if(m != null) {
                     return m;
+                }
+                if(objectClass == Object.class) {
+                    break;
                 }
                 objectClass = objectClass.getSuperclass();
             }
@@ -834,7 +837,8 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, function)) {
                 return true;
             }
-            Renderer<T> r = html ? renderer((Function<T, HTMLGenerator>)function) : renderer(hc.getColumnTemplate(columnName), function);
+            Renderer<T> r = html ? renderer((Function<T, HTMLGenerator>)function) :
+                    renderer(hc.getColumnTemplate(columnName), function);
             hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -873,7 +877,8 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, method)) {
                 return true;
             }
-            return createColumn(columnName, null, HTMLGenerator.class.isAssignableFrom(method.getReturnType()), getMethodFunction(columnName, method));
+            return createColumn(columnName, null, HTMLGenerator.class.isAssignableFrom(method.getReturnType()),
+                    getMethodFunction(columnName, method));
         }
 
         private boolean createColumn(String columnName, Renderer<T> renderer) {
@@ -1073,6 +1078,11 @@ public interface HasColumns<T> extends ExecutableView {
             }
             if(view == null && create) {
                 view = new View(grid, ((HasColumns<T>)grid).getCaption()) {
+
+                    @Override
+                    public boolean isCloseable() {
+                        return grid instanceof CloseableView;
+                    }
 
                     @Override
                     public void returnedFrom(View parent) {
