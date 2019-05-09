@@ -6,6 +6,8 @@ import com.vaadin.flow.component.Composite;
 /**
  * Using this class one can draw a "box" around any Vaadin component. If you have a component, in order to enclose it in a box, just use
  * <code>new Box(component)</code>. Box is drawn as per "HTML Box Model".
+ *
+ * @author Syam
  */
 public class Box extends Composite {
 
@@ -38,6 +40,7 @@ public class Box extends Composite {
 
     /**
      * Set border radius.
+     *
      * @param radius Radius in pixels
      */
     public void setBorderRadius(int radius) {
@@ -54,6 +57,7 @@ public class Box extends Composite {
 
     /**
      * Set border width.
+     *
      * @param widths Width
      */
     public void setBorderWidth(String widths) {
@@ -62,6 +66,7 @@ public class Box extends Composite {
 
     /**
      * Set border color.
+     *
      * @param color HTML color
      */
     public void setBorderColor(String color) {
@@ -78,6 +83,7 @@ public class Box extends Composite {
 
     /**
      * Set padding.
+     *
      * @param padding Padding in pixels
      */
     public void setPadding(int padding) {
@@ -86,6 +92,7 @@ public class Box extends Composite {
 
     /**
      * Set padding.
+     *
      * @param paddings Padding
      */
     public void setPadding(String paddings) {
@@ -94,6 +101,7 @@ public class Box extends Composite {
 
     /**
      * Set margin.
+     *
      * @param margin Margin in pixels
      */
     public void setMargin(int margin) {
@@ -102,6 +110,7 @@ public class Box extends Composite {
 
     /**
      * Set margin.
+     *
      * @param margins Margin
      */
     public void setMargin(String margins) {
@@ -110,6 +119,7 @@ public class Box extends Composite {
 
     /**
      * Directly set styles. For example, <code>setStyle("margin", "3px")</code>
+     *
      * @param style Style to set
      * @param value Value of the style
      */
@@ -126,6 +136,7 @@ public class Box extends Composite {
 
     /**
      * Set read only style. (Vaadin's Lumo theme is emulated).
+     *
      * @param readOnly Read only flag
      */
     public void setReadOnly(boolean readOnly) {
@@ -135,6 +146,7 @@ public class Box extends Composite {
 
     /**
      * Set enabled/disabled style. (Vaadin's Lumo theme is emulated).
+     *
      * @param enabled Enabled or not
      */
     public void setEnabled(boolean enabled) {
