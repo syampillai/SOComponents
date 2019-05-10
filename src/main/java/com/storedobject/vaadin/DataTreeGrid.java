@@ -107,6 +107,12 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
         return soGrid.getColumnByKey(columnKey);
     }
 
+    /**
+     * This method always return <code>null</code>. Instead of this method, use {@link #createHierarchyColumn(String, ValueProvider)}.
+     *
+     * @param valueProvider Value provider for column values
+     * @return <code>null</code>
+     */
     @Override
     public Column<T> addHierarchyColumn(ValueProvider<T, ?> valueProvider) {
         return null;
@@ -115,11 +121,12 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
     /**
      * Add the hierarchy column. If this or any of its cousin method is never called, the first column created will be made the hierarchy column.
      *
+     * @param columnName Name of the column
      * @param valueProvider Value provider for the column
      * @return Column created.
      */
     public Column<T> createHierarchyColumn(String columnName, ValueProvider<T, ?> valueProvider) {
-        if(soGrid.treeCreated()) {
+        if(soGrid.treeCreated() || columnName == null) {
             return null;
         }
         soGrid.treeBuilt(columnName);
@@ -131,12 +138,13 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
     /**
      * Add a HTML hierarchy column. If this or any of its cousin method is never called, the first column created will be made the hierarchy column.
      *
+     * @param columnName Name of the column
      * @param htmlFunction Function that returns a HTML generator for generating the HTML content
      * @return Column created.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "UnusedReturnValue"})
     public Column<T> createHTMLHierarchyColumn(String columnName, Function<T, HTMLGenerator> htmlFunction) {
-        if(soGrid.treeCreated()) {
+        if(soGrid.treeCreated() || columnName == null) {
             return null;
         }
         soGrid.treeBuilt(columnName);
