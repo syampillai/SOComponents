@@ -2,11 +2,14 @@ package com.storedobject.vaadin;
 
 /**
  * An interface that generate HTML text.
+ *
+ * @author Syam
  */
 @FunctionalInterface
 public interface HTMLGenerator {
+
     /**
-     * Get the HTML text generated. (The generated HTML may not contain outer tags. So, spam or div tag may be used to
+     * Get the HTML text generated. (The generated HTML may not contain outer tags. So, span or div tag may be used to
      * bracket it in order to make it a valid HTML text).
      *
      * @return HTML text generated.

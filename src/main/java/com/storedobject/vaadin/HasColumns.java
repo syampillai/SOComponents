@@ -36,6 +36,7 @@ public interface HasColumns<T> extends ExecutableView {
     /**
      * Get the currently rendered object. This method is useful when you have your own methods mapped for column values and you want to do any special setup
      * or computation.
+     *
      * @return Currently rendered object.
      */
     default T getObjectRendered() {
@@ -44,6 +45,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * This method is invoked just before each row is rendered. You can do special set up or comuptation at this stage.
+     *
      * @param object Currently rendered object.
      */
     default void render(@SuppressWarnings("unused") T object) {
@@ -51,6 +53,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Set the resizable artribute of a given column.
+     *
      * @param columnName Name of the column
      * @param resizable Whether resizable or not
      */
@@ -60,6 +63,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Check the resizable artribute of a given column.
+     *
      * @param columnName Name of the column
      * @return Whether resizable or not
      */
@@ -69,6 +73,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Set the visibility artribute of a given column.
+     *
      * @param columnName Name of the column
      * @param visible Whether visible or not
      */
@@ -78,6 +83,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Check the viibility artribute of a given column.
+     *
      * @param columnName Name of the column
      * @return Whether visble or not
      */
@@ -87,6 +93,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Set the frozen artribute of a given column.
+     *
      * @param columnName Name of the column
      * @param frozen Whether frozen or not
      */
@@ -96,6 +103,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Check the frozen artribute of a given column.
+     *
      * @param columnName Name of the column
      * @return Whether frozen or not
      */
@@ -106,6 +114,7 @@ public interface HasColumns<T> extends ExecutableView {
     /**
      * Get the "configure button" that can be added somewhere in your user interface, usually as the first component of the "header row". The grid columns
      * can be configured by clicking this button.
+     *
      * @return Configure button.
      */
     default ButtonIcon getConfigureButton() {
@@ -114,6 +123,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Set the minimum/maximum width of the column.
+     *
      * @param perColumnWidthInPixels Minimum width (in pixels) per column
      * @param maxWidthInPixels Maximum width of the grid in pixels
      */
@@ -123,6 +133,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Get the column count of the grid.
+     *
      * @return Number of columns.
      */
     default int getColumnCount() {
@@ -131,6 +142,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Get the data class of the grid.
+     *
      * @return Data class.
      */
     default Class<T> getDataClass() {
@@ -146,6 +158,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Rfresh a particular item in the grid.
+     *
      * @param item Item
      */
     default void refresh(T item) {
@@ -154,6 +167,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Return a Function for generating column data.
+     *
      * @param columnName Column name
      * @return Default implementation is to find out this from the Application Environment but the detault Application Environment also returns null.
      */
@@ -177,6 +191,7 @@ public interface HasColumns<T> extends ExecutableView {
      * Create a column for the given column name. If the column name is "XXX", it first determines if a getXXX(T object) or isXXX(T object) method
      * is already defined in the grid or not for generating data for this column. If not, it calls the getColumnFunction("XXX")
      * to determine if any Function is defined for this purpose. If not found, it calls the getColumnMethod("XXX") to determine.
+     *
      * @param columnName Column name
      * @return Whether a new column can be created or not.
      */
@@ -185,8 +200,9 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Crate a column that uses one or more functions to generate its column value. It generates a multi-line output with result of each function
-     * in separate line unless a template is already define for this column using getColumnTemplate method.
+     * Create a column that uses one or more functions to generate its column value. It generates a multi-line output with result of each function
+     * in separate line unless a template is already defined for this column using getColumnTemplate method.
+     *
      * @param columnName Column name
      * @param functions Functions that take object as a parameter and returns some sort of value. Values are stringified before displaying.
      *                  (Application Environment may be set up to control how the stringification process by defining it in the toDisplay(..) method).
@@ -198,8 +214,20 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Crate a column that uses one or more functions to generate its column value. The output is formatted using the "template" passed. The template
+     * Create a HTML column that uses HTML emitted by a {@link HTMLGenerator} as its column value.
+     *
+     * @param columnName Column name
+     * @param htmlGeneratorFunction Function that take object as a parameter and returns a {@link HTMLGenerator}.
+     * @return Whether a new column can be created or not.
+     */
+    default boolean createHTMLColumn(String columnName, Function<T, HTMLGenerator> htmlGeneratorFunction) {
+        return getSOGrid().createColumn(columnName, null, true, htmlGeneratorFunction);
+    }
+
+    /**
+     * Create a column that uses one or more functions to generate its column value. The output is formatted using the "template" passed. The template
      * can contain any HTML text and placeholders such as &lt;1&gt;, &lt;2&gt;, &lt;3&gt; ... These placeholders will be replaced from the output from the functions.
+     *
      * @param columnName Column name
      * @param template Template
      * @param functions Functions that take object as a parameter and returns some sort of value. Values are stringified before displaying.
@@ -214,6 +242,7 @@ public interface HasColumns<T> extends ExecutableView {
     /**
      * Create a column uses a method to determine its data. The method must be either available in the grid itself or must be available in the object.
      * If it is available in the grid itself, it should take object as the only parameter.
+     *
      * @param columnName Column name
      * @param method Method
      * @return Whether a new column can be created or not.
@@ -224,6 +253,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Create a column that generates data through a custom renderer.
+     *
      * @param columnName Column name
      * @param renderer Renderer.
      * @return Whether a new column can be created or not.
@@ -313,6 +343,7 @@ public interface HasColumns<T> extends ExecutableView {
     /**
      * Caption used when displaying it in a View. If no caption was set using setCaption method, a label for the Bean's class
      * is determined from the Application Environment.
+     *
      * @return Caption
      */
     default String getCaption() {
@@ -337,6 +368,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Set caption used when displaying the grid in a View.
+     *
      * @param caption Caption
      */
     default void setCaption(String caption) {
@@ -356,6 +388,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Select rows.
+     *
      * @param items Items to be selected.
      */
     default void select(Iterable<T> items) {
@@ -364,6 +397,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Select rows.
+     *
      * @param items Items to be selected.
      */
     default void select(Iterator<T> items) {
@@ -372,6 +406,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Deselect rows.
+     *
      * @param items Items to be deselected.
      */
     default void deselect(Iterable<T> items) {
@@ -380,6 +415,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Deselect rows.
+     *
      * @param items Items to be deselected.
      */
     default void deselect(Iterator<T> items) {
@@ -388,6 +424,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Get the selected item. This will return the item only if a single item is selected.
+     *
      * @return Item if that is the only row selected.
      */
     default T getSelected() {
@@ -396,6 +433,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Scroll to a particular row.
+     *
      * @param rowIndex Zero based index of the row.
      */
     default void scrollTo(int rowIndex) {
@@ -468,13 +506,15 @@ public interface HasColumns<T> extends ExecutableView {
         private boolean allowColumnReordering = true;
         private T objectRendered;
         private View view;
-        private boolean buildTree;
+        private String treeColumnName = "_$_";
         private Application application;
 
         @SuppressWarnings("unchecked")
         SOGrid(Grid<T> grid, Class<T> objectClass, Iterable<String> columns) {
             this.grid = grid;
-            buildTree = grid instanceof TreeGrid;
+            if(grid instanceof TreeGrid) {
+                treeColumnName = null;
+            }
             this.hc = (HasColumns<T>) grid;
             this.objectClass = objectClass;
             this.columns = columns;
@@ -812,7 +852,7 @@ public interface HasColumns<T> extends ExecutableView {
 
         @SuppressWarnings("unchecked")
         private boolean createColumn(String columnName) {
-            if(columnName == null) {
+            if(columnName == null || columnName.equals(treeColumnName)) {
                 return false;
             }
             if(renderers != null && renderers.containsKey(columnName)) {
@@ -931,27 +971,33 @@ public interface HasColumns<T> extends ExecutableView {
             return r;
         }
 
-        void treeBuilt() {
-            buildTree =false;
+        void treeBuilt(String columnName) {
+            treeColumnName = columnName;
+        }
+
+        boolean treeCreated() {
+            return treeColumnName != null;
         }
 
         private boolean createTreeColumn(String columnName, Method m) {
-            if(!buildTree || m == null) {
+            if(treeCreated() || m == null) {
                 return false;
             }
-            buildTree = false;
             Function<T, ?> function = getMethodFunction(columnName, m);
-            Grid.Column<T> column = ((DataTreeGrid<T>)grid).addHierarchyColumn(function::apply);
-            acceptColumn(column, columnName);
+            if(HTMLGenerator.class.isAssignableFrom(m.getReturnType())) {
+                //noinspection unchecked
+                ((DataTreeGrid<T>) grid).createHTMLHierarchyColumn(columnName, (Function<T, HTMLGenerator>)function);
+            } else {
+                ((DataTreeGrid<T>) grid).createHierarchyColumn(columnName, function::apply);
+            }
             return true;
         }
 
         private boolean createTreeColumn(String columnName, Function<T, ?> function) {
-            if(!buildTree || function == null) {
+            if(treeCreated() || function == null) {
                 return false;
             }
-            buildTree = false;
-            acceptColumn(((DataTreeGrid<T>)grid).addHierarchyColumn(function::apply), columnName);
+            ((DataTreeGrid<T>)grid).createHierarchyColumn(columnName, function::apply);
             return true;
         }
 
@@ -1001,7 +1047,7 @@ public interface HasColumns<T> extends ExecutableView {
             acceptColumn(grid.addColumn(renderer), columnName);
         }
 
-        private void acceptColumn(Grid.Column<T> column, String columnName) {
+        void acceptColumn(Grid.Column<T> column, String columnName) {
             column.setKey(columnName);
             Component h = hc.getColumnHeaderComponent(columnName);
             if(h == null) {
