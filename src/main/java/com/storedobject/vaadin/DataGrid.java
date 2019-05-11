@@ -1,12 +1,10 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Enhancement to Vaadin's Grid to handle Java Beans in a specialized way. Please note that this is not supporting the functionality supported
@@ -56,22 +54,6 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
         return soGrid;
     }
 
-    /**
-     * This method is invoked once all the columns are built and the grid is ready to display.
-     */
-    protected void constructed() {
-    }
-
-    /**
-     * You can have a "header row" (as the first row) that covers the whole grid. Typically, such a row is to show your own buttons or components to
-     * customize the grid. The default implentation returns null and thus, no such row is created.
-     *
-     * @return Component to be used as the "header row".
-     */
-    protected Component createHeader() {
-        return null;
-    }
-
     @Override
     public boolean isColumnReorderingAllowed() {
         return soGrid.rendered() ? super.isColumnReorderingAllowed() : soGrid.isColumnReorderingAllowed();
@@ -100,53 +82,5 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
             return super.getColumnByKey(columnKey);
         }
         return soGrid.getColumnByKey(columnKey);
-    }
-
-    /**
-     * This method is invoked to find out the names of the columns to be generated. However, this will not be invoked if the column names
-     * are already passed in the constructor. The default implementation returns null (however, this behaviour can be changed by setting up an
-     * appropriate {@link ApplicationEnvironment} that can create a customized {@link ObjectColumnCreator#getColumnNames()})
-     * and in that case, columns names will be determined
-     * through getXXX and isXXX methods of the Bean type.
-     *
-     * @return Column names to be constructed.
-     */
-    protected Stream<String> getColumnNames() {
-        return null;
-    }
-
-    /**
-     * Return the method for generating column data from the Bean. By default, getXXX and isXXX methods are tried.
-     * However, this method is invoked only if no getXXX or isXXX method is defined in the grid itself. (Also note that
-     * {@link #getColumnFunction(String)}
-     * is invoked before that and thus, this will not be invoked if data is already available through a Function returned by
-     * the {@link #getColumnFunction(String)} method.
-     *
-     * @param columnName Column name
-     * @return method if available, otherwise null. Firstly, it sees if this can be retrieved from the
-     * {@link ObjectColumnCreator#getColumnMethod(String)} returned by the {@link ApplicationEnvironment}.
-     */
-    protected Method getColumnMethod(String columnName) {
-        return soGrid.getColumnMethod(columnName);
-    }
-
-    /**
-     * This mehod is invoked when the column is actually constructed.
-     *
-     * @param columnName Column name
-     * @param column Grid column that may be customized
-     */
-    protected void customizeColumn(@SuppressWarnings("unused") String columnName,
-                                   @SuppressWarnings("unused") Grid.Column<T> column) {
-    }
-
-
-    /**
-     * Create a View to display the grid when executed. If this method returns null, a default View will be created.
-     *
-     * @return A View with this grid as the component. Default implementaion returns <code>null</code>.
-     */
-    protected View createView() {
-        return null;
     }
 }

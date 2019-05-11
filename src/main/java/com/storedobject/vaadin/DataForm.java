@@ -86,7 +86,11 @@ public abstract class DataForm extends AbstractDataForm {
         buildFields();
         buildButtons();
         if(windowMode) {
-            setComponent(new Window((Component) v));
+            Window window = createWindow((Component)v);
+            if(window == null) {
+                window = new Window((Component)v);
+            }
+            setComponent(window);
         } else {
             setComponent((Component)v);
         }

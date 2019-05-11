@@ -9,6 +9,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.function.ValueProvider;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,12 +20,61 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * Common interface for DataGrid and DataTreeGrid.
+ * Common interface for DataGrid and DataTreeGrid. (Other implementations of {@link Grid} may also implement this).
  *
  * @param <T> Bean type of the Gird/TreeGrid.
  * @author Syam
  */
 public interface HasColumns<T> extends ExecutableView {
+
+    /**
+     * This method is invoked once all the columns are built and the grid is ready to display.
+     */
+    default void constructed() {
+    }
+
+    /**
+     * You can have a "header row" (as the first row) that covers the whole grid. Typically, such a row is to show your own buttons or components to
+     * customize the grid. The default implementation returns null and thus, no such row is created.
+     *
+     * @return Component to be used as the "header row".
+     */
+    default Component createHeader() {
+        return null;
+    }
+
+    /**
+     * This method is invoked to find out the names of the columns to be generated. However, this will not be invoked if the column names
+     * are already passed in the constructor of the {@link SOGrid}. The default implementation returns null (however, this behaviour can be changed by setting up an
+     * appropriate {@link ApplicationEnvironment} that can create a customized {@link ObjectColumnCreator#getColumnNames()})
+     * and in that case, columns names will be determined
+     * through getXXX and isXXX methods of the Bean type.
+     *
+     * @return Column names to be constructed.
+     */
+    default Stream<String> getColumnNames() {
+        return null;
+    }
+
+    /**
+     * This mehod is invoked when the column is actually constructed.
+     *
+     * @param columnName Column name
+     * @param column Grid column that may be customized
+     */
+    default void customizeColumn(@SuppressWarnings("unused") String columnName,
+                                   @SuppressWarnings("unused") Grid.Column<T> column) {
+    }
+
+
+    /**
+     * Create a View to display the grid when executed. If this method returns null, a default View will be created.
+     *
+     * @return A View with this grid as the component. Default implementaion returns <code>null</code>.
+     */
+    default View createView() {
+        return null;
+    }
 
     /**
      * Set the "theme" to make the appearence of this grid compact. It uses less space than normal and more rows will be visible.
@@ -169,7 +219,7 @@ public interface HasColumns<T> extends ExecutableView {
      * Return a Function for generating column data.
      *
      * @param columnName Column name
-     * @return Default implementation is to find out this from the Application Environment but the detault Application Environment also returns null.
+     * @return Default implementation returns <code>null</code>.
      */
     default Function<T, ?> getColumnFunction(@SuppressWarnings("unused") String columnName) {
         return null;
@@ -214,19 +264,19 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Create a HTML column that uses HTML emitted by a {@link HTMLGenerator} as its column value.
+     * Create a HTML column that uses HTML emitted by the function as its column value.
      *
      * @param columnName Column name
-     * @param htmlGeneratorFunction Function that take object as a parameter and returns a {@link HTMLGenerator}.
+     * @param htmlFunction Function that takes object as a parameter and returns HTML text.
      * @return Whether a new column can be created or not.
      */
-    default boolean createHTMLColumn(String columnName, Function<T, HTMLGenerator> htmlGeneratorFunction) {
-        return getSOGrid().createColumn(columnName, null, true, htmlGeneratorFunction);
+    default boolean createHTMLColumn(String columnName, Function<T, ?> htmlFunction) {
+        return getSOGrid().createColumn(columnName, null, true, htmlFunction);
     }
 
     /**
      * Create a column that uses one or more functions to generate its column value. The output is formatted using the "template" passed. The template
-     * can contain any HTML text and placeholders such as &lt;1&gt;, &lt;2&gt;, &lt;3&gt; ... These placeholders will be replaced from the output from the functions.
+     * can contain any HTML text and placeholders such as &lt;1&gt;, &lt;2&gt;, &lt;3&gt; ... These placeholders will be replaced from the output of the functions.
      *
      * @param columnName Column name
      * @param template Template
@@ -263,8 +313,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Get the template for the given column name. (This will not be invoked for columns that generate values as {@link HTMLGenerator}.
-     * For such columns, HTML text from the {@link HTMLGenerator} will be used for rendering).
+     * Get the template for the given column name. (This will not be invoked for HTML columns).
      *
      * @param columnName Column name
      * @return The default implementation returns null.
@@ -482,7 +531,33 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * For internal use only.
+     * Add the hierarchy column. If this or any of its cousin method is never called, the first column created will be made the hierarchy column.
+     * Note: This method is invoked only for Tree type grids.
+     *
+     * @param columnName Name of the column
+     * @param valueProvider Value provider for the column
+     * @return Column created.
+     */
+    default Grid.Column<T> createHierarchyColumn(String columnName, ValueProvider<T, ?> valueProvider) {
+        return null;
+    }
+
+    /**
+     * Add a HTML hierarchy column. If this or any of its cousin method is never called, the first column created will be made the hierarchy column.
+     * Note: This method is invoked only for Tree type grids.
+     *
+     * @param columnName Name of the column
+     * @param htmlFunction Function that returns HTML content
+     * @return Column created.
+     */
+    default Grid.Column<T> createHTMLHierarchyColumn(String columnName, Function<T, ?> htmlFunction) {
+        return null;
+    }
+
+    /**
+     * This method is invoked multiple times. So, the {@link SOGrid} instance created must be assigned to a variable and
+     * returned whenever asked for.
+     *
      * @return SO Grid
      */
     SOGrid<T> getSOGrid();
@@ -509,8 +584,15 @@ public interface HasColumns<T> extends ExecutableView {
         private String treeColumnName = "_$_";
         private Application application;
 
+        /**
+         * Constructor.
+         *
+         * @param grid Grid for which SO grid is being created
+         * @param objectClass Data class of the grid
+         * @param columns Iterable list of column names (maybe null)
+         */
         @SuppressWarnings("unchecked")
-        SOGrid(Grid<T> grid, Class<T> objectClass, Iterable<String> columns) {
+        public SOGrid(Grid<T> grid, Class<T> objectClass, Iterable<String> columns) {
             this.grid = grid;
             if(grid instanceof TreeGrid) {
                 treeColumnName = null;
@@ -524,10 +606,8 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void constructed() {
-            if(grid instanceof DataGrid) {
-                ((DataGrid<T>) grid).constructed();
-            } else {
-                ((DataTreeGrid<T>) grid).constructed();
+            if(grid instanceof HasColumns) {
+                ((HasColumns) grid).constructed();
             }
         }
 
@@ -597,11 +677,11 @@ public interface HasColumns<T> extends ExecutableView {
             return columnCreator;
         }
 
-        boolean isColumnReorderingAllowed() {
+        public boolean isColumnReorderingAllowed() {
             return allowColumnReordering;
         }
 
-        void setColumnReorderingAllowed(boolean allowColumnReordering) {
+        public void setColumnReorderingAllowed(boolean allowColumnReordering) {
             this.allowColumnReordering = allowColumnReordering;
         }
 
@@ -675,10 +755,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private Component createHeader() {
-            if(grid instanceof DataGrid) {
-                return ((DataGrid<T>) grid).createHeader();
-            }
-            return ((DataTreeGrid<T>) grid).createHeader();
+            return grid instanceof HasColumns ? ((HasColumns) grid).createHeader() : null;
         }
 
         private void constructHeader(Component component) {
@@ -721,12 +798,12 @@ public interface HasColumns<T> extends ExecutableView {
             setMinWidth(Math.min(maxWidthInPixels, perColumnWidthInPixels * getColumnCount()) + "px");
         }
 
-        List<Grid.Column<T>> getColumns() {
+        public List<Grid.Column<T>> getColumns() {
             init();
             return grid.getColumns();
         }
 
-        Grid.Column<T> getColumnByKey(String columnKey) {
+        public Grid.Column<T> getColumnByKey(String columnKey) {
             init();
             return grid.getColumnByKey(columnKey);
         }
@@ -762,16 +839,14 @@ public interface HasColumns<T> extends ExecutableView {
 
         @SuppressWarnings("unchecked")
         private Stream<String> getColumnNames() {
-            Stream<String> names;
-            if(grid instanceof DataGrid) {
-                names = ((DataGrid<T>) grid).getColumnNames();
-            } else {
-                names = ((DataTreeGrid<T>) grid).getColumnNames();
+            Stream<String> names = null;
+            if(grid instanceof HasColumns) {
+                names = ((HasColumns) grid).getColumnNames();
             }
             return names == null ? cc().getColumnNames() : names;
         }
 
-        Method getColumnMethod(String columnName) {
+        private Method getColumnMethod(String columnName) {
             Method m = cc().getColumnMethod(columnName);
             if(m != null) {
                 return m;
@@ -877,7 +952,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, function)) {
                 return true;
             }
-            Renderer<T> r = html ? renderer((Function<T, HTMLGenerator>)function) :
+            Renderer<T> r = html ? renderer(function) :
                     renderer(hc.getColumnTemplate(columnName), function);
             hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
@@ -888,7 +963,6 @@ public interface HasColumns<T> extends ExecutableView {
             return true;
         }
 
-        @SuppressWarnings("unchecked")
         @SafeVarargs
         private final boolean createColumn(String columnName, String template, boolean html, Function<T, ?>... functions) {
             if (functions == null || functions.length == 0) {
@@ -900,7 +974,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(template == null) {
                 template = hc.getColumnTemplate(columnName);
             }
-            Renderer<T> r = html ? renderer(((Function<T, HTMLGenerator>)functions[0])) : renderer(template, functions);
+            Renderer<T> r = html ? renderer(functions[0]) : renderer(template, functions);
             hc.setRendererFunctions(columnName, html, functions);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -961,14 +1035,8 @@ public interface HasColumns<T> extends ExecutableView {
             return r;
         }
 
-        private Renderer<T> renderer(Function<T, HTMLGenerator> htmlFunction) {
-            String template = "<span inner-h-t-m-l=\"[[item.html]]\"></span>";
-            TemplateRenderer<T> r = TemplateRenderer.of(template);
-            r.withProperty("html", o -> {
-                setRO(o);
-                return htmlFunction.apply(o).getHTML();
-            });
-            return r;
+        private Renderer<T> renderer(Function<T, ?> htmlFunction) {
+            return renderer("<span inner-h-t-m-l=\"<1>\"></span>", htmlFunction);
         }
 
         void treeBuilt(String columnName) {
@@ -979,25 +1047,30 @@ public interface HasColumns<T> extends ExecutableView {
             return treeColumnName != null;
         }
 
+        @SuppressWarnings("unchecked")
         private boolean createTreeColumn(String columnName, Method m) {
             if(treeCreated() || m == null) {
                 return false;
             }
-            Function<T, ?> function = getMethodFunction(columnName, m);
-            if(HTMLGenerator.class.isAssignableFrom(m.getReturnType())) {
-                //noinspection unchecked
-                ((DataTreeGrid<T>) grid).createHTMLHierarchyColumn(columnName, (Function<T, HTMLGenerator>)function);
-            } else {
-                ((DataTreeGrid<T>) grid).createHierarchyColumn(columnName, function::apply);
+            if(grid instanceof HasColumns) {
+                Function<T, ?> function = getMethodFunction(columnName, m);
+                if (HTMLGenerator.class.isAssignableFrom(m.getReturnType())) {
+                    return ((HasColumns) grid).createHTMLHierarchyColumn(columnName, function) != null;
+                } else {
+                    return ((HasColumns<T>) grid).createHierarchyColumn(columnName, function::apply) != null;
+                }
             }
-            return true;
+            return false;
         }
 
         private boolean createTreeColumn(String columnName, Function<T, ?> function) {
             if(treeCreated() || function == null) {
                 return false;
             }
-            ((DataTreeGrid<T>)grid).createHierarchyColumn(columnName, function::apply);
+            if(grid instanceof HasColumns) {
+                //noinspection unchecked
+                return ((HasColumns<T>) grid).createHierarchyColumn(columnName, function::apply) != null;
+            }
             return true;
         }
 
@@ -1047,7 +1120,7 @@ public interface HasColumns<T> extends ExecutableView {
             acceptColumn(grid.addColumn(renderer), columnName);
         }
 
-        void acceptColumn(Grid.Column<T> column, String columnName) {
+        public void acceptColumn(Grid.Column<T> column, String columnName) {
             column.setKey(columnName);
             Component h = hc.getColumnHeaderComponent(columnName);
             if(h == null) {
@@ -1068,19 +1141,17 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void customizeColumn(String columnName, Grid.Column<T> column) {
-            if(grid instanceof DataGrid) {
-                ((DataGrid<T>) grid).customizeColumn(columnName, column);
-            } else {
-                ((DataTreeGrid<T>) grid).customizeColumn(columnName, column);
+            if(grid instanceof HasColumns) {
+                //noinspection unchecked
+                ((HasColumns<T>) grid).customizeColumn(columnName, column);
             }
         }
 
         private int getColumnOrder(String columnName) {
             try {
-                if (grid instanceof DataGrid) {
-                    return ((DataGrid<T>) grid).getColumnOrder(columnName);
-                } else {
-                    return ((DataTreeGrid<T>) grid).getColumnOrder(columnName);
+                if (grid instanceof HasColumns) {
+                    //noinspection unchecked
+                    return ((HasColumns<Object>) grid).getColumnOrder(columnName);
                 }
             } catch (AbstractDataForm.FieldError ignored) {
             }
@@ -1113,17 +1184,15 @@ public interface HasColumns<T> extends ExecutableView {
             return h == null ? cc().getColumnCaption(columnName) : h;
         }
 
-        @SuppressWarnings("unchecked")
         private View getView(boolean create) {
             if(view == null && create) {
-                if(grid instanceof DataGrid) {
-                    view = ((DataGrid<T>)grid).createView();
-                } else {
-                    view = ((DataTreeGrid<T>)grid).createView();
+                if(grid instanceof HasColumns) {
+                    view = ((HasColumns)grid).createView();
                 }
             }
             if(view == null && create) {
-                view = new View(grid, ((HasColumns<T>)grid).getCaption()) {
+                String caption = grid instanceof HasColumns ? ((HasColumns) grid).getCaption() : "Data View";
+                view = new View(grid, caption) {
 
                     @Override
                     public boolean isCloseable() {
@@ -1132,7 +1201,9 @@ public interface HasColumns<T> extends ExecutableView {
 
                     @Override
                     public void returnedFrom(View parent) {
-                        ((HasColumns) grid).returnedFrom(parent);
+                        if(grid instanceof HasColumns) {
+                            ((HasColumns) grid).returnedFrom(parent);
+                        }
                     }
 
                     @Override
@@ -1140,7 +1211,9 @@ public interface HasColumns<T> extends ExecutableView {
                         super.close();
                         View v = view;
                         view = null;
-                        ((HasColumns) grid).close();
+                        if(grid instanceof HasColumns) {
+                            ((HasColumns) grid).close();
+                        }
                         view = v;
                     }
 
@@ -1149,7 +1222,9 @@ public interface HasColumns<T> extends ExecutableView {
                         super.abort();
                         View v = view;
                         view = null;
-                        ((HasColumns) grid).abort();
+                        if(grid instanceof HasColumns) {
+                            ((HasColumns) grid).abort();
+                        }
                         view = v;
                     }
                 };
@@ -1200,7 +1275,7 @@ public interface HasColumns<T> extends ExecutableView {
             UI.getCurrent().getPage().executeJavaScript("$0._scrollToIndex(" + rowIndex + ")", grid.getElement());
         }
 
-        boolean rendered() {
+        public boolean rendered() {
             return renderers == null;
         }
 

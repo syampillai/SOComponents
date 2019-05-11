@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 /**
  * A view that is used for creating "data entry forms". A {@link Form} is embedded in the view.
+ *
  * @author Syam
  */
 public abstract class AbstractDataForm extends View {
@@ -30,6 +31,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Get the form embedded in this view.
+     *
      * @return Form
      */
     public Form getForm() {
@@ -43,7 +45,18 @@ public abstract class AbstractDataForm extends View {
     }
 
     /**
+     * Create the window for embedding the form. Default implementation returns null.
+     *
+     * @param component Form component to embed
+     * @return A window with the form component added to it.
+     */
+    protected Window createWindow(Component component) {
+        return null;
+    }
+
+    /**
      * Get the "data" associated with the form.
+     *
      * @return Data structure that holds the data.
      */
     protected final Data getData() {
@@ -52,6 +65,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Get the field container of the form as a component.
+     *
      * @return Field container as a component. <code>null</code> is returned if the field container is not a component.
      */
     @Override
@@ -62,6 +76,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Create the field container of this form. This will be invoked only if no container was already set.
      * Default implementation creates a {@link com.vaadin.flow.component.formlayout.FormLayout}.
+     *
      * @return Field container created.
      */
     protected HasComponents createFieldContainer() {
@@ -70,6 +85,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * This method is invoked to create the layout of the view.
+     *
      * @return Layout
      */
     protected HasComponents createLayout() {
@@ -78,6 +94,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * This method is invoked to create a "button panel" to be displayed typically at the top of the view's layout.
+     *
      * @return A component to display other components, typically, buttons.
      */
     protected HasComponents createButtonLayout() {
@@ -86,6 +103,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Get the field container of the form.
+     *
      * @return Field container.
      */
     public HasComponents getContainer() {
@@ -94,6 +112,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Get the field names. This is invoked to determine the fields to be created for constructing the form.
+     *
      * @return Stream of fields.
      */
     public Stream<String> getFieldNames() {
@@ -102,6 +121,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Create the field for a particular "field name".
+     *
      * @param fieldName Field name
      * @return Field created.
      */
@@ -111,6 +131,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Add a field to the form. The field will not be having a "field name".
+     *
      * @param field Field to be added
      */
     public void addField(HasValue<?, ?> field) {
@@ -119,6 +140,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Add a field to the form.
+     *
      * @param fieldName Name associated with the field
      * @param field Field
      */
@@ -132,6 +154,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Remove fields from the form.
+     *
      * @param fieldNames Names of the field to be removed
      */
     public void removeField(String... fieldNames) {
@@ -140,6 +163,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Remove a field from the form.
+     *
      * @param field Field to be removed.
      */
     public void removeField(HasValue<?, ?> field) {
@@ -148,6 +172,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Add components to the form's field container.
+     *
      * @param components Compoents to add
      */
     public void add(Component... components) {
@@ -156,6 +181,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Remove components from the form's field container.
+     *
      * @param components Compoents to remove
      */
     public void remove(Component... components) {
@@ -178,6 +204,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Save data from the fields to the internal data structure.
+     *
      * @return True if data is saved successfully.
      */
     public boolean commit() {
@@ -186,6 +213,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Get a field associated with a field name.
+     *
      * @param fieldName Name of the field
      * @return Field.
      */
@@ -195,6 +223,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Get a field name associated with a field.
+     *
      * @param field Field
      * @return Name of the field.
      */
@@ -205,6 +234,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      */
     public void setRequired(HasValue<?, ?> field) {
@@ -214,6 +244,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      */
     public void setRequired(String fieldName) {
@@ -223,6 +254,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      * @param errorMessage Error message to show when the field is empty
      */
@@ -233,6 +265,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      * @param errorMessage Error message to show when the field is empty
      */
@@ -243,6 +276,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      * @param required True or false
      */
@@ -253,6 +287,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      * @param required True or false
      */
@@ -263,6 +298,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param field Field
      * @param required True or false
      * @param errorMessage Error message to show when the field is empty
@@ -274,6 +310,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
+     *
      * @param fieldName Field name
      * @param required True or false
      * @param errorMessage Error message to show when the field is empty
@@ -284,6 +321,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Add a validator for the field. Validator should return <code>true</code> if the field is valid.
+     *
      * @param field Field
      * @param validator Validator
      * @param <T> Type of the field.
@@ -294,6 +332,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Add a validator for the field. Validator should return <code>true</code> if the field is valid.
+     *
      * @param field Field
      * @param validator Validator
      * @param errorMessage Error message to be displayed if the field is not valid
@@ -305,6 +344,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Mark a field as not valid.
+     *
      * @param field Field
      */
     public static void markError(HasValue<?, ?> field) {
@@ -313,6 +353,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Clear the error status associated with a field.
+     *
      * @param field Field
      */
     public static void clearError(HasValue<?, ?> field) {
@@ -335,6 +376,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * Set the view read only.
+     *
      * @param readOnly True or false
      */
     public void setReadOnly(boolean readOnly) {
@@ -343,6 +385,7 @@ public abstract class AbstractDataForm extends View {
 
     /**
      * This method is invoked to determine if a field needs to be made visible or not.
+     *
      * @param fieldName Name of the field
      * @return True or false.
      */
@@ -563,6 +606,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Attach a field to the form. This is invoked whenever a field is added to the form. The default implementation adds the component of
      * the field (if it is a component) to the field container.
+     *
      * @param fieldName Name of the field
      * @param field Field
      */
@@ -574,6 +618,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Detach a field from the form. This is invoked whenever a field is removed to the form. The default implementation removes the component of
      * the field (if it is a component) from the field container.
+     *
      * @param fieldName Name of the field
      * @param field Field
      */
@@ -585,6 +630,7 @@ public abstract class AbstractDataForm extends View {
     /**
      * Error messages of the form are typcially displayed using {@link com.vaadin.flow.component.notification.Notification}. However,
      * one can set any {@link HasText} for that.
+     *
      * @param display Error messages will be displayed on this
      */
     public void setErrorDisplay(HasText display) {

@@ -51,6 +51,9 @@ public interface ApplicationEnvironment {
         if(Exception.class.isAssignableFrom(any.getClass())) {
             return toDisplay(((Exception)any).getMessage());
         }
+        if(any instanceof HTMLGenerator) {
+            return ((HTMLGenerator) any).getHTML();
+        }
         return toString(any);
     }
 
