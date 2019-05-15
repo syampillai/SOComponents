@@ -378,6 +378,7 @@ public class View implements ExecutableView {
      *
      * @param caption Caption
      */
+    @Override
     public void setCaption(String caption) {
         this.caption = caption;
         if(menuItem != null) {
@@ -467,6 +468,7 @@ public class View implements ExecutableView {
     /**
      * Execute this view.
      */
+    @Override
     public final void execute() {
         execute(null, true);
     }
@@ -477,6 +479,7 @@ public class View implements ExecutableView {
      *
      * @param lock View to be locked.
      */
+    @Override
     public final void execute(View lock) {
         execute(lock, false);
     }
@@ -487,6 +490,7 @@ public class View implements ExecutableView {
      *
      * @param parent Parent view to be set
      */
+    @Override
     public final void invoke(View parent) {
         execute(parent, true);
     }
@@ -546,6 +550,7 @@ public class View implements ExecutableView {
     /**
      * Close this view.
      */
+    @Override
     public void close() {
         closeInt();
     }
@@ -553,6 +558,7 @@ public class View implements ExecutableView {
     /**
      * Abort this view. Default implementation sets an "abort flag" and closes the view.
      */
+    @Override
     public void abort() {
         aborted = true;
         closeInt();

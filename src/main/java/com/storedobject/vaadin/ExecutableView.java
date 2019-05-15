@@ -76,6 +76,26 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     }
 
     /**
+     * Execute the associated view by locking another view (the locked view will not be selectable until this view is closed).
+     * The locked view acts as its "parent" and it will automatically get selected when this view closes.
+     *
+     * @param lock View to be locked.
+     */
+    default void execute(View lock) {
+        getView(true).execute(lock);
+    }
+
+    /**
+     * Execute the associated view and set its parent too. (In this case, parent view is not locked). The parent view is automatically selected
+     * when this view closes.
+     *
+     * @param parent Parent view to be set
+     */
+    default void invoke(View parent) {
+        getView(true).invoke(parent);
+    }
+
+    /**
      * Close this.
      */
     void close();
