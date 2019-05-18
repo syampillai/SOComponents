@@ -313,13 +313,13 @@ public abstract class Application extends UI {
         }
         switch (messageType) {
             case 1: // Warning
-                messageType = 150000;
+                messageType = 20000;
                 break;
             case 2: // Error
                 messageType = Integer.MAX_VALUE;
                 break;
             default:
-                messageType = 50000;
+                messageType = 10000;
                 break;
         }
         n.setDuration(messageType);
@@ -429,8 +429,11 @@ public abstract class Application extends UI {
      * @param error Error
      */
     public void showNotification(String caption, Throwable error) {
-        notification(caption, "<BR/>Error: " + getEnvironment().toDisplay(error),
-                2, Notification.Position.BOTTOM_END,false);
+        String e = getEnvironment().toDisplay(error);
+        if(!e.toLowerCase().contains("error")) {
+            e = "Error: " + e;
+        }
+        notification(caption, e,2, Notification.Position.BOTTOM_END,false);
     }
 
     /**

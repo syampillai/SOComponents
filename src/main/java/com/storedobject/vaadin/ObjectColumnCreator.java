@@ -58,10 +58,10 @@ public interface ObjectColumnCreator<T> {
      * Get the order of the column to be displayed in the grid. It could be any integer number and lower numbered columns will be on the left side.
      *
      * @param columnName Name of the column
-     * @return An integer number representing the order. Default implementation returns {@link Integer#MAX_VALUE}.
+     * @return An integer number representing the order. Default implementation returns {@link Integer#MIN_VALUE}.
      */
     default int getColumnOrder(@SuppressWarnings("unused") String columnName) {
-        return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE;
     }
 
     /**

@@ -376,6 +376,16 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
+     * Get the number of columns that are already defined/created.
+     *
+     * @return Number of columns already defined via some createColumn/addColumn method.
+     */
+    default int getDefinedColumnCount() {
+        SOGrid<T> g = getSOGrid();
+        return g.renderers == null ? g.getColumnCount() : g.renderers.size();
+    }
+
+    /**
      * Set some other object to supply the column methods. If such an object is set, for column method look up, this object also will be used
      * before checking in the gird itself.
      *
@@ -621,7 +631,6 @@ public interface HasColumns<T> extends ExecutableView {
                         createColumn(n);
                     }
                 });
-                columns = null;
             } else {
                 Stream<String> columnNames = getColumnNames();
                 if(columnNames != null) {
@@ -632,6 +641,7 @@ public interface HasColumns<T> extends ExecutableView {
             }
             renderers.keySet().stream().filter(this::includeColumn).
                     sorted(Comparator.comparingInt(this::getColumnOrder)).forEach(this::constructColumn);
+            columns = null;
             renderers = null;
             columnResizable = null;
             columnVisible = null;
@@ -882,7 +892,7 @@ public interface HasColumns<T> extends ExecutableView {
         private Method getOutsideMethod(String columnName, Class<?> objectClass) {
             Class<?>[] params = new Class<?>[] { objectClass };
             if(methodHandlerHost != null) {
-                if(Character.isLowerCase(columnName.charAt(0))) {
+                if(Character.isLowerCase(columnName.charAt(0)) && !columnName.equals(columnName.toLowerCase())) {
                     try {
                         return methodHandlerHost.getClass().getMethod(columnName, params);
                     } catch (NoSuchMethodException ignore) {
@@ -897,7 +907,7 @@ public interface HasColumns<T> extends ExecutableView {
                 } catch (NoSuchMethodException ignore) {
                 }
             }
-            if(Character.isLowerCase(columnName.charAt(0))) {
+            if(Character.isLowerCase(columnName.charAt(0)) && !columnName.equals(columnName.toLowerCase())) {
                 try {
                     return grid.getClass().getMethod(columnName, params);
                 } catch (NoSuchMethodException ignore) {
@@ -910,6 +920,9 @@ public interface HasColumns<T> extends ExecutableView {
             try {
                 return grid.getClass().getMethod("is" + columnName, params);
             } catch (NoSuchMethodException ignore) {
+            }
+            if(columnName.equals(columnName.toLowerCase())) {
+                return getOutsideMethod(Character.toUpperCase(columnName.charAt(0)) + columnName.substring(1), objectClass);
             }
             return null;
         }
@@ -942,9 +955,6 @@ public interface HasColumns<T> extends ExecutableView {
                 }
                 html = HTMLGenerator.class.isAssignableFrom(m.getReturnType());
                 function = getMethodFunction(columnName, m);
-            }
-            if(function == null) {
-                function = getColumnFunction(columnName);
             }
             if(function == null) {
                 function = getMethodFunction(columnName);
@@ -1077,6 +1087,10 @@ public interface HasColumns<T> extends ExecutableView {
         private Function<T, ?> getMethodFunction(String columnName) {
             Method m = getColumnMethod(columnName);
             if(m == null) {
+                Function<T, ?> function = getColumnFunction(columnName);
+                if(function != null) {
+                    return function;
+                }
                 return item -> "?";
             }
             return getMethodFunction(columnName, m);
@@ -1128,13 +1142,17 @@ public interface HasColumns<T> extends ExecutableView {
             } else {
                 column.setHeader(h);
             }
-            Boolean v = columnResizable.get(columnName);
-            if(v != null) {
-                column.setResizable(v);
+            if(columnResizable != null) {
+                Boolean r = columnResizable.get(columnName);
+                if (r != null) {
+                    column.setResizable(r);
+                }
             }
-            v = columnVisible.get(columnName);
-            if(v != null) {
-                column.setVisible(v);
+            if(columnVisible != null) {
+                Boolean v = columnVisible.get(columnName);
+                if (v != null) {
+                    column.setVisible(v);
+                }
             }
             column.setTextAlign(getTextAlign(columnName));
             customizeColumn(columnName, column);
@@ -1155,7 +1173,17 @@ public interface HasColumns<T> extends ExecutableView {
                 }
             } catch (AbstractDataForm.FieldError ignored) {
             }
-            return cc().getColumnOrder(columnName);
+            int order = cc().getColumnOrder(columnName);
+            if(order == Integer.MIN_VALUE && columns != null) {
+                order = 0;
+                for(String name: columns) {
+                    if(name.equals(columnName)) {
+                        break;
+                    }
+                    ++order;
+                }
+            }
+            return order;
         }
 
         private boolean includeColumn(String columnName) {
