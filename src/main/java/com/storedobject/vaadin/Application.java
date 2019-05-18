@@ -290,14 +290,13 @@ public abstract class Application extends UI {
         if(log && (a == null || messageType == 2)) {
             if(message instanceof Throwable) {
                 if(a == null) {
-                    logError((Throwable)message);
+                    ((Throwable)message).printStackTrace();
                 } else {
-                    a.log((Throwable) message);
+                    a.log(message);
                 }
             } else {
                 if(a == null) {
-                    m = message.toString();
-                    logMessage(m);
+                    System.err.println(m);
                 } else {
                     m = a.getEnvironment().toDisplay(message);
                     a.log(a.getEnvironment().toString(m));
@@ -327,35 +326,33 @@ public abstract class Application extends UI {
     }
 
     /**
-     * Log the error (by printing a stack trace).
-     * @param error Error to log
+     * Log something (goes to the System error stream).
+     *
+     * @param anything Message to log, it could be a {@link Throwable}
      */
-    public static void logError(Throwable error) {
-        error.printStackTrace();
+    public void log(Object anything) {
+        if(anything instanceof Throwable) {
+            ((Throwable)anything).printStackTrace();
+        } else {
+            System.err.println(anything);
+        }
     }
 
     /**
-     * Log a message by printing it to the System.err.
-     * @param message Message to log.
+     * Log something along with an exception (goes to the System error stream).
+     *
+     * @param anything Message to log, it could be a {@link Throwable}
+     * @param error Error to be printed
      */
-    public static void logMessage(String message) {
-        System.err.println(message);
-    }
-
-    /**
-     * Log an error. Default implementation invokes the {@link #logError(Throwable)} method.
-     * @param error Error to log
-     */
-    public void log(Throwable error) {
-        logError(error);
-    }
-
-    /**
-     * Log a message. Default implementation invokes the {@link #logMessage(String)} method.
-     * @param message Message to log
-     */
-    public void log(String message) {
-        logMessage(message);
+    public void log(Object anything, Throwable error) {
+        if(anything instanceof Throwable) {
+            ((Throwable)anything).printStackTrace();
+        } else {
+            System.err.println(anything);
+        }
+        if(error != null) {
+            error.printStackTrace();
+        }
     }
 
     /**
