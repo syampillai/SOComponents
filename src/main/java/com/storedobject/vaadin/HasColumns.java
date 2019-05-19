@@ -216,7 +216,8 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Return a Function for generating column data.
+     * Return a Function for generating column data. If this method returns a non-null value, it will be used for
+     * rendering the column values unless a getXXX(T object)/isXXX(T object) method exists in the grid itself.
      *
      * @param columnName Column name
      * @return Default implementation returns <code>null</code>.
@@ -962,8 +963,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, function)) {
                 return true;
             }
-            Renderer<T> r = html ? renderer(function) :
-                    renderer(hc.getColumnTemplate(columnName), function);
+            Renderer<T> r = html ? renderer(function) : renderer(hc.getColumnTemplate(columnName), function);
             hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -1085,12 +1085,12 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private Function<T, ?> getMethodFunction(String columnName) {
+            Function<T, ?> function = getColumnFunction(columnName);
+            if(function != null) {
+                return function;
+            }
             Method m = getColumnMethod(columnName);
             if(m == null) {
-                Function<T, ?> function = getColumnFunction(columnName);
-                if(function != null) {
-                    return function;
-                }
                 return item -> "?";
             }
             return getMethodFunction(columnName, m);
