@@ -5,6 +5,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -28,14 +30,21 @@ public class Demo extends Application {
         return new SimpleLayout();
     }
 
-    private class SimpleLayout extends SplitLayout implements ApplicationLayout, ApplicationMenu {
+    private class SimpleLayout extends HorizontalLayout implements ApplicationLayout, ApplicationMenu {
+
+        VerticalLayout menu = new VerticalLayout(), content = new VerticalLayout();
 
         private SimpleLayout() {
-            super(new Div(), new Div());
-            setSplitterPosition(15);
+            add(menu, content);
+            menu.setMargin(false);
+            menu.setHeight("100vh");
+            menu.setWidth("");
+            content.setMargin(false);
+            content.setHeight("100vh");
+            content.setWidth("calc(100vw - 80px)");
             setHeight("100vh");
             setWidth("100vw");
-            getPrimaryComponent().getElement().getStyle().set("background-color", "lightblue");
+            menu.getElement().getStyle().set("background-color", "lightblue");
         }
 
         @Override
@@ -50,12 +59,12 @@ public class Demo extends Application {
 
         @Override
         public HasComponents getMenuPane() {
-            return (Div)getPrimaryComponent();
+            return menu;
         }
 
         @Override
         public Component getContent() {
-            return getSecondaryComponent();
+            return content;
         }
 
         @Override

@@ -370,7 +370,7 @@ public abstract class Application extends UI {
     }
 
     private void receiveSize() {
-        getPage().executeJavaScript("document.body.$server.deviceSize(document.body.clientWidth, document.body.clientHeight);");
+        getPage().executeJavaScript("document.body.$server.deviceSize(window.innerWidth,window.innerHeight);");
     }
 
     /**

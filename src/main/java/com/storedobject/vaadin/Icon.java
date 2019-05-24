@@ -30,20 +30,10 @@ public class Icon extends com.vaadin.flow.component.icon.Icon implements HasIcon
     }
 
     /**
-     * Create from an Iron icon
+     * Create from an Iron icon.
      * @param icon Name of the Iron icon
      */
     public Icon(String icon) {
-        this("vaadin", icon);
-    }
-
-    /**
-     * Create from an Iron icon available in a specific collection
-     * @param collection Name of the icon collection
-     * @param icon Name of the Iron icon
-     */
-    public Icon(String collection, String icon) {
-        super(collection, icon);
-        setIcon(collection, icon);
+        setIcon(icon);
     }
 }

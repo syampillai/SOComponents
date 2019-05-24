@@ -24,6 +24,8 @@ public class MiscTest extends View {
         }
         ChoicesField csf;
         FormLayout form = new FormLayout();
+        Badge badge = new Badge("Badge", ThemeStyle.PILL, ThemeStyle.ERROR);
+        form.add(badge);
         form.add(new PopupTextField("Pop"));
         form.add(new UploadField("Upload"));
         NumberField numberField = new NumberField("Number Field");
@@ -53,11 +55,11 @@ public class MiscTest extends View {
         ListBox<String> test = new ListBox<>();
         HorizontalLayout h = new HorizontalLayout();
         Form dataForm = new Form();
-        h.add(new ButtonIcon("device", "bluetooth", e -> {
+        h.add(new ButtonIcon("device:bluetooth", e -> {
             test.setVisible(!test.isVisible());
             alert("Bluetooh clicked! Visibility of 'Item List' toggled!!");
         }));
-        h.add(new Button("Save", new Icon("editor", "functions"), e -> {
+        h.add(new Button("Save", new Icon("editor:functions"), e -> {
             if(dataForm.commit()) {
                 alert("Saved!");
             } else {
@@ -65,7 +67,7 @@ public class MiscTest extends View {
                 dataForm.clearErrors();
             }
         }));
-        h.add(new Button("Load", new Icon("editor", "functions"), e -> {
+        h.add(new Button("Load", new Icon("editor:functions"), e -> {
             dataForm.load();
             alert("Loaded");
         }));

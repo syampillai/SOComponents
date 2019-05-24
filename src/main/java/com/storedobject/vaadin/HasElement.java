@@ -5,7 +5,7 @@ package com.storedobject.vaadin;
  *
  * @author Syam
  */
-public interface HasElement extends com.vaadin.flow.component.HasElement {
+public interface HasElement extends HasThemeStyle {
 
     /**
      * Set style of the element.

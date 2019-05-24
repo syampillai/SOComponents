@@ -11,7 +11,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  *
  * @author Syam
  */
-public class ImageButton extends Icon {
+public class ImageButton extends Icon implements HasBadgeStyle {
 
     private ElementClick click;
     private ComponentEventListener<ClickEvent<Component>> eventListener;
@@ -24,21 +24,6 @@ public class ImageButton extends Icon {
      */
     public ImageButton(String iconName, ClickHandler clickHandler) {
         super(iconName);
-        init(clickHandler);
-        if(iconName != null) {
-            setAttribute("title", iconName);
-        }
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param iconName Icon
-     * @param iconCollection Icon collection name
-     * @param clickHandler Click handler
-     */
-    public ImageButton(String iconName, String iconCollection, ClickHandler clickHandler) {
-        super(iconName, iconCollection);
         init(clickHandler);
         if(iconName != null) {
             setAttribute("title", iconName);
@@ -110,11 +95,11 @@ public class ImageButton extends Icon {
     }
 
     /**
-     * Set size to small (20 pixels).
+     * Set size to small.
      *
      * @return Self reference.
      */
     public ImageButton asSmall() {
-        return withSize(20);
+        return (ImageButton) HasBadgeStyle.super.asSmall();
     }
 }

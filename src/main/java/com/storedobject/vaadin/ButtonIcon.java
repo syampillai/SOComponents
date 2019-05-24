@@ -30,7 +30,7 @@ public class ButtonIcon extends Component implements HasSquareElement, HasIcon, 
      * @param clickHandler Click handler
      */
     public ButtonIcon(String icon, ClickHandler clickHandler) {
-        this(null, icon, ClickHandler.convert(clickHandler));
+        this(icon, ClickHandler.convert(clickHandler));
     }
 
     /**
@@ -40,16 +40,6 @@ public class ButtonIcon extends Component implements HasSquareElement, HasIcon, 
      */
     public ButtonIcon(VaadinIcon icon, ClickHandler clickHandler) {
         this(icon, ClickHandler.convert(clickHandler));
-    }
-
-    /**
-     * Create with an Iron icon from a specific collection
-     * @param iconCollection Icon collection name
-     * @param icon Name of the Iron icon
-     * @param clickHandler Click handler
-     */
-    public ButtonIcon(String iconCollection, String icon, ClickHandler clickHandler) {
-        this(iconCollection, icon, ClickHandler.convert(clickHandler));
     }
 
     /**
@@ -65,24 +55,15 @@ public class ButtonIcon extends Component implements HasSquareElement, HasIcon, 
      * @param icon Name of the Iron icon
      */
     public ButtonIcon(String icon) {
-        this(null, icon);
-    }
-
-    /**
-     * Create with an Iron icon from a specific collection
-     * @param iconCollection Icon collection name
-     * @param icon Name of the Iron icon
-     */
-    public ButtonIcon(String iconCollection, String icon) {
-        this(iconCollection, icon, (ComponentEventListener<ClickEvent<ButtonIcon>>)null);
+        this(icon, (ComponentEventListener<ClickEvent<ButtonIcon>>)null);
     }
 
     private ButtonIcon(VaadinIcon icon, ComponentEventListener<ClickEvent<ButtonIcon>> listener) {
-        this("vaadin", icon.name().toLowerCase().replace('_', '-'), listener);
+        this(icon.name().toLowerCase().replace('_', '-'), listener);
     }
 
-    private ButtonIcon(String iconCollection, String icon, ComponentEventListener<ClickEvent<ButtonIcon>> listener) {
-        setIcon(iconCollection, icon);
+    private ButtonIcon(String icon, ComponentEventListener<ClickEvent<ButtonIcon>> listener) {
+        setIcon(icon);
         if(listener != null) {
             addClickListener(listener);
         }

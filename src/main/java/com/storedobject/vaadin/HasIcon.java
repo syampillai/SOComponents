@@ -14,26 +14,16 @@ public interface HasIcon extends HasElement {
      * @param icon Name of the Iron icon to set
      */
     default void setIcon(String icon) {
-        setIcon(null, icon);
-    }
-
-    /**
-     * Set the icon from a specific collection
-     * @param iconCollection Name of the icon collection
-     * @param icon Name of the Iron icon to set
-     */
-    default void setIcon(String iconCollection, String icon) {
         if(icon == null || icon.trim().isEmpty()) {
-            icon = "vaadin:vaadin-h";
+            getElement().removeAttribute("icon");
+            return;
         }
         if(!icon.contains(":")) {
             ApplicationEnvironment ae = ApplicationEnvironment.get();
             if(ae != null) {
                 icon = ae.getIconName(icon);
             }
-        }
-        if(iconCollection != null && !iconCollection.trim().isEmpty() && !icon.contains(":")) {
-            icon = iconCollection.trim() + ":" + icon;
+            icon = "vaadin:" + icon;
         }
         getElement().setAttribute("icon", icon.trim().toLowerCase().replace('_', '-'));
     }
@@ -44,7 +34,7 @@ public interface HasIcon extends HasElement {
      * @param icon Vaadin icon
      */
     default void setIcon(VaadinIcon icon) {
-        setIcon("vaadin", icon.name().toLowerCase().replace('_', '-'));
+        setIcon(icon.name().toLowerCase().replace('_', '-'));
     }
 
     /**

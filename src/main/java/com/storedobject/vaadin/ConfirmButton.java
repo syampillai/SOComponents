@@ -18,6 +18,8 @@ public class ConfirmButton extends Button {
     private BooleanSupplier preconfirm;
     private Yes yes;
     private ContextMenu menu;
+    private ButtonLayout buttons;
+    private StyledText message;
 
     /**
      * Constructor.
@@ -158,28 +160,36 @@ public class ConfirmButton extends Button {
     }
 
     private void init(ClickHandler clickHandler, String message) {
+        this.message = new StyledText(message == null ? "Are you sure?" : message);
         getElement().appendChild(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL).getElement());
-        menu = new ContextMenu();
-        menu.setTarget(this);
-        menu.setOpenOnClick(true);
-        menu.addOpenedChangeListener(e -> {
-           if(e.isOpened()) {
-               if(preconfirm != null && !preconfirm.getAsBoolean()) {
-                   menu.close();
-               }
-           }
-        });
         getElement().getStyle().set("background", "var(--lumo-error-color-10pct)");
         yes = new Yes(clickHandler);
-        menu.add(new StyledText(message == null ? "Are you sure?" : message));
-        ButtonLayout b = new ButtonLayout(new Button("No", e -> closePopup()).asSmall(), yes);
-        menu.addItem(b, null);
+        buttons = new ButtonLayout(new Button("No", e -> menu.close()).asSmall(), yes);
+        createMenu();
     }
 
-    private void closePopup() {
-        if(menu.isOpened()) {
-            clickInClient();
+    private void createMenu() {
+        if(menu != null) {
+            menu.setTarget(null);
+            menu.removeAll();
         }
+        menu = new ContextMenu(this) {
+            @Override
+            public void close() {
+                super.close();
+                createMenu();
+            }
+        };
+        menu.setOpenOnClick(true);
+        menu.addOpenedChangeListener(e -> {
+            if(e.isOpened()) {
+                if(preconfirm != null && !preconfirm.getAsBoolean()) {
+                    menu.close();
+                }
+            }
+        });
+        menu.add(message);
+        menu.addItem(buttons, null);
     }
 
     @Override
@@ -212,12 +222,12 @@ public class ConfirmButton extends Button {
             super("Yes", null);
             this.handler = clickHandler;
             addClickHanlder(this);
-            asSmall();
+            addTheme(ThemeStyle.ERROR, ThemeStyle.SMALL);
         }
 
         @Override
         public void clicked(Component c) {
-            closePopup();
+            menu.close();
             if(handler != null) {
                 handler.clicked(ConfirmButton.this);
             }

@@ -10,7 +10,7 @@ import com.vaadin.flow.shared.Registration;
  * it will try to create an {@link Icon} (unless an icon is already specified).
  * @author Syam
  */
-public class Button extends com.vaadin.flow.component.button.Button {
+public class Button extends com.vaadin.flow.component.button.Button implements HasThemeStyle {
 
     /**
      * Constructor.
@@ -61,7 +61,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
         addClickHanlder(clickHandler);
         getElement().getStyle().set("cursor", "pointer");
         if(text == null) {
-            addTheme("icon");
+            ThemeStyle.add(this, ThemeStyle.ICON);
         }
     }
 
@@ -114,8 +114,7 @@ public class Button extends com.vaadin.flow.component.button.Button {
      * @return Self reference.
      */
     public Button asPrimary() {
-        addTheme("primary");
-        return this;
+        return (Button) HasThemeStyle.super.asPrimary();
     }
 
     /**
@@ -124,20 +123,6 @@ public class Button extends com.vaadin.flow.component.button.Button {
      * @return Self reference.
      */
     public Button asSmall() {
-        addTheme("small");
-        return this;
-    }
-
-    private void addTheme(String theme) {
-        String current = getElement().getAttribute("theme");
-        if(current == null) {
-            getElement().setAttribute("theme", theme);
-            return;
-        }
-        current = " " + current + " ";
-        if(current.contains(theme)) {
-            return;
-        }
-        getElement().setAttribute("theme", current.substring(1) + theme);
+        return (Button) HasThemeStyle.super.asSmall();
     }
 }

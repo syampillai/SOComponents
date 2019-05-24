@@ -11,7 +11,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  */
 public class PopupButton extends Button {
 
-    private ContextMenu menu = new ContextMenu();
+    private ContextMenu menu;
     private GridLayout container = new GridLayout(1);
 
     /**
@@ -79,6 +79,21 @@ public class PopupButton extends Button {
 
     private void init() {
         getElement().appendChild(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL).getElement());
+        createMenu();
+    }
+
+    private void createMenu() {
+        if(menu != null) {
+            menu.setTarget(null);
+            menu.removeAll();
+        }
+        menu = new ContextMenu() {
+            @Override
+            public void close() {
+                super.close();
+                createMenu();
+            }
+        };
         menu.setTarget(this);
         menu.setOpenOnClick(true);
         menu.addItem(container);
@@ -150,9 +165,7 @@ public class PopupButton extends Button {
      * Close the pop up.
      */
     public void closePopup() {
-        if(menu.isOpened()) {
-            clickInClient();
-        }
+        menu.close();
     }
     /**
      * Set number of rows to span.

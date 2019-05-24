@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 /**
  * Common interface for DataGrid and DataTreeGrid. (Other implementations of {@link Grid} may also implement this).
  *
- * @param <T> Bean type of the Gird/TreeGrid.
+ * @param <T> Bean type of the Grid/TreeGrid.
  * @author Syam
  */
 public interface HasColumns<T> extends ExecutableView {
@@ -277,7 +277,7 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * Create a column that uses one or more functions to generate its column value. The output is formatted using the "template" passed. The template
-     * can contain any HTML text and placeholders such as &lt;1&gt;, &lt;2&gt;, &lt;3&gt; ... These placeholders will be replaced from the output of the functions.
+     * can contain any HTML text and placeholders such as &lt;1&gt;, &lt;2&gt;, &lt;3&gt; ... These placeholders will be replaced by the values returned by the functions.
      *
      * @param columnName Column name
      * @param template Template
@@ -573,12 +573,24 @@ public interface HasColumns<T> extends ExecutableView {
      */
     SOGrid<T> getSOGrid();
 
+    /**
+     * This class takes care of creation of the columns in the grid. In order to have behaviours of {@link HasColumns},
+     * an instance of this class is required and should be returned in the {@link HasColumns#getSOGrid()} method. (See
+     * the source code of {@link DataGrid} and {@link DataTreeGrid} classes to get an idea). Also, the following methods
+     * of the grid must be overridden: {@link Grid#setColumnReorderingAllowed(boolean)},
+     * {@link Grid#isColumnReorderingAllowed()}, {@link Grid#getColumns()}, @{@link Grid#getColumnByKey(String)}. These
+     * methods should check whether the grid is rendered using {@link SOGrid#rendered()} method and if not rendered,
+     * these method calls to be delegated into this class.
+     *
+     * @param <T> Bean type of the grid
+     */
     class SOGrid<T> {
 
         private final Grid<T> grid;
         private final HasColumns<T> hc;
         private final Class<T> objectClass;
         private Map<String, Renderer<T>> renderers = new HashMap<>();
+        private Map<String, ValueProvider<T, ?>> valueProviders = new HashMap<>();
         private Map<String, Boolean> columnResizable = new HashMap<>();
         private Map<String, Boolean> columnVisible = new HashMap<>();
         private Map<String, Boolean> columnFrozen = new HashMap<>();
@@ -644,6 +656,7 @@ public interface HasColumns<T> extends ExecutableView {
                     sorted(Comparator.comparingInt(this::getColumnOrder)).forEach(this::constructColumn);
             columns = null;
             renderers = null;
+            valueProviders = null;
             columnResizable = null;
             columnVisible = null;
             columnFrozen = null;
@@ -688,10 +701,20 @@ public interface HasColumns<T> extends ExecutableView {
             return columnCreator;
         }
 
+        /**
+         * Check whether the column reordering is allowed or not. (Delegated method).
+         *
+         * @return True if column reordering is allowed.
+         */
         public boolean isColumnReorderingAllowed() {
             return allowColumnReordering;
         }
 
+        /**
+         * Set whether column reordering is allowed or not. (Delegated method).
+         *
+         * @param allowColumnReordering True if column reordering is allowed.
+         */
         public void setColumnReorderingAllowed(boolean allowColumnReordering) {
             this.allowColumnReordering = allowColumnReordering;
         }
@@ -809,11 +832,22 @@ public interface HasColumns<T> extends ExecutableView {
             setMinWidth(Math.min(maxWidthInPixels, perColumnWidthInPixels * getColumnCount()) + "px");
         }
 
+        /**
+         * Get the columns of the grid. (Delegated method).
+         *
+         * @return Columns of the grid.
+         */
         public List<Grid.Column<T>> getColumns() {
             init();
             return grid.getColumns();
         }
 
+        /**
+         * Get the column of the grid for the given key. (Delegated method).
+         *
+         * @param columnKey Column key
+         * @return Column for the key.
+         */
         public Grid.Column<T> getColumnByKey(String columnKey) {
             init();
             return grid.getColumnByKey(columnKey);
@@ -963,7 +997,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, function)) {
                 return true;
             }
-            Renderer<T> r = html ? renderer(function) : renderer(hc.getColumnTemplate(columnName), function);
+            Renderer<T> r = html ? renderer(function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
             hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -984,7 +1018,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(template == null) {
                 template = hc.getColumnTemplate(columnName);
             }
-            Renderer<T> r = html ? renderer(functions[0]) : renderer(template, functions);
+            Renderer<T> r = html ? renderer(functions[0]) : renderer(columnName, template, functions);
             hc.setRendererFunctions(columnName, html, functions);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -1018,7 +1052,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         @SafeVarargs
-        private final Renderer<T> renderer(String template, Function<T, ?>... functions) {
+        private final Renderer<T> renderer(String columnName, String template, Function<T, ?>... functions) {
             if(template == null) {
                 StringBuilder s = new StringBuilder();
                 IntStream.range(0, functions.length - 1).forEach(i -> s.append('<').append(i).append('>').append("<br/>"));
@@ -1042,11 +1076,14 @@ public interface HasColumns<T> extends ExecutableView {
                     return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(function.apply(o));
                 });
             }
+            if(columnName != null) {
+                valueProviders.put(columnName, (t) -> functions[functions.length - 1].apply(t));
+            }
             return r;
         }
 
         private Renderer<T> renderer(Function<T, ?> htmlFunction) {
-            return renderer("<span inner-h-t-m-l=\"<1>\"></span>", htmlFunction);
+            return renderer(null,"<span inner-h-t-m-l=\"<1>\"></span>", htmlFunction);
         }
 
         void treeBuilt(String columnName) {
@@ -1131,9 +1168,36 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void constructColumn(String columnName, Renderer<T> renderer) {
-            acceptColumn(grid.addColumn(renderer), columnName);
+            acceptColumn(constructColumn(columnName, grid, renderer, valueProviders.get(columnName)), columnName);
         }
 
+        /**
+         * This is where the column is finally constructed. If you have another implementation, this method can be
+         * overridden. (For example, an "editable" grid such as Vaadin's GridPro, may construct an
+         * "editable" column.
+         *
+         * @param grid Grid for which column needs to be created.
+         *
+         * @param columnName Name of the column
+         * @param renderer Renderer for the column
+         * @param valueProvider Value provider (This could be <code>null</code>)
+         * @return Column created. Default implementation use the {@link Grid#addColumn(Renderer)} method to create the
+         * column.
+         */
+        @SuppressWarnings("unused")
+        protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer, ValueProvider<T, ?> valueProvider) {
+            return grid.addColumn(renderer);
+        }
+
+        /**
+         * This will be invoked when each column is constructed. (If you directly create any columns using
+         * addColumn methods of the {@link Grid}, then it is highly recommended to invoke this method for those
+         * columns. Also, make sure that a unique column name is used because column name will be used as the
+         * column key of the grid).
+         *
+         * @param column Column that is constructed
+         * @param columnName Name of the column
+         */
         public void acceptColumn(Grid.Column<T> column, String columnName) {
             column.setKey(columnName);
             Component h = hc.getColumnHeaderComponent(columnName);
@@ -1303,6 +1367,11 @@ public interface HasColumns<T> extends ExecutableView {
             UI.getCurrent().getPage().executeJavaScript("$0._scrollToIndex(" + rowIndex + ")", grid.getElement());
         }
 
+        /**
+         * Check whether the rendering is already done.
+         *
+         * @return True if the rendering is done.
+         */
         public boolean rendered() {
             return renderers == null;
         }

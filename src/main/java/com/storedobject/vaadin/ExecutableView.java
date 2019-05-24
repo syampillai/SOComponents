@@ -175,4 +175,34 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     @Override
     default void clicked(Component c) {
     }
+
+    /**
+     * Log something. Default implementation invokes {@link Application#log(Object)}.
+     *
+     * @param anything Message to log, it could be a {@link Throwable}
+     */
+    default void log(Object anything) {
+        Application application = getApplication();
+        if(application != null) {
+            application.log(anything);
+        } else {
+            System.err.println(anything);
+        }
+    }
+
+    /**
+     * Log something along with an exception. Default implementation invokes {@link Application#log(Object, Throwable)}.
+     *
+     * @param anything Message to log, it could be a {@link Throwable}
+     * @param error Error to be printed
+     */
+    default void log(Object anything, Throwable error) {
+        Application application = getApplication();
+        if(application != null) {
+            application.log(anything, error);
+        } else {
+            System.err.println(anything);
+            error.printStackTrace();
+        }
+    }
 }
