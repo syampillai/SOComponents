@@ -95,7 +95,7 @@ public class PDFViewer extends Component implements HasSize {
      * Clear the current content.
      */
     public void clear() {
-        getElement().callFunction("clear");
+        getElement().callJsFunction("clear");
         if (streamRegistration != null) {
             streamRegistration.unregister();
             streamRegistration = null;

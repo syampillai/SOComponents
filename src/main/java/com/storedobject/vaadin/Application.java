@@ -72,9 +72,9 @@ import java.util.*;
  *    {@literal @}Override
  *     public void drawMenu(Application application) {
  *         getMenuPane().add(new HtmlComponent("hr"));
- *         add(MenuItem.create(...));
- *         add(MenuItem.create(...));
- *         add(MenuItem.create(...));
+ *         add(application.createMenuItem(...));
+ *         add(application.createMenuItem(...));
+ *         add(application.createMenuItem(...));
  *     }
  * }
  * </code>
@@ -188,6 +188,39 @@ public abstract class Application extends UI {
     }
 
     /**
+     * Create a menu item.
+     *
+     * @param label Label of the menu item
+     * @param menuAction Action to execute when menu item is clicked
+     * @return Menu item. By default, the menu item will be created from the "application environment" {@link ApplicationEnvironment#createMenuItem(String, String, Runnable)}
+     */
+    public ApplicationMenuItem createMenuItem(String label, Runnable menuAction) {
+        return createMenuItem(label, null, menuAction);
+    }
+
+    /**
+     * Create a menu item.
+     *
+     * @param label Label of the menu item
+     * @param icon Icon to be used
+     * @param menuAction Action to execute when menu item is clicked
+     * @return Menu item. By default, the menu item will be created from the "application environment" {@link ApplicationEnvironment#createMenuItem(String, String, Runnable)}
+     */
+    public ApplicationMenuItem createMenuItem(String label, String icon, Runnable menuAction) {
+        return getEnvironment().createMenuItem(label, icon, menuAction);
+    }
+
+    /**
+     * Create a menu item.
+     *
+     * @param label Label of the menu item
+     * @return Menu item. By default, the menu item will be created from the "application environment" {@link ApplicationEnvironment#createMenuItemGroup(String)}
+     */
+    public ApplicationMenuItemGroup createMenuItemGroup(String label) {
+        return getEnvironment().createMenuItemGroup(label);
+    }
+
+    /**
      * Close the application by closing all registered "resources". If the associated session is not closed, it will also be closed.
      */
     @Override
@@ -295,9 +328,7 @@ public abstract class Application extends UI {
                     a.log(message);
                 }
             } else {
-                if(a == null) {
-                    System.err.println(m);
-                } else {
+                if(a != null) {
                     m = a.getEnvironment().toDisplay(message);
                     a.log(a.getEnvironment().toString(m));
                 }
@@ -370,7 +401,7 @@ public abstract class Application extends UI {
     }
 
     private void receiveSize() {
-        getPage().executeJavaScript("document.body.$server.deviceSize(window.innerWidth,window.innerHeight);");
+        getPage().executeJs("document.body.$server.deviceSize(window.innerWidth,window.innerHeight);");
     }
 
     /**
@@ -696,7 +727,7 @@ public abstract class Application extends UI {
             if(parent != null) {
                 m = contentMenu.get(parent);
                 if(m != null) {
-                    m.setEnabled(true);
+                    m.getElement().setEnabled(true);
                 }
                 select(parent);
                 parent.returnedFrom(view);
@@ -725,7 +756,7 @@ public abstract class Application extends UI {
             if(m == null) {
                 return false;
             }
-            if(!m.isEnabled()) {
+            if(!m.getElement().isEnabled()) {
                 return true;
             }
             hideAllContent(view);
@@ -741,7 +772,7 @@ public abstract class Application extends UI {
                 if(mi == menuItem) {
                     mi.hilite();
                 } else {
-                    mi.getElement().getStyle().set("background-color", "transparent");
+                    mi.dehilite();
                 }
             });
         }

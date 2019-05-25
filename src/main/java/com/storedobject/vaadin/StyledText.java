@@ -3,7 +3,6 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasText;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.Span;
 
 /**
@@ -41,7 +40,7 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
             htmlText = "";
         }
         this.text = htmlText;
-        content.getElement().executeJavaScript("this.innerHTML = $0", htmlText);
+        content.getElement().executeJs("this.innerHTML = $0", htmlText);
     }
 
     @Override

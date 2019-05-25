@@ -70,14 +70,14 @@ public class Demo extends Application {
         @Override
         public void drawMenu(Application application) {
             getMenuPane().add(new HtmlComponent("hr"));
-            add(MenuItem.create("Edit Person Details", new PersonEditor()));
-            add(MenuItem.create("Veiw Sample PDF", new PDFTest()));
-            add(MenuItem.create("Test Alert Component", "vaadin:user", new AlertTest()));
-            add(MenuItem.create("Misc. Test", new MiscTest()));
-            add(MenuItem.create("Test Grid", new GridTest()));
-            add(MenuItem.create("Test Parent/Child", new ParentChildTest()));
-            add(MenuItem.create("Test Dashboard", new DashboardTest()));
-            add(MenuItem.create("Test Form", new TestForm()));
+            add(application.createMenuItem("Edit Person Details", new PersonEditor()));
+            add(application.createMenuItem("Veiw Sample PDF", new PDFTest()));
+            add(application.createMenuItem("Test Alert Component", "vaadin:user", new AlertTest()));
+            add(application.createMenuItem("Misc. Test", new MiscTest()));
+            add(application.createMenuItem("Test Grid", new GridTest()));
+            add(application.createMenuItem("Test Parent/Child", new ParentChildTest()));
+            add(application.createMenuItem("Test Dashboard", new DashboardTest()));
+            add(application.createMenuItem("Test Form", new TestForm()));
         }
     }
 

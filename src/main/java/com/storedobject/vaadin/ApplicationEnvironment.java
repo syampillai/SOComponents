@@ -102,7 +102,7 @@ public interface ApplicationEnvironment {
      * @return Name of the icon (Icons are created using {@link Icon} class).
      */
     default String getIconName(String label) {
-        if(label == null) {
+        if(label == null || label.contains(":")) {
             return null;
         }
         switch (label.toLowerCase()) {
@@ -117,11 +117,39 @@ public interface ApplicationEnvironment {
         return label;
     }
 
+    /**
+     * Create a menu item.
+     *
+     * @param menuLabel Menu label
+     * @param icon Icon
+     * @param menuAction Action associated with the menu item
+     * @return Menu item created.
+     */
+    default ApplicationMenuItem createMenuItem(String menuLabel, String icon, Runnable menuAction) {
+        return MenuItem.create(menuLabel, getIconName(icon), menuAction);
+    }
+
+    /**
+     * Create a menu item for the View.
+     *
+     * @param view View for which menu item needs to be created
+     * @param menuLabel Menu label
+     * @param menuAction Action associated with the menu item
+     * @param closeable Whether the menu item is closeable or not
+     * @return Menu item created.
+     */
     default ApplicationMenuItem createMenuItem(View view, String menuLabel, Runnable menuAction, boolean closeable) {
-        if(closeable) {
-            return CloseableMenuItem.create(menuLabel, menuAction, view);
-        }
-        return MenuItem.create(menuLabel, menuAction);
+        return MenuItem.create(view, menuLabel, menuAction, closeable);
+    }
+
+    /**
+     * Create a menu item.
+     *
+     * @param menuLabel Menu label
+     * @return Menu item created.
+     */
+    default ApplicationMenuItemGroup createMenuItemGroup(String menuLabel) {
+        return MenuItem.createGroup(menuLabel);
     }
 
     /**

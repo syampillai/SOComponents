@@ -14,18 +14,11 @@ public interface HasIcon extends HasElement {
      * @param icon Name of the Iron icon to set
      */
     default void setIcon(String icon) {
-        if(icon == null || icon.trim().isEmpty()) {
+        if(getIconName(icon) == null) {
             getElement().removeAttribute("icon");
             return;
         }
-        if(!icon.contains(":")) {
-            ApplicationEnvironment ae = ApplicationEnvironment.get();
-            if(ae != null) {
-                icon = ae.getIconName(icon);
-            }
-            icon = "vaadin:" + icon;
-        }
-        getElement().setAttribute("icon", icon.trim().toLowerCase().replace('_', '-'));
+        getElement().setAttribute("icon", getIconName(icon));
     }
 
     /**
@@ -34,7 +27,7 @@ public interface HasIcon extends HasElement {
      * @param icon Vaadin icon
      */
     default void setIcon(VaadinIcon icon) {
-        setIcon(icon.name().toLowerCase().replace('_', '-'));
+        setIcon(getIconName(icon));
     }
 
     /**
@@ -43,5 +36,35 @@ public interface HasIcon extends HasElement {
      */
     default String getIcon() {
         return getElement().getAttribute("icon");
+    }
+
+    /**
+     * Find the real name of the icon to be used from the {@link ApplicationEnvironment}.
+     *
+     * @param icon Name of the icon.
+     * @return Name of the icon derived from the {@link ApplicationEnvironment}.
+     */
+    static String getIconName(String icon) {
+        if(icon == null || icon.trim().isEmpty()) {
+            return null;
+        }
+        if(!icon.contains(":")) {
+            ApplicationEnvironment ae = ApplicationEnvironment.get();
+            if(ae != null) {
+                icon = ae.getIconName(icon);
+            }
+            icon = "vaadin:" + icon;
+        }
+        return icon.trim().toLowerCase().replace('_', '-');
+    }
+
+    /**
+     * Get the name of the Vaadin icon.
+     *
+     * @param icon Icon
+     * @return Name of the icon.
+     */
+    static String getIconName(VaadinIcon icon) {
+        return "vaadin:" + icon.name().toLowerCase().replace('_', '-');
     }
 }

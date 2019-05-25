@@ -1364,7 +1364,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(rowIndex < 0) {
                 return;
             }
-            UI.getCurrent().getPage().executeJavaScript("$0._scrollToIndex(" + rowIndex + ")", grid.getElement());
+            UI.getCurrent().getPage().executeJs("$0._scrollToIndex(" + rowIndex + ")", grid.getElement());
         }
 
         /**
