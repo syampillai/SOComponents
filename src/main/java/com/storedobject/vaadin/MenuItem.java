@@ -16,8 +16,9 @@ import java.util.ArrayList;
 @HtmlImport("so-menu-styles.html")
 public class MenuItem extends Div implements ApplicationMenuItem {
 
+    final Icon icon;
+    int level = 0;
     private Span caption = new Span();
-    Icon icon;
 
     MenuItem(String label, Icon icon, Runnable runnable, boolean closeable) {
         this.icon = icon;
@@ -42,7 +43,6 @@ public class MenuItem extends Div implements ApplicationMenuItem {
 
     public static ApplicationMenuItem create(View view, String menuLabel, Runnable menuAction, boolean closeable) {
         Icon icon = createIcon(closeable ? "vaadin:close-circle" : null);
-        icon.setColor(closeable ? "var(--lumo-error-color-50pct)" : "var(--lumo-primary-color-50pct)");
         if(closeable) {
             icon.setAttribute("title", "Close");
             new Clickable<>(icon, e -> view.abort());
@@ -76,28 +76,47 @@ public class MenuItem extends Div implements ApplicationMenuItem {
     private static class MenuItemGroup extends MenuItem implements ApplicationMenuItemGroup {
 
         private boolean plus = true;
-        private ArrayList<ApplicationMenuItem> items = new ArrayList<>();
+        private ArrayList<MenuItem> items = new ArrayList<>();
 
-        MenuItemGroup(String label) {
-            super(label, new Icon("vaadin:plus-circle"), null, false);
+        private MenuItemGroup(String label) {
+            this(label, new Icon("vaadin:plus-circle"));
+        }
+
+        private MenuItemGroup(String label, Icon icon) {
+            super(label, icon, null, false);
             new Clickable<>(this, e -> toggle());
         }
 
         private void toggle() {
             plus = !plus;
             icon.setIcon("vaadin:" + (plus ? "plus" : "minus") + "-circle");
-            items.forEach(mi -> mi.getElement().setVisible(!plus));
+            items.forEach(mi -> mi.setVisible(!plus));
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+            items.forEach(mi -> mi.setVisible(!plus && isVisible()));
         }
 
         @Override
         public void add(ApplicationMenuItem menuItem) {
-            menuItem.getElement().setVisible(false);
-            ((MenuItem)menuItem).icon.setColor("var(--lumo-contrast-30pct)");
-            items.add(menuItem);
+            if(!(menuItem instanceof MenuItem)) {
+                return;
+            }
+            MenuItem mi = (MenuItem) menuItem;
+            mi.level = level + 1;
+            int n = 40 + (mi.level * 125);
+            mi.icon.setStyle("margin-left", (n / 100) + "." + (n % 100) + "em");
+            mi.setVisible(!plus && isVisible());
+            items.add(mi);
         }
 
         @Override
         public void remove(ApplicationMenuItem menuItem) {
+            if(!(menuItem instanceof MenuItem)) {
+                return;
+            }
             items.remove(menuItem);
         }
     }
