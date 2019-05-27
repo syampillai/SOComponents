@@ -78,6 +78,9 @@ public interface ObjectFieldCreator<T> {
         if(fieldType == java.sql.Date.class) {
             return new DateField(label);
         }
+        if(fieldType == java.util.Date.class) {
+            return new com.storedobject.vaadin.util.DateField(label);
+        }
         if(fieldType == LocalDate.class) {
             return new DatePicker(label);
         }

@@ -590,7 +590,6 @@ public interface HasColumns<T> extends ExecutableView {
         private final HasColumns<T> hc;
         private final Class<T> objectClass;
         private Map<String, Renderer<T>> renderers = new HashMap<>();
-        private Map<String, ValueProvider<T, ?>> valueProviders = new HashMap<>();
         private Map<String, Boolean> columnResizable = new HashMap<>();
         private Map<String, Boolean> columnVisible = new HashMap<>();
         private Map<String, Boolean> columnFrozen = new HashMap<>();
@@ -656,7 +655,6 @@ public interface HasColumns<T> extends ExecutableView {
                     sorted(Comparator.comparingInt(this::getColumnOrder)).forEach(this::constructColumn);
             columns = null;
             renderers = null;
-            valueProviders = null;
             columnResizable = null;
             columnVisible = null;
             columnFrozen = null;
@@ -997,7 +995,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, function)) {
                 return true;
             }
-            Renderer<T> r = html ? renderer(function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
+            Renderer<T> r = html ? renderer(function) : renderer(hc.getColumnTemplate(columnName), function);
             hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -1018,7 +1016,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(template == null) {
                 template = hc.getColumnTemplate(columnName);
             }
-            Renderer<T> r = html ? renderer(functions[0]) : renderer(columnName, template, functions);
+            Renderer<T> r = html ? renderer(functions[0]) : renderer(template, functions);
             hc.setRendererFunctions(columnName, html, functions);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -1052,7 +1050,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         @SafeVarargs
-        private final Renderer<T> renderer(String columnName, String template, Function<T, ?>... functions) {
+        private final Renderer<T> renderer(String template, Function<T, ?>... functions) {
             if(template == null) {
                 StringBuilder s = new StringBuilder();
                 IntStream.range(0, functions.length - 1).forEach(i -> s.append('<').append(i).append('>').append("<br/>"));
@@ -1076,14 +1074,11 @@ public interface HasColumns<T> extends ExecutableView {
                     return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(function.apply(o));
                 });
             }
-            if(columnName != null) {
-                valueProviders.put(columnName, (t) -> functions[functions.length - 1].apply(t));
-            }
             return r;
         }
 
         private Renderer<T> renderer(Function<T, ?> htmlFunction) {
-            return renderer(null,"<span inner-h-t-m-l=\"<1>\"></span>", htmlFunction);
+            return renderer("<span inner-h-t-m-l=\"<1>\"></span>", htmlFunction);
         }
 
         void treeBuilt(String columnName) {
@@ -1168,7 +1163,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void constructColumn(String columnName, Renderer<T> renderer) {
-            acceptColumn(constructColumn(columnName, grid, renderer, valueProviders.get(columnName)), columnName);
+            acceptColumn(constructColumn(columnName, grid, renderer), columnName);
         }
 
         /**
@@ -1180,12 +1175,11 @@ public interface HasColumns<T> extends ExecutableView {
          *
          * @param columnName Name of the column
          * @param renderer Renderer for the column
-         * @param valueProvider Value provider (This could be <code>null</code>)
          * @return Column created. Default implementation use the {@link Grid#addColumn(Renderer)} method to create the
          * column.
          */
         @SuppressWarnings("unused")
-        protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer, ValueProvider<T, ?> valueProvider) {
+        protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer) {
             return grid.addColumn(renderer);
         }
 
