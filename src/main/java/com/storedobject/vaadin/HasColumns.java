@@ -658,7 +658,7 @@ public interface HasColumns<T> extends ExecutableView {
             columnResizable = null;
             columnVisible = null;
             columnFrozen = null;
-            grid.getElement().setAttribute("theme", "row-stripes wrap-cell-content");
+            grid.getElement().setAttribute("theme", getDefaultThemes());
             constructHeader(createHeader());
             if(columnCreator != null) {
                 columnCreator.close();
@@ -669,7 +669,17 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void compact() {
-            grid.getElement().setAttribute("theme", "compact row-stripes wrap-cell-content");
+            grid.getElement().setAttribute("theme", "compact " + getDefaultThemes());
+        }
+
+        /**
+         * Get the default themes to be set. Default is "row-stripes wrap-cell-content". This could be overriden in
+         * {@link HasColumns#constructed()} method if required.
+         *
+         * @return Default themes.
+         */
+        protected String getDefaultThemes() {
+            return "row-stripes wrap-cell-content";
         }
 
         private Application getApplication() {
