@@ -8,7 +8,7 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.dom.Element;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -613,6 +613,46 @@ public class Form {
             field.getClass().getMethod("setLabel", String.class).invoke(field, label);
         } catch (Throwable ignored) {
         }
+    }
+
+    /**
+     * Connect fields so that a change in any of it is propagated to others within that connected group.
+     *
+     * @param fieldNames Fields to connect.
+     * @return True if connection is established successfully.
+     */
+    public boolean connect(String... fieldNames) {
+        List<HasValue<?, ?>> fieldList = new ArrayList<>();
+        HasValue<?, ?> field;
+        for(String fieldName: fieldNames) {
+            field = getField(fieldName);
+            if(field != null) {
+                fieldList.add(field);
+            }
+        }
+        return connect(fieldList);
+    }
+
+    /**
+     * Connect fields so that a change in any of it is propagated to others within that connected group.
+     *
+     * @param fields Fields to connect.
+     * @return True if connection is established successfully.
+     */
+    public boolean connect(HasValue<?, ?>... fields) {
+        List<HasValue<?, ?>> fieldList = new ArrayList<>();
+        Collections.addAll(fieldList, fields);
+        return connect(fieldList);
+    }
+
+    /**
+     * Connect fields so that a change in any of it is propagated to others within that connected group.
+     *
+     * @param fields Fields to connect.
+     * @return True if connection is established successfully.
+     */
+    public boolean connect(Collection<HasValue<?, ?>> fields) {
+        return data.connect(fields);
     }
 
     /**

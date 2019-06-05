@@ -4,7 +4,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -35,12 +34,62 @@ public interface HasColumns<T> extends ExecutableView {
 
     /**
      * You can have a "header row" (as the first row) that covers the whole grid. Typically, such a row is to show your own buttons or components to
-     * customize the grid. The default implementation returns null and thus, no such row is created.
+     * customize the grid. The default implementation returns null and thus, no such row is created. (Please note that {@link #createHeaders()}}
+     * is invoked before this method for adding other header rows just above the main header row. This may be used for column grouping etc.)
      *
      * @return Component to be used as the "header row".
      */
     default Component createHeader() {
         return null;
+    }
+
+    /**
+     * Create extra header rows if required here by invoking {@link #prependHeader()} or {@link #appendHeader()} (typically useful for
+     * creating column grouping etc.). Default implementation does nothing. This is invoked before {@link #createHeader()}.
+     */
+    default void createHeaders() {
+    }
+
+    /**
+     * Create footer rows if required here by invoking {@link #appendFooter()} or {@link #prependFooter()}. Default implementation does nothing.
+     */
+    default void createFooters() {
+    }
+
+    /**
+     * Prepend a header row.
+     *
+     * @return Row created.
+     */
+    default GridRow prependHeader() {
+        return GridRow.createHeader(getSOGrid().grid, false);
+    }
+
+    /**
+     * Append a header row.
+     *
+     * @return Row created.
+     */
+    default GridRow appendHeader() {
+        return GridRow.createHeader(getSOGrid().grid, true);
+    }
+
+    /**
+     * Prepend a footer row.
+     *
+     * @return Row created.
+     */
+    default GridRow prependFooter() {
+        return GridRow.createFooter(getSOGrid().grid, false);
+    }
+
+    /**
+     * Append a footer row.
+     *
+     * @return Row created.
+     */
+    default GridRow appendFooter() {
+        return GridRow.createFooter(getSOGrid().grid, true);
     }
 
     /**
@@ -619,7 +668,11 @@ public interface HasColumns<T> extends ExecutableView {
             if(grid instanceof TreeGrid) {
                 treeColumnName = null;
             }
-            this.hc = (HasColumns<T>) grid;
+            if(grid instanceof HasColumns) {
+                this.hc = (HasColumns<T>) grid;
+            } else {
+                this.hc = null;
+            }
             this.objectClass = objectClass;
             this.columns = columns;
             grid.addAttachListener(e -> init());
@@ -659,7 +712,14 @@ public interface HasColumns<T> extends ExecutableView {
             columnVisible = null;
             columnFrozen = null;
             grid.getElement().setAttribute("theme", getDefaultThemes());
-            constructHeader(createHeader());
+            if(grid instanceof HasColumns) {
+                hc.createHeaders();
+                Component component = hc.createHeader();
+                if(component != null) {
+                    hc.prependHeader().join().setComponent(component);
+                }
+                hc.createFooters();
+            }
             if(columnCreator != null) {
                 columnCreator.close();
                 columnCreator = null;
@@ -794,27 +854,6 @@ public interface HasColumns<T> extends ExecutableView {
             }
             Boolean v = columnFrozen.get(columnName);
             return v == null ? false : v;
-        }
-
-        private Component createHeader() {
-            return grid instanceof HasColumns ? ((HasColumns) grid).createHeader() : null;
-        }
-
-        private void constructHeader(Component component) {
-            if(component == null) {
-                return;
-            }
-            HeaderRow r = grid.prependHeaderRow();
-            HeaderRow.HeaderCell c;
-            List<Grid.Column<T>> columns = getColumns();
-            if(columns.size() == 1) {
-                c = r.getCells().get(0);
-            } else {
-                Grid.Column[] a = new Grid.Column[columns.size()];
-                columns.toArray(a);
-                c = r.join(a);
-            }
-            c.setComponent(component);
         }
 
         private ButtonIcon getConfigureButton() {

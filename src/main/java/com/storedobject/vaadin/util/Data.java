@@ -10,10 +10,9 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.binder.Validator;
 import com.vaadin.flow.data.binder.ValueContext;
+import com.vaadin.flow.shared.Registration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -26,6 +25,8 @@ public class Data extends HashMap<String, Object> {
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
     private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
     private final Map<HasValue<?, ?>, DataValidators> validators = new HashMap<>();
+    private final Map<HasValue<?, ?>, Binder.Binding<Data, ?>> bindings = new HashMap<>();
+    private Map<HasValue<?, ?>, List<Registration>> connections;
     private Binder<Data> binder;
     private boolean readOnly;
     private final Form form;
@@ -78,20 +79,53 @@ public class Data extends HashMap<String, Object> {
         final String name = fieldName;
         final HasValue<?, Object> f = (HasValue<?, Object>)field;
         binder.withValidator(validator);
+        Binder.Binding<Data, ?> binding;
         if (valueHandler.isBasic() || !valueHandler.canHandle(name)) {
             setValue(fieldName, field.getValue());
-            binder.bind(f, x -> getValue(name), (d, v) -> setValue(name, v));
+            binding = binder.bind(f, x -> getValue(name), (d, v) -> setValue(name, v));
         } else {
             if (valueHandler.canSet(name)) {
-                binder.bind(f, x -> valueHandler.getValue(name), (d, v) -> valueHandler.setValue(name, v));
+                binding = binder.bind(f, x -> valueHandler.getValue(name), (d, v) -> valueHandler.setValue(name, v));
             } else {
-                binder.bind(f, x -> valueHandler.getValue(name), null);
+                binding = binder.bind(f, x -> valueHandler.getValue(name), null);
             }
         }
+        bindings.put(field, binding);
         if(field instanceof ValueRequired && ((ValueRequired)field).isRequired() && valueHandler.canSet(fieldName)) {
             setRequired(field, true, null);
         }
         return fieldName;
+    }
+
+    public boolean connect(Collection<HasValue<?, ?>> fields) {
+        List<HasValue<?, ?>> fieldList = new ArrayList<>(fields);
+        if(fieldList.size() <= 1) {
+            return false;
+        }
+        if(connections == null) {
+            connections = new HashMap<>();
+            binder.setBean(this);
+        }
+        List<Registration> registrations;
+        for(HasValue<?, ?> field: fieldList) {
+            registrations = connections.computeIfAbsent(field, k -> new ArrayList<>());
+            registrations.add(field.addValueChangeListener(e -> {
+                if(e.isFromClient()) {
+                    updateConnections(e.getHasValue(), fieldList);
+                }
+            }));
+        }
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateConnections(HasValue<?, ?> source, List<HasValue<?, ?>> connections) {
+        connections.forEach(f -> {
+            if(f != source) {
+                Binder.Binding<Data, Object> binding = (Binder.Binding<Data, Object>) bindings.get(f);
+                ((HasValue<?, Object>)f).setValue(binding.getGetter().apply(this));
+            }
+        });
     }
 
     private DataValidators validator(HasValue<?, ?> field) {
@@ -160,8 +194,16 @@ public class Data extends HashMap<String, Object> {
             return null;
         }
         binder.removeBinding(field);
+        bindings.remove(field);
         fieldNames.remove(field);
         validators.remove(field);
+        if(connections != null) {
+            List<Registration> registrations = connections.get(field);
+            if(registrations != null) {
+                registrations.forEach(Registration::remove);
+                connections.remove(field);
+            }
+        }
         remove(fieldName);
         return field;
     }

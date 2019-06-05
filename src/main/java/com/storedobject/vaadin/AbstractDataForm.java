@@ -7,6 +7,7 @@ import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -679,5 +680,35 @@ public abstract class AbstractDataForm extends View {
      */
     public int getColumnSpan(Component component) {
         return form.getColumnSpan(component);
+    }
+
+    /**
+     * Connect fields so that a change in any of it is propagated to others within that connected group.
+     *
+     * @param fieldNames Fields to connect.
+     * @return True if connection is established successfully.
+     */
+    public boolean connect(String... fieldNames) {
+        return form.connect(fieldNames);
+    }
+
+    /**
+     * Connect fields so that a change in any of it is propagated to others within that connected group.
+     *
+     * @param fields Fields to connect.
+     * @return True if connection is established successfully.
+     */
+    public boolean connect(HasValue<?, ?>... fields) {
+        return form.connect(fields);
+    }
+
+    /**
+     * Connect fields so that a change in any of it is propagated to others within that connected group.
+     *
+     * @param fields Fields to connect.
+     * @return True if connection is established successfully.
+     */
+    public boolean connect(Collection<HasValue<?, ?>> fields) {
+        return form.connect(fields);
     }
 }
