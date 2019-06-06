@@ -81,6 +81,9 @@ public abstract class GridRow {
             List<Cell> cells = new ArrayList<>();
             if(names == null || names.length == 0) {
                 getCells().forEach(cells::add);
+                if(cells.size() == 1) {
+                    return getCell(cells.get(0).name);
+                }
             } else {
                 Cell cell;
                 for(String name: names) {

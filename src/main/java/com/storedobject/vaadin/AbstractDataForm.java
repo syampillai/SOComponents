@@ -663,6 +663,13 @@ public abstract class AbstractDataForm extends View {
     }
 
     /**
+     * Add a new line to the form.
+     */
+    public void newLine() {
+        form.newLine();
+    }
+
+    /**
      * Set number of columns to span for a particular component.
      *
      * @param component Component for which column span to be set

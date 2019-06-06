@@ -291,6 +291,15 @@ public class Form {
     }
 
     /**
+     * Add a new line to the form. (This will work only when the container is of type {@link FormLayout}).
+     */
+    public void newLine() {
+        if(container instanceof FormLayout) {
+            ((FormLayout) container).newLine();
+        }
+    }
+
+    /**
      * Set number of columns to span for a particular component. (This will work only when the container is of type {@link FormLayout}).
      *
      * @param component Component for which column span to be set

@@ -1,6 +1,8 @@
 package com.storedobject.vaadin.util;
 
-public interface HasTextValue {
+import com.vaadin.flow.component.HasSize;
+
+public interface HasTextValue extends HasSize {
     void setValue(String value);
     String getValue();
     void setMaxLength(int width);

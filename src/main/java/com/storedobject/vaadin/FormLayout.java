@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 
 /**
@@ -61,6 +62,13 @@ public class FormLayout extends com.vaadin.flow.component.formlayout.FormLayout 
      */
     public final int getColumns() {
         return columns;
+    }
+
+    /**
+     * Add a new line to the form.
+     */
+    public void newLine() {
+        add(new Html("<br>"));
     }
 
     /**
