@@ -106,6 +106,13 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     void abort();
 
     /**
+     * Get the caption for this view.
+     *
+     * @return Caption.
+     */
+    String getCaption();
+
+    /**
      * Set the caption
      *
      * @param caption Caption
@@ -204,5 +211,51 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
             System.err.println(anything);
             error.printStackTrace();
         }
+    }
+
+    /**
+     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
+     * By default, this invokes {@link #createMenuItem(Runnable)} to create the menu item.
+     *
+     * @param menuAction Action for the menu item to be created
+     * @return Menu item.
+     */
+    default ApplicationMenuItem getMenuItem(Runnable menuAction) {
+        ApplicationMenuItem m = createMenuItem(menuAction);
+        if(m == null) {
+            m = getApplication().getEnvironment().createMenuItem(this, getCaption(), menuAction);
+        }
+        return m;
+    }
+
+    /**
+     * Create the menu item for this view. This will be invoked by {@link #getMenuItem(Runnable)}.
+     * By default, this invokes {@link ApplicationEnvironment#createMenuItem(ExecutableView, String, Runnable)} to create the menu item.
+     *
+     * @param menuAction Action for the menu item to be created
+     * @return Menu item.
+     */
+    default ApplicationMenuItem createMenuItem(@SuppressWarnings("unused") Runnable menuAction) {
+        return getApplication().getEnvironment().createMenuItem(this, getCaption(), menuAction);
+    }
+
+    /**
+     * Get the name of the icon to be displayed in the menu when this view is active (running).
+     *
+     * @return Default implementation takes this value from {@link ApplicationEnvironment#getActiveMenuIconName()}.
+     */
+    default String getMenuIconName() {
+        return getApplication().getEnvironment().getActiveMenuIconName();
+    }
+
+
+    /**
+     * Check if this view is closeable or not. If closeable, a "closeable" menu item will be created by {@link #getMenuItem(Runnable)}.
+     * This is checked only once when the "menu item" is created.
+     *
+     * @return True if closeable. By default, a view is closeable if it implements {@link CloseableView}.
+     */
+    default boolean isCloseable() {
+        return this instanceof CloseableView;
     }
 }

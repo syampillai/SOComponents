@@ -135,11 +135,10 @@ public interface ApplicationEnvironment {
      * @param view View for which menu item needs to be created
      * @param menuLabel Menu label
      * @param menuAction Action associated with the menu item
-     * @param closeable Whether the menu item is closeable or not
      * @return Menu item created.
      */
-    default ApplicationMenuItem createMenuItem(View view, String menuLabel, Runnable menuAction, boolean closeable) {
-        return MenuItem.create(view, menuLabel, menuAction, closeable);
+    default ApplicationMenuItem createMenuItem(ExecutableView view, String menuLabel, Runnable menuAction) {
+        return MenuItem.create(view, menuLabel, menuAction);
     }
 
     /**
@@ -150,6 +149,15 @@ public interface ApplicationEnvironment {
      */
     default ApplicationMenuItemGroup createMenuItemGroup(String menuLabel) {
         return MenuItem.createGroup(menuLabel);
+    }
+
+    /**
+     * Get the menu icon to be used for active (running) {@link View}s.
+     *
+     * @return Default implementation returns "vaadin:cogs".
+     */
+    default String getActiveMenuIconName() {
+        return "vaadin:cogs";
     }
 
     /**

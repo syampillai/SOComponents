@@ -1331,6 +1331,9 @@ public interface HasColumns<T> extends ExecutableView {
 
                     @Override
                     public boolean isCloseable() {
+                        if(grid instanceof HasColumns) {
+                            return ((HasColumns) grid).isCloseable();
+                        }
                         return grid instanceof CloseableView;
                     }
 
@@ -1361,6 +1364,22 @@ public interface HasColumns<T> extends ExecutableView {
                             ((HasColumns) grid).abort();
                         }
                         view = v;
+                    }
+
+                    @Override
+                    public String getMenuIconName() {
+                        if(grid instanceof HasColumns) {
+                            return ((HasColumns) grid).getMenuIconName();
+                        }
+                        return super.getMenuIconName();
+                    }
+
+                    @Override
+                    public ApplicationMenuItem createMenuItem(Runnable menuAction) {
+                        if(grid instanceof HasColumns) {
+                            return ((HasColumns) grid).createMenuItem(menuAction);
+                        }
+                        return super.createMenuItem(menuAction);
                     }
                 };
             }

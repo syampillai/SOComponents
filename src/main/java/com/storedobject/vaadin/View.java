@@ -336,40 +336,19 @@ public class View implements ExecutableView {
 
     /**
      * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
-     * By default, this invokes {@link #createMenuItem(Runnable)} to create the menu item. If {@link #createMenuItem(Runnable)} returns <code>null</code>,
-     * method from the {@link ApplicationEnvironment#createMenuItem(View, String, Runnable, boolean)} is invoked.
+     * This method is final but {@link #createMenuItem(Runnable)} can be overridden for customizing it.
      *
      * @param menuAction Action for the menu item to be created
      * @return Menu item.
      */
     public final ApplicationMenuItem getMenuItem(Runnable menuAction) {
         if(menuItem == null) {
-            menuItem = createMenuItem(menuAction);
+            menuItem = ExecutableView.super.getMenuItem(menuAction);
             if(menuItem == null) {
-                menuItem = getApplication().getEnvironment().createMenuItem(this, caption, menuAction, isCloseable());
+                menuItem = getApplication().getEnvironment().createMenuItem(this, caption, menuAction);
             }
         }
         return menuItem;
-    }
-
-    /**
-     * Check if this view is closeable or not. If closeable, a "closeable" menu item will be created by {@link #getMenuItem(Runnable)}.
-     * This is checked only once when the "menu item" is created.
-     *
-     * @return True if closeable. By default, a view is closeable if it implements {@link CloseableView}.
-     */
-    public boolean isCloseable() {
-        return this instanceof CloseableView;
-    }
-
-    /**
-     * Create the menu item for this view. This will be invoked by {@link #getMenuItem(Runnable)}. Default implementation returns <code>null</code>.
-     *
-     * @param menuAction Action for the menu item to be created
-     * @return Menu item.
-     */
-    protected ApplicationMenuItem createMenuItem(@SuppressWarnings("unused") Runnable menuAction) {
-        return null;
     }
 
     /**
@@ -391,6 +370,7 @@ public class View implements ExecutableView {
      *
      * @return Caption.
      */
+    @Override
     public String getCaption() {
         return caption;
     }

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 
+import java.lang.reflect.Executable;
 import java.util.ArrayList;
 
 /**
@@ -41,8 +42,9 @@ public class MenuItem extends Div implements ApplicationMenuItem {
         return new MenuItem(menuLabel, createIcon(icon), menuAction, false);
     }
 
-    public static ApplicationMenuItem create(View view, String menuLabel, Runnable menuAction, boolean closeable) {
-        Icon icon = createIcon(closeable ? "vaadin:close-circle" : null);
+    public static ApplicationMenuItem create(ExecutableView view, String menuLabel, Runnable menuAction) {
+        boolean closeable = view.isCloseable();
+        Icon icon = createIcon(closeable ? "vaadin:close-circle" : view.getMenuIconName());
         if(closeable) {
             icon.setAttribute("title", "Close");
             new Clickable<>(icon, e -> view.abort());
@@ -55,7 +57,7 @@ public class MenuItem extends Div implements ApplicationMenuItem {
     }
 
     private static Icon createIcon(String icon) {
-        return new Icon(icon == null || icon.isEmpty() ? "go" : icon);
+        return new Icon(icon == null ? "vaadin:chevron_circle_right" : icon);
     }
 
     @Override
