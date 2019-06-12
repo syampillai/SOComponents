@@ -134,4 +134,15 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     public boolean isEmpty() {
         return getValue() < 0;
     }
+
+    /**
+     * Replace a choice at a specified index. (If the index is outside the range, it will not be replaced).
+     *
+     * @param index Index
+     * @param choice New choice
+     */
+    public void setChoice(int index, String choice) {
+        //noinspection unchecked
+        ((ListField<String>)getField()).setItem(index, choice);
+    }
 }

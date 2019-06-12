@@ -11,7 +11,9 @@ import java.util.Objects;
 /**
  * The class that defines the content view of the {@link Application}. An implementation of this class (with all the necessary
  * annotations) is required for using {@link Application} class. There is no need to override or implement any methods.
+ *
  * @see Application
+ * @author Syam
  */
 public abstract class ApplicationView extends Composite<Component> {
 

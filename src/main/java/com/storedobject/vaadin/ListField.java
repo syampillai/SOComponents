@@ -71,4 +71,17 @@ public class ListField<T> extends Select<T> {
         this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
         super.setItems(this.items);
     }
+
+    /**
+     * Replace an item at a specified index. (If the index is outside the range, it will not be replaced).
+     *
+     * @param index Index
+     * @param item New item
+     */
+    public void setItem(int index, T item) {
+        if(index >= 0 && index < items.size()) {
+            items.set(index, item);
+            super.setItems(items);
+        }
+    }
 }

@@ -87,6 +87,7 @@ import java.util.*;
  * displayed in the 'content' area and its 'caption' is inserted as a new 'menu item' in the 'menu' area. The 'content' area displays only the 'active
  * view' (currently selected or executed view) and hides all previously displayed 'views' but any those 'views' can be made active again
  * by licking on its respective 'menu item' created from its 'caption'.
+ *
  * @author Syam
  */
 public abstract class Application extends UI {

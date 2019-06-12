@@ -5,6 +5,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A thin wrapper around Vaadin's {@link ComboBox}.
@@ -71,5 +72,23 @@ public class ComboField<T> extends ComboBox<T> {
     @Override
     public T getEmptyValue() {
         return null;
+    }
+
+    /**
+     * Get the number of items in the combo.
+     *
+     * @return Number of items.
+     */
+    public int size() {
+        return list.size();
+    }
+
+    /**
+     * Get items from the list as a stream.
+     *
+     * @return Stream of items from the combo.
+     */
+    public Stream<T> items() {
+        return list.stream();
     }
 }

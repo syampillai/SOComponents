@@ -12,7 +12,7 @@ public class InvalidLink extends InvalidLinkError {
     @Override
     public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<NotFoundException> parameter) {
         System.err.println("Here!");
-        event.rerouteTo(Demo.DemoView.class);
+        //event.rerouteTo(Demo.DemoView.class);
         return HttpServletResponse.SC_OK;
     }
 }

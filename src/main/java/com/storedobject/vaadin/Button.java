@@ -40,7 +40,7 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
      * @param clickHandler Click handler
      */
     public Button(String text, String icon, ClickHandler clickHandler) {
-        this(text, new Icon(icon), clickHandler);
+        this(text, icon == null || icon.isEmpty() ? null : new Icon(icon), clickHandler);
     }
 
     /**
@@ -105,6 +105,15 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
      * @param icon Vaadin icon
      */
     public void setIcon(VaadinIcon icon) {
+        super.setIcon(new Icon(icon));
+    }
+
+    /**
+     * Set icon for this button.
+     *
+     * @param icon Name of the icon
+     */
+    public void setIcon(String icon) {
         super.setIcon(new Icon(icon));
     }
 

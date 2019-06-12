@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.VaadinServletConfiguration;
@@ -86,10 +87,11 @@ public class Demo extends Application {
     public static class DemoServlet extends VaadinServlet {
     }
 
-    @Route("test")
+    @Route("")
     @Push(PushMode.MANUAL)
     @BodySize(height = "100vh", width = "100vw")
     @Theme(value = Lumo.class, variant = Lumo.LIGHT)
+    @PreserveOnRefresh
     public static class DemoView extends ApplicationView {
     }
 }

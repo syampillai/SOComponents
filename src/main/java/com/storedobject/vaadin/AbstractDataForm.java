@@ -51,7 +51,7 @@ public abstract class AbstractDataForm extends View {
      * @param component Form component to embed
      * @return A window with the form component added to it.
      */
-    protected Window createWindow(Component component) {
+    protected Window createWindow(@SuppressWarnings("unused") Component component) {
         return null;
     }
 
@@ -590,7 +590,7 @@ public abstract class AbstractDataForm extends View {
      * @param fieldName Name of the field for which label needs to be set
      * @param label Label to set
      */
-    public void setFieldLabel(String fieldName, String label) {
+    public final void setFieldLabel(String fieldName, String label) {
         form.setFieldLabel(fieldName, label);
     }
 
@@ -600,8 +600,28 @@ public abstract class AbstractDataForm extends View {
      * @param field Field for which label needs to be set
      * @param label Label to set
      */
-    public void setFieldLabel(HasValue<?, ?> field, String label) {
+    public final void setFieldLabel(HasValue<?, ?> field, String label) {
         form.setFieldLabel(field, label);
+    }
+
+    /**
+     * Get label for the given field.
+     *
+     * @param fieldName Name of the field
+     * @return Label string if "getLabel" method exists in the field, otherwise null.
+     */
+    public final String getFieldLabel(String fieldName) {
+        return fieldName == null ? null : getFieldLabel(getField(fieldName));
+    }
+
+    /**
+     * Get label for the given field.
+     *
+     * @param field Field
+     * @return Label string if "getLabel" method exists in the field, otherwise null.
+     */
+    public final String getFieldLabel(HasValue<?, ?> field) {
+        return field == null ? null : form.getFieldLabel(field);
     }
 
     /**
@@ -717,5 +737,24 @@ public abstract class AbstractDataForm extends View {
      */
     public boolean connect(Collection<HasValue<?, ?>> fields) {
         return form.connect(fields);
+    }
+
+
+    /**
+     * Get all fields.
+     *
+     * @return Stream of fields.
+     */
+    public final Stream<HasValue<?, ?>> streamFieldsCreated() {
+        return form.streamFieldsCreated();
+    }
+
+    /**
+     * Get all fields names.
+     *
+     * @return Stream of field names.
+     */
+    public final Stream<String> streamFieldNamesCreated() {
+        return form.streamFieldNamesCreated();
     }
 }

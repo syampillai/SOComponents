@@ -351,12 +351,21 @@ public class Form {
     }
 
     /**
-     * Get all fields. This may not
+     * Get all fields.
      *
      * @return Stream of fields.
      */
-    public Stream<HasValue<?, ?>> getFields() {
+    public final Stream<HasValue<?, ?>> streamFieldsCreated() {
         return data.getFields();
+    }
+
+    /**
+     * Get all fields names.
+     *
+     * @return Stream of field names.
+     */
+    public final Stream<String> streamFieldNamesCreated() {
+        return data.getFieldNames();
     }
 
     /**
@@ -604,7 +613,7 @@ public class Form {
      * @param fieldName Name of the field for which label needs to be set
      * @param label Label to set
      */
-    public void setFieldLabel(String fieldName, String label) {
+    public final void setFieldLabel(String fieldName, String label) {
         setFieldLabel(getField(fieldName), label);
     }
 
@@ -614,7 +623,7 @@ public class Form {
      * @param field Field for which label needs to be set
      * @param label Label to set
      */
-    public void setFieldLabel(HasValue<?, ?> field, String label) {
+    public final void setFieldLabel(HasValue<?, ?> field, String label) {
         if(field == null) {
             return;
         }
@@ -622,6 +631,26 @@ public class Form {
             field.getClass().getMethod("setLabel", String.class).invoke(field, label);
         } catch (Throwable ignored) {
         }
+    }
+
+    /**
+     * Get label for the given field.
+     *
+     * @param fieldName Name of the field
+     * @return Label string if "getLabel" method exists in the field, otherwise null.
+     */
+    public final String getFieldLabel(String fieldName) {
+        return fieldName == null ? null : getFieldLabel(getField(fieldName));
+    }
+
+    /**
+     * Get label for the given field.
+     *
+     * @param field Field
+     * @return Label string if "getLabel" method exists in the field, otherwise null.
+     */
+    public final String getFieldLabel(HasValue<?, ?> field) {
+        return field == null ? null : data.getLabel(field);
     }
 
     /**

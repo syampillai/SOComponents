@@ -324,7 +324,7 @@ public class Data extends HashMap<String, Object> {
         return requiredCache;
     }
 
-    private static String getLabel(HasValue<?, ?> field) {
+    public static String getLabel(HasValue<?, ?> field) {
         try {
             return (String) (field.getClass().getMethod("getLabel")).invoke(field);
         } catch (Throwable ignored) {
