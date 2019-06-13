@@ -21,7 +21,7 @@ public interface ApplicationMenu extends HasComponents {
      * @param menuItem Menu item
      */
     default void add(ApplicationMenuItem menuItem) {
-        getMenuPane().getElement().appendChild(menuItem.getElement());
+        getMenuPane().getElement().appendChild(menuItem.getElement().removeFromTree());
     }
 
     /**
@@ -30,7 +30,7 @@ public interface ApplicationMenu extends HasComponents {
      * @param menuItem Menu item
      */
     default void insert(int position, ApplicationMenuItem menuItem) {
-        getMenuPane().getElement().insertChild(position, menuItem.getElement());
+        getMenuPane().getElement().insertChild(position, menuItem.getElement().removeFromTree());
     }
 
     /**

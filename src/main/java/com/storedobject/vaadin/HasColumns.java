@@ -748,7 +748,7 @@ public interface HasColumns<T> extends ExecutableView {
             }
             if(application == null) {
                 //noinspection ConstantConditions
-                application = (Application)grid.getUI().orElseGet(null);
+                application = Application.get(grid.getUI().orElseGet(null));
             }
             return application;
         }

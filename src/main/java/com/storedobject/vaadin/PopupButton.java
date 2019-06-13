@@ -87,13 +87,7 @@ public class PopupButton extends Button {
             menu.setTarget(null);
             menu.removeAll();
         }
-        menu = new ContextMenu() {
-            @Override
-            public void close() {
-                super.close();
-                createMenu();
-            }
-        };
+        menu = new ContextMenu();
         menu.setTarget(this);
         menu.setOpenOnClick(true);
         menu.addItem(container);

@@ -24,6 +24,8 @@ public class MiscTest extends View {
         }
         ChoicesField csf;
         FormLayout form = new FormLayout();
+        ConfirmButton confirmButton = new ConfirmButton("Delete", e -> Notification.show("Delete confirmed"));
+        form.add(confirmButton);
         Badge badge = new Badge("Badge", ThemeStyle.PILL, ThemeStyle.ERROR);
         form.add(badge);
         form.add(new PopupTextField("Pop"));

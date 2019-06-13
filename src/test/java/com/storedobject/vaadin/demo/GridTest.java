@@ -1,6 +1,7 @@
 package com.storedobject.vaadin.demo;
 
 import com.storedobject.vaadin.*;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import java.util.ArrayList;
@@ -20,6 +21,12 @@ public class GridTest extends View {
         public Grid() {
             super(Person.class);
             setDataProvider(new ListDataProvider<>(new Persons()));
+        }
+
+        @Override
+        public void constructed() {
+            prependHeader().join().setText("Hello World", ColumnTextAlign.CENTER);
+            //prependHeader().join().setText("Another World", ColumnTextAlign.CENTER);
         }
     }
 

@@ -1,10 +1,11 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.page.Page;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
@@ -13,9 +14,10 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.concurrent.Future;
 
 /**
- * Application is an extension to Vaadin's UI class for creating 'single page' web applications. The 'single page' should be defined
+ * Application is the base class for creating a 'single page' web applications. The 'single page' should be defined
  * by extending {@link com.storedobject.vaadin.ApplicationView} class.
  * <pre>
  * <code>
@@ -26,16 +28,16 @@ import java.util.*;
  *         return new MyLayout();
  *     }
  *
- *    {@literal @}WebServlet(urlPatterns = "/*", name = "DemoServlet", asyncSupported = true, loadOnStartup = 0)
- *    {@literal @}VaadinServletConfiguration(ui = Demo.class, productionMode = false, closeIdleSessions = true)
- *     public static class DemoServlet extends VaadinServlet {
- *     }
- *
  *    {@literal @}Route("")
  *    {@literal @}Push(PushMode.MANUAL)
  *    {@literal @}BodySize(height = "100vh", width = "100vw")
  *    {@literal @}Theme(value = Lumo.class, variant = Lumo.LIGHT)
  *     public static class DemoView extends ApplicationView {
+ *
+ *        {@literal @}Override
+ *         protected Application createApplication() {
+ *             return new Demo();
+ *         }
  *     }
  * }
  *
@@ -90,8 +92,11 @@ import java.util.*;
  *
  * @author Syam
  */
-public abstract class Application extends UI {
+public abstract class Application {
 
+    private static final String APP_KEY = "$so-app";
+    private ApplicationView applicationView;
+    private UI ui;
     private ApplicationEnvironment environment;
     private Map<Object, Integer> pollIntervals = new HashMap<>();
     private ViewManager viewManager;
@@ -107,9 +112,7 @@ public abstract class Application extends UI {
      * is called.
      * @param request Vaadin Request
      */
-    @Override
     protected void init(VaadinRequest request) {
-        addDetachListener(e -> close());
         String link = request.getContextPath();
         if (link != null && link.length() > 1 && link.startsWith("/")) {
             link = link.substring(1);
@@ -135,7 +138,7 @@ public abstract class Application extends UI {
                 while (!closed) {
                     synchronized (commands) {
                         if(!commands.isEmpty()) {
-                            super.access(commands.remove(0));
+                            ui.access(commands.remove(0));
                             if(!commands.isEmpty()) {
                                 continue;
                             }
@@ -148,6 +151,91 @@ public abstract class Application extends UI {
                 }
             }).start();
         }
+    }
+
+    /**
+     * Get the browser Page.
+     *
+     * @return Current page.
+     */
+    public final Page getPage() {
+        return ui.getPage();
+    }
+
+    /**
+     * Get the UI associated with this Application.
+     *
+     * @return The UI.
+     */
+    public final UI getUI() {
+        if(ui == null) {
+            setUI(UI.getCurrent());
+        }
+        return ui;
+    }
+
+    /**
+     * Inform Application about the UI change (This can happen when users refreshes the page).
+     *
+     * @param ui UI to set
+     */
+    final void setUI(UI ui) {
+        if(ui == null) {
+            return;
+        }
+        this.ui = ui;
+        ui.getSession().setAttribute(APP_KEY, this);
+        attached();
+    }
+
+    /**
+     * Invoked whenever this application is attached to a UI. Default implementation does nothing.
+     */
+    public void attached() {
+    }
+
+    /**
+     * Invoked whenever this application is detached from its UI (it may get attached again to another UI if the user just refreshed
+     * the browser). The default implementation closes the appliacation ({@link #close()}) after 20 seconds.
+     */
+    public void deatached() {
+        this.ui = null;
+        new Timer().schedule(new AppCloser(this), 20000L);
+    }
+
+    private static class AppCloser extends TimerTask {
+
+        private final Application a;
+
+        private AppCloser(Application a) {
+            this.a = a;
+        }
+
+        @Override
+        public void run() {
+            if(a.ui == null) {
+                a.close();
+            }
+        }
+    }
+
+    /**
+     * Set the locale for this Application.
+     *
+     * @param locale Locate to set
+     */
+    public void setLocale(Locale locale) {
+       applicationView.setLocale(locale);
+    }
+
+    /**
+     * Lock the UI and execute a command.
+     *
+     * @param command Command to execute.
+     * @return A future that can be used to check for task completion and to cancel the command.
+     */
+    public Future<Void> access(Command command) {
+        return getUI().access(command);
     }
 
     /**
@@ -224,7 +312,6 @@ public abstract class Application extends UI {
     /**
      * Close the application by closing all registered "resources". If the associated session is not closed, it will also be closed.
      */
-    @Override
     public synchronized void close() {
         closed = true;
         while(resources.size() > 0) {
@@ -238,9 +325,9 @@ public abstract class Application extends UI {
         }
         VaadinSession vs = VaadinSession.getCurrent();
         if(vs != null) {
+            vs.setAttribute(APP_KEY, null);
             vs.close();
         }
-        super.close();
         synchronized (commands) {
             commands.notifyAll();
         }
@@ -256,11 +343,24 @@ public abstract class Application extends UI {
 
     /**
      * Get the current application.
+     *
      * @return Current application.
      */
     public static Application get() {
-        UI ui = UI.getCurrent();
-        return ui instanceof Application ? (Application)ui : null;
+        return get(null);
+    }
+
+    /**
+     * Get the application for the given UI.
+     *
+     * @param ui UI
+     * @return Current application.
+     */
+    public static Application get(UI ui) {
+        if(ui == null) {
+            ui = UI.getCurrent();
+        }
+        return ui == null ? null : (Application)ui.getSession().getAttribute(APP_KEY);
     }
 
     /**
@@ -395,14 +495,9 @@ public abstract class Application extends UI {
         return link;
     }
 
-    @ClientCallable
-    private void deviceSize(int width, int height) {
+    final void deviceSize(int width, int height) {
         this.deviceWidth = width;
         this.deviceHeight = height;
-    }
-
-    private void receiveSize() {
-        getPage().executeJs("document.body.$server.deviceSize(window.innerWidth,window.innerHeight);");
     }
 
     /**
@@ -411,7 +506,9 @@ public abstract class Application extends UI {
      */
     public int getDeviceHeight() {
         if(deviceHeight < 0) {
-            receiveSize();
+            if(applicationView != null) {
+                applicationView.receiveSize();
+            }
         }
         return deviceHeight;
     }
@@ -422,7 +519,9 @@ public abstract class Application extends UI {
      */
     public int getDeviceWidth() {
         if(deviceWidth < 0) {
-            receiveSize();
+            if(applicationView != null) {
+                applicationView.receiveSize();
+            }
         }
         return deviceWidth;
     }
@@ -470,9 +569,9 @@ public abstract class Application extends UI {
      * @param applicationView Application view.
      */
     final void setMainView(ApplicationView applicationView) {
+        this.applicationView = applicationView;
         if(this.viewManager == null) {
             viewManager = new ViewManager(applicationView);
-            receiveSize();
             login();
         }
     }
@@ -562,7 +661,6 @@ public abstract class Application extends UI {
         }
     }
 
-    @Override
     public void setPollInterval(int intervalInMillis) {
         setPollInterval(this, intervalInMillis);
     }
@@ -601,8 +699,8 @@ public abstract class Application extends UI {
         }
         pollIntervals.put(owner, intervalInMillis);
         if(intervalInMillis < pi) {
-            if (intervalInMillis <= getPollInterval()) {
-                super.setPollInterval(intervalInMillis);
+            if (intervalInMillis <= ui.getPollInterval()) {
+                ui.setPollInterval(intervalInMillis);
             }
             return;
         }
@@ -611,7 +709,7 @@ public abstract class Application extends UI {
 
     private void setPoll() {
         int pi = pollIntervals.values().stream().min(Comparator.comparing(Integer::valueOf)).orElse(-1);
-        access(() -> super.setPollInterval(pi));
+        ui.access(() -> ui.setPollInterval(pi));
     }
 
     /**
@@ -722,7 +820,9 @@ public abstract class Application extends UI {
                 menu.remove(m);
             }
             contentMenu.remove(view);
-            view.getComponent().getElement().removeFromParent();
+            Element element = view.getComponent().getElement();
+            element.removeFromParent();
+            //element.removeFromTree();
             stack.remove(view);
             View parent = parents.remove(view);
             if(parent != null) {

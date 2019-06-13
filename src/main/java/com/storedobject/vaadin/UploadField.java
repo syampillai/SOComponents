@@ -125,8 +125,9 @@ public class UploadField extends CustomField<Integer> {
     }
 
     private OutputStream createStream(String fileName, String mimeType) {
-        if(getU() instanceof Application) {
-            ((Application) ui).startPolling(this);
+        Application a = Application.get(getU());
+        if(a != null) {
+            a.startPolling(this);
         }
         this.fileName = fileName;
         PipedOutputStream out = new PipedOutputStream();
@@ -142,8 +143,8 @@ public class UploadField extends CustomField<Integer> {
                     in.close();
                 } catch (IOException ignore) {
                 }
-                if(ui instanceof Application) {
-                   ((Application) ui).stopPolling(this);
+                if(a != null) {
+                   a.stopPolling(this);
                 }
                 if(fileCount == maxFileCount) {
                     ui.access(() -> {

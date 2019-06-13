@@ -82,16 +82,15 @@ public class Demo extends Application {
         }
     }
 
-    @WebServlet(urlPatterns = "/*", name = "DemoServlet", asyncSupported = true, loadOnStartup = 0)
-    @VaadinServletConfiguration(ui = Demo.class, productionMode = false, closeIdleSessions = true)
-    public static class DemoServlet extends VaadinServlet {
-    }
-
     @Route("")
     @Push(PushMode.MANUAL)
     @BodySize(height = "100vh", width = "100vw")
     @Theme(value = Lumo.class, variant = Lumo.LIGHT)
     @PreserveOnRefresh
     public static class DemoView extends ApplicationView {
+        @Override
+        protected Application createApplication() {
+            return new Demo();
+        }
     }
 }

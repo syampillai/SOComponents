@@ -173,13 +173,7 @@ public class ConfirmButton extends Button {
             menu.setTarget(null);
             menu.removeAll();
         }
-        menu = new ContextMenu(this) {
-            @Override
-            public void close() {
-                super.close();
-                createMenu();
-            }
-        };
+        menu = new ContextMenu(this);
         menu.setOpenOnClick(true);
         menu.addOpenedChangeListener(e -> {
             if(e.isOpened()) {

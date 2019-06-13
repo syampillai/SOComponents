@@ -78,7 +78,7 @@ public class FormLayout extends com.vaadin.flow.component.formlayout.FormLayout 
      * @param columnSpan Number of columns to span
      */
     public void setColumnSpan(Component component, int columnSpan) {
-        component.getElement().setAttribute("colspan", "" + Math.min(Math.max(1, columnSpan), columns));
+        setColspan(component, Math.min(Math.max(1, columnSpan), columns));
     }
 
     /**
@@ -88,10 +88,6 @@ public class FormLayout extends com.vaadin.flow.component.formlayout.FormLayout 
      * @return Column span for the component.
      */
     public int getColumnSpan(Component component) {
-        try {
-            return Integer.valueOf(component.getElement().getAttribute("colspan"));
-        } catch (Throwable error) {
-            return 1;
-        }
+        return getColspan(component);
     }
 }
