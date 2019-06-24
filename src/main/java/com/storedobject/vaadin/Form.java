@@ -535,6 +535,7 @@ public class Form {
      */
     public void clearErrors() {
         data.clearErrors();
+        data.getErrorDisplay().setText(null);
     }
 
     /**
@@ -650,7 +651,7 @@ public class Form {
      * @return Label string if "getLabel" method exists in the field, otherwise null.
      */
     public final String getFieldLabel(HasValue<?, ?> field) {
-        return field == null ? null : data.getLabel(field);
+        return field == null ? null : Data.getLabel(field);
     }
 
     /**

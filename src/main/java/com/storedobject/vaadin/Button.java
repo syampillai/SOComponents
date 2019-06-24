@@ -58,7 +58,7 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
         if(text != null) {
             this.setText(text);
         }
-        addClickHanlder(clickHandler);
+        addClickHandler(clickHandler);
         getElement().getStyle().set("cursor", "pointer");
         if(text == null) {
             ThemeStyle.add(this, ThemeStyle.ICON);
@@ -92,7 +92,7 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
      * @param clickHandler Click handler to add
      * @return Registration.
      */
-    public Registration addClickHanlder(ClickHandler clickHandler) {
+    public Registration addClickHandler(ClickHandler clickHandler) {
         if(clickHandler == null) {
             return null;
         }

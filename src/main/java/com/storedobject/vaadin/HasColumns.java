@@ -614,6 +614,15 @@ public interface HasColumns<T> extends ExecutableView {
         return null;
     }
 
+    @Override
+    default void clearAlerts() {
+        ExecutableView.super.clearAlerts();
+        View v = getSOGrid().getView(false);
+        if(v != null) {
+            Application.clearAlerts(v);
+        }
+    }
+
     /**
      * This method is invoked multiple times. So, the {@link SOGrid} instance created must be assigned to a variable and
      * returned whenever asked for.
@@ -1262,6 +1271,7 @@ public interface HasColumns<T> extends ExecutableView {
                 }
             }
             column.setTextAlign(getTextAlign(columnName));
+            column.setAutoWidth(true);
             customizeColumn(columnName, column);
         }
 

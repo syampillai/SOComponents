@@ -15,7 +15,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Warning
      */
     default void warning(Object message) {
-        Application.warning(message);
+        Application.warning(this, message);
     }
 
     /**
@@ -24,7 +24,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Message to show in the tray.
      */
     default void tray(Object message) {
-        Application.tray(message);
+        Application.tray(this, message);
     }
 
     /**
@@ -33,7 +33,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Message
      */
     default void message(Object message) {
-        Application.message(message);
+        Application.message(this, message);
     }
 
     /**
@@ -41,7 +41,14 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Error
      */
     default void error(Object message) {
-        Application.error(message);
+        Application.error(this, message);
+    }
+
+    /**
+     * Clear all alters owned by this view.
+     */
+    default void clearAlerts() {
+        Application.clearAlerts(this);
     }
 
     /**

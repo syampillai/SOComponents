@@ -111,11 +111,6 @@ public class PopupButton extends Button {
     public void add(Component... components) {
         if(components != null) {
             container.add(components);
-            for (Component component : components) {
-                if(component instanceof com.vaadin.flow.component.button.Button) {
-                    ((com.vaadin.flow.component.button.Button) component).addClickListener(e -> closePopup());
-                }
-            }
         }
     }
 
@@ -125,7 +120,9 @@ public class PopupButton extends Button {
      * @param components Components to remove
      */
     public void remove(Component... components) {
-        container.remove(components);
+        if(components != null) {
+            container.remove(components);
+        }
     }
 
     /**
@@ -155,12 +152,6 @@ public class PopupButton extends Button {
         return container.getColumnSpan(component);
     }
 
-    /**
-     * Close the pop up.
-     */
-    public void closePopup() {
-        menu.close();
-    }
     /**
      * Set number of rows to span.
      *

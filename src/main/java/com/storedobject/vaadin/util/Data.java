@@ -6,6 +6,7 @@ import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.binder.Validator;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
 public class Data extends HashMap<String, Object> {
 
     private static ValidationResult OK = ValidationResult.ok();
-    private static Alert errorText = new Alert(null);
+    private static Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
     private static long id = 0L;
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
@@ -41,6 +42,10 @@ public class Data extends HashMap<String, Object> {
 
     public void setErrorDisplay(HasText display) {
         binder.setStatusLabel(display == null ? errorText : display);
+    }
+
+    public HasText getErrorDisplay() {
+        return binder.getStatusLabel().orElse(errorText);
     }
 
     public void setExtraErrors() {

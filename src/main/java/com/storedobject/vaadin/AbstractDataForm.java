@@ -739,6 +739,11 @@ public abstract class AbstractDataForm extends View {
         return form.connect(fields);
     }
 
+    @Override
+    public void clean() {
+        getForm().data.getErrorDisplay().setText(null);
+        super.clean();
+    }
 
     /**
      * Get all fields.

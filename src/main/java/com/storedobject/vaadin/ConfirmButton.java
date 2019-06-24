@@ -164,7 +164,7 @@ public class ConfirmButton extends Button {
         getElement().appendChild(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL).getElement());
         getElement().getStyle().set("background", "var(--lumo-error-color-10pct)");
         yes = new Yes(clickHandler);
-        buttons = new ButtonLayout(new Button("No", e -> menu.close()).asSmall(), yes);
+        buttons = new ButtonLayout(new Button("No", e -> {}).asSmall(), yes);
         createMenu();
     }
 
@@ -182,12 +182,12 @@ public class ConfirmButton extends Button {
                 }
             }
         });
-        menu.add(message);
+        menu.addItem(message);
         menu.addItem(buttons, null);
     }
 
     @Override
-    public Registration addClickHanlder(ClickHandler clickHandler) {
+    public Registration addClickHandler(ClickHandler clickHandler) {
         if(clickHandler == null || yes == null) {
             return null;
         }
@@ -195,7 +195,7 @@ public class ConfirmButton extends Button {
             yes.handler = clickHandler;
             return () -> yes.handler = null;
         }
-        return super.addClickHanlder(clickHandler);
+        return super.addClickHandler(clickHandler);
     }
 
     /**
@@ -215,13 +215,12 @@ public class ConfirmButton extends Button {
         public Yes(ClickHandler clickHandler) {
             super("Yes", null);
             this.handler = clickHandler;
-            addClickHanlder(this);
+            addClickHandler(this);
             addTheme(ThemeStyle.ERROR, ThemeStyle.SMALL);
         }
 
         @Override
         public void clicked(Component c) {
-            menu.close();
             if(handler != null) {
                 handler.clicked(ConfirmButton.this);
             }

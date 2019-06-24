@@ -1,9 +1,12 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.notification.GeneratedVaadinNotification;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.Command;
@@ -15,6 +18,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.function.Predicate;
 
 /**
  * Application is the base class for creating a 'single page' web applications. The 'single page' should be defined
@@ -95,9 +99,11 @@ import java.util.concurrent.Future;
 public abstract class Application {
 
     private static final String APP_KEY = "$so-app";
+    private AlertCloser alertCloser = new AlertCloser();
     private ApplicationView applicationView;
     private UI ui;
     private ApplicationEnvironment environment;
+    private Map<Object, AlertList> alerts = new HashMap<>();
     private Map<Object, Integer> pollIntervals = new HashMap<>();
     private ViewManager viewManager;
     private ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
@@ -108,8 +114,9 @@ public abstract class Application {
     String error;
 
     /**
-     * This method is invoked as documented in Vaadin Flow's documentation. If you want to override this method, make sure that <code>super</code>
-     * is called.
+     * This method is invoked as documented in Vaadin Flow's documentation for UI's init(VaadinRequest) method.
+     * If you want to override this method, make sure that <code>super</code> is called.
+     *
      * @param request Vaadin Request
      */
     protected void init(VaadinRequest request) {
@@ -240,6 +247,7 @@ public abstract class Application {
 
     /**
      * This method is invoked when the applicationn comes up.
+     *
      * @param link The context path of the application.
      * @return True if application can go ahead. Otherwise, an "Initialization failed" message is displayed. Default return value is <code>true</code>.
      */
@@ -249,6 +257,7 @@ public abstract class Application {
 
     /**
      * This method is invoked only once to determine the layout of the application.
+     *
      * @return Application layout.
      */
     protected abstract ApplicationLayout createLayout();
@@ -256,6 +265,7 @@ public abstract class Application {
     /**
      * An "application environment" may be created to specifiy certain behaviours of the applicaion. If this method returns <code>null</code>, a default
      * "environment" will be created.
+     *
      * @return Returns null by default.
      */
     protected ApplicationEnvironment createEnvironment() {
@@ -264,6 +274,7 @@ public abstract class Application {
 
     /**
      * Get the current "application environment".
+     *
      * @return Application environment.
      */
     public final ApplicationEnvironment getEnvironment() {
@@ -313,6 +324,10 @@ public abstract class Application {
      * Close the application by closing all registered "resources". If the associated session is not closed, it will also be closed.
      */
     public synchronized void close() {
+        for(Object owner: alerts.keySet()) {
+            alerts.get(owner).forEach(Alert::remove);
+        }
+        alerts.clear();
         closed = true;
         while(resources.size() > 0) {
             Closeable resource = resources.remove(0).get();
@@ -335,6 +350,7 @@ public abstract class Application {
 
     /**
      * Register a "resource" that will be closed when the application is shutdown.
+     *
      * @param resource Resource to close.
      */
     public void registerResource(Closeable resource) {
@@ -364,26 +380,178 @@ public abstract class Application {
     }
 
     /**
+     * Register an alert with the application.
+     *
+     * @param alert Alert to be registered.
+     * @param owner Owner of the alert.
+     */
+    public static void registerAlert(Alert alert, Object owner) {
+        Application a = Application.get();
+        if(a == null) {
+            return;
+        }
+        a.regAlert(alert, owner);
+    }
+
+    /**
+     * Get alert list for a specified owner.
+     *
+     * @param owner Owner of the alert
+     * @return List of alerts belonging to this owner. (<code>null</code> is returned if application is not reachable
+     * or if the owner doesn't own any alert).
+     */
+    public static List<Alert> getAlerts(Object owner) {
+        Application a = get();
+        if(a == null) {
+            return null;
+        }
+        return a.alerts.get(owner);
+    }
+
+    /**
+     * Get the number of alerts for a specified owner.
+     *
+     * @param owner Owner of the alert
+     * @return Number of alert. (-1 is returned if application is not reachable)
+     */
+    public static int getAlertCount(Object owner) {
+        Application a = get();
+        if(a == null) {
+            return -1;
+        }
+        List<Alert> list = a.alerts.get(owner);
+        return list == null ? 0 : list.size();
+    }
+
+    /**
+     * This method is invoked whenever alter count changes for a particular owner.
+     *
+     * @param owner Alert owner
+     */
+    public void alertCountChanged(@SuppressWarnings("unused") Object owner) {
+    }
+
+    /**
+     * Show all alerts.
+     */
+    public static void showAlerts() {
+        Application a = get();
+        if(a == null) {
+            return;
+        }
+        for(AlertList alerts: a.alerts.values()) {
+            alerts.forEach(Alert::show);
+        }
+    }
+
+    /**
+     * Show all alerts of the specified owner.
+     *
+     * @param owner Owner
+     */
+    public static void showAlerts(Object owner) {
+        Application a = get();
+        if(a == null) {
+            return;
+        }
+        List<Alert> list = a.alerts.get(owner);
+        if(list == null) {
+            return;
+        }
+        list.forEach(Alert::show);
+    }
+
+    /**
+     * Clear all alerts. (Alerts with any associated "click action" will not be removed).
+     */
+    public static void clearAlerts() {
+        Application a = get();
+        if(a == null) {
+            return;
+        }
+        new ArrayList<>(a.alerts.keySet()).forEach(a::clrAlerts);
+    }
+
+    /**
+     * Clear all alerts of the specified owner. (Alerts associated with any "click action" will not be removed).
+     *
+     * @param owner Owner
+     */
+    public static void clearAlerts(Object owner) {
+        Application a = get();
+        if(a == null) {
+            return;
+        }
+        a.clrAlerts(owner);
+    }
+
+    private void clrAlerts(Object owner) {
+        List<Alert> list = alerts.get(owner);
+        if(list == null) {
+            return;
+        }
+        List<Alert> listToremove = new ArrayList<>(list);
+        listToremove.removeIf(Alert::deleteOnClose);
+        listToremove.forEach(this::removeAlert);
+        if(list.isEmpty()) {
+            alerts.remove(owner);
+        }
+    }
+
+    /**
+     * Clear an alert.
+     *
+     * @param alert Alert to be cleared.
+     */
+    public static void clearAlert(Alert alert) {
+        Application a = get();
+        if(a == null) {
+            return;
+        }
+        a.removeAlert(alert);
+    }
+
+    /**
+     * Remove an alert unconditionally.
+     *
+     * @param alert Alert to be removed
+     */
+    final void removeAlert(Alert alert) {
+        for(AlertList list: alerts.values()) {
+            if(list.remove(alert)) {
+                if(list.isEmpty()) {
+                    alerts.remove(list.owner);
+                    break;
+                }
+            }
+        }
+        alert.close();
+    }
+
+    /**
      * Show a warning message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
      * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
      * @param message Message.
      */
     public static void warning(Object message) {
-        notification(message, 1);
+        notification(null, message,1);
     }
 
     /**
      * Show a message on the tray from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
      * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
      * @param message Message.
      */
     public static void tray(Object message) {
-        notification(message, 1, Notification.Position.BOTTOM_END, false);
+        notification(null, message,1, Notification.Position.BOTTOM_END, false);
     }
 
     /**
      * Show a message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
      * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
      * @param message Message.
      */
 
@@ -391,30 +559,75 @@ public abstract class Application {
         if(message instanceof Throwable) {
             error(message);
         } else {
-            notification(message, 0);
+            notification(null, message,0);
         }
     }
 
     /**
      * Show an error message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
      * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
+     * @param message Message.
+     */
+    public static void error(Object message) {
+        notification(null, message,2);
+    }
+
+
+    /**
+     * Show a warning message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
+     * @param owner Owner of the message.
+     * @param message Message.
+     */
+    public static void warning(Object owner, Object message) {
+        notification(owner, message,1);
+    }
+
+    /**
+     * Show a message on the tray from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
+     * @param owner Owner of the message.
+     * @param message Message.
+     */
+    public static void tray(Object owner, Object message) {
+        notification(owner, message,1, Notification.Position.BOTTOM_END, false);
+    }
+
+    /**
+     * Show a message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
+     * @param owner Owner of the message.
      * @param message Message.
      */
 
-    public static void error(Object message) {
-        notification(message, 2);
+    public static void message(Object owner, Object message) {
+        if(message instanceof Throwable) {
+            error(owner, message);
+        } else {
+            notification(owner, message,0);
+        }
     }
 
-
-    private static void notification(Object message, int messageType) {
-        notification(message, messageType, null, true);
+    /**
+     * Show an error message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
+     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     *
+     * @param owner Owner of the message.
+     * @param message Message.
+     */
+    public static void error(Object owner, Object message) {
+        notification(owner, message, 2);
     }
 
-    private static void notification(Object message, int messageType, Notification.Position position, boolean log) {
-        notification(null, message, messageType, position, log);
+    private static void notification(Object owner, Object message, int messageType) {
+        notification(owner, message, messageType, null, true);
     }
 
-    private static void notification(String caption, Object message, int messageType, Notification.Position position, boolean log) {
+    private static void notification(Object owner, Object message, int messageType, Notification.Position position, boolean log) {
         if(message instanceof Notification) {
             ((Notification)message).open();
             return;
@@ -438,23 +651,47 @@ public abstract class Application {
         if(m == null) {
             m = a == null ? message.toString() : a.getEnvironment().toDisplay(message);
         }
-        Alert n = new Alert(caption, m);
+        Alert n = new Alert(m);
         if(position != null) {
             n.setPosition(position);
         }
         switch (messageType) {
             case 1: // Warning
                 messageType = 20000;
+                n.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
                 break;
             case 2: // Error
                 messageType = Integer.MAX_VALUE;
+                n.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 break;
             default:
                 messageType = 10000;
+                n.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 break;
         }
         n.setDuration(messageType);
         n.open();
+        if(a == null) {
+            return;
+        }
+        a.regAlert(n, owner);
+    }
+
+    private void regAlert(Alert alert, Object owner) {
+        alert.addOpenedChangeListener(alertCloser);
+        if(owner != null) {
+            alerts.computeIfAbsent(owner, k -> new AlertList(owner)).add(alert);
+        }
+    }
+
+    private class AlertCloser implements ComponentEventListener<GeneratedVaadinNotification.OpenedChangeEvent<Notification>> {
+        @Override
+        public void onComponentEvent(GeneratedVaadinNotification.OpenedChangeEvent<Notification> e) {
+            Alert alert = (Alert)e.getSource();
+            if(!alert.isOpened() && alert.deleteOnClose()) {
+                removeAlert(alert);
+            }
+        }
     }
 
     /**
@@ -489,6 +726,7 @@ public abstract class Application {
 
     /**
      * Get the "context path" of the application.
+     *
      * @return Context path
      */
     public String getLinkName() {
@@ -502,6 +740,7 @@ public abstract class Application {
 
     /**
      * Get the device (broswer) height.
+     *
      * @return Device height.
      */
     public int getDeviceHeight() {
@@ -515,6 +754,7 @@ public abstract class Application {
 
     /**
      * Get the device (broswer) width.
+     *
      * @return Device width.
      */
     public int getDeviceWidth() {
@@ -528,6 +768,7 @@ public abstract class Application {
 
     /**
      * Show a notification on the screen.
+     *
      * @param text Text of the notification
      */
     public void showNotification(String text) {
@@ -536,6 +777,7 @@ public abstract class Application {
 
     /**
      * Show a notification on the screen.
+     *
      * @param caption Caption of the notification
      * @param text Text of the notification
      */
@@ -545,6 +787,7 @@ public abstract class Application {
 
     /**
      * Show error notification,
+     *
      * @param error Error
      */
     public void showNotification(Throwable error) {
@@ -553,6 +796,7 @@ public abstract class Application {
 
     /**
      * Show error notification.
+     *
      * @param caption Caption to be displayed
      * @param error Error
      */
@@ -566,6 +810,7 @@ public abstract class Application {
 
     /**
      * For internal use only.
+     *
      * @param applicationView Application view.
      */
     final void setMainView(ApplicationView applicationView) {
@@ -585,6 +830,7 @@ public abstract class Application {
 
     /**
      * Get the IP address of the application.
+     *
      * @return IP address.
      */
     public String getIPAddress() {
@@ -593,6 +839,7 @@ public abstract class Application {
 
     /**
      * Get an identifier of the application (can be used for logging etc.).
+     *
      * @return Ab identifier derived from the browser information.
      */
     public String getIdentifier() {
@@ -601,6 +848,7 @@ public abstract class Application {
 
     /**
      * Get the major version number (from browser information).
+     *
      * @return Major version number.
      */
     public int getMajorVersion() {
@@ -609,6 +857,7 @@ public abstract class Application {
 
     /**
      * Get the minor version number (from browser information).
+     *
      * @return Minor version number.
      */
     public int getMinorVersion() {
@@ -617,6 +866,7 @@ public abstract class Application {
 
     /**
      * For internal use only. (Execute a "view").
+     *
      * @param view View to execute
      * @param doNotLock Whether to lock the parent or not
      * @param parentBox Parent view if any, otherwise <code>null</code>
@@ -627,6 +877,7 @@ public abstract class Application {
 
     /**
      * For internal use only. (Close a "view").
+     *
      * @param view View to close
      */
     void close(View view) {
@@ -635,6 +886,7 @@ public abstract class Application {
 
     /**
      * For internal use only. (Select a view)
+     *
      * @param view View to be selected
      * @return Whether the view was selected or not.
      */
@@ -652,6 +904,7 @@ public abstract class Application {
     /**
      * Set a component to be focused later when the current "view" is selected again. This is useful in situations like bringing back to
      * the current "data entry" screen to a particular field.
+     *
      * @param component Component to be focused later.
      */
     public void setPostFocus(Component component) {
@@ -669,6 +922,7 @@ public abstract class Application {
      * Set polling interval. Several owners may be requesting it and the value actually set will the lowest value. It is
      * the owner's responsibility to release polling by invoking stopPolling when polling is
      * no more required.
+     *
      * @param owner Object that is invoking the request
      * @param intervalInMillis Interval in milliseconds
      * @see #stopPolling(Object)
@@ -714,6 +968,7 @@ public abstract class Application {
 
     /**
      * Start polling by setting the interval to 1000 milliseconds.
+     *
      * @param owner Object that is invoking the request
      */
     public void startPolling(Object owner) {
@@ -722,6 +977,7 @@ public abstract class Application {
 
     /**
      * Stop polling. Polling will not be stopped if requests are there from other owners.
+     *
      * @param owner Owner who requested for polling earlier
      */
     public void stopPolling(Object owner) {
@@ -730,11 +986,93 @@ public abstract class Application {
 
     /**
      * Get the view in which a particular component is currently appearing.
+     *
      * @param component Component to be checked
      * @return View in which the component is appearing or <code>null</code> if it's not displayed in any of the views.
      */
     public View getViewFor(Component component) {
         return viewManager == null ? null : viewManager.getViewFor(component);
+    }
+
+    private class AlertList extends ArrayList<Alert> {
+
+        private final Object owner;
+
+        private AlertList(Object owner) {
+            this.owner = owner;
+        }
+
+        @Override
+        public Alert remove(int index) {
+            Alert a = super.remove(index);
+            if(a != null) {
+                alertCountChanged(owner);
+            }
+            return a;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            if(super.remove(o)) {
+                alertCountChanged(owner);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            if(super.removeAll(c)) {
+                alertCountChanged(owner);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean removeIf(Predicate<? super Alert> filter) {
+            if(super.removeIf(filter)) {
+                alertCountChanged(owner);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            if(super.retainAll(c)) {
+                alertCountChanged(owner);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean add(Alert alert) {
+            super.add(alert);
+            alertCountChanged(owner);
+            return true;
+        }
+
+        @Override
+        public void add(int index, Alert element) {
+            super.add(index, element);
+            alertCountChanged(owner);
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends Alert> c) {
+            super.addAll(c);
+            alertCountChanged(owner);
+            return true;
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends Alert> c) {
+            super.addAll(index, c);
+            alertCountChanged(owner);
+            return true;
+        }
     }
 
     private static class ViewManager {
