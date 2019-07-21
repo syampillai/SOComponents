@@ -10,7 +10,11 @@ import java.util.Set;
  *
  * @author Syam
  */
+@FunctionalInterface
 public interface ItemsSelectedListener<T> extends ItemSelectedListener<T> {
+
+    default void itemSelected(Component component, T item) {
+    }
 
     /**
      * Method called when set of items are selected.
@@ -18,7 +22,5 @@ public interface ItemsSelectedListener<T> extends ItemSelectedListener<T> {
      * @param component Component from which the items are selected
      * @param items Selected items
      */
-    default void itemsSelected(Component component, Set<T> items) {
-        items.forEach(item -> itemSelected(component, item));
-    }
+    void itemsSelected(Component component, Set<T> items);
 }

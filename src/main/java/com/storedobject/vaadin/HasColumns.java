@@ -652,6 +652,41 @@ public interface HasColumns<T> extends ExecutableView {
     SOGrid<T> getSOGrid();
 
     /**
+     * Add an "item selected listener" to the grid. Whenever a row is selected, this listener
+     * will be notified via {@link ItemSelectedListener#itemSelected(Component, Object)}.
+     *
+     * @param itemSelectedListener Listener
+     */
+    default void addItemSelectedListener(ItemSelectedListener<T> itemSelectedListener) {
+        List<ItemSelectedListener<T>> itemSelectedListeners = getSOGrid().getItemSelectedListeners();
+        if(itemSelectedListeners == null) {
+            return;
+        }
+        itemSelectedListeners.add(itemSelectedListener);
+    }
+
+    /**
+     * Add an "items selected listener" to the grid. Whenever one or more rows are selected or deselected, this listener
+     * will be notified via {@link ItemsSelectedListener#itemsSelected(Component, Set)}.
+     *
+     * @param itemsSelectedListener Listener
+     */
+    default void addItemsSelectedListener(ItemsSelectedListener<T> itemsSelectedListener) {
+        addItemSelectedListener(itemsSelectedListener);
+    }
+
+    /**
+     * Remove an "item selected listener" that was previously added to the grid. See {@link #addItemSelectedListener(ItemSelectedListener)}.
+     *
+     * @param itemSelectedListener Listener
+     */
+    default void removeItemSelectedListener(ItemSelectedListener<T> itemSelectedListener) {
+        if(getSOGrid().itemSelectedListeners != null) {
+            getSOGrid().itemSelectedListeners.remove(itemSelectedListener);
+        }
+    }
+
+    /**
      * This class takes care of creation of the columns in the grid. In order to have behaviours of {@link HasColumns},
      * an instance of this class is required and should be returned in the {@link HasColumns#getSOGrid()} method. (See
      * the source code of {@link DataGrid} and {@link DataTreeGrid} classes to get an idea). Also, the following methods
@@ -683,6 +718,7 @@ public interface HasColumns<T> extends ExecutableView {
         private View view;
         private String treeColumnName = "_$_";
         private Application application;
+        private List<ItemSelectedListener<T>> itemSelectedListeners;
 
         /**
          * Constructor.
@@ -1482,5 +1518,25 @@ public interface HasColumns<T> extends ExecutableView {
             return renderers == null;
         }
 
+        private List<ItemSelectedListener<T>> getItemSelectedListeners() {
+            if(itemSelectedListeners == null) {
+                itemSelectedListeners = new ArrayList<>();
+                grid.addSelectionListener(e -> selected(e.getAllSelectedItems()));
+            }
+            return itemSelectedListeners;
+        }
+
+        private void selected(Set<T> selection) {
+            if(itemSelectedListeners == null || itemSelectedListeners.isEmpty()) {
+                return;
+            }
+            itemSelectedListeners.forEach(isl -> {
+                if(isl instanceof ItemsSelectedListener) {
+                    ((ItemsSelectedListener<T>) isl).itemsSelected(grid, selection);
+                } else if(!selection.isEmpty()) {
+                    isl.itemSelected(grid, selection.stream().findAny().orElse(null));
+                }
+            });
+        }
     }
 }
