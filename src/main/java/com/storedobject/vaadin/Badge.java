@@ -14,6 +14,13 @@ public class Badge extends Span implements HasBadgeStyle {
 
     /**
      * Constructor.
+     */
+    public Badge() {
+        this("", ThemeStyle.BADGE);
+    }
+
+    /**
+     * Constructor.
      *
      * @param text Text to be displayed
      * @param styles Stlyes

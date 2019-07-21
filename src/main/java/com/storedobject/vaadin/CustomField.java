@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.dependency.NpmPackage;
 
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.customfield.CustomField}.

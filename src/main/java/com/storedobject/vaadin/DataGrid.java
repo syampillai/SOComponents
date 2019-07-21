@@ -1,9 +1,8 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -20,7 +19,7 @@ import java.util.List;
  * @param <T> Bean type
  * @author Syam
  */
-@HtmlImport("so-grid-styles.html")
+@JsModule("./so/grid/styles.js")
 public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;

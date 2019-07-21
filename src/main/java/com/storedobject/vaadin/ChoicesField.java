@@ -150,7 +150,8 @@ public class ChoicesField extends CustomField<Integer> {
                     RadioChoiceField select = new RadioChoiceField(new String[]{"All", "None"});
                     select.setValue(1);
                     select.addValueChangeListener(e -> setValue(e.getValue() == 0 ? 0xFFFF : 0));
-                    new Box(select);
+                    Box b = new Box(select);
+                    b.setPadding(0);
                     layout.add(select);
                     layout.setColumnSpan(select, columns);
                 }
@@ -159,7 +160,7 @@ public class ChoicesField extends CustomField<Integer> {
                 container = new ButtonLayout();
             }
             box = new Box((Component) container);
-            box.setReadOnly(false);
+            box.setPadding(0);
         }
         list.forEach(container::add);
         add((Component)container);
@@ -214,17 +215,5 @@ public class ChoicesField extends CustomField<Integer> {
             }
             i <<= 1;
         }
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-        box.setReadOnly(readOnly);
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        box.setEnabled(enabled);
     }
 }

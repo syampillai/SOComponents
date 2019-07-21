@@ -1,14 +1,14 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
 
 /**
  * Interface to mark that a class has theme styles.
  *
  * @author Syam
  */
-@HtmlImport("so-badge-styles.html")
+@JsModule("./so/badge/styles.js")
 public interface HasThemeStyle extends HasElement {
 
     /**

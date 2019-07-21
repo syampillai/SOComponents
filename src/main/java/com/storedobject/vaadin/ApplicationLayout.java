@@ -6,6 +6,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 
 /**
  * {@link Application} requires an instance of this class to determine the "layout" of its page.
+ *
  * @author Syam
  */
 public interface ApplicationLayout {
@@ -35,7 +36,7 @@ public interface ApplicationLayout {
     void drawMenu(Application application);
 
     /**
-     * This method is invoked when user authentication completed. Typically, its used to dusplay the user names
+     * This method is invoked when user authentication completed. Typically, its used to display the user names
      * and other details in some part of the screen.
      * @param application Application.
      */

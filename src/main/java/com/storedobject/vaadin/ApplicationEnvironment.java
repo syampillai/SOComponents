@@ -39,7 +39,7 @@ public interface ApplicationEnvironment {
     }
 
     /**
-     * Converts an object into a displable form (String). The default implementation converts {@link Exception} to its message and rest of the
+     * Converts an object into a displayable form (String). The default implementation converts {@link Exception} to its message and rest of the
      * types to {@link #toString(Object)}.
      * @param any Object to convert
      * @return Converted string.

@@ -2,7 +2,7 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.ElementClick;
 import com.vaadin.flow.component.ItemLabelGenerator;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.binder.HasItems;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class LabelField<T> extends CustomField<T> implements HasItems<T> {
 
-    private Div container = new Div();
+    private Span container = new Span();
     private List<T> items;
     private int index = -1;
     private ItemLabelGenerator<T> labelGenerator;
@@ -43,9 +43,10 @@ public class LabelField<T> extends CustomField<T> implements HasItems<T> {
         super(items.get(0));
         add(container);
         Box b = new Box(container);
-        b.setStyle("background", "var(--lumo-contrast-20pct)");
+        b.grey();
         b.setStyle("cursor", "pointer");
         b.setBorderWidth(0);
+        b.setHiliteOnHover(true);
         ElementClick click = new ElementClick(this);
         click.addClickListener(e -> setIndex(index + 1, true));
         setItems(items);

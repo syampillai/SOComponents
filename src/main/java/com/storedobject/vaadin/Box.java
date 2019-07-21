@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.dependency.JsModule;
 
 /**
  * Using this class one can draw a "box" around any Vaadin component. If you have a component, in order to enclose it in a box, just use
@@ -9,6 +10,7 @@ import com.vaadin.flow.component.Composite;
  *
  * @author Syam
  */
+@JsModule("./so/hover/styles.js")
 public class Box extends Composite {
 
     private static final String BACKGROUND = "var(--lumo-contrast-20pct)";
@@ -17,6 +19,7 @@ public class Box extends Composite {
     /**
      * Put a component inside a box. Default behaviour of the box:
      * <p>Border style: solid, Border width: 2, Border colour: var(--lumo-contrast-20pct), Padding: 4, Border radius: 5</p>
+     *
      * @param component Component to be boxed.
      */
     public Box(Component component) {
@@ -36,6 +39,19 @@ public class Box extends Composite {
     @Override
     public Component getContent() {
         return component;
+    }
+
+    /**
+     * Hilite the content on hover by making the background to "var(--lumo-primary-color-50pct)".
+     *
+     * @param hilite True if needs to be hilited
+     */
+    public void setHiliteOnHover(boolean hilite) {
+        if(hilite) {
+            component.getElement().getClassList().add("so-hover");
+        } else {
+            component.getElement().getClassList().remove("so-hover");
+        }
     }
 
     /**
@@ -140,7 +156,7 @@ public class Box extends Composite {
      * @param readOnly Read only flag
      */
     public void setReadOnly(boolean readOnly) {
-        setStyle("background", readOnly ? "white" : BACKGROUND);
+        setStyle("background-color", readOnly ? "white" : BACKGROUND);
         setBorderStyle(readOnly ? "dotted" : "solid");
     }
 

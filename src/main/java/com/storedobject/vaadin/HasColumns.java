@@ -1,7 +1,6 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -143,11 +142,32 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * This method is invoked just before each row is rendered. You can do special set up or comuptation at this stage.
+     * This method is invoked just before each row is rendered. You can do special set up or computation at this stage.
      *
      * @param object Currently rendered object.
      */
     default void render(@SuppressWarnings("unused") T object) {
+    }
+
+    /**
+     * Get the currently rendered unwrapped object. See {@link #unwrap(Object)}.
+     *
+     * @return Currently rendered unwrapped object.
+     */
+    default T getObjectUnwrapped() {
+        return getSOGrid().objectUnwrapped;
+    }
+
+    /**
+     * Sometimes the row object being rendered may be embedded in another object and just before rendering the row's column details,
+     * it may have to be unwrapped. This method is invoked when the row is rendered and just before the rendering function is applied.
+     * The default implementation returns the same object.
+     *
+     * @param object Currently rendered object.
+     * @return Unwrapped object.
+     */
+    default T unwrap(@SuppressWarnings("unused") T object) {
+        return object;
     }
 
     /**
@@ -659,7 +679,7 @@ public interface HasColumns<T> extends ExecutableView {
         private Iterable<String> columns;
         private String caption;
         private boolean allowColumnReordering = true;
-        private T objectRendered;
+        private T objectRendered, objectUnwrapped;
         private View view;
         private String treeColumnName = "_$_";
         private Application application;
@@ -768,6 +788,7 @@ public interface HasColumns<T> extends ExecutableView {
             }
             objectRendered = object;
             hc.render(object);
+            objectUnwrapped = hc.unwrap(objectRendered);
         }
 
         @SuppressWarnings("unchecked")
@@ -1129,7 +1150,12 @@ public interface HasColumns<T> extends ExecutableView {
                 final Function<T, ?> function = functions[i];
                 r.withProperty("so" + ids[i], o -> {
                     setRO(o);
-                    return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(function.apply(o));
+                    o = objectUnwrapped;
+                    Object v = function.apply(o);
+                    if(v == null && grid instanceof TreeGrid) {
+                        v = "";
+                    }
+                    return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(v);
                 });
             }
             return r;
@@ -1153,7 +1179,7 @@ public interface HasColumns<T> extends ExecutableView {
                 return false;
             }
             if(grid instanceof HasColumns) {
-                Function<T, ?> function = getMethodFunction(columnName, m);
+                Function<T, ?> function = wrap(getMethodFunction(columnName, m));
                 if (HTMLGenerator.class.isAssignableFrom(m.getReturnType())) {
                     return ((HasColumns) grid).createHTMLHierarchyColumn(columnName, function) != null;
                 } else {
@@ -1168,10 +1194,18 @@ public interface HasColumns<T> extends ExecutableView {
                 return false;
             }
             if(grid instanceof HasColumns) {
+                function = wrap(function);
                 //noinspection unchecked
                 return ((HasColumns<T>) grid).createHierarchyColumn(columnName, function::apply) != null;
             }
             return true;
+        }
+
+        private Function<T, ?> wrap(Function<T, ?> function) {
+            return item -> {
+                setRO(item);
+                return function.apply(objectUnwrapped);
+            };
         }
 
         private Function<T, ?> getMethodFunction(String columnName) {
@@ -1436,7 +1470,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(rowIndex < 0) {
                 return;
             }
-            UI.getCurrent().getPage().executeJs("$0._scrollToIndex(" + rowIndex + ")", grid.getElement());
+            grid.getElement().callJsFunction("_scrollToIndex", rowIndex);
         }
 
         /**

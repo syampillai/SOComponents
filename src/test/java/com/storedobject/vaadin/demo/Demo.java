@@ -4,22 +4,25 @@ import com.storedobject.vaadin.*;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HtmlComponent;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.polymertemplate.BundleParser;
+import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
+import com.vaadin.flow.component.polymertemplate.TemplateParser;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinServlet;
-import com.vaadin.flow.server.VaadinServletConfiguration;
+import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.shared.communication.PushMode;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
+import org.jsoup.nodes.Element;
 
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class Demo extends Application {
 
@@ -29,9 +32,24 @@ public class Demo extends Application {
     @Override
     public ApplicationLayout createLayout() {
         return new SimpleLayout();
+        //return new ComplexLayout();
     }
 
-    private class SimpleLayout extends HorizontalLayout implements ApplicationLayout, ApplicationMenu {
+    private interface AppMenu {
+
+        ApplicationMenu getMenu();
+
+        default void drawMenu(Application application) {
+            ApplicationMenu m = getMenu();
+            m.add(application.createMenuItem("Edit Person Details", new PersonEditor()));
+            m.add(application.createMenuItem("Veiw Sample PDF", new PDFTest()));
+            m.add(application.createMenuItem("Misc. Test", new MiscTest()));
+            m.add(application.createMenuItem("Test Grid", new GridTest()));
+            m.add(application.createMenuItem("Test Dashboard", new DashboardTest()));
+        }
+    }
+
+    private static class SimpleLayout extends HorizontalLayout implements ApplicationLayout, ApplicationMenu, AppMenu {
 
         VerticalLayout menu = new VerticalLayout(), content = new VerticalLayout();
 
@@ -71,14 +89,20 @@ public class Demo extends Application {
         @Override
         public void drawMenu(Application application) {
             getMenuPane().add(new HtmlComponent("hr"));
-            add(application.createMenuItem("Edit Person Details", new PersonEditor()));
-            add(application.createMenuItem("Veiw Sample PDF", new PDFTest()));
-            add(application.createMenuItem("Test Alert Component", "vaadin:user", new AlertTest()));
-            add(application.createMenuItem("Misc. Test", new MiscTest()));
-            add(application.createMenuItem("Test Grid", new GridTest()));
-            add(application.createMenuItem("Test Parent/Child", new ParentChildTest()));
-            add(application.createMenuItem("Test Dashboard", new DashboardTest()));
-            add(application.createMenuItem("Test Form", new TestForm()));
+            AppMenu.super.drawMenu(application);
+        }
+    }
+
+    private static class ComplexLayout extends ApplicationFrame implements AppMenu {
+
+        @Override
+        public void drawMenu(Application application) {
+            AppMenu.super.drawMenu(application);
+        }
+
+        @Override
+        public Component getMenuSearcher() {
+            return new TextField("", "Hello World");
         }
     }
 
@@ -88,6 +112,7 @@ public class Demo extends Application {
     @Theme(value = Lumo.class, variant = Lumo.LIGHT)
     @PreserveOnRefresh
     public static class DemoView extends ApplicationView {
+
         @Override
         protected Application createApplication() {
             return new Demo();

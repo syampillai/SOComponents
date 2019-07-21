@@ -6,9 +6,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.GregorianCalendar;
 
-import static java.util.Calendar.DATE;
-import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
+import static java.util.Calendar.*;
 
 /**
  * A field to edit {@link Date}. Even though developers should start using {@link LocalDate}, almost all databases are still
@@ -36,6 +34,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
         super(new DatePicker(), (f, d) -> create(d), (f, d) -> create(d), null);
         setLabel(label);
         setValue(initialValue);
+        getField().setClearButtonVisible(false);
     }
 
     @Override
@@ -90,5 +89,44 @@ public class DateField extends TranslatedField<Date, LocalDate> {
     private static Date create(int year, int month, int day) {
         @SuppressWarnings("MagicConstant") GregorianCalendar c = new GregorianCalendar(year, month - 1, day);
         return new Date(c.getTimeInMillis());
+    }
+
+    @Override
+    public DatePicker getField() {
+        return (DatePicker) super.getField();
+    }
+
+    public void setMin(Date value) {
+        getField().setMin(value == null ? null : create(value));
+    }
+
+    public void setMax(Date value) {
+        getField().setMax(value == null ? null : create(value));
+    }
+
+    public Date getMin() {
+        LocalDate d = getField().getMin();
+        return d == null ? null : create(d);
+    }
+
+    public Date getMax() {
+        LocalDate d = getField().getMax();
+        return d == null ? null : create(d);
+    }
+
+    public boolean isRequired() {
+        return getField().isRequired();
+    }
+
+    public void setRequired(boolean required) {
+        getField().setRequired(required);
+    }
+
+    public void setWeekNumbersVisible(boolean weekNumbersVisible) {
+        getField().setWeekNumbersVisible(weekNumbersVisible);
+    }
+
+    public boolean isWeekNumbersVisible() {
+        return getField().isWeekNumbersVisible();
     }
 }

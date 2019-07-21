@@ -1,11 +1,9 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.HasTextValue;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasEnabled;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
+import com.vaadin.flow.dom.Element;
 
 import java.util.Objects;
 
@@ -15,7 +13,7 @@ import java.util.Objects;
  * @param <T> Value type
  * @author Syam
  */
-public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix {
+public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix, HasStyle {
 
     private HasTextValue field;
     private String emptyDisplay;
@@ -32,13 +30,13 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
     @Override
     public void setWidth(String width) {
         super.setWidth(width);
-        ((HasSize)field).setWidth(width);
+        field.setWidth(width);
     }
 
     @Override
     public void setHeight(String height) {
         super.setHeight(height);
-        ((HasSize)field).setHeight(height);
+        field.setHeight(height);
     }
 
     /**
@@ -172,6 +170,11 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         if(field instanceof HasEnabled) {
             ((HasEnabled)field).setEnabled(enabled);
         }
+    }
+
+    @Override
+    public Element getInternalElement() {
+        return field.getElement();
     }
 
     private static class TF extends com.vaadin.flow.component.textfield.TextField implements HasSize, HasTextValue {

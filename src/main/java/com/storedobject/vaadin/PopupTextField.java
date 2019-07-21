@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -14,7 +15,7 @@ public class PopupTextField extends TextField {
 
     private TextArea textArea;
     private Window window;
-    private StyledText label;
+    private Span label;
 
     /**
      * Constructor.
@@ -101,7 +102,12 @@ public class PopupTextField extends TextField {
             createWindow();
         }
         String label = getLabel();
-        this.label.setText(label == null ? "" : label);
+        if(label != null) {
+            this.label.setText(label);
+            this.label.getStyle().set("margin-left", "auto");
+        } else {
+            this.label.setText("");
+        }
         textArea.setValue(getValue());
         window.open();
     }
@@ -109,9 +115,11 @@ public class PopupTextField extends TextField {
     private void createWindow() {
         textArea = new TextArea();
         textArea.setWidth("600px");
-        label = new StyledText();
+        label = new Span();
         Button ok = new Button("Ok", e -> { PopupTextField.this.setValue(textArea.getValue()); window.close(); });
         Button cancel = new Button("Cancel", e -> window.close());
-        window = new Window(new Div(new ButtonLayout(ok, cancel, label), textArea));
+        ButtonLayout buttonLayout = new ButtonLayout(ok, cancel, label);
+        buttonLayout.setWidthFull();
+        window = new Window(new Div(buttonLayout, textArea));
     }
 }

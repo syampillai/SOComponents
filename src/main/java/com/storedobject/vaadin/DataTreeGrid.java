@@ -1,6 +1,6 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -25,7 +25,7 @@ import java.util.function.Function;
  * @param <T> Bean type
  * @author Syam
  */
-@HtmlImport("so-grid-styles.html")
+@JsModule("./so/grid/styles.js")
 public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;

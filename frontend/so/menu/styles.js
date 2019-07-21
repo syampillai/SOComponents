@@ -1,3 +1,5 @@
+const $_documentContainer = document.createElement('template');
+$_documentContainer.innerHTML = `
 <custom-style>
     <style is="custom-style">
 
@@ -29,4 +31,6 @@
         }
 
   </style>
-</custom-style>
+</custom-style>`;
+
+document.head.appendChild($_documentContainer.content);

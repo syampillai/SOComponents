@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
@@ -8,17 +9,18 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  *
  * @author Syam
  */
-@HtmlImport("frontend://bower_components/iron-icons/iron-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/av-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/communication-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/device-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/editor-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/hardware-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/image-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/maps-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/notification-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/social-icons.html")
-@HtmlImport("frontend://bower_components/iron-icons/places-icons.html")
+@NpmPackage(value = "@polymer/iron-icons", version = "3.0.1")
+@JsModule("@polymer/iron-icons/iron-icons.js")
+@JsModule("@polymer/iron-icons/av-icons.js")
+@JsModule("@polymer/iron-icons/communication-icons.js")
+@JsModule("@polymer/iron-icons/device-icons.js")
+@JsModule("@polymer/iron-icons/editor-icons.js")
+@JsModule("@polymer/iron-icons/hardware-icons.js")
+@JsModule("@polymer/iron-icons/image-icons.js")
+@JsModule("@polymer/iron-icons/maps-icons.js")
+@JsModule("@polymer/iron-icons/notification-icons.js")
+@JsModule("@polymer/iron-icons/social-icons.js")
+@JsModule("@polymer/iron-icons/places-icons.js")
 public class Icon extends com.vaadin.flow.component.icon.Icon implements HasIcon, HasSquareElement {
 
     /**

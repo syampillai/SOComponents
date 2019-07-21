@@ -1,27 +1,18 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
- * Vaadin Flow wrapper around the Web Component: <a href="https://github.com/PolymerElements/paper-icon-button" target="_blank">Paper Icon Button</a>
+ * Vaadin Flow wrapper around the Web Component: Paper Icon Button.
+ * 
  * @author Syam
  */
 @Tag("paper-icon-button")
-@HtmlImport("bower_components/iron-icons/iron-icons.html")
-@HtmlImport("bower_components/iron-icons/av-icons.html")
-@HtmlImport("bower_components/iron-icons/communication-icons.html")
-@HtmlImport("bower_components/iron-icons/device-icons.html")
-@HtmlImport("bower_components/iron-icons/editor-icons.html")
-@HtmlImport("bower_components/iron-icons/hardware-icons.html")
-@HtmlImport("bower_components/iron-icons/image-icons.html")
-@HtmlImport("bower_components/iron-icons/maps-icons.html")
-@HtmlImport("bower_components/iron-icons/notification-icons.html")
-@HtmlImport("bower_components/iron-icons/social-icons.html")
-@HtmlImport("bower_components/iron-icons/places-icons.html")
-@HtmlImport("bower_components/vaadin-icons/vaadin-icons.html")
-@HtmlImport("bower_components/paper-icon-button/paper-icon-button.html")
+@NpmPackage(value = "@polymer/paper-icon-button", version = "3.0.2")
+@JsModule("@polymer/paper-icon-button/paper-icon-button.js")
 public class ButtonIcon extends Component implements HasSquareElement, HasIcon, ClickNotifier<ButtonIcon> {
 
     /**

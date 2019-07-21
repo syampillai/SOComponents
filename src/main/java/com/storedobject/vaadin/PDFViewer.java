@@ -2,6 +2,8 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.server.StreamRegistration;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.StreamResourceRegistry;
@@ -9,15 +11,13 @@ import com.vaadin.flow.server.VaadinSession;
 
 /**
  * A PDF viewer component that uses browser's native PDF viewer.
- * This is written as a Vaadin Flow wrapper around
- * <a href="https://github.com/IngressoRapidoWebComponents/pdf-browser-viewer" target="_blank">PDF Browser Viewer</a>
- * (Author: Andrew Silva Movile)
- * <p>Note: Vaadin has plans to include a PDF viewer as a standard component and in that case, this will be removed in the future versions.</p>
+ * This is written as a Vaadin Flow wrapper around "@lrnwebcomponents/pdf-browser-viewer/pdf-browser-viewer.js"
  *
  * @author Syam
  */
 @Tag("pdf-browser-viewer")
-@HtmlImport("bower_components/pdf-browser-viewer/pdf-browser-viewer.html")
+@NpmPackage(value = "@lrnwebcomponents/pdf-browser-viewer", version = "2.1.1")
+@JsModule("@lrnwebcomponents/pdf-browser-viewer/pdf-browser-viewer.js")
 public class PDFViewer extends Component implements HasSize {
 
     private StreamRegistration streamRegistration;
