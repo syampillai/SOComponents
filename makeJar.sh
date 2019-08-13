@@ -8,6 +8,7 @@ ln -s ../../../../../../frontend/so .
 cd ~/IdeaProjects/SOComponents
 mvn clean install -Pdirectory
 mkdir -p zipTarget
+rm zipTarget/*.zip
 cp target/*.zip zipTarget
 cd src/main
 rm -fr resources

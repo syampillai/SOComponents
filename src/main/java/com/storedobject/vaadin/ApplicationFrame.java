@@ -7,16 +7,8 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.polymertemplate.BundleParser;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
-import com.vaadin.flow.component.polymertemplate.TemplateParser;
-import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.templatemodel.TemplateModel;
-import org.jsoup.nodes.Element;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * An implementaion of {@link ApplicationLayout}.
@@ -38,7 +30,6 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
      * Constructor.
      */
     public ApplicationFrame() {
-        super(new AFTemplateParser());
         Div m = new Div();
         m.getStyle().set("margin-top", "70px");
         Component c = getMenuSearcher();
@@ -131,34 +122,6 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
 
         private void top() {
             Application.get().getPage().executeJs("document.getElementById('appmenu" + id + "').scrollTop=0;");
-        }
-    }
-
-    private static class AFTemplateParser implements TemplateParser {
-        @Override
-        public TemplateData getTemplateContent(Class<? extends PolymerTemplate<?>> aClass, String tag, VaadinService vaadinService) {
-            BufferedReader r;
-            r = new BufferedReader(new InputStreamReader(Objects.requireNonNull(ApplicationFrame.class.getClassLoader().getResourceAsStream("META-INF/resources/frontend/so/app-frame/app-frame.js")),
-                    StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            try {
-                while((line = r.readLine()) != null) {
-                    sb.append(line).append('\n');
-                }
-            } catch (Exception ignored) {
-            } finally {
-                try {
-                    r.close();
-                } catch (IOException ignored) {
-                }
-            }
-            String source = sb.toString();
-            Element parent = new Element(tag);
-            parent.attr("id", tag);
-            Element templateElement = BundleParser.parseTemplateElement("so-app-frame", source);
-            templateElement.appendTo(parent);
-            return new TemplateData("so-app-frame", templateElement);
         }
     }
 }

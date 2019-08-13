@@ -97,6 +97,11 @@ public abstract class DataForm extends AbstractDataForm {
     }
 
     @Override
+    public void setWindowMode(boolean windowOn) {
+        throw new UnsupportedOperationException("Window mode can't be changed");
+    }
+
+    @Override
     public boolean skipFirstFocus(Focusable<?> skipFocus) {
         return skipFocus == ok || skipFocus == cancel;
     }
