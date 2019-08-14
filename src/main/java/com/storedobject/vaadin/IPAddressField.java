@@ -1,26 +1,22 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.PatternField;
+import com.storedobject.vaadin.util.IPAddressTextField;
+
+import java.net.Inet4Address;
 
 /**
  * Field to edit an IP addresses.
  *
  * @author Syam
  */
-public class IPAddressField extends PatternField {
-
-    private static String pattern = "\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+public class IPAddressField extends TranslatedField<Inet4Address, String> {
 
     public IPAddressField() {
         this(null);
     }
 
     public IPAddressField(String label) {
-        super(label, 15, pattern);
-    }
-
-    @Override
-    public String getEmptyValue() {
-        return "000.000.000.000";
+        super(new IPAddressTextField(), (f, a) -> IPAddressTextField.getAddress(a), (f, a) -> IPAddressTextField.getAddress(a));
+        setLabel(label);
     }
 }

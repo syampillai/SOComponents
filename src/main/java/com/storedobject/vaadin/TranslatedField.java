@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.Validation;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasValue;
@@ -87,5 +88,16 @@ public class TranslatedField<T, I> extends CustomField<T> {
         if(field instanceof HasEnabled) {
             ((HasEnabled) field).setEnabled(enabled);
         }
+    }
+
+    @Override
+    public boolean isInvalid() {
+        if(super.isInvalid()) {
+            return true;
+        }
+        if(field instanceof Validation) {
+            return ((Validation) field).isInvalid();
+        }
+        return false;
     }
 }

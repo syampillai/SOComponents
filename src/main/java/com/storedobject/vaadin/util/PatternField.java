@@ -1,22 +1,26 @@
 package com.storedobject.vaadin.util;
 
 import com.vaadin.flow.component.textfield.TextField;
+import org.vaadin.textfieldformatter.CustomStringBlockFormatter;
 
-public abstract class PatternField extends TextField {
+public abstract class PatternField extends TextField implements Validation {
 
-    public PatternField(String label, int width, String pattern) {
+    public PatternField(String label, int width, CustomStringBlockFormatter pattern) {
         super(label);
         super.setMinlength(width);
         super.setMaxlength(width);
-        super.setPattern(pattern);
+        pattern.extend(this);
         setValue(getEmptyValue());
         addBlurListener(e -> {
             String v = getValue();
-            if(v.isEmpty() || isInvalid()) {
+            if(v == null || v.isEmpty()) {
                 setValue(getEmptyValue());
+            } else {
+                if(isInvalid()) {
+                    focus();
+                }
             }
         });
-
     }
 
     @Override

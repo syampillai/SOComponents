@@ -101,7 +101,7 @@ public class BigDecimalField extends NumericField<BigDecimal> {
     }
 
     private static int decimals(int decimals) {
-        return decimals < 1 ? 2 : (decimals > 40 ? 40 : decimals);
+        return decimals < 1 ? 2 : Math.min(decimals, 40);
     }
 
     @Override
@@ -114,36 +114,13 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         return toBigDecimal(string, decimals);
     }
 
-    public void setLength(int width) {
-        int min = 1;
-        if(allowNegative) {
-            ++min;
-        }
-        if(decimals > 0) {
-            min += decimals + 1;
-        }
-        if(width < min) {
-            width = min;
-        }
-        this.width = width;
-        getField().setMaxLength(width);
-    }
-
     public final int getDecimals() {
         return decimals;
     }
 
-    protected void setPattern() {
-        String p = "(\\d{1,3})(,?(?1))*";
-        if(decimals > 0) {
-            p += "(.\\d{0," + decimals + "})";
-        }
-        if(allowNegative) {
-            p = "-?" + p;
-        }
-        p = "^" + p + "$";
-        getField().setPattern(p);
-        setValue(getValue());
+    @Override
+    protected int getDefaultLength() {
+        return 18;
     }
 
     private static BigDecimal toBigDecimal(Object value) {

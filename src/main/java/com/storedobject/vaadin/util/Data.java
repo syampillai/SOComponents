@@ -244,6 +244,11 @@ public class Data extends HashMap<String, Object> {
         if(errorText.equals(binder.getStatusLabel().orElse(null))) {
             errorText.close();
         }
+        for(HasValue<?, ?> field: fields.values()) {
+            if(field instanceof Validation && ((Validation) field).isInvalid()) {
+                return false;
+            }
+        }
         extraErrors = false;
         if(!binder.writeBeanIfValid(this)) {
             return false;

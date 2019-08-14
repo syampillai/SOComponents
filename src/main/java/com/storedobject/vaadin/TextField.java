@@ -1,11 +1,13 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.Validation;
+
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.textfield.TextField}.
  *
  * @author Syam
  */
-public class TextField extends com.vaadin.flow.component.textfield.TextField {
+public class TextField extends com.vaadin.flow.component.textfield.TextField implements Validation {
 
     /**
      * Constructor.

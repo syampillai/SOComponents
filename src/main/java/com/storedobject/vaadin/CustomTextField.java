@@ -1,7 +1,10 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.HasTextValue;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasEnabled;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
 import com.vaadin.flow.dom.Element;
 
@@ -56,7 +59,6 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         add((TF)field);
         ((TF)field).setPreventInvalidInput(true);
         customizeTextField(field);
-        add((TF)field);
         return field;
     }
 

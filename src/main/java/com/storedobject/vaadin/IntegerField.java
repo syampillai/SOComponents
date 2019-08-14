@@ -68,28 +68,8 @@ public class IntegerField extends NumericField<Integer> {
         }
     }
 
-    public void setLength(int width) {
-        if(width < 1) {
-            width = 8;
-        }
-        int min = 1;
-        if(allowNegative) {
-            ++min;
-        }
-        if(width < min) {
-            width = min;
-        }
-        this.width = width;
-        getField().setMaxLength(width);
-    }
-
-    protected void setPattern() {
-        String p = "(\\d{1,3})(,?(?1))*";
-        if(allowNegative) {
-            p = "-?" + p;
-        }
-        p = "^" + p + "$";
-        getField().setPattern(p);
-        setPresentationValue(getValue());
+    @Override
+    protected int getDefaultLength() {
+        return 8;
     }
 }

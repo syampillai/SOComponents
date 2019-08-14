@@ -1,11 +1,13 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.Validation;
+
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.textfield.TextArea}.
  *
  * @author Syam
  */
-public class TextArea extends com.vaadin.flow.component.textfield.TextArea {
+public class TextArea extends com.vaadin.flow.component.textfield.TextArea implements Validation {
 
     /**
      * Constructor.

@@ -88,7 +88,7 @@ public class DoubleField extends NumericField<Double> {
         super(ZERO);
         this.grouping = grouping;
         this.allowNegative = allowNegative;
-        this.decimals = decimals < 1 ? 0 : (decimals > 9 ? 9 : decimals);
+        this.decimals = decimals < 1 ? 0 : Math.min(decimals, 9);
         setLength(width);
         setValue(initialValue);
         setDecimals(this.decimals);
@@ -105,27 +105,14 @@ public class DoubleField extends NumericField<Double> {
         }
     }
 
-    public void setLength(int width) {
-        if(width < 1) {
-            width = 18;
-        }
-        int min = 1;
-        if(allowNegative) {
-            ++min;
-        }
-        if(decimals > 0) {
-            min += decimals + 1;
-        }
-        if(width < min) {
-            width = min;
-        }
-        this.width = width;
-        getField().setMaxLength(width);
-    }
-
     @Override
     public final int getDecimals() {
         return decimals;
+    }
+
+    @Override
+    protected int getDefaultLength() {
+        return 18;
     }
 
     public void setDecimals(int decimals) {
@@ -134,18 +121,5 @@ public class DoubleField extends NumericField<Double> {
         }
         this.decimals = decimals;
         setPattern();
-    }
-
-    protected void setPattern() {
-        String p = "(\\d{1,3})(,?(?1))*";
-        if(decimals > 0) {
-            p += "(.\\d{0," + decimals + "})";
-        }
-        if(allowNegative) {
-            p = "-?" + p;
-        }
-        p = "^" + p + "$";
-        getField().setPattern(p);
-        setPresentationValue(getValue());
     }
 }

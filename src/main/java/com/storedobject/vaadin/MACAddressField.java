@@ -1,26 +1,20 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.PatternField;
+import com.storedobject.vaadin.util.MACAddressTextField;
 
 /**
  * Field to accept valid MAC address.
  *
  * @author Syam
  */
-public class MACAddressField extends PatternField {
-
-    private static String pattern = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$";
+public class MACAddressField extends TranslatedField<byte[], String> {
 
     public MACAddressField() {
         this(null);
     }
 
     public MACAddressField(String label) {
-        super(label, 17, pattern);
-    }
-
-    @Override
-    public String getEmptyValue() {
-        return "aa:bb:cc:dd:ee:ff";
+        super(new MACAddressTextField(), (f, a) -> MACAddressTextField.getAddress(a), (f, b) -> MACAddressTextField.getAddress(b));
+        setLabel(label);
     }
 }
