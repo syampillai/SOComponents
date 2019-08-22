@@ -134,6 +134,9 @@ public class ObjectForm<T> extends Form {
         BiConsumer<T, ?> valueSetter;
         Method valueGetterM, valueSetterM;
         for(String fieldName: fieldNames) {
+            if(!includeField.includeField(fieldName)) {
+                continue;
+            }
             valueGetterM = getGetMethodFromHost(fieldName);
             valueSetterM = valueGetterM == null ? null : getSetMethodFromHost(fieldName, valueGetterM);
             if(valueGetterM == null) {
@@ -178,6 +181,9 @@ public class ObjectForm<T> extends Form {
      * @param valueSetter Function that determines how to commit value from the field to the obejct's instance
      */
     protected void addField(String fieldName, Function<T, ?> valueGetter, BiConsumer<T, ?> valueSetter) {
+        if(!includeField.includeField(fieldName)) {
+            return;
+        }
         if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
             return;
         }
@@ -226,6 +232,9 @@ public class ObjectForm<T> extends Form {
      * @param setMethod Method that determines how to commit the value from the field to the obejct's instance
      */
     protected void addField(String fieldName, Method getMethod, Method setMethod) {
+        if(!includeField.includeField(fieldName)) {
+            return;
+        }
         if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
             return;
         }
@@ -329,13 +338,13 @@ public class ObjectForm<T> extends Form {
     }
 
     /**
-     * Generate field names. This method is geenrally not overridden.
+     * Generate field names. This method is generally not overridden.
      */
     @Override
     protected void generateFieldNames() {
         getFieldGetMethods().forEach(m -> {
             String name = getFieldCreator().getFieldName(m);
-            if(name != null && includeField(name)) {
+            if(name != null && includeField.includeField(name) && includeField(name)) {
                 Method hm = getGetMethodFromHost(name);
                 addField(name, hm == null ? m : hm, null);
             }

@@ -1,6 +1,6 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @see ApplicationMenu
  * @author Syam
  */
-@JsModule("./so/menu/styles.js")
+@CssImport("./so/menu/styles.css")
 public class MenuItem extends Div implements ApplicationMenuItem {
 
     final Icon icon;

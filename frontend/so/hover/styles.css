@@ -1,0 +1,7 @@
+.so-hover {
+    cursor: pointer;
+}
+
+.so-hover:hover {
+    background-color: var(--lumo-primary-color-50pct);
+}

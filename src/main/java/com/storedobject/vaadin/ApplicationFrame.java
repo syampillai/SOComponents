@@ -11,7 +11,7 @@ import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.templatemodel.TemplateModel;
 
 /**
- * An implementaion of {@link ApplicationLayout}.
+ * An implementation of {@link ApplicationLayout}.
  *
  * @author Syam
  */

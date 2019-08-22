@@ -27,6 +27,7 @@ public abstract class AbstractDataForm extends View {
      * Form embedded in this view.
      */
     protected Form form;
+    private FormConstructed formConstructed;
     private List<String> readOnly = new ArrayList<>(), hidden = new ArrayList<>();
     private List<HasValue<?, ?>> readOnlyFields = new ArrayList<>(), hiddenFields = new ArrayList<>();
 
@@ -40,9 +41,22 @@ public abstract class AbstractDataForm extends View {
     }
 
     /**
-     * This method is invoked when the form is constructed
+     * This method is invoked when the form is constructed. The default implementation invokes {@link FormConstructed} action if set.
      */
     protected void formConstructed() {
+        if(formConstructed != null) {
+            formConstructed.formConstructed();
+        }
+    }
+
+    /**
+     * Set the action to be carried out when form is constructed.
+     *
+     * @param formConstructed Action to be set
+     * @see #formConstructed()
+     */
+    public void setFormConstructedAction(FormConstructed formConstructed) {
+        this.formConstructed = formConstructed;
     }
 
     /**
@@ -118,6 +132,16 @@ public abstract class AbstractDataForm extends View {
      */
     public Stream<String> getFieldNames() {
         return null;
+    }
+
+
+    /**
+     * Set "include field checker". It will determine if a field can be added or not.
+     *
+     * @param includeField The "include field checker"
+     */
+    public void setIncludeFieldChecker(IncludeField includeField) {
+        getForm().setIncludeFieldChecker(includeField);
     }
 
     /**

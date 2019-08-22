@@ -33,6 +33,7 @@ public class Form {
     private boolean loadPending = false;
     private View view;
     private int columns = 2;
+    IncludeField includeField = name -> true;
 
     /**
      * Construct a form.
@@ -62,6 +63,19 @@ public class Form {
         this.container = container;
     }
 
+    /**
+     * Set "include field checker". It will determine if a field can be added or not.
+     *
+     * @param includeField The "include field checker"
+     */
+    public void setIncludeFieldChecker(IncludeField includeField) {
+        if(includeField == null) {
+            this.includeField = name -> true;
+        } else {
+            this.includeField = includeField;
+        }
+    }
+
     private static HasComponents createDefaultContainer() {
         return new FormLayout();
     }
@@ -77,7 +91,7 @@ public class Form {
     }
 
     /**
-     * For interal use only.
+     * For internal use only.
      */
     protected void generateFieldNames() {}
 
@@ -96,9 +110,11 @@ public class Form {
             Stream<String> fieldNames = getFieldNames();
             if (fieldNames != null) {
                 fieldNames.forEach(n -> {
-                    HasValue<?, ?> field = createField(n);
-                    if(n != null) {
-                        addField(n, field);
+                    if(includeField.includeField(n)) {
+                        HasValue<?, ?> field = createField(n);
+                        if (n != null) {
+                            addField(n, field);
+                        }
                     }
                 });
             }
@@ -118,6 +134,9 @@ public class Form {
     }
 
     private void addFieldInt(String fieldName, HasValue<?, ?> field) {
+        if(!includeField.includeField(fieldName)) {
+            return;
+        }
         data.addField(fieldName, field);
         attachF(fieldName, field);
     }
@@ -317,7 +336,7 @@ public class Form {
      */
     public int getColumnSpan(Component component) {
         try {
-            return Integer.valueOf(component.getElement().getAttribute("colspan"));
+            return Integer.parseInt(component.getElement().getAttribute("colspan"));
         } catch (Throwable error) {
             return 1;
         }

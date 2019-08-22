@@ -1039,8 +1039,9 @@ public interface HasColumns<T> extends ExecutableView {
 
         private Method getOutsideMethod(String columnName, Class<?> objectClass) {
             Class<?>[] params = new Class<?>[] { objectClass };
+            boolean methodName = Character.isLowerCase(columnName.charAt(0)) && !columnName.equals(columnName.toLowerCase());
             if(methodHandlerHost != null) {
-                if(Character.isLowerCase(columnName.charAt(0)) && !columnName.equals(columnName.toLowerCase())) {
+                if(methodName) {
                     try {
                         return methodHandlerHost.getClass().getMethod(columnName, params);
                     } catch (NoSuchMethodException ignore) {
@@ -1055,7 +1056,7 @@ public interface HasColumns<T> extends ExecutableView {
                 } catch (NoSuchMethodException ignore) {
                 }
             }
-            if(Character.isLowerCase(columnName.charAt(0)) && !columnName.equals(columnName.toLowerCase())) {
+            if(methodName) {
                 try {
                     return grid.getClass().getMethod(columnName, params);
                 } catch (NoSuchMethodException ignore) {

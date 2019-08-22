@@ -1,6 +1,6 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  * @param <T> Bean type
  * @author Syam
  */
-@JsModule("./so/grid/styles.js")
+@CssImport(value = "./so/grid/styles.css", themeFor = "vaadin-grid")
 public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;

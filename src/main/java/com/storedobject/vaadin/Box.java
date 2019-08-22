@@ -2,7 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.CssImport;
 
 /**
  * Using this class one can draw a "box" around any Vaadin component. If you have a component, in order to enclose it in a box, just use
@@ -10,7 +10,7 @@ import com.vaadin.flow.component.dependency.JsModule;
  *
  * @author Syam
  */
-@JsModule("./so/hover/styles.js")
+@CssImport("./so/hover/styles.css")
 public class Box extends Composite {
 
     private static final String BACKGROUND = "var(--lumo-contrast-20pct)";
