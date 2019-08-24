@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 /**
  * A thin wrapper around Vaadin's {@link ComboBox}.
  * @param <T> Type of the field's value.
+ *
  * @author Syam
  */
 public class ComboField<T> extends ComboBox<T> {

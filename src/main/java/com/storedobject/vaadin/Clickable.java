@@ -8,6 +8,7 @@ import com.vaadin.flow.shared.Registration;
 /**
  * A wrapped class to make any Vaadin component "clickable".
  * <p>Example: Component c; new Clickable(c);</p>
+ *
  * @param <T> Component type
  * @author Syam
  */
@@ -21,19 +22,19 @@ public class Clickable<T extends Component> extends Composite<T> implements Clic
      * @param component Component to make it clickable
      */
     public Clickable(T component) {
-        this(component, null);
+        this(component,null);
     }
 
     /**
      * Constructor.
      * @param component Component to make it clickable
-     * @param listener Listener
+     * @param clickHandler Click handler
      */
-    public Clickable(T component, ComponentEventListener<ClickEvent<Component>> listener) {
+    public Clickable(T component, ClickHandler clickHandler) {
         this.component = component;
         click = new ElementClick(component);
-        if(listener != null) {
-            addClickListener(listener);
+        if(clickHandler != null) {
+            addClickHandler(clickHandler);
         }
     }
 
@@ -50,5 +51,19 @@ public class Clickable<T extends Component> extends Composite<T> implements Clic
     @Override
     public void removeClickListener(ComponentEventListener<ClickEvent<Component>> listener) {
         click.removeClickListener(listener);
+    }
+
+    /**
+     * Add a click handler.
+     *
+     * @param clickHandler Click handler to add
+     * @return Registration.
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public Registration addClickHandler(ClickHandler clickHandler) {
+        if(clickHandler == null) {
+            return null;
+        }
+        return addClickListener(ClickHandler.convert(clickHandler));
     }
 }
