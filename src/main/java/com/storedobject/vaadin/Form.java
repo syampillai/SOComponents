@@ -617,7 +617,7 @@ public class Form {
     }
 
     /**
-     * This method is invoked to determine the label used for dislaying the field. The default implementation determine it by invoking
+     * This method is invoked to determine the label used for displaying the field. The default implementation determine it by invoking
      * {@link ApplicationEnvironment#createLabel(String)}.
      *
      * @param fieldName Name of the field

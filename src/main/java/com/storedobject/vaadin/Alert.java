@@ -10,6 +10,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.shared.Registration;
 
+import java.io.Closeable;
 import java.util.function.Consumer;
 
 /**

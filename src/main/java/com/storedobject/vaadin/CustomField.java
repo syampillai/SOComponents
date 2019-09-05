@@ -1,11 +1,9 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.Validation;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.dependency.NpmPackage;
 
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.customfield.CustomField}.
@@ -13,7 +11,7 @@ import com.vaadin.flow.component.dependency.NpmPackage;
  * @param <T> Value type
  * @author Syam
  */
-public abstract class CustomField<T> extends com.vaadin.flow.component.customfield.CustomField<T> implements Validation {
+public abstract class CustomField<T> extends com.vaadin.flow.component.customfield.CustomField<T> {
 
     /**
      * Constructor.

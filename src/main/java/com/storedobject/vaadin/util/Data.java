@@ -5,6 +5,7 @@ import com.storedobject.vaadin.Form;
 import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.data.binder.Binder;
@@ -241,11 +242,10 @@ public class Data extends HashMap<String, Object> {
 
     @SuppressWarnings("unchecked")
     public boolean saveValues() {
-        if(errorText.equals(binder.getStatusLabel().orElse(null))) {
-            errorText.close();
-        }
+        binder.getStatusLabel().ifPresent(errDisp -> errDisp.setText(""));
         for(HasValue<?, ?> field: fields.values()) {
-            if(field instanceof Validation && ((Validation) field).isInvalid()) {
+            if(field instanceof HasValidation && ((HasValidation) field).isInvalid()) {
+                showErr(field);
                 return false;
             }
         }
@@ -269,6 +269,17 @@ public class Data extends HashMap<String, Object> {
         return true;
     }
 
+    private void showErr(HasValue<?, ?> field) {
+        HasText hasText = binder.getStatusLabel().orElse(null);
+        if(hasText == null) {
+            return;
+        }
+        HasValidation hv = (HasValidation)field;
+        String m = hv.getErrorMessage();
+        m = errMessage(field, m == null ? DataValidator.INVALID : m);
+        hasText.setText(m);
+    }
+
     public void clearErrors() {
         fields.values().forEach(Form::clearError);
         if(errorText.equals(binder.getStatusLabel().orElse(null))) {
@@ -284,7 +295,7 @@ public class Data extends HashMap<String, Object> {
         if(field == null) {
             return;
         }
-        validator(field).add(new DataValidator<>(form, validator, errorMessage));
+        validator(field).add(new DataValidator<>(validator, errorMessage));
     }
 
     public void setRequired(HasValue<?, ?> field, boolean required, String errorMessage) {
@@ -324,12 +335,12 @@ public class Data extends HashMap<String, Object> {
                 dv.remove(0);
             }
         }
-        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(form, errorMessage));
+        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(errorMessage));
     }
 
     private Required requiredCache() {
         if(requiredCache == null) {
-            requiredCache = new Required(form,null);
+            requiredCache = new Required(null);
         }
         return requiredCache;
     }
@@ -342,14 +353,25 @@ public class Data extends HashMap<String, Object> {
         return null;
     }
 
+    private String errMessage(HasValue<?, ?> field, String message) {
+        String m, id = getName(field);
+        if(!id.startsWith("_")) {
+            m = form.getLabel(id);
+        } else {
+            m = getLabel(field);
+        }
+        if(m == null) {
+            return message;
+        }
+        return m + ": " + message;
+    }
+
     private static class Required implements Validator<Data> {
 
         private static final String CAN_NOT_BE_EMPTY = "Can not be empty";
         private String errorMessage;
-        private Form form;
 
-        private Required(Form form, String errorMessage) {
-            this.form = form;
+        private Required(String errorMessage) {
             if(errorMessage != null && !errorMessage.isEmpty()) {
                 this.errorMessage = errorMessage;
             }
@@ -367,17 +389,7 @@ public class Data extends HashMap<String, Object> {
             }
             String m = errorMessage;
             if(m == null) {
-                String id = data.getName(field);
-                if(!id.startsWith("_")) {
-                    m = form.getLabel(id);
-                } else {
-                    m = getLabel(field);
-                }
-                if(m == null) {
-                    m = CAN_NOT_BE_EMPTY;
-                } else {
-                    m += ": " + CAN_NOT_BE_EMPTY;
-                }
+                m = data.errMessage(field, CAN_NOT_BE_EMPTY);
             }
             return ValidationResult.error(m);
         }
@@ -388,10 +400,8 @@ public class Data extends HashMap<String, Object> {
         private static final String INVALID = "Not valid";
         private Function<T, Boolean> validator;
         private String errorMessage;
-        private Form form;
 
-        private DataValidator(Form form, Function<T, Boolean> validator, String errorMessage) {
-            this.form = form;
+        private DataValidator(Function<T, Boolean> validator, String errorMessage) {
             this.validator = validator;
             if(errorMessage != null && !errorMessage.isEmpty()) {
                 this.errorMessage = errorMessage;
@@ -407,17 +417,7 @@ public class Data extends HashMap<String, Object> {
             }
             String m = errorMessage;
             if(m == null) {
-                String id = data.getName(field);
-                if(!id.startsWith("_")) {
-                    m = form.getLabel(id);
-                } else {
-                    m = getLabel(field);
-                }
-                if(m == null) {
-                    m = INVALID;
-                } else {
-                    m += ": " + INVALID;
-                }
+                m = data.errMessage(field, INVALID);
             }
             return ValidationResult.error(m);
         }

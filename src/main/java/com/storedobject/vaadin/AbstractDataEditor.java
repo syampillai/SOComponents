@@ -166,7 +166,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
     }
 
     /**
-     * Create the field for the particular name.. Default implementation try to obatin the value from the "field creator"
+     * Create the field for the particular name.. Default implementation try to obtain the value from the "field creator"
      * ({@link ObjectFieldCreator#createField(String, Class, String)}).
      * @param fieldName Name of the field
      * @param fieldType Type of the field's value
@@ -174,11 +174,26 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      * @return Field
      */
     protected HasValue<?, ?> createField(String fieldName, @SuppressWarnings("unused") Class<?> fieldType, @SuppressWarnings("unused") String label) {
-        HasValue<?, ?> field = createField(fieldName);
+        HasValue<?, ?> field = createField(fieldName, label);
+        if(field != null) {
+            return field;
+        }
+        field = createField(fieldName);
         if(field != null) {
             return field;
         }
         throw FIELD_ERROR;
+    }
+
+    /**
+     * Create the field for the particular name.. Default implementation try to obtain the value from the "field creator"
+     * ({@link ObjectFieldCreator#createField(String, Class, String)}).
+     * @param fieldName Name of the field
+     * @param label Label
+     * @return Field
+     */
+    protected HasValue<?, ?> createField(String fieldName, @SuppressWarnings("unused") String label) {
+        return null;
     }
 
     /**
@@ -216,6 +231,15 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      */
     protected T createObjectInstance() {
         throw FIELD_ERROR;
+    }
+
+    /**
+     * Create an instance of the object (public method).
+     *
+     * @return Newly created object.
+     */
+    public T newObject() {
+        return getForm().createObjectInstance();
     }
 
     /**

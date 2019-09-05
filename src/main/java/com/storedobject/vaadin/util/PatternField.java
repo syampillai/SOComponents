@@ -3,7 +3,7 @@ package com.storedobject.vaadin.util;
 import com.vaadin.flow.component.textfield.TextField;
 import org.vaadin.textfieldformatter.CustomStringBlockFormatter;
 
-public abstract class PatternField extends TextField implements Validation {
+public abstract class PatternField extends TextField {
 
     public PatternField(String label, int width, CustomStringBlockFormatter pattern) {
         super(label);
