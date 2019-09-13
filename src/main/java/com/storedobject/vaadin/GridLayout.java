@@ -190,7 +190,7 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
     }
 
     /**
-     * Justfiy (horizontally) a component within its grid cell.
+     * Justify (horizontally) a component within its grid cell.
      *
      * @param component Component
      * @param position Position

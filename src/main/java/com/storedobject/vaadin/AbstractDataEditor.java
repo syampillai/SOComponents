@@ -412,6 +412,9 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
             } catch (FieldError e) {
                 super.attachField(fieldName, field);
             }
+            if(field instanceof ViewDependent) {
+                ((ViewDependent) field).setDependentView(getView());
+            }
         }
 
         @Override

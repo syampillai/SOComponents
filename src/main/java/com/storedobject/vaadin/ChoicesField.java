@@ -3,14 +3,13 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.checkbox.Checkbox;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * A field that allows you select mutliple values from a fixed list of Strings. The value is returned as
+ * A field that allows you select multiple values from a fixed list of Strings. The value is returned as
  * a bit pattern with its positional values set for the selected items. The first item in the list uses the least significant bit.
  *
  * @author Syam
@@ -20,8 +19,8 @@ public class ChoicesField extends CustomField<Integer> {
     private static final Integer ZERO = 0;
     private HasComponents container;
     private ArrayList<Checkbox> list = new ArrayList<>();
-    private Box box;
     private int mask;
+    private RadioChoiceField fullSelect;
 
     /**
      * Constructor.
@@ -141,25 +140,32 @@ public class ChoicesField extends CustomField<Integer> {
     }
 
     private void createGrid(int columns, HasComponents c) {
+        fullSelect = null;
         if(c != null) {
             container = c;
         } else {
             if (columns > 0) {
                 GridLayout layout = new GridLayout(columns);
                 if (list.size() > 4) {
-                    RadioChoiceField select = new RadioChoiceField(new String[]{"All", "None"});
-                    select.setValue(1);
-                    select.addValueChangeListener(e -> setValue(e.getValue() == 0 ? 0xFFFF : 0));
-                    Box b = new Box(select);
+                    fullSelect = new RadioChoiceField(new String[]{"All", "None"});
+                    fullSelect.setValue(1);
+                    fullSelect.addValueChangeListener(e -> {
+                        if(!isReadOnly()) {
+                            setValue(e.getValue() == 0 ? 0xFFFF : 0);
+                        }
+                    });
+                    Box b = new Box(fullSelect);
                     b.setPadding(0);
-                    layout.add(select);
-                    layout.setColumnSpan(select, columns);
+                    b.setBorderWidth("0px 0px 2px 0px");
+                    layout.add(fullSelect);
+                    layout.setColumnSpan(fullSelect, columns);
+                    layout.justify(fullSelect, GridLayout.Position.CENTER);
                 }
                 container = layout;
             } else {
                 container = new ButtonLayout();
             }
-            box = new Box((Component) container);
+            Box box = new Box((Component) container);
             box.setPadding(0);
         }
         list.forEach(container::add);
@@ -214,6 +220,15 @@ public class ChoicesField extends CustomField<Integer> {
                 }
             }
             i <<= 1;
+        }
+    }
+
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        if(fullSelect != null) {
+            fullSelect.setReadOnly(readOnly);
         }
     }
 }

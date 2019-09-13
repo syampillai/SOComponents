@@ -92,16 +92,42 @@ public class PaintedImage extends Image {
         return type;
     }
 
-    @Override
-    public void setWidth(String width) {
-        super.setWidth(width);
+    /**
+     * Set width of the image.
+     *
+     * @param width Width of the image in pixels
+     */
+    public void setImageWidth(int width) {
+        this.widthInPixels = width;
         redraw();
     }
 
-    @Override
-    public void setHeight(String height) {
-        super.setHeight(height);
+    /**
+     * Get image width.
+     *
+     * @return Width of the image in pixels.
+     */
+    public int getImageWidth() {
+        return widthInPixels;
+    }
+
+    /**
+     * Set height of the image.
+     *
+     * @param height Height of the image in pixels
+     */
+    public void setImageHeight(int height) {
+        this.heightInPixels = height;
         redraw();
+    }
+
+    /**
+     * Get image height.
+     *
+     * @return Height of the image in pixels.
+     */
+    public int getImageHeight() {
+        return heightInPixels;
     }
 
     /**
