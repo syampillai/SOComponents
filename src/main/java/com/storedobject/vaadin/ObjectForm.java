@@ -404,6 +404,7 @@ public class ObjectForm<T> extends Form {
         HasValue<?, ?> field = createField(fieldName, returnType, getLabel(fieldName));
         if(field != null) {
             customizeField(fieldName, field);
+            getFieldCreator().customizeField(fieldName, field);
         }
         return field;
     }

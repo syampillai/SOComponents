@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  *
  * @author Syam
  */
-public abstract class AbstractDataForm extends View {
+public abstract class AbstractDataForm extends View implements HasContainer {
 
     /**
      * For internal use only.
@@ -28,6 +28,7 @@ public abstract class AbstractDataForm extends View {
      */
     protected Form form;
     private FormConstructed formConstructed;
+    private HasContainer fieldContainerProvider;
     private List<String> readOnly = new ArrayList<>(), hidden = new ArrayList<>();
     private List<HasValue<?, ?>> readOnlyFields = new ArrayList<>(), hiddenFields = new ArrayList<>();
 
@@ -89,13 +90,23 @@ public abstract class AbstractDataForm extends View {
     }
 
     /**
-     * Create the field container of this form. This will be invoked only if no container was already set.
-     * Default implementation creates a {@link com.vaadin.flow.component.formlayout.FormLayout}.
+     * Set the field container provider for this form so that {@link #createFieldContainer()}} can provide the component
+     * container from this.
+     *
+     * @param fieldContainerProvider Field container to set
+     */
+    public void setFieldContainerProvider(HasContainer fieldContainerProvider) {
+        this.fieldContainerProvider = fieldContainerProvider;
+    }
+
+    /**
+     * Create the field container of this form. Default implementation creates a container from the field container
+     * provider that was set, otherwise, it creates {@link com.vaadin.flow.component.formlayout.FormLayout}.
      *
      * @return Field container created.
      */
     protected HasComponents createFieldContainer() {
-        return null;
+        return fieldContainerProvider == null ? null : fieldContainerProvider.getContainer();
     }
 
     /**

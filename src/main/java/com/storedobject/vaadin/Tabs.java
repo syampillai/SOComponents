@@ -63,7 +63,7 @@ public class Tabs extends Composite<Div> {
      *
      * @return The embedded tabs component.
      */
-    protected com.vaadin.flow.component.tabs.Tabs getTabs() {
+    public com.vaadin.flow.component.tabs.Tabs getTabs() {
         return tabs;
     }
 

@@ -13,6 +13,7 @@ public class IP6AddressTextField extends PatternField {
 
     public IP6AddressTextField() {
         super(null, 39, pattern);
+        setMinWidth("22em");
     }
 
     @Override

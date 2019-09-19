@@ -914,6 +914,15 @@ public abstract class Application {
         }
     }
 
+    /**
+     * Get the currently active {@link View}.
+     *
+     * @return Currently active View or null if no View is active.
+     */
+    public View getActiveView() {
+        return viewManager.getActiveView();
+    }
+
     public void setPollInterval(int intervalInMillis) {
         setPollInterval(this, intervalInMillis);
     }
@@ -1168,8 +1177,14 @@ public abstract class Application {
                 if(m != null) {
                     m.getElement().setEnabled(true);
                 }
-                select(parent);
+                boolean selected = select(parent);
                 parent.returnedFrom(view);
+                if(!selected) {
+                    parent = getActiveView();
+                    if(parent != null) {
+                        select(parent);
+                    }
+                }
             } else {
                 if(!stack.isEmpty()) {
                     select(stack.get(stack.size() - 1));

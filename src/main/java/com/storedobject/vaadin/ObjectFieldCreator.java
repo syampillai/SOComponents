@@ -85,7 +85,15 @@ public interface ObjectFieldCreator<T> {
             return new DatePicker(label);
         }
         return null;
+    }
 
+    /**
+     * Customize a field. This is invoked after the field is created. The default implementation does nothing.
+     *
+     * @param fieldName Name of the field
+     * @param field Field
+     */
+    default void customizeField(String fieldName, HasValue<?, ?> field) {
     }
 
     /**

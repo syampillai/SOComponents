@@ -24,15 +24,13 @@ public class MiscTest extends View {
         }
         ChoicesField csf;
         FormLayout form = new FormLayout();
+        form.add(new ChoicesField("Choose", new String[] { "One", "Two", "Three", "Four", "Five", "six" }));
         ConfirmButton confirmButton = new ConfirmButton("Delete", e -> Notification.show("Delete confirmed"));
         form.add(confirmButton);
         Badge badge = new Badge("Badge", ThemeStyle.PILL, ThemeStyle.ERROR);
         form.add(badge);
         form.add(new PopupTextField("Pop"));
         form.add(new UploadField("Upload"));
-        NumberField numberField = new NumberField("Number Field");
-        numberField.setRequiredIndicatorVisible(true);
-        form.add(numberField);
         ArrayList<String> list = new ArrayList<String>() {{ add("One"); add("Two"); add("Three"); }};
         RadioField<String> rf = new RadioField<>("Radio", list);
         form.add(rf);

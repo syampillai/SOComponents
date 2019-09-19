@@ -16,7 +16,7 @@ import com.vaadin.flow.server.VaadinSession;
  * @author Syam
  */
 @Tag("pdf-browser-viewer")
-@NpmPackage(value = "@lrnwebcomponents/pdf-browser-viewer", version = "2.1.1")
+@NpmPackage(value = "@lrnwebcomponents/pdf-browser-viewer", version = "2.1.4")
 @JsModule("@lrnwebcomponents/pdf-browser-viewer/pdf-browser-viewer.js")
 public class PDFViewer extends Component implements HasSize {
 
