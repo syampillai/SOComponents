@@ -242,6 +242,7 @@ public class ObjectForm<T> extends Form {
             getMethod = getFieldGetMethod(fieldName);
         }
         if(getMethod == null) {
+            getM.put(fieldName, dummyGET);
             return;
         }
         getM.put(fieldName, getMethod);
@@ -389,6 +390,16 @@ public class ObjectForm<T> extends Form {
         return true;
     }
 
+    private static final Method dummyGET = dummyGET();
+
+    private static Method dummyGET() {
+        try {
+            return Object.class.getMethod("toString");
+        } catch (NoSuchMethodException ignored) {
+        }
+        return null;
+    }
+
     /**
      * Create the field for the particular name.
      * @param fieldName Name of the field
@@ -398,7 +409,9 @@ public class ObjectForm<T> extends Form {
     protected final HasValue<?, ?> createField(String fieldName) {
         Class<?> returnType = null;
         Method m = getM.get(fieldName);
-        if(m != null) {
+        if(m == dummyGET) {
+            getM.remove(fieldName);
+        } else if(m != null) {
             returnType = m.getReturnType();
         }
         HasValue<?, ?> field = createField(fieldName, returnType, getLabel(fieldName));
@@ -410,7 +423,7 @@ public class ObjectForm<T> extends Form {
     }
 
     /**
-     * Get the label for the field. Default implementation try to obatin the value from the "field creator"
+     * Get the label for the field. Default implementation try to obtain the value from the "field creator"
      * ({@link ObjectFieldCreator#getLabel(String)}).
      * @param fieldName Name of the field
      * @return Label
@@ -421,7 +434,7 @@ public class ObjectForm<T> extends Form {
     }
 
     /**
-     * Create the field for the particular name.. Default implementation try to obatin the value from the "field creator"
+     * Create the field for the particular name.. Default implementation try to obtain the value from the "field creator"
      * ({@link ObjectFieldCreator#createField(String, Class, String)}).
      * @param fieldName Name of the field
      * @param fieldType Type of the field's value
