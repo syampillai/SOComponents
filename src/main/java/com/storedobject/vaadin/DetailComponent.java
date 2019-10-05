@@ -19,7 +19,7 @@ import java.util.List;
  * @author Syam (Initial version was written by Anand Jeypal)
  */
 @Tag("div")
-public class DetailComponent extends Composite<Div> {
+public class DetailComponent extends Composite<Div> implements HasSize {
 
     private Div body = new Div();
     private Icon headerIcon;
