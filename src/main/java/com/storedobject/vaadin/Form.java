@@ -577,6 +577,15 @@ public class Form {
     }
 
     /**
+     * Check whether the form is "read only" or not.
+     *
+     * @return True or false.
+     */
+    public boolean isReadOnly() {
+        return data.isReadOnly();
+    }
+
+    /**
      * This method is invoked to determine if a field needs to be made visible or not.
      *
      * @param fieldName Name of the field

@@ -420,6 +420,15 @@ public abstract class AbstractDataForm extends View implements HasContainer {
     }
 
     /**
+     * Check whether the view is "read only" or not.
+     *
+     * @return True or false.
+     */
+    public boolean isReadOnly() {
+        return form.isReadOnly();
+    }
+
+    /**
      * This method is invoked to determine if a field needs to be made visible or not.
      *
      * @param fieldName Name of the field
