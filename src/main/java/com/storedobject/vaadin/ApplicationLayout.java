@@ -54,4 +54,22 @@ public interface ApplicationLayout {
         }
         getContent().getElement().appendChild(c.getElement());
     }
+
+    /**
+     * This method is for toggling the menu display (default implementation does nothing).
+     */
+    default void toggleMenu() {
+    }
+
+    /**
+     * This method is for opening the menu display (default implementation does nothing).
+     */
+    default void openMenu() {
+    }
+
+    /**
+     * This method is for closing the menu display (default implementation does nothing).
+     */
+    default void closeMenu() {
+    }
 }

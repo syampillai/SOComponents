@@ -4,10 +4,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.server.StreamRegistration;
-import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.server.StreamResourceRegistry;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.*;
 
 /**
  * A PDF viewer component that uses browser's native PDF viewer.
@@ -18,10 +15,11 @@ import com.vaadin.flow.server.VaadinSession;
 @Tag("pdf-browser-viewer")
 @NpmPackage(value = "@lrnwebcomponents/pdf-browser-viewer", version = "2.1.4")
 @JsModule("@lrnwebcomponents/pdf-browser-viewer/pdf-browser-viewer.js")
-public class PDFViewer extends Component implements HasSize {
+public class PDFViewer extends Component implements ResourcedComponent, HasSize {
 
-    private StreamRegistration streamRegistration;
-    private StreamResource streamResource;
+    private final ResourceSupport resourceSupport;
+    private static long ID = 0;
+    private long id;
 
     /**
      * Default constructor.
@@ -35,10 +33,12 @@ public class PDFViewer extends Component implements HasSize {
      * @param fileURI URI of the file to view
      */
     public PDFViewer(String fileURI) {
+        resourceSupport = new ResourceSupport(this);
         if(fileURI != null) {
             setURI(fileURI);
         }
         setSizeFull();
+        setID(this);
     }
 
     /**
@@ -46,10 +46,20 @@ public class PDFViewer extends Component implements HasSize {
      * @param streamResource Stream resource
      */
     public PDFViewer(StreamResource streamResource) {
+        resourceSupport = new ResourceSupport(this);
         if(streamResource != null) {
             setSource(streamResource);
         }
         setSizeFull();
+        setID(this);
+    }
+
+    private synchronized static void setID(PDFViewer v) {
+        v.id = ++ID;
+        if(ID == Long.MAX_VALUE) {
+            ID = 0;
+        }
+        v.getElement().setAttribute("id", "sopdf" + v.id);
     }
 
     /**
@@ -57,11 +67,7 @@ public class PDFViewer extends Component implements HasSize {
      * @param fileURL URL of the file to view
      */
     public void setSource(String fileURL) {
-        if (streamRegistration != null) {
-            streamRegistration.unregister();
-            streamRegistration = null;
-        }
-        streamResource = null;
+        resourceSupport.clear();
         setURI(fileURL);
     }
 
@@ -78,45 +84,31 @@ public class PDFViewer extends Component implements HasSize {
      * Set the file to view from a {@link StreamResource}.
      * @param streamResource Stream source
      */
-    public void setSource(StreamResource streamResource) {
-        if(streamResource == null) {
-            setSource((String)null);
-            return;
+    public void setSource(AbstractStreamResource streamResource) {
+        resourceSupport.register(streamResource);
+        String uri = resourceSupport.getURI();
+        if(uri != null) {
+            setURI(uri);
         }
-        if(streamRegistration != null) {
-            streamRegistration.unregister();
-        }
-        this.streamResource = streamResource;
-        streamRegistration = VaadinSession.getCurrent().getResourceRegistry().registerResource(streamResource);
-        setURI(StreamResourceRegistry.getURI(streamResource).toASCIIString());
     }
 
     /**
      * Clear the current content.
      */
     public void clear() {
-        getElement().callJsFunction("clear");
-        if (streamRegistration != null) {
-            streamRegistration.unregister();
-            streamRegistration = null;
-        }
-        streamResource = null;
+        Application.get().getPage().executeJs("document.getElementById('sopdf" + id + "').clear();");
+        resourceSupport.clear();
     }
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        if(streamResource != null && streamRegistration == null) {
-            setSource(streamResource);
-        }
+        resourceSupport.register();
     }
 
     @Override
     protected void onDetach(DetachEvent detachEvent) {
         super.onDetach(detachEvent);
-        if (streamRegistration != null) {
-            streamRegistration.unregister();
-            streamRegistration = null;
-        }
+        resourceSupport.unregister();
     }
 }

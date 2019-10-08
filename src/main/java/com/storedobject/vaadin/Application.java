@@ -101,6 +101,7 @@ public abstract class Application {
     private static final String APP_KEY = "$so-app";
     private AlertCloser alertCloser = new AlertCloser();
     private ApplicationView applicationView;
+    private ApplicationLayout applicationLayout;
     private UI ui;
     private ApplicationEnvironment environment;
     private Map<Object, AlertList> alerts = new HashMap<>();
@@ -131,7 +132,8 @@ public abstract class Application {
         if (link != null && !link.equals("/")) {
             error = "Unknown application '" + (this.link == null ? "" : this.link) + link + "'.\nPlease use the correct link.";
         } else {
-            if(createLayout() == null) {
+            applicationLayout = createLayout();
+            if(applicationLayout == null) {
                 error = "Layout missing";
             }
         }
@@ -817,12 +819,13 @@ public abstract class Application {
         this.applicationView = applicationView;
         if(this.viewManager == null) {
             viewManager = new ViewManager(applicationView);
+            applicationLayout.toggleMenu();
             login();
         }
     }
 
     /**
-     * This method can be overriden to accept login credentials and {@link #loggedin()} must be called if successfully logged in.
+     * This method can be overridden to accept login credentials and {@link #loggedin()} must be called if successfully logged in.
      */
     protected void login() {
         loggedin();
@@ -899,6 +902,7 @@ public abstract class Application {
      */
     protected final void loggedin() {
         viewManager.loggedin(this);
+        applicationLayout.toggleMenu();
     }
 
     /**
@@ -1091,6 +1095,7 @@ public abstract class Application {
         private List<View> stack = new ArrayList<>();
         private Map<View, ApplicationMenuItem> contentMenu = new HashMap<>();
         private Map<View, View> parents = new HashMap<>();
+        private View homeView;
 
         public ViewManager(ApplicationView applicationView) {
             this.applicationView = applicationView;
@@ -1125,6 +1130,9 @@ public abstract class Application {
             if(select(view)) {
                 return;
             }
+            if(view instanceof HomeView && homeView != null && !(view.getComponent() instanceof Dialog)) {
+                homeView.abort();
+            }
             Component c = view.getComponent();
             boolean window = c instanceof Dialog;
             if(window && parent == null && stack.size() > 0) {
@@ -1149,7 +1157,13 @@ public abstract class Application {
             applicationView.layout.addView(view);
             view.setVisible(true);
             ApplicationMenuItem m = view.getMenuItem(() -> select(view));
-            menu.insert(0, m);
+            if(view instanceof HomeView) {
+                if(!(view.getComponent() instanceof Dialog)) {
+                    homeView = view;
+                }
+            } else {
+                menu.insert(0, m);
+            }
             contentMenu.put(view, m);
             hilite(m);
         }
@@ -1163,13 +1177,15 @@ public abstract class Application {
                 return;
             }
             ApplicationMenuItem m = contentMenu.get(view);
-            if(m != null) {
+            if(!(view instanceof HomeView)) {
                 menu.remove(m);
+            }
+            if(view == homeView && !(view.getComponent() instanceof Dialog)) {
+                homeView = null;
             }
             contentMenu.remove(view);
             Element element = view.getComponent().getElement();
             element.removeFromParent();
-            //element.removeFromTree();
             stack.remove(view);
             View parent = parents.remove(view);
             if(parent != null) {

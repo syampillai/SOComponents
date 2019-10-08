@@ -16,10 +16,12 @@ import com.vaadin.flow.templatemodel.TemplateModel;
  * @author Syam
  */
 @Tag("app-frame")
-@NpmPackage(value = "@polymer/app-layout", version = "3.0.2")
+@NpmPackage(value = "@polymer/app-layout", version = "3.1.0")
 @JsModule("./so/app-frame/app-frame.js")
 public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.ApplicationFrameModel> implements ApplicationLayout, ComponentSlot {
 
+    private static long ID = 0;
+    private final long id;
     private Content content = new Content();
     private Menu menu = new Menu();
 
@@ -42,6 +44,8 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
         add(content, "content");
         int trimHeight = getMenuSearcher() == null ? 90 : 110;
         menu.getElement().setAttribute("style", "height: calc(100vh - " + trimHeight + "px); overflow: auto;");
+        id = newID();
+        getElement().setAttribute("id", "appframe" + id);
     }
 
     /**
@@ -92,19 +96,40 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
         }
     }
 
+    @Override
+    public void openMenu() {
+        js("doOpen");
+    }
+
+    @Override
+    public void closeMenu() {
+        js("doClose");
+    }
+
+    @Override
+    public void toggleMenu() {
+        js("doToggle");
+    }
+
+    private void js(String js) {
+        Application.get().getPage().executeJs("document.getElementById('appframe" + id + "')." + js + "();");
+    }
+
+    private synchronized static long newID() {
+        long id = ++ID;
+        if(ID == Long.MAX_VALUE) {
+            ID = 0;
+        }
+        return id;
+    }
+
     @Tag("div")
     private static class Menu extends Component implements ApplicationMenu, HasSize {
 
-        private static long ID = 0;
-        private long id;
+        private final long id;
 
         public Menu() {
-            synchronized (Menu.class) {
-                id = ++ID;
-                if(ID == Long.MAX_VALUE) {
-                    ID = 0;
-                }
-            }
+            id = newID();
             getElement().setAttribute("id", "appmenu" + id);
         }
 

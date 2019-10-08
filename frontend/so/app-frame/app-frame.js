@@ -57,7 +57,16 @@ class AppFrame extends PolymerElement {
         } else {
             this.$.drawerLayout.drawer.toggle();
         }
-        document.body.$server.resized();
+    }
+
+    doOpen() {
+        if(!this.$.drawerLayout.narrow) {
+            this.$.drawerLayout.drawer.open();
+        }
+    }
+
+    doClose() {
+        this.$.drawerLayout.drawer.close();
     }
 }
 

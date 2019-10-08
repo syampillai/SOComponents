@@ -24,7 +24,7 @@ public class DetailComponent extends Composite<Div> implements HasSize {
     private Div body = new Div();
     private Icon headerIcon;
     private Clickable<Component> header;
-    private Div contentLayout = new Div();
+    private ContentSection contentLayout = new ContentSection();
     private ClickHandler clickHandler = (ClickHandler) c -> toggle(true);
     private List<ToggleListener> listeners;
 
@@ -32,7 +32,7 @@ public class DetailComponent extends Composite<Div> implements HasSize {
      * Constructor with blank header.
      */
     public DetailComponent() {
-        this("", null);
+        this("", (Component[]) null);
     }
 
     /**
@@ -41,7 +41,7 @@ public class DetailComponent extends Composite<Div> implements HasSize {
      * @param header Header text
      * @param content Content
      */
-    public DetailComponent(String header, Component content) {
+    public DetailComponent(String header, Component... content) {
         this(header, null, content);
     }
 
@@ -51,11 +51,11 @@ public class DetailComponent extends Composite<Div> implements HasSize {
      * @param header Header component
      * @param content Content
      */
-    public DetailComponent(Component header, Component content) {
+    public DetailComponent(Component header, Component... content) {
         this(null, header, content);
     }
 
-    private DetailComponent(String headerText, Component header, Component content) {
+    private DetailComponent(String headerText, Component header, Component... content) {
         contentLayout.setVisible(false);
         if(headerText != null) {
             header = constructHeader(headerText);
@@ -108,22 +108,28 @@ public class DetailComponent extends Composite<Div> implements HasSize {
     }
 
     /**
-     * Add a component to the content section.
+     * Add components to the content section.
      *
-     * @param component the component to add
+     * @param components Component to add
      */
-    public void addContent(Component component) {
-        this.contentLayout.add(component);
+    public void addContent(Component... components) {
+        this.contentLayout.add(components);
     }
 
     /**
-     * Set a component to the content section.
+     * Set components to the content section.
      *
-     * @param component the component to set
+     * @param components Components to set
      */
-    public void setContent(Component component) {
+    public void setContent(Component... components) {
+        this.contentLayout.setContent(components);
+    }
+
+    /**
+     * Clear the content section.
+     */
+    public void clearContent() {
         this.contentLayout.removeAll();
-        this.contentLayout.add(component);
     }
 
     private Component constructHeader(String header) {
@@ -137,6 +143,7 @@ public class DetailComponent extends Composite<Div> implements HasSize {
         headerIcon = new Icon(contentLayout.isVisible() ? VaadinIcon.CHEVRON_CIRCLE_RIGHT : VaadinIcon.CHEVRON_CIRCLE_DOWN);
         summaryLayout.add(titleText, headerIcon);
         Box box = new Box(summaryLayout);
+        box.alignSizing();
         box.setStyle("cursor", "pointer");
         return summaryLayout;
     }
@@ -168,9 +175,6 @@ public class DetailComponent extends Composite<Div> implements HasSize {
 
     private void toggle(boolean fromClient) {
         contentLayout.setVisible(!contentLayout.isVisible());
-        if(headerIcon != null) {
-            headerIcon.setIcon(contentLayout.isVisible() ? VaadinIcon.CHEVRON_CIRCLE_RIGHT : VaadinIcon.CHEVRON_CIRCLE_DOWN);
-        }
         if(listeners != null) {
             ToggledEvent event = new ToggledEvent(this, fromClient, contentLayout.isVisible());
             listeners.forEach(listener -> listener.toggled(event));
@@ -242,6 +246,74 @@ public class DetailComponent extends Composite<Div> implements HasSize {
          */
         public boolean isCollapsed() {
             return !expanded;
+        }
+    }
+
+    private class ContentSection extends Div {
+
+        private int componentCount = 0;
+
+        @Override
+        public void setVisible(boolean visible) {
+            if(visible) {
+                if(componentCount == 0) {
+                    visible = false;
+                }
+            }
+            super.setVisible(visible);
+            updateIcon();
+        }
+
+        @Override
+        public void add(Component... components) {
+            super.add(components);
+            updateComponentCount();
+        }
+
+        @Override
+        public void add(String text) {
+            super.add(text);
+            updateComponentCount();
+        }
+
+        @Override
+        public void addComponentAsFirst(Component component) {
+            super.addComponentAsFirst(component);
+            updateComponentCount();
+        }
+
+        @Override
+        public void addComponentAtIndex(int index, Component component) {
+            super.addComponentAtIndex(index, component);
+            updateComponentCount();
+        }
+
+        @Override
+        public void remove(Component... components) {
+            super.remove(components);
+            updateComponentCount();
+        }
+
+        @Override
+        public void removeAll() {
+            super.removeAll();
+            updateComponentCount();
+        }
+
+        private void setContent(Component... components) {
+            super.removeAll();
+            add(components);
+        }
+
+        private void updateComponentCount() {
+            componentCount = (int)getChildren().count();
+            setVisible(isVisible());
+        }
+
+        private void updateIcon() {
+            if(headerIcon != null) {
+                headerIcon.setIcon(isVisible() ? VaadinIcon.CHEVRON_CIRCLE_RIGHT : (componentCount == 0 ? VaadinIcon.MINUS_CIRCLE : VaadinIcon.CHEVRON_CIRCLE_DOWN));
+            }
         }
     }
 }
