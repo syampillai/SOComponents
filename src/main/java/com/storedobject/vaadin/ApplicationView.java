@@ -90,7 +90,11 @@ public abstract class ApplicationView extends Composite<Component> {
 
     @ClientCallable
     final void deviceSize(int width, int height) {
-        application.deviceSize(width, height);
+        if(application == null) {
+            receiveSize();
+        } else {
+            application.deviceSize(width, height);
+        }
     }
 
     final void receiveSize() {

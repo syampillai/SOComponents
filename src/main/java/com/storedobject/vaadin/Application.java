@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.GeneratedVaadinNotification;
@@ -205,7 +206,7 @@ public abstract class Application {
 
     /**
      * Invoked whenever this application is detached from its UI (it may get attached again to another UI if the user just refreshed
-     * the browser). The default implementation closes the appliacation ({@link #close()}) after 20 seconds.
+     * the browser). The default implementation closes the application ({@link #close()}) after 20 seconds.
      */
     public void deatached() {
         this.ui = null;
@@ -824,6 +825,13 @@ public abstract class Application {
         }
     }
 
+    public void setCaption(String caption) {
+        if(applicationLayout != null) {
+            applicationLayout.setCaption(caption);
+        }
+        getPage().setTitle(caption);
+    }
+
     /**
      * This method can be overridden to accept login credentials and {@link #loggedin()} must be called if successfully logged in.
      */
@@ -903,6 +911,10 @@ public abstract class Application {
     protected final void loggedin() {
         viewManager.loggedin(this);
         applicationLayout.toggleMenu();
+        Component menuSearcher = applicationLayout.getMenuSearcher();
+        if(menuSearcher instanceof Focusable) {
+            ((Focusable) menuSearcher).focus();
+        }
     }
 
     /**
@@ -1177,6 +1189,9 @@ public abstract class Application {
                 return;
             }
             ApplicationMenuItem m = contentMenu.get(view);
+            if(m == null) {
+                return;
+            }
             if(!(view instanceof HomeView)) {
                 menu.remove(m);
             }

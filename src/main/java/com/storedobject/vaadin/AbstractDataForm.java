@@ -693,13 +693,22 @@ public abstract class AbstractDataForm extends View implements HasContainer {
     }
 
     /**
-     * Error messages of the form are typcially displayed using {@link com.vaadin.flow.component.notification.Notification}. However,
+     * Error messages of the form are typically displayed using {@link com.vaadin.flow.component.notification.Notification}. However,
      * one can set any {@link HasText} for that.
      *
      * @param display Error messages will be displayed on this
      */
     public void setErrorDisplay(HasText display) {
         form.setErrorDisplay(display);
+    }
+
+    /**
+     * Get the current error display of the form. (See {@link #setErrorDisplay(HasText)}).
+     *
+     * @return Current error display.
+     */
+    public HasText getErrorDisplay() {
+        return form.getErrorDisplay();
     }
 
     /**

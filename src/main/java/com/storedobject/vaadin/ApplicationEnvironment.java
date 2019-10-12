@@ -112,6 +112,7 @@ public interface ApplicationEnvironment {
                 return "check";
             case "cancel":
             case "no":
+            case "clear":
                 return "close";
         }
         return label;

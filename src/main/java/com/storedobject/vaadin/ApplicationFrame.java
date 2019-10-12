@@ -53,17 +53,9 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
      *
      * @param caption Caption
      */
+    @Override
     public void setCaption(String caption) {
-        add(new Span(caption), "caption");
-    }
-
-    /**
-     * Get the "menu searcher" component.
-     *
-     * @return Default implementation returns <code>null</code>.
-     */
-    public Component getMenuSearcher() {
-        return null;
+        set(new Span(caption), "caption");
     }
 
     @Override

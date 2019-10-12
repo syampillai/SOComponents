@@ -12,32 +12,55 @@ import com.vaadin.flow.component.dialog.Dialog;
 public interface ApplicationLayout {
 
     /**
+     * Set the caption of the application.
+     *
+     * @param caption Caption
+     */
+    default void setCaption(String caption) {
+    }
+
+    /**
      * The component of the "layout".
+     *
      * @return The main layout component.
      */
     Component getComponent();
 
     /**
      * The "content" portion of the "layout".
+     *
      * @return The content portion.
      */
     Component getContent();
 
     /**
      * The "menu" of the layout.
+     *
      * @return Menu of the layout.
      */
     ApplicationMenu getMenu();
 
     /**
      * This method should draw the "menu". It will be invoked when the application comes up.
+     *
      * @param application Application
      */
     void drawMenu(Application application);
 
     /**
+     * Get the "menu searcher" component.
+     *
+     * @return Default implementation returns <code>null</code>.
+     */
+    default Component getMenuSearcher() {
+        return null;
+    }
+
+
+    /**
      * This method is invoked when user authentication completed. Typically, its used to display the user names
      * and other details in some part of the screen.
+     *
      * @param application Application.
      */
     default void loggedin(@SuppressWarnings("unused") Application application) {
@@ -45,6 +68,7 @@ public interface ApplicationLayout {
 
     /**
      * Add a "view" to the application. The default implementation adds the view's component to the "content" area.
+     *
      * @param view View to be added.
      */
     default void addView(View view) {

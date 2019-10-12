@@ -567,6 +567,16 @@ public class Form {
         data.setErrorDisplay(display);
     }
 
+
+    /**
+     * Get the current error display of the form. (See {@link #setErrorDisplay(HasText)}).
+     *
+     * @return Current error display.
+     */
+    public HasText getErrorDisplay() {
+        return data.getErrorDisplay();
+    }
+
     /**
      * Set the form read only.
      *
