@@ -33,6 +33,9 @@ public class Form {
     private boolean loadPending = false;
     private View view;
     private int columns = 2;
+    /**
+     * This will be used to check whether a field needs to be included or not.
+     */
     IncludeField includeField = name -> true;
 
     /**
@@ -87,13 +90,15 @@ public class Form {
      * @return Field container created.
      */
     protected HasComponents createContainer() {
-        return createDefaultContainer();
+        HasComponents c = view instanceof AbstractDataForm ? ((AbstractDataForm)view).createFieldContainer() : null;
+        return c == null ? createDefaultContainer() : c;
     }
 
     /**
      * For internal use only.
      */
-    protected void generateFieldNames() {}
+    protected void generateFieldNames() {
+    }
 
     /**
      * Get the field container of the form.
@@ -111,7 +116,7 @@ public class Form {
             if (fieldNames != null) {
                 fieldNames.forEach(n -> {
                     if(includeField.includeField(n)) {
-                        HasValue<?, ?> field = createField(n);
+                        HasValue<?, ?> field = createFieldInt(n, getLabel(n));
                         if (n != null) {
                             addField(n, field);
                         }
@@ -127,10 +132,24 @@ public class Form {
         return container;
     }
 
+    private HasValue<?, ?> createFieldInt(String fieldName, String label) {
+        HasValue<?, ?> field = createField(fieldName, label);
+        if(field == null) {
+            field = createField(fieldName);
+            if(field != null && label != null) {
+                setFieldLabel(fieldName, label);
+            }
+        }
+        return field;
+    }
+
     /**
      * This method is invoked when the "fields" are created and the form is ready to display.
      */
     protected void constructed() {
+        if(view instanceof AbstractDataForm) {
+            ((AbstractDataForm) view).formConstructed();
+        }
     }
 
     private void addFieldInt(String fieldName, HasValue<?, ?> field) {
@@ -157,7 +176,7 @@ public class Form {
      * @return Stream of fields.
      */
     protected Stream<String> getFieldNames() {
-        return null;
+        return view instanceof AbstractDataForm ? ((AbstractDataForm) view).getFieldNames() : null;
     }
 
     /**
@@ -167,7 +186,18 @@ public class Form {
      * @return Field created.
      */
     protected HasValue<?, ?> createField(String fieldName) {
-        return null;
+        return view instanceof AbstractDataForm ? ((AbstractDataForm) view).createField(fieldName) : null;
+    }
+
+    /**
+     * Create the field for a particular "field name".
+     *
+     * @param fieldName Field name
+     * @param label Label for the field
+     * @return Field created.
+     */
+    protected HasValue<?, ?> createField(String fieldName, String label) {
+        return view instanceof AbstractDataForm ? ((AbstractDataForm) view).createField(fieldName, label) : null;
     }
 
     /**
@@ -225,6 +255,9 @@ public class Form {
     private void attachF(String fieldName, HasValue<?, ?> field) {
         if(fieldName != null && field != null) {
             attachField(fieldName, field);
+            if(field instanceof ViewDependent && view != null) {
+                ((ViewDependent) field).setDependentView(view);
+            }
         }
     }
 
@@ -242,6 +275,13 @@ public class Form {
      * @param field Field
      */
     protected void attachField(String fieldName, HasValue<?, ?> field) {
+        if(view instanceof AbstractDataForm) {
+            try {
+                ((AbstractDataForm) view).attachField(fieldName, field);
+                return;
+            } catch (AbstractDataForm.FieldError ignored) {
+            }
+        }
         if(field instanceof Component) {
             getContainer().add((Component)field);
         }
@@ -255,6 +295,13 @@ public class Form {
      * @param field Field
      */
     protected void detachField(String fieldName, HasValue<?, ?> field) {
+        if(view instanceof AbstractDataForm) {
+            try {
+                ((AbstractDataForm) view).detachField(fieldName, field);
+                return;
+            } catch (AbstractDataForm.FieldError ignored) {
+            }
+        }
         if(field instanceof Component) {
             getContainer().remove((Component)field);
         }
@@ -602,6 +649,9 @@ public class Form {
      * @return True or false.
      */
     public boolean isFieldVisible(String fieldName) {
+        if(view instanceof AbstractDataForm) {
+            return ((AbstractDataForm) view).isFieldVisible(fieldName);
+        }
         return true;
     }
 
@@ -612,6 +662,9 @@ public class Form {
      * @return True or false.
      */
     public boolean isFieldVisible(HasValue<?, ?> field) {
+        if(view instanceof AbstractDataForm) {
+            return ((AbstractDataForm) view).isFieldVisible(field);
+        }
         return true;
     }
 
@@ -622,6 +675,9 @@ public class Form {
      * @return True or false.
      */
     public boolean isFieldEditable(String fieldName) {
+        if(view instanceof AbstractDataForm) {
+            return ((AbstractDataForm) view).isFieldEditable(fieldName);
+        }
         return true;
     }
 
@@ -632,6 +688,9 @@ public class Form {
      * @return True or false.
      */
     public boolean isFieldEditable(HasValue<?, ?> field) {
+        if(view instanceof AbstractDataForm) {
+            return ((AbstractDataForm) view).isFieldEditable(field);
+        }
         return true;
     }
 
@@ -643,6 +702,12 @@ public class Form {
      * @return Label
      */
     public String getLabel(String fieldName) {
+        if(view instanceof AbstractDataForm) {
+            try {
+                return ((AbstractDataForm) view).getLabel(fieldName);
+            } catch (AbstractDataForm.FieldError ignored) {
+            }
+        }
         return Objects.requireNonNull(ApplicationEnvironment.get()).createLabel(fieldName);
     }
 

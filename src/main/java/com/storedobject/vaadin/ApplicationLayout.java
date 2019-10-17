@@ -96,4 +96,12 @@ public interface ApplicationLayout {
      */
     default void closeMenu() {
     }
+
+    /**
+     * Speak out the given sentence.
+     *
+     * @param sentence Text to be spoken out.
+     */
+    default void speak(String sentence) {
+    }
 }

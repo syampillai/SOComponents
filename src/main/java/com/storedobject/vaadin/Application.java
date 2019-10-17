@@ -13,6 +13,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.shared.Registration;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -114,6 +115,11 @@ public abstract class Application {
     private final ArrayList<Command> commands = new ArrayList<>();
     private transient boolean closed = false;
     String error;
+    private boolean speaker = false;
+    interface SpeakerToggledListner {
+        void speaker(boolean on);
+    }
+    private Set<SpeakerToggledListner> speakerToggledListeners;
 
     /**
      * This method is invoked as documented in Vaadin Flow's documentation for UI's init(VaadinRequest) method.
@@ -825,11 +831,69 @@ public abstract class Application {
         }
     }
 
+    /**
+     * Set caption for the application (It will set the caption for the {@link ApplicationLayout} and the {@link Page}).
+     *
+     * @param caption Caption to be set
+     */
     public void setCaption(String caption) {
         if(applicationLayout != null) {
             applicationLayout.setCaption(caption);
         }
         getPage().setTitle(caption);
+    }
+
+    /**
+     * Speak out the given sentence if the {@link ApplicationLayout} is supporting it (The default layout
+     * {@link ApplicationFrame} supports it). Please note that the speaker
+     * must have been switched on before calling this (See {@link SpeakerButton}).
+     *
+     * @param sentence Sentence to speak out.
+     */
+    public void speak(String sentence) {
+        if(sentence != null && speaker && applicationLayout != null) {
+            sentence = sentence.trim();
+            if(sentence.isEmpty()) {
+                return;
+            }
+            sentence = sentence.replaceAll("\\s+", " ");
+            while (sentence.contains("  ")) {
+                sentence = sentence.replace("  ", " ");
+            }
+            applicationLayout.speak(sentence);
+        }
+    }
+
+    /**
+     * Internally used by {@link SpeakerButton} to switch the speaker on or off.
+     *
+     * @param on True to switch on the speaker
+     */
+    synchronized void setSpeaker(boolean on) {
+        this.speaker = on;
+        if(speakerToggledListeners != null) {
+            speakerToggledListeners.forEach(listener -> listener.speaker(this.speaker));
+        }
+    }
+
+    /**
+     * Internally used by {@link SpeakerButton} to check the status of the speaker.
+     *
+     * @return True if the speaker is on.
+     */
+    public boolean isSpeakerOn() {
+        return speaker;
+    }
+
+    Registration addSpeakerToggedListener(SpeakerToggledListner listener) {
+        if(listener == null) {
+            return null;
+        }
+        if(speakerToggledListeners == null) {
+            speakerToggledListeners = new HashSet<>();
+        }
+        speakerToggledListeners.add(listener);
+        return () -> speakerToggledListeners.remove(listener);
     }
 
     /**

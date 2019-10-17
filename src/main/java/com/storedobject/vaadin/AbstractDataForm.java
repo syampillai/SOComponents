@@ -22,12 +22,13 @@ public abstract class AbstractDataForm extends View implements HasContainer {
     /**
      * For internal use only.
      */
-    protected static final FieldError FIELD_ERROR = new FieldError();
+    static final FieldError FIELD_ERROR = new FieldError();
     /**
      * Form embedded in this view.
      */
     protected Form form;
     private FormConstructed formConstructed;
+    private boolean formCreated = false;
     private HasContainer fieldContainerProvider;
     private List<String> readOnly = new ArrayList<>(), hidden = new ArrayList<>();
     private List<HasValue<?, ?>> readOnlyFields = new ArrayList<>(), hiddenFields = new ArrayList<>();
@@ -45,18 +46,25 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * This method is invoked when the form is constructed. The default implementation invokes {@link FormConstructed} action if set.
      */
     protected void formConstructed() {
+        formCreated = true;
         if(formConstructed != null) {
             formConstructed.formConstructed();
         }
     }
 
     /**
-     * Set the action to be carried out when form is constructed.
+     * Set the action to be carried out when the form is constructed.
      *
      * @param formConstructed Action to be set
      * @see #formConstructed()
      */
     public void setFormConstructedAction(FormConstructed formConstructed) {
+        if(formCreated) {
+            if(formConstructed != null) {
+                formConstructed.formConstructed();
+            }
+            return;
+        }
         this.formConstructed = formConstructed;
     }
 
@@ -162,6 +170,17 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * @return Field created.
      */
     protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName) {
+        return null;
+    }
+
+    /**
+     * Create the field for a particular "field name".
+     *
+     * @param fieldName Field name
+     * @param label Label for the field
+     * @return Field created.
+     */
+    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, String label) {
         return null;
     }
 
@@ -495,6 +514,9 @@ public abstract class AbstractDataForm extends View implements HasContainer {
             hidden.add(fieldName);
             field = form.getField(fieldName);
             if(field != null) {
+                if(field instanceof  Component) {
+                    ((Component) field).setVisible(false);
+                }
                 hiddenFields.add(field);
             }
         }
@@ -511,8 +533,11 @@ public abstract class AbstractDataForm extends View implements HasContainer {
         }
         String fieldName;
         for(HasValue<?, ?> field: fields) {
-            if(field == null || field.isEmpty()) {
+            if(field == null) {
                 continue;
+            }
+            if(field instanceof  Component) {
+                ((Component) field).setVisible(false);
             }
             fieldName = form.getFieldName(field);
             if(fieldName != null) {
@@ -589,6 +614,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
             readOnly.add(fieldName);
             field = form.getField(fieldName);
             if(field != null) {
+                field.setReadOnly(true);
                 readOnlyFields.add(field);
             }
         }
@@ -605,9 +631,10 @@ public abstract class AbstractDataForm extends View implements HasContainer {
         }
         String fieldName;
         for(HasValue<?, ?> field: fields) {
-            if(field == null || field.isEmpty()) {
+            if(field == null) {
                 continue;
             }
+            field.setReadOnly(true);
             fieldName = form.getFieldName(field);
             if(fieldName != null) {
                 readOnly.add(fieldName);
@@ -675,8 +702,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * @param fieldName Name of the field
      * @param field Field
      */
-    protected void attachField(@SuppressWarnings("unused") String fieldName,
-                               @SuppressWarnings("unused") HasValue<?, ?> field) {
+    protected void attachField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") HasValue<?, ?> field) {
         throw FIELD_ERROR;
     }
 
@@ -687,8 +713,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * @param fieldName Name of the field
      * @param field Field
      */
-    protected void detachField(@SuppressWarnings("unused") String fieldName,
-                               @SuppressWarnings("unused") HasValue<?, ?> field) {
+    protected void detachField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") HasValue<?, ?> field) {
         throw FIELD_ERROR;
     }
 

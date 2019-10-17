@@ -1,10 +1,14 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.storedobject.vaadin.util.ID;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.server.*;
+import com.vaadin.flow.server.AbstractStreamResource;
+import com.vaadin.flow.server.StreamResource;
 
 /**
  * A PDF viewer component that uses browser's native PDF viewer.
@@ -18,8 +22,6 @@ import com.vaadin.flow.server.*;
 public class PDFViewer extends Component implements ResourcedComponent, HasSize {
 
     private final ResourceSupport resourceSupport;
-    private static long ID = 0;
-    private long id;
 
     /**
      * Default constructor.
@@ -55,11 +57,7 @@ public class PDFViewer extends Component implements ResourcedComponent, HasSize 
     }
 
     private synchronized static void setID(PDFViewer v) {
-        v.id = ++ID;
-        if(ID == Long.MAX_VALUE) {
-            ID = 0;
-        }
-        v.getElement().setAttribute("id", "sopdf" + v.id);
+        v.setId("sopdf" + ID.newID());
     }
 
     /**
@@ -96,7 +94,7 @@ public class PDFViewer extends Component implements ResourcedComponent, HasSize 
      * Clear the current content.
      */
     public void clear() {
-        Application.get().getPage().executeJs("document.getElementById('sopdf" + id + "').clear();");
+        Application.get().getPage().executeJs("document.getElementById('" + getId().orElse(null) + "').clear();");
         resourceSupport.clear();
     }
 

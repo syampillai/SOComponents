@@ -35,6 +35,7 @@ class AppFrame extends PolymerElement {
                     <app-toolbar>
                         <paper-icon-button tabindex="-1", on-click="doToggle" icon="menu"></paper-icon-button>
                         <div main-title><slot name="caption"></slot></div>
+                        <slot name="speaker"></slot>
                         <slot name="alert"></slot>
                         <slot name="user"></slot>
                         <slot name="logout"></slot>
@@ -67,6 +68,10 @@ class AppFrame extends PolymerElement {
 
     doClose() {
         this.$.drawerLayout.drawer.close();
+    }
+
+    speak(sentence) {
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(sentence));
     }
 }
 

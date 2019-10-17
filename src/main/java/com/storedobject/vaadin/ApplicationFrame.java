@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.ID;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.Tag;
@@ -7,6 +8,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.polymertemplate.Id;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.templatemodel.TemplateModel;
 
@@ -20,8 +22,6 @@ import com.vaadin.flow.templatemodel.TemplateModel;
 @JsModule("./so/app-frame/app-frame.js")
 public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.ApplicationFrameModel> implements ApplicationLayout, ComponentSlot {
 
-    private static long ID = 0;
-    private final long id;
     private Content content = new Content();
     private Menu menu = new Menu();
 
@@ -44,8 +44,7 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
         add(content, "content");
         int trimHeight = getMenuSearcher() == null ? 90 : 110;
         menu.getElement().setAttribute("style", "height: calc(100vh - " + trimHeight + "px); overflow: auto;");
-        id = newID();
-        getElement().setAttribute("id", "appframe" + id);
+        setId("appframe" + ID.newID());
     }
 
     /**
@@ -90,39 +89,36 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
 
     @Override
     public void openMenu() {
-        js("doOpen");
+        js("doOpen()");
     }
 
     @Override
     public void closeMenu() {
-        js("doClose");
+        js("doClose()");
     }
 
     @Override
     public void toggleMenu() {
-        js("doToggle");
+        js("doToggle()");
+    }
+
+    @Override
+    public void speak(String sentence) {
+        if(sentence.indexOf('"') >= 0) {
+            sentence = sentence.replace("\"", "");
+        }
+        js("speak(\"" + sentence + "\")");
     }
 
     private void js(String js) {
-        Application.get().getPage().executeJs("document.getElementById('appframe" + id + "')." + js + "();");
-    }
-
-    private synchronized static long newID() {
-        long id = ++ID;
-        if(ID == Long.MAX_VALUE) {
-            ID = 0;
-        }
-        return id;
+        Application.get().getPage().executeJs("document.getElementById('" + getId().orElse(null) + "')." + js + ";");
     }
 
     @Tag("div")
     private static class Menu extends Component implements ApplicationMenu, HasSize {
 
-        private final long id;
-
         public Menu() {
-            id = newID();
-            getElement().setAttribute("id", "appmenu" + id);
+            setId("appmenu" + ID.newID());
         }
 
         @Override
@@ -138,7 +134,7 @@ public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.
         }
 
         private void top() {
-            Application.get().getPage().executeJs("document.getElementById('appmenu" + id + "').scrollTop=0;");
+            Application.get().getPage().executeJs("document.getElementById('" + getId().orElse(null) + "').scrollTop=0;");
         }
     }
 }

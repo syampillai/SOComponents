@@ -6,7 +6,8 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.shared.Registration;
 
 /**
- * A wrapped class to make any Vaadin component "clickable".
+ * A wrapped class to make any Vaadin component "clickable". The registered {@link ClickHandler} will receive
+ * {@link EnhancedClickEvent}s.
  * <p>Example: Component c; new Clickable(c);</p>
  *
  * @param <T> Component type

@@ -265,4 +265,18 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     default boolean isCloseable() {
         return this instanceof CloseableView;
     }
+
+    /**
+     * Speak out the given sentence if the {@link ApplicationLayout} is supporting it (The default layout
+     * {@link ApplicationFrame} supports it). Please note that the speaker
+     * must have been switched on before calling this (See {@link SpeakerButton}).
+     *
+     * @param sentence Sentence to speak out.
+     */
+    default void speak(String sentence) {
+        Application a = getApplication();
+        if(a != null) {
+            a.speak(sentence);
+        }
+    }
 }

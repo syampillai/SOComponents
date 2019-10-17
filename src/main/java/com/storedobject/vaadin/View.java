@@ -7,9 +7,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * View represents an independent piece of information (typically a "data entry form" or some information dashboard) to be displayed
@@ -21,6 +19,8 @@ import java.util.Optional;
  */
 public class View implements ExecutableView {
 
+    private Set<ViewClosedListener> closedListeners;
+    private Set<ViewOpenedListener> openedListeners;
     private Component component;
     private String caption;
     private boolean aborted = false;
@@ -493,6 +493,9 @@ public class View implements ExecutableView {
         this.parent = parent;
         aborted = false;
         getApplication().execute(this, doNotLock, parent);
+        if(openedListeners != null) {
+            openedListeners.forEach(listener -> listener.viewOpened(this));
+        }
     }
 
     /**
@@ -575,5 +578,42 @@ public class View implements ExecutableView {
         }
         doFocus = true;
         clean();
+        if(closedListeners != null) {
+            closedListeners.forEach(listener -> listener.viewClosed(this));
+        }
+    }
+
+    /**
+     * Add a "view opened listener". The {@link ViewOpenedListener#viewOpened(View)} will be invoked whenever this view is executed.
+     *
+     * @param listener View opened listener
+     * @return Registration that can be used for removing the listener.
+     */
+    public Registration addOpenedListener(ViewOpenedListener listener) {
+        if(listener == null) {
+            return null;
+        }
+        if(openedListeners == null) {
+            openedListeners = new HashSet<>();
+        }
+        openedListeners.add(listener);
+        return () -> openedListeners.remove(listener);
+    }
+
+    /**
+     * Add a "view closed listener". The {@link ViewClosedListener#viewClosed(View)} will be invoked whenever this view is closed/aborted.
+     *
+     * @param listener View closed listener
+     * @return Registration that can be used for removing the listener.
+     */
+    public Registration addClosedListener(ViewClosedListener listener) {
+        if(listener == null) {
+            return null;
+        }
+        if(closedListeners == null) {
+            closedListeners = new HashSet<>();
+        }
+        closedListeners.add(listener);
+        return () -> closedListeners.remove(listener);
     }
 }

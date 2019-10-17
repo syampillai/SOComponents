@@ -78,6 +78,7 @@ public class ObjectForm<T> extends Form {
             fCreator.close();
             fCreator = null;
         }
+        super.constructed();
     }
 
     /**
@@ -134,7 +135,7 @@ public class ObjectForm<T> extends Form {
         BiConsumer<T, ?> valueSetter;
         Method valueGetterM, valueSetterM;
         for(String fieldName: fieldNames) {
-            if(!includeField.includeField(fieldName)) {
+            if(!includeF(fieldName)) {
                 continue;
             }
             valueGetterM = getGetMethodFromHost(fieldName);
@@ -181,7 +182,7 @@ public class ObjectForm<T> extends Form {
      * @param valueSetter Function that determines how to commit value from the field to the obejct's instance
      */
     protected void addField(String fieldName, Function<T, ?> valueGetter, BiConsumer<T, ?> valueSetter) {
-        if(!includeField.includeField(fieldName)) {
+        if(!includeF(fieldName)) {
             return;
         }
         if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
@@ -232,7 +233,7 @@ public class ObjectForm<T> extends Form {
      * @param setMethod Method that determines how to commit the value from the field to the obejct's instance
      */
     protected void addField(String fieldName, Method getMethod, Method setMethod) {
-        if(!includeField.includeField(fieldName)) {
+        if(!includeF(fieldName)) {
             return;
         }
         if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
@@ -345,14 +346,14 @@ public class ObjectForm<T> extends Form {
     protected void generateFieldNames() {
         getFieldGetMethods().forEach(m -> {
             String name = getFieldCreator().getFieldName(m);
-            if(name != null && includeField.includeField(name) && includeField(name)) {
+            if(name != null && includeF(name)) {
                 Method hm = getGetMethodFromHost(name);
                 addField(name, hm == null ? m : hm, null);
             }
         });
         Stream<String> additionalNames = getFieldCreator().getFieldNames();
         if(additionalNames != null) {
-            additionalNames.filter(Objects::nonNull).filter(this::includeField).forEach(this::addField);
+            additionalNames.filter(Objects::nonNull).filter(this::includeF).forEach(this::addField);
         }
     }
 
@@ -367,7 +368,7 @@ public class ObjectForm<T> extends Form {
      */
     protected final Stream<String> getFieldNames() {
         return Stream.concat(getM.keySet().stream(), getF.keySet().stream()).filter(n -> n != null && !n.isEmpty()).
-                filter(this::includeField).sorted(Comparator.comparingInt(this::getFieldOrder));
+                filter(this::includeF).sorted(Comparator.comparingInt(this::getFieldOrder));
     }
 
     /**
@@ -390,6 +391,10 @@ public class ObjectForm<T> extends Form {
         return true;
     }
 
+    private boolean includeF(String fieldName) {
+        return includeField.includeField(fieldName) && includeField(fieldName);
+    }
+
     private static final Method dummyGET = dummyGET();
 
     private static Method dummyGET() {
@@ -407,6 +412,10 @@ public class ObjectForm<T> extends Form {
      */
     @Override
     protected final HasValue<?, ?> createField(String fieldName) {
+        HasValue<?, ?> field = super.createField(fieldName);
+        if(field != null) {
+            return field;
+        }
         Class<?> returnType = null;
         Method m = getM.get(fieldName);
         if(m == dummyGET) {
@@ -414,7 +423,7 @@ public class ObjectForm<T> extends Form {
         } else if(m != null) {
             returnType = m.getReturnType();
         }
-        HasValue<?, ?> field = createField(fieldName, returnType, getLabel(fieldName));
+        field = createField(fieldName, returnType, getLabel(fieldName));
         if(field != null) {
             customizeField(fieldName, field);
             getFieldCreator().customizeField(fieldName, field);
@@ -430,6 +439,12 @@ public class ObjectForm<T> extends Form {
      */
     @Override
     public String getLabel(String fieldName) {
+        if(getView() instanceof AbstractDataForm) {
+            try {
+                return ((AbstractDataForm) getView()).getLabel(fieldName);
+            } catch (AbstractDataForm.FieldError ignored) {
+            }
+        }
         return getFieldCreator().getLabel(fieldName);
     }
 

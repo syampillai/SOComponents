@@ -56,7 +56,8 @@ public abstract class DataForm extends AbstractDataForm {
      * @param windowMode True if the view to be displayed as a window/dialog
      */
     public DataForm(String caption, String labelOK, String labelCancel, boolean windowMode) {
-        this.form = new DForm();
+        this.form = new Form();
+        this.form.setView(this);
         setErrorDisplay(null);
         setCaption(caption);
         ok = new Button(labelOK == null ? "Ok" : labelOK, "ok", this).asPrimary();
@@ -180,45 +181,5 @@ public abstract class DataForm extends AbstractDataForm {
      */
     @SuppressWarnings("RedundantThrows")
     protected void validateData() throws Exception {
-    }
-
-    private class DForm extends Form {
-
-        public DForm() {
-            setView(DataForm.this);
-        }
-
-        @Override
-        public Stream<String> getFieldNames() {
-            return DataForm.this.getFieldNames();
-        }
-
-        @Override
-        protected HasComponents createContainer() {
-            return DataForm.this.createFieldContainer();
-        }
-
-        @Override
-        protected HasValue<?, ?> createField(String fieldName) {
-            return DataForm.this.createField(fieldName);
-        }
-
-        @Override
-        protected void attachField(String fieldName, HasValue<?, ?> field) {
-            try {
-                DataForm.this.attachField(fieldName, field);
-            } catch (FieldError e) {
-                super.attachField(fieldName, field);
-            }
-        }
-
-        @Override
-        protected void detachField(String fieldName, HasValue<?, ?> field) {
-            try {
-                DataForm.this.detachField(fieldName, field);
-            } catch (FieldError e) {
-                super.detachField(fieldName, field);
-            }
-        }
     }
 }

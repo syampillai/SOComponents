@@ -22,7 +22,6 @@ public class Data extends HashMap<String, Object> {
 
     private static ValidationResult OK = ValidationResult.ok();
     private static Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
-    private static long id = 0L;
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
     private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
@@ -71,10 +70,7 @@ public class Data extends HashMap<String, Object> {
             return null;
         }
         if(fieldName == null || fieldName.isEmpty()) {
-            if(++id == Long.MAX_VALUE) {
-                id = 1L;
-            }
-            fieldName = "_" + id;
+            fieldName = "_" + ID.newID();
         }
         if(fields.containsKey(fieldName)) {
             throw new RuntimeException("There is already a field with Id = " + fieldName);

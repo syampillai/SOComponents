@@ -16,7 +16,15 @@ public class Image extends com.vaadin.flow.component.html.Image implements Resou
     private final ResourceSupport resourceSupport;
 
     /**
-     * Image from a URL
+     * Image constructor.
+     */
+    public Image() {
+        super();
+        resourceSupport = new ResourceSupport(this);
+    }
+
+    /**
+     * Image from a URL.
      *
      * @param url Image URL
      */
