@@ -108,7 +108,10 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
 
     protected final void setPattern() {
         if(formatter != null) {
-            formatter.remove();
+            try {
+                formatter.remove();
+            } catch (Throwable ignore) {
+            }
         }
         int w = width - getDecimals();
         if(allowNegative) {

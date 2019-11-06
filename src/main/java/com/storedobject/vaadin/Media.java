@@ -3,6 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.*;
 
@@ -24,6 +25,7 @@ public abstract class Media extends Component implements HasSize {
      * Constructor.
      */
     public Media() {
+        ID.set(this);
         showControls(true);
     }
 
@@ -32,6 +34,7 @@ public abstract class Media extends Component implements HasSize {
      * @param resources Sources to be set
      */
     public Media(StreamResource... resources) {
+        ID.set(this);
         addSource(resources);
         showControls(true);
     }
@@ -42,8 +45,19 @@ public abstract class Media extends Component implements HasSize {
      * @param type Content type of the media
      */
     public Media(String uri, String type) {
+        ID.set(this);
         addSource(uri, type);
         showControls(true);
+    }
+
+    private void reload() {
+        String id = getId().orElse(null);
+        if(id != null) {
+            UI ui = UI.getCurrent();
+            if (ui != null) {
+                ui.getPage().executeJs("document.getElementById('" + id + "').load();");
+            }
+        }
     }
 
     /**
@@ -68,6 +82,7 @@ public abstract class Media extends Component implements HasSize {
             this.resources.add(sr);
             register(sr);
         }
+        reload();
     }
 
     /**
@@ -92,6 +107,7 @@ public abstract class Media extends Component implements HasSize {
         s.setAttribute("type", type);
         getElement().appendChild(s);
         uriSources.add(s);
+        reload();
     }
 
     /**

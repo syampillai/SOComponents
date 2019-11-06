@@ -1052,7 +1052,14 @@ public abstract class Application {
 
     private void setPoll() {
         int pi = pollIntervals.values().stream().min(Comparator.comparing(Integer::valueOf)).orElse(-1);
-        ui.access(() -> ui.setPollInterval(pi));
+        UI u = ui;
+        if(u != null) {
+            u.access(() -> {
+                if(ui != null) {
+                    u.setPollInterval(pi);
+                }
+            });
+        }
     }
 
     /**

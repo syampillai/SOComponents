@@ -1,5 +1,4 @@
 cd ~/IdeaProjects/SOComponents
-rm -fr node_modules
 cd src/main
 rm -fr resources
 mkdir -p resources/META-INF/resources/frontend
@@ -10,8 +9,3 @@ mvn clean install -Pdirectory
 mkdir -p zipTarget
 rm -f zipTarget/*.zip
 cp target/*.zip zipTarget
-cd src/main
-rm -fr resources
-cd ~/IdeaProjects/SOComponents
-mvn clean
-rm -fr node_modules

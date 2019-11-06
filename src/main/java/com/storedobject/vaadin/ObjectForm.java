@@ -412,17 +412,16 @@ public class ObjectForm<T> extends Form {
      */
     @Override
     protected final HasValue<?, ?> createField(String fieldName) {
+        Method m = getM.get(fieldName);
+        if(m == dummyGET) {
+            getM.remove(fieldName);
+            m = null;
+        }
         HasValue<?, ?> field = super.createField(fieldName);
         if(field != null) {
             return field;
         }
-        Class<?> returnType = null;
-        Method m = getM.get(fieldName);
-        if(m == dummyGET) {
-            getM.remove(fieldName);
-        } else if(m != null) {
-            returnType = m.getReturnType();
-        }
+        Class<?> returnType = m == null ? null : m.getReturnType();
         field = createField(fieldName, returnType, getLabel(fieldName));
         if(field != null) {
             customizeField(fieldName, field);
@@ -575,6 +574,9 @@ public class ObjectForm<T> extends Form {
             }
             try {
                 Method m = getM.get(fieldName);
+                if(m == null || m == dummyGET) {
+                    return null;
+                }
                 return m.invoke(actOn(m));
             } catch (NullPointerException | IllegalAccessException | InvocationTargetException ignored) {
             }
