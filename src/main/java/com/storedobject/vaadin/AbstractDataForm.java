@@ -13,11 +13,12 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * A view that is used for creating "data entry forms". A {@link Form} is embedded in the view.
+ * A view that is used for creating "data entry forms". A {@link AbstractForm} is embedded in the view.
  *
+ * @param <D> Type of data in the embedded form
  * @author Syam
  */
-public abstract class AbstractDataForm extends View implements HasContainer {
+public abstract class AbstractDataForm<D> extends View implements HasContainer {
 
     /**
      * For internal use only.
@@ -26,7 +27,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
     /**
      * Form embedded in this view.
      */
-    protected Form form;
+    protected AbstractForm<D> form;
     private FormConstructed formConstructed;
     private boolean formCreated = false;
     private HasContainer fieldContainerProvider;
@@ -38,7 +39,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      *
      * @return Form
      */
-    public Form getForm() {
+    public AbstractForm<D> getForm() {
         return form;
     }
 
@@ -180,7 +181,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * @param label Label for the field
      * @return Field created.
      */
-    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, String label) {
+    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") String label) {
         return null;
     }
 
@@ -391,7 +392,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * @param field Field
      * @param validator Validator
      * @param errorMessage Error message to be displayed if the field is not valid
-     * @param <T> Type of the field.
+     * @param <T> Type of the field value.
      */
     public <T> void addValidator(HasValue<?, T> field, Function<T, Boolean> validator, String errorMessage) {
         form.addValidator(field, validator, errorMessage);
@@ -403,7 +404,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * @param field Field
      */
     public static void markError(HasValue<?, ?> field) {
-        Form.markError(field);
+        AbstractForm.markError(field);
     }
 
     /**
@@ -412,7 +413,7 @@ public abstract class AbstractDataForm extends View implements HasContainer {
      * @param field Field
      */
     public static void clearError(HasValue<?, ?> field) {
-        Form.clearError(field);
+        AbstractForm.clearError(field);
     }
 
     /**

@@ -105,7 +105,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * This mehod is invoked when the column is actually constructed.
+     * This method is invoked when the column is actually constructed.
      *
      * @param columnName Column name
      * @param column Grid column that may be customized

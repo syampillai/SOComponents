@@ -6,15 +6,13 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-import java.util.stream.Stream;
-
 /**
  * This class is used to accept some quick data from the users. It has an "Ok" and a "Cancel" button. By default, is is displayed
  * as a {@link com.vaadin.flow.component.dialog.Dialog} box.
  *
  * @author Syam
  */
-public abstract class DataForm extends AbstractDataForm {
+public abstract class DataForm extends AbstractDataForm<Object> {
 
     protected Button ok, cancel;
     protected HasComponents buttonPanel;
@@ -119,7 +117,8 @@ public abstract class DataForm extends AbstractDataForm {
      * This is where the fields are built. Typically, we create the fields and add it using {@link #addField(HasValue)} or
      * {@link #addField(String, HasValue)} methods.
      */
-    protected abstract void buildFields();
+    protected void buildFields() {
+    }
 
     /**
      * Build the buttons. Button "Ok" and "Cancel" are already created. This method add those to the {@link #buttonPanel}.

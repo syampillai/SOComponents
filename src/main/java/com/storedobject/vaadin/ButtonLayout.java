@@ -71,6 +71,9 @@ public class ButtonLayout extends FlexLayout {
      * @param margin Margin (gap) in pixels
      */
     public void add(Component c, int margin) {
+        if(c == null) {
+            return;
+        }
         m(c, margin);
         super.add(c);
     }

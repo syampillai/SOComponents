@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 /**
  * Class to represent a "data entry form" for a particular type of object.
- * <p>Form (see {@link Form}) contains "fields" ({@link HasValue}) and each field has a name. By default, "field names" are automatically determined
+ * <p>Form (see {@link AbstractForm}) contains "fields" ({@link HasValue}) and each field has a name. By default, "field names" are automatically determined
  * from the attributes of the object under editing via reflection. So, getXXX (for example, getFirstName()) methods are used to
  * determine the field names and its value types.
  * <p>Field values can be loaded from the object instance that is being edited and edited values can be committed to the object instance.
@@ -40,24 +40,22 @@ import java.util.stream.Stream;
  * {@link DataEditor} is used where an "object form" is already embedded. All overridable methods in the form can be defined in these
  * "views" too.</p>
  *
- * @param <T> Type of object to be edited
+ * @param <D> Type of object to be edited
  * @author Syam
  */
-public class ObjectForm<T> extends Form {
+public class ObjectForm<D> extends AbstractForm<D> {
 
-    private final Class<T> objectClass;
     private final Map<String, Method> getM = new HashMap<>();
     private final Map<String, Method> setM = new HashMap<>();
-    private final Map<String, Function<T, ?>> getF = new HashMap<>();
-    private final Map<String, BiConsumer<T, ?>> setF = new HashMap<>();
-    private T objectData;
-    private ObjectFieldCreator<T> fCreator;
+    private final Map<String, Function<D, ?>> getF = new HashMap<>();
+    private final Map<String, BiConsumer<D, ?>> setF = new HashMap<>();
+    private ObjectFieldCreator<D> fCreator;
 
     /**
      * Constructor
      * @param objectClass Class of the object
      */
-    public ObjectForm(Class<T> objectClass) {
+    public ObjectForm(Class<D> objectClass) {
         this(objectClass, null);
     }
 
@@ -66,9 +64,8 @@ public class ObjectForm<T> extends Form {
      * @param objectClass Class of the object
      * @param container Field container
      */
-    public ObjectForm(Class<T> objectClass, HasComponents container) {
-        super(container);
-        this.objectClass = objectClass;
+    public ObjectForm(Class<D> objectClass, HasComponents container) {
+        super(objectClass, container);
         data.setFieldValueHandler(new FieldHandler());
     }
 
@@ -86,9 +83,9 @@ public class ObjectForm<T> extends Form {
      * @return Field creator.
      */
     @SuppressWarnings("unchecked")
-    ObjectFieldCreator<T> getFieldCreator() {
+    ObjectFieldCreator<D> getFieldCreator() {
         if(fCreator == null) {
-            fCreator = ((ObjectFieldCreator<T>) Objects.requireNonNull(ApplicationEnvironment.get()).getObjectFieldCreator()).create(this);
+            fCreator = ((ObjectFieldCreator<D>) Objects.requireNonNull(ApplicationEnvironment.get()).getObjectFieldCreator()).create(this);
         }
         return fCreator;
     }
@@ -106,7 +103,7 @@ public class ObjectForm<T> extends Form {
      * Get the class of the object being edtited. (Same as {@link #getDataClass()}.
      * @return Object's class.
      */
-    public Class<T> getObjectClass() {
+    public Class<D> getObjectClass() {
         return objectClass;
     }
 
@@ -114,7 +111,7 @@ public class ObjectForm<T> extends Form {
      * Get the class of the object being edtited. (Same as {@link #getObjectClass()}.
      * @return Object's class.
      */
-    public Class<T> getDataClass() {
+    public Class<D> getDataClass() {
         return objectClass;
     }
 
@@ -131,8 +128,8 @@ public class ObjectForm<T> extends Form {
      * @param fieldNames Names of the fields to be added
      */
     protected void addField(String... fieldNames) {
-        Function<T, ?> valueGetter;
-        BiConsumer<T, ?> valueSetter;
+        Function<D, ?> valueGetter;
+        BiConsumer<D, ?> valueSetter;
         Method valueGetterM, valueSetterM;
         for(String fieldName: fieldNames) {
             if(!includeF(fieldName)) {
@@ -171,7 +168,7 @@ public class ObjectForm<T> extends Form {
      * @param fieldName Name of the field.
      * @param valueGetter Function that determines how to get the value to load the field.
      */
-    protected void addField(String fieldName, Function<T, ?> valueGetter) {
+    protected void addField(String fieldName, Function<D, ?> valueGetter) {
         addField(fieldName, valueGetter, null);
     }
 
@@ -181,7 +178,7 @@ public class ObjectForm<T> extends Form {
      * @param valueGetter Function that determines how to get the value to load the field
      * @param valueSetter Function that determines how to commit value from the field to the obejct's instance
      */
-    protected void addField(String fieldName, Function<T, ?> valueGetter, BiConsumer<T, ?> valueSetter) {
+    protected void addField(String fieldName, Function<D, ?> valueGetter, BiConsumer<D, ?> valueSetter) {
         if(!includeF(fieldName)) {
             return;
         }
@@ -468,64 +465,6 @@ public class ObjectForm<T> extends Form {
     }
 
     /**
-     * Create an instance of the object. Default implementation tries to invoke the default constructor to create an instance.
-     * @return Newly created object.
-     */
-    protected T createObjectInstance() {
-        try {
-            return objectClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ignored) {
-        }
-        return null;
-    }
-
-    /**
-     * Get the instance of the currently editing object. (A new object will be created by invoking {@link #createObjectInstance()} if there
-     * is no current object instance set).
-     * @return Instance of the currently loaded object.
-     */
-    public T getObject() {
-        return getObject(true);
-    }
-
-    /**
-     * Get the instance of the currently editing object. A new object will be created by invoking {@link #createObjectInstance()} if there
-     * is no current object instance set and the parameter passed is <code>true</code>.
-     * @param create Whether to create a new instance or not
-     * @return Instance of the currently loaded object.
-     */
-    public T getObject(boolean create) {
-        if(objectData == null && create) {
-            objectData = createObjectInstance();
-        }
-        return objectData;
-    }
-
-    /**
-     * Set the current object. Fields will be loaded.
-     * @param object Object to set
-     */
-    public void setObject(T object) {
-        setObject(object, true);
-    }
-
-    /**
-     * Set the current object. Fields will be loaded.
-     * @param object Object to set
-     * @param load Whether to load the fields or not
-     */
-    public void setObject(T object, boolean load) {
-        objectData = object;
-        if(load) {
-            if(object == null) {
-                clearFields();
-            } else {
-                load();
-            }
-        }
-    }
-
-    /**
      * Handle errors while setting (committing)  values. Default implementation returns <code>true</code> without doing anything.
      * @param fieldName Name of the field
      * @param field Field
@@ -568,7 +507,7 @@ public class ObjectForm<T> extends Form {
 
         @Override
         public Object getValue(String fieldName) {
-            Function<T, ?> get = getF.get(fieldName);
+            Function<D, ?> get = getF.get(fieldName);
             if(get != null) {
                 return get.apply(getObject());
             }
@@ -586,10 +525,10 @@ public class ObjectForm<T> extends Form {
         @Override
         @SuppressWarnings("unchecked")
         public void setValue(String fieldName, Object value) {
-            BiConsumer<T, ?> set = setF.get(fieldName);
+            BiConsumer<D, ?> set = setF.get(fieldName);
             if(set != null) {
                 try {
-                    ((BiConsumer<T, Object>)set).accept(getObject(), value);
+                    ((BiConsumer<D, Object>)set).accept(getObject(), value);
                 } catch (Throwable e) {
                     handleValueSetError(fieldName, getField(fieldName), value, getValue(fieldName), e);
                 }

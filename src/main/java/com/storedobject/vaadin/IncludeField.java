@@ -1,10 +1,10 @@
 package com.storedobject.vaadin;
 
 /**
- * An interface used by {@link Form} and {@link AbstractDataForm} classes to determine if a field can be added to the form or not.
+ * An interface used by {@link AbstractForm} and {@link AbstractDataForm} classes to determine if a field can be added to the form or not.
  *
  * @see AbstractDataForm#setIncludeFieldChecker(IncludeField)
- * @see Form#setIncludeFieldChecker(IncludeField)
+ * @see AbstractForm#setIncludeFieldChecker(IncludeField)
  * @author Syam
  */
 @FunctionalInterface

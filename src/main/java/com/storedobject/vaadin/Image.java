@@ -110,4 +110,11 @@ public class Image extends com.vaadin.flow.component.html.Image implements Resou
         super.onDetach(detachEvent);
         resourceSupport.unregister();
     }
+
+    /**
+     * Clear the content.
+     */
+    public void clear() {
+        setSource((String)null);
+    }
 }

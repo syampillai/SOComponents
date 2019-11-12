@@ -1,6 +1,5 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 
 import java.lang.reflect.Method;
@@ -19,7 +18,7 @@ import java.util.stream.Stream;
  * @param <T> Type of object to be edited
  * @author Syam
  */
-public abstract class AbstractDataEditor<T> extends AbstractDataForm {
+public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
     private HashMap<Method, Object> fixedValues = new HashMap<>();
 
@@ -42,7 +41,6 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public ObjectForm<T> getForm() {
         return (ObjectForm<T>) super.getForm();
     }
@@ -51,7 +49,6 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      * Get the class of the object being edtited. (Same as {@link #getDataClass()}.
      * @return Object's class.
      */
-    @SuppressWarnings("unchecked")
     public Class<T> getObjectClass() {
         return ((ObjectForm<T>)form).getObjectClass();
     }
@@ -60,7 +57,6 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      * Get the class of the object being edtited. (Same as {@link #getObjectClass()}.
      * @return Object's class.
      */
-    @SuppressWarnings("unchecked")
     public Class<T> getDataClass() {
         return ((ObjectForm<T>)form).getDataClass();
     }
@@ -173,7 +169,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      * @param label Label
      * @return Field
      */
-    protected HasValue<?, ?> createField(String fieldName, @SuppressWarnings("unused") Class<?> fieldType, @SuppressWarnings("unused") String label) {
+    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") Class<?> fieldType, @SuppressWarnings("unused") String label) {
         return null;
     }
 
@@ -190,7 +186,6 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      * Get the "field creator" for this form. By default, it tries to obtain it from {@link ApplicationEnvironment#getObjectFieldCreator()}.
      * @return Field creator.
      */
-    @SuppressWarnings("unchecked")
     protected ObjectFieldCreator<T> getFieldCreator() {
         return ((ObjectForm<T>)form).getFieldCreator();
     }
@@ -228,18 +223,16 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      * is no current object instance set).
      * @return Instance of the currently loaded object.
      */
-    @SuppressWarnings("unchecked")
     public T getObject() {
-        return ((ObjectForm<T>)form).getObject();
+        return form.getObject();
     }
 
     /**
      * Set the current object. Fields will be loaded.
      * @param object Object to set
      */
-    @SuppressWarnings("unchecked")
     public void setObject(T object) {
-        ((ObjectForm<T>)form).setObject(object);
+        form.setObject(object);
     }
 
     /**
@@ -247,9 +240,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm {
      * @param object Object to set
      * @param load Whether to load the fields or not
      */
-    @SuppressWarnings("unchecked")
     public void setObject(T object, boolean load) {
-        ((ObjectForm<T>)form).setObject(object, load);
+        form.setObject(object, load);
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.storedobject.vaadin.util;
 
 import com.storedobject.vaadin.Alert;
-import com.storedobject.vaadin.Form;
+import com.storedobject.vaadin.AbstractForm;
 import com.storedobject.vaadin.ID;
 import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
@@ -19,26 +19,30 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class Data extends HashMap<String, Object> {
+public class Data<T> extends HashMap<String, Object> {
 
     private static ValidationResult OK = ValidationResult.ok();
     private static Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
     private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
-    private final Map<HasValue<?, ?>, DataValidators> validators = new HashMap<>();
-    private final Map<HasValue<?, ?>, Binder.Binding<Data, ?>> bindings = new HashMap<>();
+    private final Map<HasValue<?, ?>, DataValidators<?>> validators = new HashMap<>();
+    private final Map<HasValue<?, ?>, Binder.Binding<T, ?>> bindings = new HashMap<>();
     private Map<HasValue<?, ?>, List<Registration>> connections;
-    private Binder<Data> binder;
+    private Binder<T> binder;
     private boolean readOnly;
-    private final Form form;
+    private final AbstractForm<T> form;
     private Required requiredCache;
     private boolean extraErrors = false;
 
-    public Data(Form form) {
+    public Data(AbstractForm<T> form) {
         this.form = form;
         binder = new Binder<>();
         binder.setStatusLabel(errorText);
+    }
+
+    public Binder<T> getBinder() {
+        return binder;
     }
 
     public void setErrorDisplay(HasText display) {
@@ -82,7 +86,7 @@ public class Data extends HashMap<String, Object> {
         final String name = fieldName;
         final HasValue<?, Object> f = (HasValue<?, Object>)field;
         binder.withValidator(validator);
-        Binder.Binding<Data, ?> binding;
+        Binder.Binding<T, ?> binding;
         if (valueHandler.isBasic() || !valueHandler.canHandle(name)) {
             setValue(fieldName, field.getValue());
             binding = binder.bind(f, x -> getValue(name), (d, v) -> setValue(name, v));
@@ -107,7 +111,7 @@ public class Data extends HashMap<String, Object> {
         }
         if(connections == null) {
             connections = new HashMap<>();
-            binder.setBean(this);
+            binder.setBean(form.getObject());
         }
         List<Registration> registrations;
         for(HasValue<?, ?> field: fieldList) {
@@ -131,10 +135,10 @@ public class Data extends HashMap<String, Object> {
         });
     }
 
-    private DataValidators validator(HasValue<?, ?> field) {
-        DataValidators dv = validators.get(field);
+    private <F> DataValidators<F> validator(HasValue<?, F> field) {
+        @SuppressWarnings("unchecked") DataValidators<F> dv = (DataValidators<F>) validators.get(field);
         if(dv == null) {
-            dv = new DataValidators(field);
+            dv = new DataValidators<>(field);
             validators.put(field, dv);
         }
         return dv;
@@ -232,7 +236,7 @@ public class Data extends HashMap<String, Object> {
     }
 
     public void loadValues() {
-        binder.readBean(this);
+        binder.readBean(form.getObject());
         setReadOnly(!readOnly);
         setReadOnly(!readOnly);
     }
@@ -247,7 +251,7 @@ public class Data extends HashMap<String, Object> {
             }
         }
         extraErrors = false;
-        if(!binder.writeBeanIfValid(this)) {
+        if(!binder.writeBeanIfValid(form.getObject())) {
             return false;
         }
         if(!valueHandler.isBasic()) {
@@ -278,7 +282,7 @@ public class Data extends HashMap<String, Object> {
     }
 
     public void clearErrors() {
-        fields.values().forEach(Form::clearError);
+        fields.values().forEach(AbstractForm::clearError);
         if(errorText.equals(binder.getStatusLabel().orElse(null))) {
             errorText.close();
         }
@@ -288,14 +292,14 @@ public class Data extends HashMap<String, Object> {
         fields.values().forEach(HasValue::clear);
     }
 
-    public <T> void addValidator(HasValue<?, T> field, Function<T, Boolean> validator, String errorMessage) {
+    public <F> void addValidator(HasValue<?, F> field, Function<F, Boolean> validator, String errorMessage) {
         if(field == null) {
             return;
         }
-        validator(field).add(new DataValidator<>(validator, errorMessage));
+        validator(field).add(new DataValidator<>(this, validator, errorMessage));
     }
 
-    public void setRequired(HasValue<?, ?> field, boolean required, String errorMessage) {
+    public <F> void setRequired(HasValue<?, F> field, boolean required, String errorMessage) {
         if(field == null) {
             return;
         }
@@ -307,7 +311,7 @@ public class Data extends HashMap<String, Object> {
             }
         }
         field.setRequiredIndicatorVisible(required);
-        DataValidators dv = validator(field);
+        DataValidators<F> dv = validator(field);
         if(!required) {
             if(dv.isEmpty()) {
                 return;
@@ -318,7 +322,7 @@ public class Data extends HashMap<String, Object> {
             return;
         }
         if(!dv.isEmpty()) {
-            Validator<Data> v = dv.get(0);
+            Validator<F> v = dv.get(0);
             if(v instanceof Required) {
                 if(errorMessage == null || errorMessage.isEmpty()) {
                     if(((Required) v).errorMessage == null) {
@@ -332,12 +336,13 @@ public class Data extends HashMap<String, Object> {
                 dv.remove(0);
             }
         }
-        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required(errorMessage));
+        //noinspection unchecked
+        dv.add(0, errorMessage == null || errorMessage.isEmpty() ? requiredCache() : new Required<>(this, errorMessage));
     }
 
     private Required requiredCache() {
         if(requiredCache == null) {
-            requiredCache = new Required(null);
+            requiredCache = new Required<>(this, null);
         }
         return requiredCache;
     }
@@ -363,42 +368,46 @@ public class Data extends HashMap<String, Object> {
         return m + ": " + message;
     }
 
-    private static class Required implements Validator<Data> {
+    private static class Required<D, F> implements Validator<F> {
 
         private static final String CAN_NOT_BE_EMPTY = "Can not be empty";
         private String errorMessage;
+        private final Data<D> data;
 
-        private Required(String errorMessage) {
+        private Required(Data<D> data, String errorMessage) {
+            this.data = data;
             if(errorMessage != null && !errorMessage.isEmpty()) {
                 this.errorMessage = errorMessage;
             }
         }
 
         @Override
-        public ValidationResult apply(Data data, ValueContext valueContext) {
+        public ValidationResult apply(F value, ValueContext valueContext) {
             HasValue<?, ?> field = valueContext.getHasValue().orElse(null);
             if(field == null || !field.isEmpty()) {
                 return OK;
             }
-            String fieldName = data.getName(field);
-            if(fieldName != null && data.valueHandler.canHandle(fieldName) && !data.valueHandler.canSet(fieldName)) {
+            String fieldName = this.data.getName(field);
+            if(fieldName != null && this.data.valueHandler.canHandle(fieldName) && !this.data.valueHandler.canSet(fieldName)) {
                 return OK;
             }
             String m = errorMessage;
             if(m == null) {
-                m = data.errMessage(field, CAN_NOT_BE_EMPTY);
+                m = this.data.errMessage(field, CAN_NOT_BE_EMPTY);
             }
             return ValidationResult.error(m);
         }
     }
 
-    private static class DataValidator<T> implements Validator<Data> {
+    private static class DataValidator<D, F> implements Validator<F> {
 
         private static final String INVALID = "Not valid";
-        private Function<T, Boolean> validator;
+        private Function<F, Boolean> validator;
         private String errorMessage;
+        private final Data<D> data;
 
-        private DataValidator(Function<T, Boolean> validator, String errorMessage) {
+        private DataValidator(Data<D> data, Function<F, Boolean> validator, String errorMessage) {
+            this.data = data;
             this.validator = validator;
             if(errorMessage != null && !errorMessage.isEmpty()) {
                 this.errorMessage = errorMessage;
@@ -407,20 +416,23 @@ public class Data extends HashMap<String, Object> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public ValidationResult apply(Data data, ValueContext valueContext) {
-            HasValue<?, T> field = (HasValue<?, T>)valueContext.getHasValue().orElse(null);
-            if(field != null && validator.apply(field.getValue())) {
+        public ValidationResult apply(F value, ValueContext valueContext) {
+            if(validator.apply(value)) {
+                return OK;
+            }
+            HasValue<?, F> field = (HasValue<?, F>)valueContext.getHasValue().orElse(null);
+            if(field == null) {
                 return OK;
             }
             String m = errorMessage;
             if(m == null) {
-                m = data.errMessage(field, INVALID);
+                m = this.data.errMessage(field, INVALID);
             }
             return ValidationResult.error(m);
         }
     }
 
-    private static class DataValidators extends ArrayList<Validator<Data>> implements Validator<Data> {
+    private static class DataValidators<F> extends ArrayList<Validator<F>> implements Validator<F> {
 
         private ValueContext valueContext;
 
@@ -429,19 +441,22 @@ public class Data extends HashMap<String, Object> {
         }
 
         @Override
-        public ValidationResult apply(Data data, ValueContext valueContext) {
+        public ValidationResult apply(F value, ValueContext valueContext) {
             ValidationResult vr = OK;
-            for(Validator<Data> v: this) {
-                vr = v.apply(data, this.valueContext);
+            for(Validator<F> v: this) {
+                vr = v.apply(value, this.valueContext);
                 if(vr.getErrorLevel().isPresent()) {
                     break;
                 }
             }
             HasValue<?, ?> field = this.valueContext.getHasValue().orElse(null);
+            if(field == null) {
+                return OK;
+            }
             if(vr.getErrorLevel().isPresent()) {
-                Form.markError(field);
+                AbstractForm.markError(field);
             } else {
-                Form.clearError(field);
+                AbstractForm.clearError(field);
             }
             return vr;
         }
