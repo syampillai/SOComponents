@@ -51,6 +51,8 @@ public abstract class AbstractForm<D> {
 
     /**
      * Construct a form.
+     *
+     * @param objectClass Type of the data object
      */
     public AbstractForm(Class<D> objectClass) {
         this(objectClass, null);
@@ -59,6 +61,7 @@ public abstract class AbstractForm<D> {
     /**
      * Construct a form with a specified field container.
      *
+     * @param objectClass Type of the data object
      * @param container Field container of the form.
      */
     public AbstractForm(Class<D> objectClass, HasComponents container) {
@@ -69,6 +72,7 @@ public abstract class AbstractForm<D> {
     /**
      * For internal use only.
      *
+     * @param objectClass Type of the data object
      * @param container Field container of the form.
      * @param dummy Dummy value, not used
      */
