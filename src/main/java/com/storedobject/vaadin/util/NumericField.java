@@ -117,7 +117,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         if(allowNegative) {
             --w;
         }
-        formatter = new NumeralFieldFormatter(",", ".", w, getDecimals(), !allowNegative);
+        formatter = new NumeralFieldFormatter(grouping ? "," : "", ".", w, getDecimals(), !allowNegative);
         if(getUI().isPresent()) {
             formatter.extend((TextField) getField());
             formatted = true;

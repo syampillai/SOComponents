@@ -24,7 +24,7 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     /**
      * Constructor.
      *
-     * @param label Label
+     * @param label   Label
      * @param choices Choices
      */
     public ChoiceField(String label, String choices) {
@@ -43,7 +43,7 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     /**
      * Constructor.
      *
-     * @param label Label
+     * @param label   Label
      * @param choices Choices
      */
     public ChoiceField(String label, String[] choices) {
@@ -63,7 +63,7 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
      * Constructor.
      *
      * @param label Label
-     * @param list Choices
+     * @param list  Choices
      */
     public ChoiceField(String label, Iterable<?> list) {
         this(label, createList(list));
@@ -73,12 +73,12 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
      * Constructor.
      *
      * @param label Label
-     * @param list Choices
+     * @param list  Choices
      */
     @SuppressWarnings("unchecked")
     public ChoiceField(String label, Collection<String> list) {
-        super(new ListField<>(sanitize(list)), (f, s) -> ((ListField<String>)f).getIndex(s),
-                (f, v) -> ((ListField<String>)f).getValue(v));
+        super(new ListField<>(sanitize(list)), (f, s) -> ((ListField<String>) f).getIndex(s),
+                (f, v) -> ((ListField<String>) f).getValue(v));
         setValue(0);
         setLabel(label);
     }
@@ -87,10 +87,10 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
         ArrayList<String> a = new ArrayList<>();
         list.forEach(item -> {
             String s = null;
-            if(item != null) {
+            if (item != null) {
                 s = item.toString();
             }
-            if(s != null) {
+            if (s != null) {
                 a.add(s.trim());
             }
         });
@@ -98,14 +98,14 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     }
 
     private static Collection<String> sanitize(Collection<String> collection) {
-        if(!(collection instanceof List)) {
+        if (!(collection instanceof List)) {
             return collection;
         }
         List<String> list = (List<String>) collection;
         String item;
-        for(int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             item = list.get(i);
-            if(item.isEmpty()) {
+            if (item.isEmpty()) {
                 list.set(i, " ");
             }
         }
@@ -138,11 +138,50 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     /**
      * Replace a choice at a specified index. (If the index is outside the range, it will not be replaced).
      *
-     * @param index Index
+     * @param index  Index
      * @param choice New choice
      */
     public void setChoice(int index, String choice) {
         //noinspection unchecked
-        ((ListField<String>)getField()).setItem(index, choice);
+        ((ListField<String>) getField()).setItem(index, choice);
+    }
+
+    /**
+     * Set choices.
+     *
+     * @param choices Choices
+     */
+    public void setChoices(Collection<String> choices) {
+        int v = getValue();
+        //noinspection unchecked
+        ListField<String> f = (ListField<String>) getField();
+        f.setItems(choices);
+        f.setValue(f.getValue(v));
+    }
+
+    /**
+     * Set choices.
+     *
+     * @param choices Choices
+     */
+    public void setChoices(Iterable<String> choices) {
+        int v = getValue();
+        //noinspection unchecked
+        ListField<String> f = (ListField<String>) getField();
+        f.setItems(choices);
+        f.setValue(f.getValue(v));
+    }
+
+    /**
+     * Set choices.
+     *
+     * @param choices Choices
+     */
+    public void setChoices(String[] choices) {
+        int v = getValue();
+        //noinspection unchecked
+        ListField<String> f = (ListField<String>) getField();
+        f.setItems(choices);
+        f.setValue(f.getValue(v));
     }
 }

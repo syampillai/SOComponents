@@ -8,6 +8,7 @@ import com.vaadin.flow.component.select.Select;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -40,6 +41,7 @@ public class ListField<T> extends Select<T> {
     public ListField(String label, Collection<T> items) {
         setItems(items);
         setLabel(label);
+        setRequired(true);
     }
 
     /**
@@ -49,7 +51,8 @@ public class ListField<T> extends Select<T> {
      * @return Index of the item.
      */
     public int getIndex(T value) {
-        return items.indexOf(value);
+        int i = value == null ? -1 : items.indexOf(value);
+        return i < 0 && !items.isEmpty() && isRequiredBoolean() ? 0 : i;
     }
 
     /**
@@ -59,7 +62,7 @@ public class ListField<T> extends Select<T> {
      * @return Item at the index.
      */
     public T getValue(int index) {
-        return index < 0 || index >= items.size() ? null : items.get(index);
+        return index < 0 || index >= items.size() ? (isRequiredBoolean() && !items.isEmpty() ? items.get(0) : null) : items.get(index);
     }
 
     /**
@@ -69,6 +72,30 @@ public class ListField<T> extends Select<T> {
      */
     public void setItems(Collection<T> items) {
         this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
+        super.setItems(this.items);
+    }
+
+    /**
+     * Set item list.
+     *
+     * @param items Item list
+     */
+    public void setItems(Iterable<T> items) {
+        this.items = new ArrayList<>();
+        for(T item: items) {
+            this.items.add(item);
+        }
+        super.setItems(this.items);
+    }
+
+    /**
+     * Set item list.
+     *
+     * @param items Item list
+     */
+    public void setItems(T[] items) {
+        this.items = new ArrayList<>();
+        Collections.addAll(this.items, items);
         super.setItems(this.items);
     }
 
