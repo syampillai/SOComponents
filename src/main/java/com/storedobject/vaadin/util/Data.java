@@ -26,7 +26,7 @@ public class Data<T> extends HashMap<String, Object> {
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
     private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
-    private final Map<HasValue<?, ?>, DataValidators<?>> validators = new HashMap<>();
+    private final Map<HasValue<?, ?>, DataValidators<T, ?>> validators = new HashMap<>();
     private final Map<HasValue<?, ?>, Binder.Binding<T, ?>> bindings = new HashMap<>();
     private Map<HasValue<?, ?>, List<Registration>> connections;
     private Binder<T> binder;
@@ -135,8 +135,8 @@ public class Data<T> extends HashMap<String, Object> {
         });
     }
 
-    private <F> DataValidators<F> validator(HasValue<?, F> field) {
-        @SuppressWarnings("unchecked") DataValidators<F> dv = (DataValidators<F>) validators.get(field);
+    private <F> DataValidators<T, F> validator(HasValue<?, F> field) {
+        @SuppressWarnings("unchecked") DataValidators<T, F> dv = (DataValidators<T, F>) validators.get(field);
         if(dv == null) {
             dv = new DataValidators<>(field);
             validators.put(field, dv);
@@ -311,7 +311,7 @@ public class Data<T> extends HashMap<String, Object> {
             }
         }
         field.setRequiredIndicatorVisible(required);
-        DataValidators<F> dv = validator(field);
+        DataValidators<T, F> dv = validator(field);
         if(!required) {
             if(dv.isEmpty()) {
                 return;
@@ -432,24 +432,25 @@ public class Data<T> extends HashMap<String, Object> {
         }
     }
 
-    private static class DataValidators<F> extends ArrayList<Validator<F>> implements Validator<F> {
+    private static class DataValidators<D, F> extends ArrayList<Validator<F>> implements Validator<D> {
 
         private ValueContext valueContext;
+        private HasValue<?, F> field;
 
-        private DataValidators(HasValue<?, ?> field) {
+        private DataValidators(HasValue<?, F> field) {
+            this.field = field;
             valueContext = new ValueContext((Component)field, field);
         }
 
         @Override
-        public ValidationResult apply(F value, ValueContext valueContext) {
+        public ValidationResult apply(D data, ValueContext valueContext) {
             ValidationResult vr = OK;
             for(Validator<F> v: this) {
-                vr = v.apply(value, this.valueContext);
+                vr = v.apply(field.getValue(), this.valueContext);
                 if(vr.getErrorLevel().isPresent()) {
                     break;
                 }
             }
-            HasValue<?, ?> field = this.valueContext.getHasValue().orElse(null);
             if(field == null) {
                 return OK;
             }
