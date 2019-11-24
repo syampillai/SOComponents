@@ -120,6 +120,7 @@ public abstract class Application {
         void speaker(boolean on);
     }
     private Set<SpeakerToggledListner> speakerToggledListeners;
+    private ArrayList<WeakReference<BrowserResizedListener>> resizeListeners;
 
     /**
      * This method is invoked as documented in Vaadin Flow's documentation for UI's init(VaadinRequest) method.
@@ -176,6 +177,49 @@ public abstract class Application {
      */
     public final Page getPage() {
         return ui.getPage();
+    }
+
+    /**
+     * Add a browser resized listener to this application so that the listener will be alerted whenever the browser is resized.
+     *
+     * @param listener Listener
+     * @return Registration.
+     */
+    public Registration addBrowserResizedListener(BrowserResizedListener listener) {
+        if(listener == null) {
+            return null;
+        }
+        if(resizeListeners == null) {
+            resizeListeners = new ArrayList<>();
+            getPage().addBrowserWindowResizeListener(e -> {
+                fireResized(e.getWidth(), e.getHeight());
+                applicationView.receiveSize();
+            });
+        }
+        resizeListeners.add(new WeakReference<>(listener));
+        return () -> {
+            for(WeakReference<BrowserResizedListener> w: resizeListeners) {
+                if(w.get() == listener) {
+                    resizeListeners.remove(w);
+                    return;
+                }
+            }
+        };
+    }
+
+    private void fireResized(int width, int height) {
+        if(width == deviceWidth && height == deviceHeight) {
+            return;
+        }
+        if(resizeListeners != null) {
+            resizeListeners.removeIf(w -> w.get() == null);
+            resizeListeners.forEach(w -> {
+                BrowserResizedListener l = w.get();
+                if(l != null) {
+                    l.browserResized(width, height);
+                }
+            });
+        }
     }
 
     /**
@@ -745,10 +789,11 @@ public abstract class Application {
     final void deviceSize(int width, int height) {
         this.deviceWidth = width;
         this.deviceHeight = height;
+        fireResized(width, height);
     }
 
     /**
-     * Get the device (broswer) height.
+     * Get the device (browser) height.
      *
      * @return Device height.
      */
@@ -762,7 +807,7 @@ public abstract class Application {
     }
 
     /**
-     * Get the device (broswer) width.
+     * Get the device (browser) width.
      *
      * @return Device width.
      */

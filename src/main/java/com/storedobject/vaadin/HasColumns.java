@@ -931,7 +931,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void configure() {
-            Application.message("Not yet implemented");
+            grid.recalculateColumnWidths();
         }
 
         private void setMinWidth(String width) {
@@ -1343,6 +1343,7 @@ public interface HasColumns<T> extends ExecutableView {
             }
             column.setTextAlign(getTextAlign(columnName));
             column.setAutoWidth(true);
+            column.setResizable(true);
             customizeColumn(columnName, column);
         }
 
