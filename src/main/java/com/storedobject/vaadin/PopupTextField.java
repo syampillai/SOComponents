@@ -122,4 +122,9 @@ public class PopupTextField extends TextField {
         buttonLayout.setWidthFull();
         window = new Window(new Div(buttonLayout, textArea));
     }
+
+    @Override
+    public void setValue(String value) {
+        super.setValue(value == null ? "" : value);
+    }
 }

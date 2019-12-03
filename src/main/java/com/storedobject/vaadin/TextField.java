@@ -60,4 +60,9 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField {
     public void setIcon(String icon) {
         setIcon(new Icon(icon));
     }
+
+    @Override
+    public void setValue(String value) {
+        super.setValue(value == null ? "" : value);
+    }
 }

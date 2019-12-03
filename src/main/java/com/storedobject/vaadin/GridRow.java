@@ -101,7 +101,7 @@ public abstract class GridRow {
                 List<FooterRow.FooterCell> fcells = cells.stream().map(c -> (FooterRow.FooterCell)c.cell).collect(Collectors.toList());
                 ((FooterRow)row).join(fcells);
             }
-            return names == null || names.length == 0 ? getCells().findAny().orElse(null): getCell(names[0]);
+            return names == null || names.length == 0 ? getCells().findAny().orElse(null) : getCell(names[0]);
         } catch (Throwable error) {
             Application a = Application.get();
             if(a != null) {
@@ -109,6 +109,26 @@ public abstract class GridRow {
             }
             return null;
         }
+    }
+
+    /**
+     * Join cells. (If no cells are passed, all cells in the row are joined).
+     *
+     * @param cells Cells to join (Cells should be specified in proper order from left to right)
+     * @return The new Cell that is created or null if join operation fails.
+     */
+    public Cell joinCells(Cell... cells) {
+        if (cells != null && cells.length == 1) {
+            return getCell(cells[0].name);
+        }
+        if(cells == null) {
+            return join();
+        }
+        List<String> names = new ArrayList<>();
+        for(Cell c: cells) {
+            names.add(c.name);
+        }
+        return join(names);
     }
 
     /**

@@ -4,7 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 
 /**
- * An interface used by "dispylable" classes such as {@link View}.
+ * An interface used by "displayable" classes such as {@link View}.
  * @author Syam
  */
 public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandler {

@@ -164,4 +164,9 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea {
         }
         setWidth(minimumVisibleColumns + "em");
     }
+
+    @Override
+    public void setValue(String value) {
+        super.setValue(value == null ? "" : value);
+    }
 }

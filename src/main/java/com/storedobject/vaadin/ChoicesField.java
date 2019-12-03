@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A field that allows you select multiple values from a fixed list of Strings. The value is returned as
+ * A field that allows you to select multiple values from a fixed list of Strings. The value is returned as
  * a bit pattern with its positional values set for the selected items. The first item in the list uses the least significant bit.
  *
  * @author Syam
