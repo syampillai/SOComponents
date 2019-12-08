@@ -1,7 +1,7 @@
 package com.storedobject.vaadin.util;
 
-import com.storedobject.vaadin.Alert;
 import com.storedobject.vaadin.AbstractForm;
+import com.storedobject.vaadin.Alert;
 import com.storedobject.vaadin.ID;
 import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+@SuppressWarnings("rawtypes")
 public class Data<T> extends HashMap<String, Object> {
 
     private static ValidationResult OK = ValidationResult.ok();
@@ -439,7 +440,7 @@ public class Data<T> extends HashMap<String, Object> {
 
         private DataValidators(HasValue<?, F> field) {
             this.field = field;
-            valueContext = new ValueContext((Component)field, field);
+            valueContext = new ValueContext(field instanceof Component ? (Component)field : errorText, field);
         }
 
         @Override

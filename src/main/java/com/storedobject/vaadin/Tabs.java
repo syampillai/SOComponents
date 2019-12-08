@@ -93,6 +93,19 @@ public class Tabs extends Composite<Div> {
     }
 
     /**
+     * Create and add a tab with specified components.
+     *
+     * @param tabLabel Label for the tab to be created and added
+     * @param components Components to be added to the tab
+     * @return Newly created tab.
+     */
+    public Tab createTab(String tabLabel, Component... components) {
+        Tab tab = new Tab(tabLabel);
+        add(tab, components);
+        return tab;
+    }
+
+    /**
      * Add a tab with its components.
      *
      * @param tab Tab to be added (it could be a tab that was already added)

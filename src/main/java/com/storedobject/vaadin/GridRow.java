@@ -22,10 +22,10 @@ import java.util.stream.Stream;
  */
 public abstract class GridRow {
 
-    private final Grid grid;
+    private final Grid<?> grid;
     private final Object row;
 
-    private GridRow(Grid grid, Object row) {
+    private GridRow(Grid<?> grid, Object row) {
         this.grid = grid;
         this.row = row;
     }
@@ -37,7 +37,7 @@ public abstract class GridRow {
      * @param append Whether to append or not.
      * @return The row that is created.
      */
-    static GridRow createHeader(Grid grid, boolean append) {
+    static GridRow createHeader(Grid<?> grid, boolean append) {
         return new GridHeaderRow(grid, append);
     }
 
@@ -48,8 +48,29 @@ public abstract class GridRow {
      * @param append Whether to append or not.
      * @return The row that is created.
      */
-    static GridRow createFooter(Grid grid, boolean append) {
+    static GridRow createFooter(Grid<?> grid, boolean append) {
         return new GridFooterRow(grid, append);
+    }
+
+    /**
+     * Join all cells starting at a given index and ending at the last column (inclusive).
+     * @param startintgIndex Starting index of the column
+     * @return The new Cell that is created or null if join operation fails.
+     */
+    public Cell join(int startintgIndex) {
+        return join(startintgIndex, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Join cells for a range of column indices.
+     * @param startintgIndex Starting index of the column
+     * @param endingIndex Ending index of the column (exclusive).
+     * @return The new Cell that is created or null if join operation fails.
+     */
+    public Cell join(int startintgIndex, int endingIndex) {
+        List<String> names = new ArrayList<>();
+        getCells().skip(startintgIndex).limit(endingIndex - startintgIndex).forEach(c -> names.add(c.name));
+        return join(names);
     }
 
     /**
@@ -142,7 +163,7 @@ public abstract class GridRow {
         return cell == null ? null : new Cell(cell, name);
     }
 
-    private Object getCell(Grid.Column column) {
+    private Object getCell(Grid.Column<?> column) {
         if(column == null) {
             return null;
         }
@@ -155,29 +176,29 @@ public abstract class GridRow {
      * @return Stream of cells of this row.
      */
     public Stream<Cell> getCells() {
-        ArrayList<Grid.Column> columns = new ArrayList<>();
+        ArrayList<Grid.Column<?>> columns = new ArrayList<>();
         Object prev = null, cell;
         for(Object column: grid.getColumns()) {
-            cell = getCell((Grid.Column) column);
+            cell = getCell((Grid.Column<?>) column);
             if(cell == prev) {
                 continue;
             }
             prev = cell;
-            columns.add((Grid.Column) column);
+            columns.add((Grid.Column<?>) column);
         }
         return columns.stream().map(c -> new Cell(getCell(c), c.getKey()));
     }
 
     private static class GridHeaderRow extends GridRow {
 
-        public GridHeaderRow(Grid grid, boolean append) {
+        public GridHeaderRow(Grid<?> grid, boolean append) {
             super(grid, append ? grid.appendHeaderRow() : grid.prependHeaderRow());
         }
     }
 
     private static class GridFooterRow extends GridRow {
 
-        public GridFooterRow(Grid grid, boolean append) {
+        public GridFooterRow(Grid<?> grid, boolean append) {
             super(grid, append ? grid.appendFooterRow() : grid.prependFooterRow());
         }
     }
