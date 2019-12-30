@@ -79,7 +79,10 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * Execute this by displaying it in a View.
      */
     default void execute() {
-        getView(true).execute();
+        View v = getView(true);
+        if(v != null) {
+            v.execute();
+        }
     }
 
     /**
@@ -89,7 +92,10 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param lock View to be locked.
      */
     default void execute(View lock) {
-        getView(true).execute(lock);
+        View v = getView(true);
+        if(v != null) {
+            v.execute(lock);
+        }
     }
 
     /**
@@ -99,7 +105,10 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param parent Parent view to be set
      */
     default void invoke(View parent) {
-        getView(true).invoke(parent);
+        View v = getView(true);
+        if(v != null) {
+            v.invoke(parent);
+        }
     }
 
     /**
