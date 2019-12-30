@@ -747,7 +747,8 @@ public interface HasColumns<T> extends ExecutableView {
 
         private void constructed() {
             if(grid instanceof HasColumns) {
-                ((HasColumns) grid).constructed();
+                //noinspection unchecked
+                ((HasColumns<T>) grid).constructed();
             }
         }
 
@@ -828,7 +829,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         @SuppressWarnings("unchecked")
-        private ObjectColumnCreator cc() {
+        private ObjectColumnCreator<T> cc() {
             if(columnCreator == null) {
                 columnCreator = ((ObjectColumnCreator<T>) Objects.requireNonNull(ApplicationEnvironment.get()).getObjectColumnCreator()).create(hc);
             }
@@ -999,7 +1000,7 @@ public interface HasColumns<T> extends ExecutableView {
         private Stream<String> getColumnNames() {
             Stream<String> names = null;
             if(grid instanceof HasColumns) {
-                names = ((HasColumns) grid).getColumnNames();
+                names = ((HasColumns<T>) grid).getColumnNames();
             }
             return names == null ? cc().getColumnNames() : names;
         }
@@ -1081,7 +1082,6 @@ public interface HasColumns<T> extends ExecutableView {
             return m == null || m.isEmpty() ? columnName : m;
         }
 
-        @SuppressWarnings("unchecked")
         private Function<T, ?> getColumnFunction(String columnName) {
             Function<T, ?> f = hc.getColumnFunction(columnName);
             return f == null ? cc().getColumnFunction(columnName) : f;
@@ -1218,7 +1218,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(grid instanceof HasColumns) {
                 Function<T, ?> function = wrap(getMethodFunction(columnName, m));
                 if (HTMLGenerator.class.isAssignableFrom(m.getReturnType())) {
-                    return ((HasColumns) grid).createHTMLHierarchyColumn(columnName, function) != null;
+                    return ((HasColumns<T>) grid).createHTMLHierarchyColumn(columnName, function) != null;
                 } else {
                     return ((HasColumns<T>) grid).createHierarchyColumn(columnName, function::apply) != null;
                 }
@@ -1383,7 +1383,6 @@ public interface HasColumns<T> extends ExecutableView {
             return true;
         }
 
-        @SuppressWarnings("unchecked")
         private ColumnTextAlign getTextAlign(String columnName) {
             ColumnTextAlign a = hc.getTextAlign(columnName);
             if(a == null) {
@@ -1401,20 +1400,21 @@ public interface HasColumns<T> extends ExecutableView {
             return h == null ? cc().getColumnCaption(columnName) : h;
         }
 
+        @SuppressWarnings("unchecked")
         private View getView(boolean create) {
             if(view == null && create) {
                 if(grid instanceof HasColumns) {
-                    view = ((HasColumns)grid).createView();
+                    view = ((HasColumns<T>)grid).createView();
                 }
             }
             if(view == null && create) {
-                String caption = grid instanceof HasColumns ? ((HasColumns) grid).getCaption() : "Data View";
+                String caption = grid instanceof HasColumns ? ((HasColumns<T>) grid).getCaption() : "Data View";
                 view = new View(grid, caption) {
 
                     @Override
                     public boolean isCloseable() {
                         if(grid instanceof HasColumns) {
-                            return ((HasColumns) grid).isCloseable();
+                            return ((HasColumns<T>) grid).isCloseable();
                         }
                         return grid instanceof CloseableView;
                     }
@@ -1422,7 +1422,7 @@ public interface HasColumns<T> extends ExecutableView {
                     @Override
                     public void returnedFrom(View parent) {
                         if(grid instanceof HasColumns) {
-                            ((HasColumns) grid).returnedFrom(parent);
+                            ((HasColumns<T>) grid).returnedFrom(parent);
                         }
                     }
 
@@ -1432,7 +1432,7 @@ public interface HasColumns<T> extends ExecutableView {
                         View v = view;
                         view = null;
                         if(grid instanceof HasColumns) {
-                            ((HasColumns) grid).close();
+                            ((HasColumns<T>) grid).close();
                         }
                         view = v;
                     }
@@ -1443,7 +1443,7 @@ public interface HasColumns<T> extends ExecutableView {
                         View v = view;
                         view = null;
                         if(grid instanceof HasColumns) {
-                            ((HasColumns) grid).abort();
+                            ((HasColumns<T>) grid).abort();
                         }
                         view = v;
                     }
@@ -1451,7 +1451,7 @@ public interface HasColumns<T> extends ExecutableView {
                     @Override
                     public String getMenuIconName() {
                         if(grid instanceof HasColumns) {
-                            return ((HasColumns) grid).getMenuIconName();
+                            return ((HasColumns<T>) grid).getMenuIconName();
                         }
                         return super.getMenuIconName();
                     }
@@ -1459,7 +1459,7 @@ public interface HasColumns<T> extends ExecutableView {
                     @Override
                     public ApplicationMenuItem createMenuItem(Runnable menuAction) {
                         if(grid instanceof HasColumns) {
-                            return ((HasColumns) grid).createMenuItem(menuAction);
+                            return ((HasColumns<T>) grid).createMenuItem(menuAction);
                         }
                         return super.createMenuItem(menuAction);
                     }

@@ -24,6 +24,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;
     private ApplicationMenuItem menuItem;
+    private boolean firstFooter = true;
 
     /**
      * Constructor that will generate columns from the Bean's properties.
@@ -100,5 +101,14 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
             }
         }
         return menuItem;
+    }
+
+    @Override
+    public GridRow appendFooter() {
+        if(firstFooter) {
+            HasColumns.super.appendFooter();
+            firstFooter = false;
+        }
+        return HasColumns.super.appendFooter();
     }
 }

@@ -1,3 +1,6 @@
 :host(.so-grid) [part~="row"][selected] [part~="body-cell"]:not([part~="details-cell"]) {
     background: var(--lumo-primary-color-50pct);
 }
+#footer tr:first-child {
+    display:none
+}

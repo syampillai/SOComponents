@@ -329,7 +329,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
                 return AbstractDataEditor.this.getFieldSetMethod(fieldName, getMethod);
             } catch (FieldError ignored) {
             }
-            Class[] params = new Class[]{getMethod.getReturnType()};
+            Class<?>[] params = new Class[] { getMethod.getReturnType() };
             try {
                 Method m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
                 if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
