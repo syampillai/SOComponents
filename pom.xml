@@ -109,7 +109,7 @@
         <dependency>
             <groupId>org.vaadin</groupId>
             <artifactId>textfieldformatter</artifactId>
-            <version>4.0.0.beta4</version>
+            <version>4.1.0</version>
         </dependency>
 
         <!-- Vaadin addon for Multiselect Combo -->
