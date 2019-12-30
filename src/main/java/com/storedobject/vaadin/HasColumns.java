@@ -118,7 +118,7 @@ public interface HasColumns<T> extends ExecutableView {
     /**
      * Create a View to display the grid when executed. If this method returns null, a default View will be created.
      *
-     * @return A View with this grid as the component. Default implementaion returns <code>null</code>.
+     * @return A View with this grid as the component. Default implementation returns <code>null</code>.
      */
     default View createView() {
         return null;
@@ -480,7 +480,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Closes the view if that exists
+     * Closes the view if that exists.
      */
     @Override
     default void close() {
@@ -488,11 +488,20 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Closes the view by aborting if that exists
+     * Closes the view by aborting if that exists.
      */
     @Override
     default void abort() {
         getSOGrid().abort();
+    }
+
+    /**
+     * Close resources if any that are left opened.
+     * This method is invoked when the grid is removed from the {@link Application}.
+     * The default implementation invokes the clean method of the view if it exists.
+     */
+    default void clean() {
+        getSOGrid().clean();
     }
 
     /**
@@ -1449,6 +1458,17 @@ public interface HasColumns<T> extends ExecutableView {
                     }
 
                     @Override
+                    public void clean() {
+                        super.clean();
+                        View v = view;
+                        view = null;
+                        if(grid instanceof HasColumns) {
+                            ((HasColumns<T>) grid).clean();
+                        }
+                        view = v;
+                    }
+
+                    @Override
                     public String getMenuIconName() {
                         if(grid instanceof HasColumns) {
                             return ((HasColumns<T>) grid).getMenuIconName();
@@ -1477,6 +1497,12 @@ public interface HasColumns<T> extends ExecutableView {
         private void abort() {
             if(view != null) {
                 view.abort();
+            }
+        }
+
+        private void clean() {
+            if(view != null) {
+                view.clean();
             }
         }
 
