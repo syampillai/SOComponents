@@ -1,10 +1,8 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.ElementClick;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.shared.Registration;
 
 /**
  * A button that shows only an icon. Since no text is displayed, it saves screen real estate.
@@ -14,7 +12,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 public class ImageButton extends Icon implements HasBadgeStyle {
 
     private ElementClick click;
-    private ComponentEventListener<ClickEvent<Component>> eventListener;
 
     /**
      * Constructor.
@@ -58,29 +55,18 @@ public class ImageButton extends Icon implements HasBadgeStyle {
     private void init(ClickHandler clickHandler) {
         getElement().getStyle().set("cursor", "pointer");
         click = new ElementClick(this);
-        setClickHandler(clickHandler);
-    }
-
-    /**
-     * Set click handler.
-     *
-     * @param clickHandler Click handler
-     */
-    public void setClickHandler(ClickHandler clickHandler) {
-        if(eventListener != null) {
-            click.removeClickListener(eventListener);
-        }
-        eventListener = ClickHandler.convert(clickHandler);
-        click.addClickListener(eventListener);
+        addClickHandler(clickHandler);
     }
 
     /**
      * Add click handler.
      *
      * @param clickHandler Click handler
+     * @return Registration.
      */
-    public void addClickHandler(ClickHandler clickHandler) {
-        click.addClickListener(ClickHandler.convert(clickHandler));
+    @SuppressWarnings("UnusedReturnValue")
+    public Registration addClickHandler(ClickHandler clickHandler) {
+        return click.addClickListener(ClickHandler.convert(clickHandler));
     }
 
     /**

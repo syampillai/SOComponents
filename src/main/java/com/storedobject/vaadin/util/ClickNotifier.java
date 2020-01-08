@@ -7,6 +7,7 @@ import com.vaadin.flow.shared.Registration;
 
 /**
  * Slightly enhanced version of Vaadin's {@link ClickNotifier}.
+ *
  * @author Syam
  */
 public interface ClickNotifier extends com.vaadin.flow.component.ClickNotifier<Component> {

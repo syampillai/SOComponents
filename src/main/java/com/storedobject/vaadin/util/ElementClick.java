@@ -42,7 +42,7 @@ public class ElementClick implements ClickNotifier {
 
     private void handleClick(DomEvent event) {
         JsonObject e = event.getEventData();
-        EnhancedClickEvent ce = new EnhancedClickEvent(component, true, (int)e.getNumber("event.screenX"),
+        EnhancedClickEvent<?> ce = new EnhancedClickEvent<>(component, true, (int)e.getNumber("event.screenX"),
                 (int)e.getNumber("event.screenY"), (int)e.getNumber("event.clientX"), (int)e.getNumber("event.clientY"),
                 (int)e.getNumber("event.offsetX"), (int)e.getNumber("event.offsetY"),
                 (int)e.getNumber("event.detail"), (int)e.getNumber("event.button"), e.getBoolean("event.ctrlKey"),

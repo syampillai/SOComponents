@@ -4,6 +4,9 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.server.AbstractStreamResource;
 
+import java.awt.*;
+import java.util.function.Consumer;
+
 /**
  * Enhancement to Vaadin's {@link com.vaadin.flow.component.html.Image} component with proper resource handling.
  *
@@ -53,7 +56,7 @@ public class Image extends com.vaadin.flow.component.html.Image implements Resou
     public void setSource(String source) {
         resourceSupport.clear();
         if(source == null) {
-            setSource(new PaintedImageResource(null));
+            setSource(new PaintedImageResource((Consumer< Graphics2D>)null));
             setAlt(NO_IMAGE);
         } else {
             super.setSrc(source);

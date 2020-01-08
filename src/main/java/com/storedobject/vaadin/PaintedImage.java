@@ -40,6 +40,16 @@ public class PaintedImage extends Image {
     /**
      * Create an image.
      *
+     * @param widthInPixels Image width in pixels
+     * @param heightInPixels Image height in pixels
+     */
+    public PaintedImage(int widthInPixels, int heightInPixels) {
+        this(Type.SVG, null, widthInPixels, heightInPixels);
+    }
+
+    /**
+     * Create an image.
+     *
      * @param type Type of the image to create
      * @param widthInPixels Image width in pixels
      * @param heightInPixels Image height in pixels
@@ -157,7 +167,7 @@ public class PaintedImage extends Image {
     }
 
     /**
-     * Paint the image to the {@link Graphics2D}. if there is a painter already set, it will be invoked to do the painting.
+     * Paint the image to the {@link Graphics2D}. if there is a painter already set, that will be invoked to do the painting.
      *
      * @param graphics {@link Graphics2D} on which image needs to be drawn
      */

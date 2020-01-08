@@ -9,7 +9,7 @@ import com.vaadin.flow.component.Composite;
  *
  * @author Syam
  */
-public class Scrollable extends Composite {
+public class Scrollable extends Composite<Component> {
 
     private Component component;
 
@@ -27,7 +27,8 @@ public class Scrollable extends Composite {
      * @param scrollable Scrollable or not
      */
     public Scrollable(Component component, boolean scrollable) {
-        this.component = component instanceof Composite ? ((Composite) component).getContent() : component;
+        //noinspection unchecked
+        this.component = component instanceof Composite ? ((Composite<Component>) component).getContent() : component;
         if(scrollable) {
             component.getElement().getStyle().set("overflow", "auto");
         } else if(isScrollable()) {
@@ -49,13 +50,14 @@ public class Scrollable extends Composite {
     }
 
     /**
-     * Check curent state of scrollability of a particular component.
+     * Check current state of scrollability of a particular component.
      * @param component Component to check
      * @return Scrollable or not.
      */
     public static boolean isScrollable(Component component) {
         if(component instanceof Composite) {
-            return isScrollable(((Composite) component).getContent());
+            //noinspection unchecked
+            return isScrollable(((Composite<Component>) component).getContent());
         }
         return "auto".equals(component.getElement().getStyle().get("overflow"));
     }

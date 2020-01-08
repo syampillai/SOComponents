@@ -21,11 +21,10 @@ import java.util.List;
 @Tag("div")
 public class DetailComponent extends Composite<Div> implements HasSize {
 
-    private Div body = new Div();
+    private final Div body = new Div();
     private Icon headerIcon;
-    private Clickable<Component> header;
-    private ContentSection contentLayout = new ContentSection();
-    private ClickHandler clickHandler = (ClickHandler) c -> toggle(true);
+    private final ContentSection contentLayout = new ContentSection();
+    private final ClickHandler clickHandler = (ClickHandler) c -> toggle(true);
     private List<ToggleListener> listeners;
 
     /**
@@ -63,7 +62,7 @@ public class DetailComponent extends Composite<Div> implements HasSize {
         if(header == null) {
             header = constructHeader("");
         }
-        this.header = new Clickable<>(header, clickHandler);
+        new Clickable<>(header, clickHandler);
         if(content != null) {
             contentLayout.add(content);
         }
@@ -85,7 +84,7 @@ public class DetailComponent extends Composite<Div> implements HasSize {
             return;
         }
         body.getElement().removeChild(0);
-        this.header = new Clickable<>(header, clickHandler);
+        new Clickable<>(header, clickHandler);
         body.getElement().insertChild(0, header.getElement());
     }
 

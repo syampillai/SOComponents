@@ -29,6 +29,43 @@ public class PaintedImageResource extends StreamResource {
 
     /**
      * Create a 100x100 pixels SVG image resource.
+     */
+    public PaintedImageResource() {
+        this(PaintedImage.Type.SVG, null);
+    }
+
+    /**
+     * Create a 100x100 pixels image resource.
+     *
+     * @param type Type of image to create.
+     */
+    public PaintedImageResource(PaintedImage.Type type) {
+        this(type, null);
+    }
+
+    /**
+     * Create an image resource.
+     *
+     * @param widthInPixels Image width in pixels
+     * @param heightInPixels Image height in pixels
+     */
+    public PaintedImageResource(int widthInPixels, int heightInPixels) {
+        this(PaintedImage.Type.SVG, null, widthInPixels, heightInPixels);
+    }
+
+    /**
+     * Create an image resource.
+     *
+     * @param imageType Type of the image to create
+     * @param widthInPixels Image width in pixels
+     * @param heightInPixels Image height in pixels
+     */
+    public PaintedImageResource(PaintedImage.Type imageType, int widthInPixels, int heightInPixels) {
+        this(imageType, null, widthInPixels, heightInPixels);
+    }
+
+    /**
+     * Create a 100x100 pixels SVG image resource.
      *
      * @param painter Image painter
      */
@@ -43,7 +80,18 @@ public class PaintedImageResource extends StreamResource {
      * @param type Type of image to create.
      */
     public PaintedImageResource(PaintedImage.Type type, Consumer<Graphics2D> painter) {
-        this(type, painter,100,100);
+        this(type, painter, 100, 100);
+    }
+
+    /**
+     * Create an image resource.
+     *
+     * @param painter Image painter
+     * @param widthInPixels Image width in pixels
+     * @param heightInPixels Image height in pixels
+     */
+    public PaintedImageResource(Consumer<Graphics2D> painter, int widthInPixels, int heightInPixels) {
+        this(PaintedImage.Type.SVG, painter, widthInPixels, heightInPixels);
     }
 
     /**
@@ -55,8 +103,24 @@ public class PaintedImageResource extends StreamResource {
      * @param heightInPixels Image height in pixels
      */
     public PaintedImageResource(PaintedImage.Type imageType, Consumer<Graphics2D> painter, int widthInPixels, int heightInPixels) {
-        super(createBaseFileName() + "." + imageType.toString().toLowerCase(), new PaintedImageResource.ImageStream(imageType, widthInPixels, heightInPixels, painter));
-        setContentType(imageType == PaintedImage.Type.SVG ? "image/svg+xml" : "image/" + imageType.toString().toLowerCase());
+        this(new PaintedImageResource.ImageStream(imageType, widthInPixels, heightInPixels), painter);
+    }
+
+    private PaintedImageResource(ImageStream imageStream, Consumer<Graphics2D> painter) {
+        super(createBaseFileName() + "." + imageStream.imageType.toString().toLowerCase(), imageStream);
+        setContentType(imageStream.imageType == PaintedImage.Type.SVG ? "image/svg+xml" : "image/" + imageStream.imageType.toString().toLowerCase());
+        if(painter == null) {
+            painter = this::paint;
+        }
+        imageStream.painter = painter;
+    }
+
+    /**
+     * Paint the image to the {@link Graphics2D}. if there is a painter already set, that will be invoked to do the painting.
+     *
+     * @param graphics {@link Graphics2D} on which image needs to be drawn
+     */
+    public void paint(Graphics2D graphics) {
     }
 
     /**
@@ -80,11 +144,10 @@ public class PaintedImageResource extends StreamResource {
         private ByteArrayInputStream bytestream = null;
         private Consumer<Graphics2D> painter;
 
-        private ImageStream(PaintedImage.Type imageType, int width, int height, Consumer<Graphics2D> painter) {
+        private ImageStream(PaintedImage.Type imageType, int width, int height) {
             this.imageType = imageType;
             this.width = width;
             this.height = height;
-            this.painter = painter;
         }
 
         @Override

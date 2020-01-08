@@ -73,7 +73,7 @@ public enum ThemeStyle {
         }
         String oldSet = theme + " " + theme + " ";
         String newSet = Arrays.stream(styles).map(Enum::toString).filter(s -> !oldSet.contains(s)).collect(Collectors.joining(" "));
-        if(newSet != null && !newSet.isEmpty()) {
+        if(!newSet.isEmpty()) {
             element.setAttribute(THEME, theme + " " + newSet);
         }
     }

@@ -1,11 +1,13 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.HasText;
+
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.textfield.TextField}.
  *
  * @author Syam
  */
-public class TextField extends com.vaadin.flow.component.textfield.TextField {
+public class TextField extends com.vaadin.flow.component.textfield.TextField implements HasText {
 
     /**
      * Constructor.
@@ -64,5 +66,15 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField {
     @Override
     public void setValue(String value) {
         super.setValue(value == null ? "" : value);
+    }
+
+    @Override
+    public String getText() {
+        return getValue();
+    }
+
+    @Override
+    public void setText(String text) {
+        setValue(text);
     }
 }

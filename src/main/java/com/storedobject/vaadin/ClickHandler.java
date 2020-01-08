@@ -43,9 +43,9 @@ public interface ClickHandler extends ComponentEventListener<ClickEvent<? extend
      * This method is invoked from {@link #onComponentEvent(ClickEvent)} when a component is clicked.
      * Default implementation invokes {@link #clicked(Component)}, {@link #doubleClicked(Component)} or {@link #rightClicked(Component)}.
      *
-     * @param event Click event.
+     * @param event Click event (This could be a {@link EnhancedClickEvent})
      */
-    default void clicked(ClickEvent event) {
+    default void clicked(ClickEvent<? extends Component> event) {
         Component c = event.getSource();
         if(event.getButton() == 2) {
             rightClicked(c);
@@ -61,7 +61,7 @@ public interface ClickHandler extends ComponentEventListener<ClickEvent<? extend
     /**
      * Default implementation invokes {@link #clicked(ClickEvent)}.
      *
-     * @param event Click event.
+     * @param event Click event (This could be a {@link EnhancedClickEvent})
      */
     @Override
     default void onComponentEvent(ClickEvent<? extends Component> event) {

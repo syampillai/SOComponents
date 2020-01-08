@@ -9,7 +9,7 @@ import com.vaadin.flow.component.Component;
  *
  * @author Syam
  */
-public class EnhancedClickEvent extends com.vaadin.flow.component.ClickEvent {
+public class EnhancedClickEvent<C extends Component> extends com.vaadin.flow.component.ClickEvent<C> {
 
     private final int componentX, componentY;
 

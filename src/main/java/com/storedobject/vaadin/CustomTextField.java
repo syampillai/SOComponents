@@ -56,6 +56,7 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
 
     private HasTextValue createFieldInt() {
         field = new TF();
+        field.setWidthFull();
         add((TF)field);
         ((TF)field).setPreventInvalidInput(true);
         customizeTextField(field);
@@ -162,7 +163,7 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
         if(field instanceof HasValue) {
-            ((HasValue)field).setReadOnly(readOnly);
+            ((HasValue<?, ?>)field).setReadOnly(readOnly);
         }
     }
 

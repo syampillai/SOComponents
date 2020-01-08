@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValue;
 import java.util.function.BiFunction;
@@ -46,6 +47,9 @@ public class TranslatedField<T, I> extends CustomField<T> {
         this.convertT2I = convertToInternalValue;
         this.convertI2T = convertToValue;
         if (field instanceof Component) {
+            if(field instanceof HasSize) {
+                ((HasSize) field).setWidthFull();
+            }
             add((Component)field);
         }
         setPresentationValue(getEmptyValue());
