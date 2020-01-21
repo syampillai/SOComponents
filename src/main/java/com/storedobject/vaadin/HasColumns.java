@@ -570,15 +570,6 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Scroll to a particular row.
-     *
-     * @param rowIndex Zero based index of the row.
-     */
-    default void scrollTo(int rowIndex) {
-        getSOGrid().scrollTo(rowIndex);
-    }
-
-    /**
      * Get the column for the given column name.
      *
      * @param columnName Name of the column
@@ -1528,13 +1519,6 @@ public interface HasColumns<T> extends ExecutableView {
                 return null;
             }
             return set.stream().findAny().orElse(null);
-        }
-
-        private void scrollTo(int rowIndex) {
-            if(rowIndex < 0) {
-                return;
-            }
-            grid.getElement().callJsFunction("_scrollToIndex", rowIndex);
         }
 
         /**

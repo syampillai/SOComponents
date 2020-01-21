@@ -1,19 +1,26 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.shared.Registration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Dashboard is a "view" that can show multiple embedded "sub-views". Dashoard divides the display area into rows and columns and each
+ * Dashboard is a "view" that can show multiple embedded "sub-views". Dashboard divides the display area into rows and columns and each
  * "sub-view" can span across one or more rows and columns.
  *
  * @author Syam
  */
-@Tag("div")
-public class Dashboard extends Component implements HasOrderedComponents<Component>, HasStyle, HasSize, ExecutableView {
+public class Dashboard extends CSSGrid implements ExecutableView {
 
     private View view;
     private String caption;
     private final boolean boxing;
+    private final Map<View, Registration> registrationMap = new HashMap<>();
+    private final ViewMonitor viewMonitor = new ViewMonitor();
 
     /**
      * Constructor. Sub-views are shown in a box by default.
@@ -49,13 +56,9 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     public Dashboard(String caption, boolean boxing) {
         this.boxing = boxing;
         setCaption(caption);
-        style("display", "grid");
-        style("align-items", "center");
-        setGap("4px");
-        style("transition", "all 5s");
         setMinimumColumnWidth(null);
         setAutoarrange(true);
-        style("place-items", "stretch");
+        style("align-items", "start");
         style("place-content", "stretch");
     }
 
@@ -69,10 +72,6 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
             width = "250px";
         }
         style("grid-template-columns", "repeat(auto-fill, minmax(" + width + ", 1fr))");
-    }
-
-    private void style(String styleName, String styleValue) {
-        getStyle().set(styleName, styleValue);
     }
 
     /**
@@ -96,19 +95,47 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     }
 
     /**
+     * Justify (horizontally) a view within its grid cell.
+     *
+     * @param view View
+     * @param position Position
+     */
+    public void justify(View view, Position position) {
+        justify(view.getComponent(), position);
+    }
+
+    /**
+     * Align (vertically) a view within its grid cell.
+     *
+     * @param view View
+     * @param position Position
+     */
+    public void align(View view, Position position) {
+        align(view.getComponent(), position);
+    }
+
+    /**
+     * Center (horizontally and vertically) a view within its grid cell.
+     *
+     * @param view View
+     */
+    public void center(View view) {
+        Component component = view.getComponent();
+        justify(component, Position.CENTER);
+        align(component, Position.CENTER);
+    }
+
+    /**
      * Set the column-span for the particular sub-view. Minimum value is 1 and maximum allowed is 6.
      *
      * @param component Sub-view
      * @param numberOfColumns Number of columns to span
      */
     public void setColumnSpan(Component component, int numberOfColumns) {
-        if(numberOfColumns < 1) {
-            numberOfColumns = 1;
-        }
         if(numberOfColumns > 6) {
             numberOfColumns = 6;
         }
-        component.getElement().getStyle().set("grid-column", "span " + numberOfColumns);
+        super.setColumnSpan(component, numberOfColumns);
     }
 
     /**
@@ -124,33 +151,11 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     /**
      * Set the row-span for the particular sub-view. Minimum value is 1.
      *
-     * @param component Sub-view
-     * @param numberOfRows Number of rows to span
-     */
-    public void setRowSpan(Component component, int numberOfRows) {
-        if(numberOfRows < 1) {
-            numberOfRows = 1;
-        }
-        component.getElement().getStyle().set("grid-row", "span " + numberOfRows);
-    }
-
-    /**
-     * Set the row-span for the particular sub-view. Minimum value is 1.
-     *
      * @param view Sub-view
      * @param numberOfRows Number of rows to span
      */
     public void setRowSpan(View view, int numberOfRows) {
         setRowSpan(view.getComponent(), numberOfRows);
-    }
-
-    /**
-     * Set gap between sub-views.
-     *
-     * @param size Gap
-     */
-    public void setGap(String size) {
-        style("grid-gap", size);
     }
 
     /**
@@ -175,7 +180,7 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
                 ((HasSize)c).setHeight("100%");
             }
         }
-        HasOrderedComponents.super.add(components);
+        super.add(components);
     }
 
     /**
@@ -187,7 +192,25 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
         if(views != null) {
             for(View v: views) {
                 if(v != null) {
-                    add(v.getComponent());
+                    if(registrationMap.get(v) == null) {
+                        registrationMap.put(v, v.addClosedListener(viewMonitor));
+                        add(v.getComponent());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove sub-views to the dashboard.
+     *
+     * @param views Sub-views.
+     */
+    public void remove(View... views) {
+        if(views != null) {
+            for (View v : views) {
+                if (v != null) {
+                    v.abort();
                 }
             }
         }
@@ -204,11 +227,22 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
      * @return A View with this grid as the component.
      */
     public View getView(boolean create) {
-        if(view == null && create) {
+        if(view != null) {
+            return view;
+        }
+        if(create) {
             view = createView();
         }
         if(view == null && create) {
-            view = new View(this, getCaption());
+            view = new View(this, getCaption()) {
+                @Override
+                public boolean isCloseable() {
+                    return Dashboard.this.isCloseable();
+                }
+            };
+        }
+        if(view != null) {
+            view.addClosedListener(v -> closeInt());
         }
         return view;
     }
@@ -238,6 +272,8 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     public void close() {
         if(view != null) {
             view.close();
+        } else {
+            closeInt();
         }
     }
 
@@ -248,7 +284,20 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
     public void abort() {
         if(view != null) {
             view.abort();
+        } else {
+            closeInt();
         }
+    }
+
+    private void closeInt() {
+        new ArrayList<>(registrationMap.keySet()).forEach(View::abort);
+        clean();
+    }
+
+    /**
+     * This will be invoked whenever the dashboard is closed or aborted so that any resource clean-up can be run.
+     */
+    public void clean() {
     }
 
     /**
@@ -258,5 +307,18 @@ public class Dashboard extends Component implements HasOrderedComponents<Compone
      */
     public void setCaption(String caption) {
         this.caption = caption;
+    }
+
+    private class ViewMonitor implements ViewClosedListener {
+
+        @Override
+        public void viewClosed(View view) {
+            remove(view.getComponent());
+            Registration r = registrationMap.get(view);
+            if(r != null) {
+                r.remove();
+                registrationMap.remove(view);
+            }
+        }
     }
 }

@@ -3,22 +3,19 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.*;
 
 /**
- * A layout for arragning components in a grid style. Only columns (just the count or sizes) can be specified.
+ * A layout for arranging components in a grid style. Only columns (just the count or sizes) can be specified.
  * When more components are added, it will wrap to the next rows if the column count exceeds the specified limit.
  *
  * @author Syam
  */
 @Tag("div")
-public class GridLayout extends Component implements HasOrderedComponents<Component>, HasStyle, HasSize {
-
-    public enum Position { START, END, CENTER, STRETCH }
+public class GridLayout extends CSSGrid {
 
     /**
      * Constructor.
      * @param numberOfColumns Number of equally sized columns
      */
     public GridLayout(int numberOfColumns) {
-        init();
         setColumns(numberOfColumns);
     }
 
@@ -28,7 +25,6 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
      *                    automatically determined from the component's size)
      */
     public GridLayout(int... columnSizes) {
-        init();
         setColumnSizes(columnSizes);
     }
 
@@ -37,15 +33,7 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
      * @param columnSizes Sizes of columns
      */
     public GridLayout(String... columnSizes) {
-        init();
         setColumnSizes(columnSizes);
-    }
-
-    private void init() {
-        style("display", "grid");
-        style("align-items", "center");
-        setColumnGap("4px");
-        style("transition", "all 1s");
     }
 
     /**
@@ -101,127 +89,22 @@ public class GridLayout extends Component implements HasOrderedComponents<Compon
      * @param numberOfColumns Number of columns to set
      */
     public void setColumns(int numberOfColumns) {
-        setColumnSizes(sizes(numberOfColumns, 0));
-    }
-
-    /**
-     * Set gap between columns.
-     * @param size Gap
-     */
-    public void setColumnGap(String size) {
-        style("grid-column-gap", size == null ? "1px" : size);
-    }
-
-    /**
-     * Set gap between rows.
-     * @param size Gap
-     */
-    public void setRowGap(String size) {
-        style("grid-row-gap", size == null ? "1px" : size);
-    }
-    
-    private void style(String styleName, String styleValue) {
-        getStyle().set(styleName, styleValue);
+        setColumnSizes(sizes(numberOfColumns));
     }
 
     /**
      * For internal use only.
      * @param numberOfColumns Number of columns
-     * @param value Value
      * @return An integer array with "number of columns" as size and each element set to "value".
      */
-    static int[] sizes(int numberOfColumns, int value) {
+    private static int[] sizes(int numberOfColumns) {
         if(numberOfColumns < 1) {
             numberOfColumns = 4;
         }
         int[] sizes = new int[numberOfColumns];
         for(int i = 0; i < numberOfColumns; i++) {
-            sizes[i] = value;
+            sizes[i] = 0;
         }
         return sizes;
-    }
-
-    /**
-     * Set number of columns to span.
-     *
-     * @param component Component
-     * @param columns Columns to span
-     */
-    public void setColumnSpan(Component component, int columns) {
-        component.getElement().getStyle().set("grid-column", "span " + columns);
-    }
-
-    /**
-     * Get number of columns the component takes up.
-     *
-     * @param component Component
-     * @return Number of columns.
-     */
-    public int getColumnSpan(Component component) {
-        return getSpan(component, "column");
-    }
-
-    /**
-     * Set number of rows to span.
-     *
-     * @param component Component
-     * @param rows Rows to span
-     */
-    public void setRowSpan(Component component, int rows) {
-        component.getElement().getStyle().set("grid-row", "span " + rows);
-    }
-
-    /**
-     * Get number of rows the component takes up.
-     *
-     * @param component Component
-     * @return Number of rows.
-     */
-    public int getRowSpan(Component component) {
-        return getSpan(component, "row");
-    }
-
-    private int getSpan(Component component, String of) {
-        try {
-            return Integer.parseInt(component.getElement().getStyle().get("grid-" + of).replace(" ", "").replace("span", ""));
-        } catch (Throwable ignored) {
-        }
-        return 1;
-    }
-
-    /**
-     * Justify (horizontally) a component within its grid cell.
-     *
-     * @param component Component
-     * @param position Position
-     */
-    public void justify(Component component, Position position) {
-        if(position == null) {
-            position = Position.STRETCH;
-        }
-        component.getElement().getStyle().set("justify-self", position.toString().toLowerCase());
-    }
-
-    /**
-     * Align (vertically) a component within its grid cell.
-     *
-     * @param component Component
-     * @param position Position
-     */
-    public void align(Component component, Position position) {
-        if(position == null) {
-            position = Position.STRETCH;
-        }
-        component.getElement().getStyle().set("align-self", position.toString().toLowerCase());
-    }
-
-    /**
-     * Center (horizontally and vertically) a component within its grid cell.
-     *
-     * @param component Component
-     */
-    public void center(Component component) {
-        justify(component, Position.CENTER);
-        align(component, Position.CENTER);
     }
 }
