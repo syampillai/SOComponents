@@ -27,12 +27,13 @@ public abstract class AbstractResourcedComponent extends Component implements Re
      * @param fileURI URI of the file to view
      */
     public AbstractResourcedComponent(String fileURI) {
+        ID.set(this);
+        init();
         resourceSupport = new ResourceSupport(this);
         if(fileURI != null) {
             setURI(fileURI);
         }
         setSizeFull();
-        ID.set(this);
     }
 
     /**
@@ -40,12 +41,19 @@ public abstract class AbstractResourcedComponent extends Component implements Re
      * @param streamResource Stream resource
      */
     public AbstractResourcedComponent(AbstractStreamResource streamResource) {
+        ID.set(this);
+        init();
         resourceSupport = new ResourceSupport(this);
         if(streamResource != null) {
             setSource(streamResource);
         }
         setSizeFull();
-        ID.set(this);
+    }
+
+    /**
+     * This will be invoked by the constructor for initial set up. The default implementation does nothing.
+     */
+    protected void init() {
     }
 
     /**
@@ -58,7 +66,7 @@ public abstract class AbstractResourcedComponent extends Component implements Re
     }
 
     /**
-     * Get the name of the URI attribute.
+     * Get the name of the URI attribute. The default value returned is "src".
      *
      * @return URI attribute name.
      */

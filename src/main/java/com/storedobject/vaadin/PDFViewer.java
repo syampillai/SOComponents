@@ -6,20 +6,18 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.server.AbstractStreamResource;
 
 /**
- * A PDF viewer component that uses browser's native PDF viewer.
- * This is written as a Vaadin Flow wrapper around "@lrnwebcomponents/pdf-browser-viewer/pdf-browser-viewer.js"
+ * A PDF viewer component that uses browser's native object tag.
  *
  * @author Syam
  */
-@Tag("pdf-browser-viewer")
-@NpmPackage(value = "@lrnwebcomponents/pdf-browser-viewer", version = "2.1.4")
-@JsModule("@lrnwebcomponents/pdf-browser-viewer/pdf-browser-viewer.js")
+@Tag("object")
 public class PDFViewer extends AbstractResourcedComponent {
 
     /**
      * Default constructor.
      */
     public PDFViewer() {
+        super();
     }
 
     /**
@@ -38,16 +36,15 @@ public class PDFViewer extends AbstractResourcedComponent {
         super(streamResource);
     }
 
-    @Override
-    protected String getURIAttributeName() {
-        return "file";
+    /**
+     * This will be invoked by the constructor for initial set up.
+     */
+    protected void init() {
+        getElement().setAttribute("type", "application/pdf");
     }
 
-    /**
-     * Clear the current content.
-     */
-    public void clear() {
-        Application.get().getPage().executeJs("document.getElementById('" + getId().orElse(null) + "').clear();");
-        super.clear();
+    @Override
+    protected String getURIAttributeName() {
+        return "data";
     }
 }

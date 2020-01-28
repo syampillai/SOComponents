@@ -1022,7 +1022,7 @@ public abstract class Application {
         applicationLayout.toggleMenu();
         Component menuSearcher = applicationLayout.getMenuSearcher();
         if(menuSearcher instanceof Focusable) {
-            ((Focusable) menuSearcher).focus();
+            ((Focusable<?>) menuSearcher).focus();
         }
     }
 

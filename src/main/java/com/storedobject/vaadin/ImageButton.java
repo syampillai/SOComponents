@@ -88,4 +88,30 @@ public class ImageButton extends Icon implements HasBadgeStyle {
     public ImageButton asSmall() {
         return (ImageButton) HasBadgeStyle.super.asSmall();
     }
+
+    /**
+     * Draw a box around ans set the overall size to 25x25 pixels.
+     *
+     * @return Self
+     */
+    public ImageButton withBox() {
+        return withBox(25);
+    }
+
+    /**
+     * Draw a box around after sizing it.
+     *
+     * @param sizeInPixels Size
+     * @return Self
+     */
+    public ImageButton withBox(int sizeInPixels) {
+        if(sizeInPixels < 5) {
+            sizeInPixels = 25;
+        }
+        Box box = new Box(this);
+        setSize(sizeInPixels + "px");
+        box.alignSizing();
+        box.grey();
+        return this;
+    }
 }

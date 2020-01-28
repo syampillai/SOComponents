@@ -83,4 +83,30 @@ public class ButtonIcon extends Component implements HasSquareElement, HasIcon, 
     public void setPlaceholder(String placeholder) {
         getElement().setAttribute("title", placeholder == null ? "" : placeholder);
     }
+
+    /**
+     * Draw a box around ans set the overall size to 25x25 pixels.
+     *
+     * @return Self
+     */
+    public ButtonIcon withBox() {
+        return withBox(25);
+    }
+
+    /**
+     * Draw a box around after sizing it.
+     *
+     * @param sizeInPixels Size
+     * @return Self
+     */
+    public ButtonIcon withBox(int sizeInPixels) {
+        if(sizeInPixels < 5) {
+            sizeInPixels = 25;
+        }
+        Box box = new Box(this);
+        setSize(sizeInPixels + "px");
+        box.alignSizing();
+        box.grey();
+        return this;
+    }
 }

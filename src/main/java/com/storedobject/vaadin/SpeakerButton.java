@@ -67,4 +67,31 @@ public class SpeakerButton extends Component implements Application.SpeakerToggl
     public void speaker(boolean on) {
         icon.setIcon(on ? VaadinIcon.VOLUME_UP : VaadinIcon.SOUND_DISABLE);
     }
+
+    /**
+     * Draw a box around ans set the overall size to 25x25 pixels.
+     *
+     * @return Self
+     */
+    public SpeakerButton withBox() {
+        return withBox(25);
+    }
+
+    /**
+     * Draw a box around after sizing it.
+     *
+     * @param sizeInPixels Size
+     * @return Self
+     */
+    public SpeakerButton withBox(int sizeInPixels) {
+        if(sizeInPixels < 5) {
+            sizeInPixels = 25;
+        }
+        Box box = new Box(icon);
+        icon.setSize(sizeInPixels + "px");
+        box.alignSizing();
+        box.grey();
+        return this;
+    }
+
 }

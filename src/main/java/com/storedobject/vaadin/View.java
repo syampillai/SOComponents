@@ -296,8 +296,8 @@ public class View implements ExecutableView {
             return component.getChildren().anyMatch(c -> focus(c, checkSkip));
         } else {
             if(component instanceof HasValue && component instanceof Focusable &&
-                    !((HasValue) component).isReadOnly() && component.isVisible()) {
-                Focusable focusable = (Focusable) component;
+                    !((HasValue<?, ?>) component).isReadOnly() && component.isVisible()) {
+                Focusable<?> focusable = (Focusable<?>) component;
                 if(!focusable.isEnabled() || (checkSkip && skipFirstFocus(focusable))) {
                     return false;
                 }
@@ -323,7 +323,7 @@ public class View implements ExecutableView {
             return component.getChildren().anyMatch(c -> focusAny(c, checkSkip));
         } else {
             if(component instanceof Focusable && component.isVisible()) {
-                Focusable focusable = (Focusable) component;
+                Focusable<?> focusable = (Focusable<?>) component;
                 if(!focusable.isEnabled() || (checkSkip && skipFirstFocus(focusable))) {
                     return false;
                 }
@@ -579,7 +579,7 @@ public class View implements ExecutableView {
         doFocus = true;
         clean();
         if(closedListeners != null) {
-            closedListeners.forEach(listener -> listener.viewClosed(this));
+            new ArrayList<>(closedListeners).forEach(listener -> listener.viewClosed(this));
         }
     }
 

@@ -11,7 +11,7 @@ import com.vaadin.flow.component.dependency.CssImport;
  * @author Syam
  */
 @CssImport("./so/hover/styles.css")
-public class Box extends Composite {
+public class Box extends Composite<Component> {
 
     private static final String BACKGROUND = "var(--lumo-contrast-20pct)";
     private Component component;

@@ -29,17 +29,16 @@ public class WindowDecorator extends Composite<ButtonLayout> {
         titleText.getStyle().set("display", "flex");
         titleText.getStyle().set("flex-grow", "100");
         content.setWidthFull();
-        ImageButton close = new ImageButton(VaadinIcon.CLOSE, e -> view.abort());
-
+        ImageButton close = new ImageButton(VaadinIcon.CLOSE, view instanceof DataForm ? e -> ((DataForm) view).cancel() : e -> view.abort());
         content.add(titleText);
         if(headerComponents != null) {
             content.add(headerComponents);
         }
-        close.getElement().setAttribute("title", "Close");
-        content.add(close);
+        close.getElement().setAttribute("title", view instanceof DataForm ? "Cancel" : "Close");
+        content.add(close.withBox());
         Box box = new Box(content);
         box.alignSizing();
-        content.getStyle().set("background-color", "var(--lumo-primary-color)");
+        content.getStyle().set("background-color", "var(--lumo-primary-color-50pct)");
         content.getStyle().set("color", "var(--lumo-primary-contrast-color)");
         setCaption(view.getCaption());
     }
