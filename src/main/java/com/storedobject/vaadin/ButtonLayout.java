@@ -79,6 +79,8 @@ public class ButtonLayout extends FlexLayout {
     }
 
     private void m(Component c, int margin) {
-        c.getElement().getStyle().set("margin-right", margin + "px");
+        if(!(c instanceof InvisibleComponent)) {
+            c.getElement().getStyle().set("margin-right", margin + "px");
+        }
     }
 }

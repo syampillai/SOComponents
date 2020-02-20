@@ -16,7 +16,7 @@ import com.vaadin.flow.templatemodel.TemplateModel;
  * @author Syam
  */
 @Tag("app-frame")
-@NpmPackage(value = "@polymer/app-layout", version = "3.1.0")
+@NpmPackage(value = "@polymer/app-layout", version = "^3.1.0")
 @JsModule("./so/app-frame/app-frame.js")
 public abstract class ApplicationFrame extends PolymerTemplate<ApplicationFrame.ApplicationFrameModel> implements ApplicationLayout, ComponentSlot {
 

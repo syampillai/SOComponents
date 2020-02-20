@@ -9,7 +9,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  *
  * @author Syam
  */
-@NpmPackage(value = "@polymer/iron-icons", version = "3.0.1")
+@NpmPackage(value = "@polymer/iron-icons", version = "^3.0.1")
 @JsModule("@polymer/iron-icons/iron-icons.js")
 @JsModule("@polymer/iron-icons/av-icons.js")
 @JsModule("@polymer/iron-icons/communication-icons.js")

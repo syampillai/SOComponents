@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.ElementClick;
+import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 
@@ -9,9 +10,11 @@ import com.vaadin.flow.shared.Registration;
  *
  * @author Syam
  */
-public class ImageButton extends Icon implements HasBadgeStyle {
+public class ImageButton extends Icon implements HasBadgeStyle, HasEnabled {
 
     private ElementClick click;
+    private boolean enabled = true;
+    private String color = null, disabledColor = "var(--lumo-disabled-text-color)";
 
     /**
      * Constructor.
@@ -21,10 +24,7 @@ public class ImageButton extends Icon implements HasBadgeStyle {
      */
     public ImageButton(String iconName, ClickHandler clickHandler) {
         super(iconName);
-        init(clickHandler);
-        if(iconName != null) {
-            setAttribute("title", iconName);
-        }
+        init(clickHandler, iconName);
     }
 
     /**
@@ -46,16 +46,29 @@ public class ImageButton extends Icon implements HasBadgeStyle {
      */
     public ImageButton(String title, VaadinIcon icon, ClickHandler clickHandler) {
         super(icon);
-        init(clickHandler);
-        if(title != null) {
-            setAttribute("title", title);
-        }
+        init(clickHandler, title);
     }
 
-    private void init(ClickHandler clickHandler) {
+    /**
+     * Constructor.
+     *
+     * @param title Title (to be shown as tooltip)
+     * @param iconName Icon
+     * @param clickHandler Click handler
+     */
+    public ImageButton(String title, String iconName, ClickHandler clickHandler) {
+        super(iconName);
+        init(clickHandler, title);
+    }
+
+    private void init(ClickHandler clickHandler, String title) {
         getElement().getStyle().set("cursor", "pointer");
         click = new ElementClick(this);
         addClickHandler(clickHandler);
+        if(title != null) {
+            setAttribute("title", title);
+        }
+        setColor(color);
     }
 
     /**
@@ -66,7 +79,11 @@ public class ImageButton extends Icon implements HasBadgeStyle {
      */
     @SuppressWarnings("UnusedReturnValue")
     public Registration addClickHandler(ClickHandler clickHandler) {
-        return click.addClickListener(ClickHandler.convert(clickHandler));
+        return click.addClickListener(e -> {
+            if(enabled && clickHandler != null) {
+                clickHandler.onComponentEvent(e);
+            }
+        });
     }
 
     /**
@@ -113,5 +130,40 @@ public class ImageButton extends Icon implements HasBadgeStyle {
         box.alignSizing();
         box.grey();
         return this;
+    }
+
+    @Override
+    public final boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if(enabled) {
+            super.setColor(color);
+        } else {
+            super.setColor(disabledColor);
+        }
+    }
+
+    @Override
+    public void setColor(String color) {
+        this.color = color;
+        if(enabled) {
+            super.setColor(color);
+        }
+    }
+
+    /**
+     * Set the color when disabled.
+     *
+     * @param color Color
+     */
+    public void setDisabledColor(String color) {
+        this.disabledColor = color;
+        if(!enabled) {
+            super.setColor(color);
+        }
     }
 }

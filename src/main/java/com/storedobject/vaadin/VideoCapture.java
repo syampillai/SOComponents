@@ -312,7 +312,7 @@ public class VideoCapture extends Video implements MediaCapture {
 
         private JsonValue toJson(Map<String, Object> map, JsonFactory factory) {
             JsonObject obj = factory.createObject();
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
+            for (Map.Entry<String, Object> entry: map.entrySet()) {
                 if (entry.getValue() instanceof Boolean) {
                     obj.put(entry.getKey(), factory.create((Boolean) entry.getValue()));
                 } else if (entry.getValue() instanceof Double) {
