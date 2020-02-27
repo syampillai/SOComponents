@@ -517,7 +517,7 @@ public class View implements ExecutableView {
      * @return True or false.
      */
     public final boolean executing() {
-        return parent() != null;
+        return component != null && getApplication().executing(this);
     }
 
     /**

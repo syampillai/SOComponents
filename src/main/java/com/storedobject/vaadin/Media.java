@@ -53,7 +53,10 @@ public abstract class Media extends Component implements HasSize {
     private void reload() {
         String id = getId().orElse(null);
         if(id != null) {
-            UI ui = UI.getCurrent();
+            UI ui = getUI().orElse(null);
+            if(ui == null) {
+                ui = UI.getCurrent();
+            }
             if (ui != null) {
                 ui.getPage().executeJs("document.getElementById('" + id + "').load();");
             }

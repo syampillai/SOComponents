@@ -7,6 +7,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.server.VaadinRequest;
 
 import java.util.Locale;
+import java.util.function.Consumer;
 
 /**
  * The class that defines the content view of the {@link Application}. An implementation of this class (with all the necessary
@@ -35,10 +36,15 @@ public abstract class ApplicationView extends Composite<Component> {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
+        UI ui = attachEvent.getUI();
         if(locale != null) {
-            attachEvent.getUI().setLocale(locale);
+            ui.setLocale(locale);
         }
-        application.setUI(attachEvent.getUI());
+        Consumer<UI> configurator = application.getUIConfigurator();
+        if(configurator != null) {
+            configurator.accept(ui);
+        }
+        application.setUI(ui);
         if(firstTime) {
             if(application.error != null) {
                 application.close();
@@ -55,7 +61,7 @@ public abstract class ApplicationView extends Composite<Component> {
     @Override
     protected void onDetach(DetachEvent detachEvent) {
         super.onDetach(detachEvent);
-        application.deatached();
+        application.detached();
     }
 
     final void setLocale(Locale locale) {

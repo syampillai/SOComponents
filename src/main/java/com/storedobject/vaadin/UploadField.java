@@ -125,7 +125,7 @@ public class UploadField extends CustomField<Integer> {
     }
 
     private OutputStream createStream(String fileName, String mimeType) {
-        Application a = Application.get(getU());
+        Application a = Application.get();
         if(a != null) {
             a.startPolling(this);
         }

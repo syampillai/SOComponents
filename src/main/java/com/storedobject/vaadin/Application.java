@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -100,7 +101,7 @@ import java.util.function.Predicate;
  */
 public abstract class Application {
 
-    private static final String APP_KEY = "$so-app";
+    private final static String APP_KEY = "so$app";
     private AlertCloser alertCloser = new AlertCloser();
     private ApplicationView applicationView;
     private ApplicationLayout applicationLayout;
@@ -113,7 +114,7 @@ public abstract class Application {
     private String link;
     private int deviceWidth = -1, deviceHeight = -1;
     private final ArrayList<Command> commands = new ArrayList<>();
-    private transient boolean closed = false;
+    private transient boolean closing = false;
     String error;
     private boolean speaker = false;
     interface SpeakerToggledListner {
@@ -123,7 +124,7 @@ public abstract class Application {
     private ArrayList<WeakReference<BrowserResizedListener>> resizeListeners;
 
     /**
-     * This method is invoked as documented in Vaadin Flow's documentation for UI's init(VaadinRequest) method.
+     * This method is invoked by {@link ApplicationView} class.
      * If you want to override this method, make sure that <code>super</code> is called.
      *
      * @param request Vaadin Request
@@ -152,7 +153,7 @@ public abstract class Application {
         }
         if(error == null) {
             new Thread(() -> {
-                while (!closed) {
+                while (!closing) {
                     synchronized (commands) {
                         if(!commands.isEmpty()) {
                             ui.access(commands.remove(0));
@@ -223,6 +224,16 @@ public abstract class Application {
     }
 
     /**
+     * Get UI configurator if any so that UI will be passed to it for handling any special configuration. This will be
+     * invoked before {@link #setUI(UI)} is called.
+     *
+     * @return Default implementation returns <code>null</code>.
+     */
+    protected Consumer<UI> getUIConfigurator() {
+        return null;
+    }
+
+    /**
      * Get the UI associated with this Application.
      *
      * @return The UI.
@@ -235,16 +246,26 @@ public abstract class Application {
     }
 
     /**
-     * Inform Application about the UI change (This can happen when users refreshes the page).
+     * Inform Application about the UI change (This can happen when the user refreshes the page).
      *
      * @param ui UI to set
      */
     final void setUI(UI ui) {
-        if(ui == null) {
+        if(ui == null || closing) {
+            if(ui != null) {
+                ui.removeAll();
+            }
             return;
         }
+        @SuppressWarnings("unchecked") ArrayList<Application> aList = (ArrayList<Application>) VaadinSession.getCurrent().getAttribute(APP_KEY);
+        if(aList == null) {
+            aList = new ArrayList<>();
+            VaadinSession.getCurrent().setAttribute(APP_KEY, aList);
+        }
+        if(!aList.contains(this)) {
+            aList.add(this);
+        }
         this.ui = ui;
-        ui.getSession().setAttribute(APP_KEY, this);
         attached();
     }
 
@@ -254,12 +275,20 @@ public abstract class Application {
     public void attached() {
     }
 
+    private void removeUI() {
+        if(ui != null) {
+            ui.removeAll();
+            ui.close();
+            ui = null;
+        }
+    }
+
     /**
      * Invoked whenever this application is detached from its UI (it may get attached again to another UI if the user just refreshed
      * the browser). The default implementation closes the application ({@link #close()}) after 20 seconds.
      */
-    public void deatached() {
-        this.ui = null;
+    public void detached() {
+        removeUI();
         new Timer().schedule(new AppCloser(this), 20000L);
     }
 
@@ -374,14 +403,22 @@ public abstract class Application {
     }
 
     /**
-     * Close the application by closing all registered "resources". If the associated session is not closed, it will also be closed.
+     * Close the application by closing all registered "resources". If the associated session is not closed and no other
+     * Application instance exists, it will also be closed.
      */
     public synchronized void close() {
         for(Object owner: alerts.keySet()) {
             alerts.get(owner).forEach(Alert::remove);
         }
         alerts.clear();
-        closed = true;
+        closing = true;
+        VaadinSession vs = VaadinSession.getCurrent();
+        if(vs != null) {
+            @SuppressWarnings("unchecked") ArrayList<Application> aList = (ArrayList<Application>) vs.getAttribute(APP_KEY);
+            if (aList != null) {
+                aList.remove(this);
+            }
+        }
         while(resources.size() > 0) {
             Closeable resource = resources.remove(0).get();
             if(resource != null) {
@@ -391,10 +428,18 @@ public abstract class Application {
                 }
             }
         }
-        VaadinSession vs = VaadinSession.getCurrent();
         if(vs != null) {
-            vs.setAttribute(APP_KEY, null);
-            vs.close();
+            ArrayList<UI> uis = new ArrayList<>(vs.getUIs());
+            if(ui != null) {
+                uis.remove(ui);
+            }
+            uis.removeIf(u -> u.isClosing() || get(u) == null);
+            if(uis.isEmpty()) {
+                removeUI();
+                vs.close();
+            } else {
+                removeUI();
+            }
         }
         synchronized (commands) {
             commands.notifyAll();
@@ -422,14 +467,19 @@ public abstract class Application {
     /**
      * Get the application for the given UI.
      *
-     * @param ui UI
-     * @return Current application.
+     * @param ui UI for which application needs to be obtained
+     * @return Application for the given UI.
      */
     public static Application get(UI ui) {
         if(ui == null) {
             ui = UI.getCurrent();
         }
-        return ui == null ? null : (Application)ui.getSession().getAttribute(APP_KEY);
+        if(ui == null) {
+            return null;
+        }
+        UI u = ui;
+        //noinspection unchecked
+        return ((ArrayList<Application>)VaadinSession.getCurrent().getAttribute(APP_KEY)).stream().filter(a -> a.ui == u).findAny().orElse(null);
     }
 
     /**
@@ -1216,11 +1266,15 @@ public abstract class Application {
         }
     }
 
+    boolean executing(View view) {
+        return viewManager.executing(view);
+    }
+
     private static class ViewManager {
 
         private final ApplicationMenu menu;
         private final ApplicationView applicationView;
-        private List<View> stack = new ArrayList<>();
+        private List<View> stack = new ArrayList<>(), homeStack = new ArrayList<>();
         private Map<View, ApplicationMenuItem> contentMenu = new HashMap<>();
         private Map<View, View> parents = new HashMap<>();
         private View homeView;
@@ -1259,7 +1313,9 @@ public abstract class Application {
                 return;
             }
             if(view instanceof HomeView && homeView != null && !(view.getComponent() instanceof Dialog)) {
-                homeView.abort();
+                homeStack.add(homeView);
+                homeView.setVisible(false);
+                homeView = null;
             }
             Component c = view.getComponent();
             boolean window = c instanceof Dialog;
@@ -1298,7 +1354,7 @@ public abstract class Application {
 
         public void detach(View view) {
             View child = child(view);
-            if(child != null) {
+            if(child != null && executing(child)) {
                 child.detachParentOnClose();
                 select(child);
                 child.abort();
@@ -1318,6 +1374,7 @@ public abstract class Application {
             Element element = view.getComponent().getElement();
             element.removeFromParent();
             stack.remove(view);
+            homeStack.remove(view);
             View parent = parents.remove(view);
             if(parent != null) {
                 m = contentMenu.get(parent);
@@ -1333,7 +1390,12 @@ public abstract class Application {
                     }
                 }
             } else {
-                if(!stack.isEmpty()) {
+                if(stack.isEmpty()) {
+                    if(homeView == null && !homeStack.isEmpty()) {
+                        homeView = homeStack.remove(homeStack.size() - 1);
+                        homeView.setVisible(true);
+                    }
+                } else {
                     select(stack.get(stack.size() - 1));
                 }
             }
@@ -1349,7 +1411,7 @@ public abstract class Application {
         }
 
         private void hideAllContent(View except) {
-            stack.forEach(db -> db.setVisible(db == except));
+            stack.forEach(v -> v.setVisible(v == except));
         }
 
         private boolean select(View view) {
@@ -1365,6 +1427,10 @@ public abstract class Application {
             stack.remove(view);
             stack.add(view);
             return true;
+        }
+
+        private boolean executing(View view) {
+            return contentMenu.get(view) != null;
         }
 
         private void hilite(ApplicationMenuItem menuItem) {

@@ -1,12 +1,10 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.ArrayList;
@@ -132,19 +130,36 @@ public class DetailComponent extends Composite<Div> implements HasSize {
     }
 
     private Component constructHeader(String header) {
+        if(header == null) {
+            header = "";
+        }
         ButtonLayout summaryLayout = new ButtonLayout();
-        H3 titleText = new H3(header == null ? "" : header);
-        titleText.getStyle().set("padding", "0px");
-        titleText.getStyle().set("margin", "0px");
-        titleText.getStyle().set("display", "flex");
-        titleText.getStyle().set("flex-grow", "100");
+        HasComponents titleComponent = createHeader(header);
+        if(!(titleComponent instanceof Component)) {
+            titleComponent = new H3(header);
+        }
+        Style style = titleComponent.getElement().getStyle();
+        style.set("padding", "0px");
+        style.set("margin", "0px");
+        style.set("display", "flex");
+        style.set("flex-grow", "100");
         summaryLayout.setWidthFull();
         headerIcon = new Icon(contentLayout.isVisible() ? VaadinIcon.CHEVRON_CIRCLE_RIGHT : VaadinIcon.CHEVRON_CIRCLE_DOWN);
-        summaryLayout.add(titleText, headerIcon);
+        summaryLayout.add((Component)titleComponent, headerIcon);
         Box box = new Box(summaryLayout);
         box.alignSizing();
         box.setStyle("cursor", "pointer");
         return summaryLayout;
+    }
+
+    /**
+     * Create the header portion. By default it creates an {@link H3}.
+     *
+     * @param headerText Header text to be set
+     * @return Header component to set.
+     */
+    protected HasComponents createHeader(String headerText) {
+        return null;
     }
 
     /**

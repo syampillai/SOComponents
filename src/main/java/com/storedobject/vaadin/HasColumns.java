@@ -812,10 +812,6 @@ public interface HasColumns<T> extends ExecutableView {
             if(application == null) {
                 application = Application.get();
             }
-            if(application == null) {
-                //noinspection ConstantConditions
-                application = Application.get(grid.getUI().orElseGet(null));
-            }
             return application;
         }
 

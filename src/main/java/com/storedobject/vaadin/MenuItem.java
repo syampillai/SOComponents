@@ -1,8 +1,10 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
 
@@ -31,7 +33,12 @@ public class MenuItem extends Div implements ApplicationMenuItem {
             icon.getStyle().set("min-width", "1.25em");
         }
         if(runnable != null) {
-            new Clickable<>(closeable ? caption : this, e -> runnable.run());
+            new Clickable<>(closeable ? caption : this, e -> {
+                UI ui = getUI().orElse(null);
+                if(ui != null && UI.getCurrent() == ui) {
+                    runnable.run();
+                }
+            });
         }
         caption.getStyle().set("flex-grow", "100");
         add(caption);
