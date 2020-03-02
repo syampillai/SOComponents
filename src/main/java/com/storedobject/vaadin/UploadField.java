@@ -62,7 +62,7 @@ public class UploadField extends CustomField<Integer> {
         super(0);
         upload = new Upload(this::createStream);
         upload.setMaxFiles(maxFileCount);
-        upload.addFailedListener(e -> { Application.error(e); getU().access(() -> setReadOnly(true)); });
+        upload.addFailedListener(e -> getU().access(() -> setReadOnly(true)));
         upload.addFinishedListener(e -> {
             ++fileCount;
             String s = "Files: " + fileCount;
