@@ -84,7 +84,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      *
      * @return Data structure that holds the data.
      */
-    protected final Data getData() {
+    protected final Data<D> getData() {
         return form.data;
     }
 
@@ -141,6 +141,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      *
      * @return Field container.
      */
+    @Override
     public HasComponents getContainer() {
         return form.getContainer();
     }

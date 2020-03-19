@@ -115,7 +115,7 @@ public abstract class AbstractForm<D> {
      * @return Field container created.
      */
     protected HasComponents createContainer() {
-        HasComponents c = view instanceof AbstractDataForm ? ((AbstractDataForm)view).createFieldContainer() : null;
+        HasComponents c = view instanceof AbstractDataForm ? ((AbstractDataForm<?>)view).createFieldContainer() : null;
         return c == null ? createDefaultContainer() : c;
     }
 
@@ -173,7 +173,7 @@ public abstract class AbstractForm<D> {
      */
     protected void constructed() {
         if(view instanceof AbstractDataForm) {
-            ((AbstractDataForm) view).formConstructed();
+            ((AbstractDataForm<?>) view).formConstructed();
         }
     }
 
@@ -680,7 +680,7 @@ public abstract class AbstractForm<D> {
      */
     public boolean isFieldVisible(String fieldName) {
         if(view instanceof AbstractDataForm) {
-            return ((AbstractDataForm) view).isFieldVisible(fieldName);
+            return ((AbstractDataForm<?>) view).isFieldVisible(fieldName);
         }
         return true;
     }
@@ -707,7 +707,7 @@ public abstract class AbstractForm<D> {
      */
     public boolean isFieldEditable(String fieldName) {
         if(view instanceof AbstractDataForm) {
-            return ((AbstractDataForm) view).isFieldEditable(fieldName);
+            return ((AbstractDataForm<?>) view).isFieldEditable(fieldName);
         }
         return true;
     }
@@ -736,7 +736,7 @@ public abstract class AbstractForm<D> {
     public String getLabel(String fieldName) {
         if(view instanceof AbstractDataForm) {
             try {
-                return ((AbstractDataForm) view).getLabel(fieldName);
+                return ((AbstractDataForm<?>) view).getLabel(fieldName);
             } catch (AbstractDataForm.FieldError ignored) {
             }
         }

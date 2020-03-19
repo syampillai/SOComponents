@@ -15,17 +15,25 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
     private Span content = new Span();
     private String text;
 
+    /**
+     * Constructor.
+     */
     public StyledText() {
         this(null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param htmlText HTML text to set (No validation is done)
+     */
     public StyledText(String htmlText) {
         setText(htmlText);
     }
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-        setText(text);
+        setTextInt(text);
         super.onAttach(attachEvent);
     }
 
@@ -36,6 +44,10 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
 
     @Override
     public void setText(String htmlText) {
+        setTextInt(htmlText);
+    }
+
+    private void setTextInt(String htmlText) {
         if(htmlText == null) {
             htmlText = "";
         }

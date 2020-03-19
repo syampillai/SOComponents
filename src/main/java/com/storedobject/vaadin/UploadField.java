@@ -10,8 +10,8 @@ import java.util.function.BiConsumer;
 
 /**
  * A class to process uploaded content. The content will be available to the "processor" as an {@link InputStream}.
- * The content must be read in completely from the stream by the processor's {@link BiConsumer#accept(Object, Object)}
- * method becasue the stream is automatically closed after invoking this method.
+ * The content must be read in completely from the stream by the processor's {@link BiConsumer}
+ * because the stream is automatically closed after invoking this method.
  *
  * This component is a {@link com.vaadin.flow.component.HasValue} and the value returned is the number of files
  * successfully uploaded.
@@ -134,7 +134,15 @@ public class UploadField extends CustomField<Integer> {
         try {
             PipedInputStream in = new PipedInputStream(out);
             new Thread(() -> {
-                process(in, mimeType);
+                try {
+                    process(in, mimeType);
+                } catch (Throwable ignored) {
+                }
+                try {
+                    //noinspection StatementWithEmptyBody
+                    while (in.read() != -1);
+                } catch(IOException ignore) {
+                }
                 try {
                     out.close();
                 } catch (IOException ignore) {
@@ -144,7 +152,7 @@ public class UploadField extends CustomField<Integer> {
                 } catch (IOException ignore) {
                 }
                 if(a != null) {
-                   a.stopPolling(this);
+                   a.stopPolling(UploadField.this);
                 }
                 if(fileCount == maxFileCount) {
                     ui.access(() -> {
@@ -159,21 +167,15 @@ public class UploadField extends CustomField<Integer> {
     }
 
     /**
-     * This is where the real proceesing happens. This method is invoked to process the uploaded content and by default,
-     * it asks the "processor" to process it. However, this can be overriden.
+     * This is where the real processing happens. This method is invoked to process the uploaded content and by default,
+     * it asks the "processor" to process it. However, this can be overridden.
      * @param data Uploaded content
      * @param mimeType Mime type of the content
      */
     public void process(InputStream data, String mimeType) {
-        if(processor == null) {
-            try {
-                //noinspection StatementWithEmptyBody
-                while (data.read() != -1);
-            } catch(IOException ignore) {
-            }
-            return;
+        if(processor != null) {
+            processor.accept(data, mimeType);
         }
-        processor.accept(data, mimeType);
     }
 
     /**

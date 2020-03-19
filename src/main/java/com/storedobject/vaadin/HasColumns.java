@@ -415,6 +415,27 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
+     * Check if the column is in-memory and back-end sortable.
+     *
+     * @param columnName Column name
+     * @return Default implementation returns <code>true</code>.
+     */
+    default boolean isColumnSortable(@SuppressWarnings("unused") String columnName) {
+        return true;
+    }
+
+    /**
+     * This will be invoked for those columns that are sortable and contains text values. If returned <code>true</code>
+     * from this method, case-insensitive sorting will be carried out.
+     *
+     * @param columnName Column name
+     * @return Default implementation returns <code>true</code>.
+     */
+    default boolean ignoreCaseForColumnSorting(@SuppressWarnings("unused") String columnName) {
+        return true;
+    }
+
+    /**
      * Determines the text alignment of the column.
      *
      * @param columnName Column name
@@ -707,6 +728,8 @@ public interface HasColumns<T> extends ExecutableView {
         private Map<String, Boolean> columnVisible = new HashMap<>();
         private Map<String, Boolean> columnFrozen = new HashMap<>();
         private Map<String, Class<?>> columnTypes = new HashMap<>();
+        @SuppressWarnings("rawtypes")
+        private Map<String, ValueProvider<T, Comparable>> columnComparators = new HashMap<>();
         private Object methodHandlerHost;
         private int paramId = 0;
         private ButtonIcon configure;
@@ -777,6 +800,7 @@ public interface HasColumns<T> extends ExecutableView {
             columnResizable = null;
             columnVisible = null;
             columnFrozen = null;
+            columnComparators = null;
             grid.getElement().setAttribute("theme", getDefaultThemes());
             if(grid instanceof HasColumns) {
                 hc.createHeaders();
@@ -1107,7 +1131,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, function)) {
                 return true;
             }
-            Renderer<T> r = html ? renderer(function) : renderer(hc.getColumnTemplate(columnName), function);
+            Renderer<T> r = html ? renderer(columnName, function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
             hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -1128,7 +1152,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(template == null) {
                 template = hc.getColumnTemplate(columnName);
             }
-            Renderer<T> r = html ? renderer(functions[0]) : renderer(template, functions);
+            Renderer<T> r = html ? renderer(columnName, functions[0]) : renderer(columnName, template, functions);
             hc.setRendererFunctions(columnName, html, functions);
             if(renderers == null) {
                 constructColumn(columnName, r);
@@ -1161,8 +1185,27 @@ public interface HasColumns<T> extends ExecutableView {
             return true;
         }
 
+        private static boolean isVariable(String columnName) {
+            char c;
+            for(int i = 0; i < columnName.length(); i++) {
+                c = columnName.charAt(i);
+                if((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+                    continue;
+                }
+                if(i == 0) {
+                    return false;
+                }
+                if(!(c >= '0' && c <= '9')) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         @SafeVarargs
-        private final Renderer<T> renderer(String template, Function<T, ?>... functions) {
+        private final Renderer<T> renderer(String columnName, String template, Function<T, ?>... functions) {
+            boolean isVar = hc != null && hc.isColumnSortable(columnName);
+            isVar = isVar && isVariable(columnName);
             if(template == null) {
                 StringBuilder s = new StringBuilder();
                 IntStream.range(0, functions.length - 1).forEach(i -> s.append('<').append(i).append('>').append("<br/>"));
@@ -1175,13 +1218,16 @@ public interface HasColumns<T> extends ExecutableView {
                 ++paramId;
                 ids[i] = paramId;
             }
-            for(i = 0; i < ids.length; i++) {
+            if(isVar) {
+                template = template.replace("<1>", "[[item." + columnName + "]]");
+            }
+            for(i = isVar ? 1 : 0; i < ids.length; i++) {
                 template = template.replace("<" + (i + 1) + ">", "[[item.so" + ids[i] + "]]");
             }
             TemplateRenderer<T> r = TemplateRenderer.of(template);
             for(i = 0; i < ids.length; i++) {
                 final Function<T, ?> function = functions[i];
-                r.withProperty("so" + ids[i], o -> {
+                r.withProperty((isVar && i == 0) ? columnName : ("so" + ids[i]), o -> {
                     setRO(o);
                     o = objectUnwrapped;
                     Object v = function.apply(o);
@@ -1191,11 +1237,24 @@ public interface HasColumns<T> extends ExecutableView {
                     return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(v);
                 });
             }
+            if(isVar) {
+                final Function<T, ?> compareFunction = functions[0];
+                @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProvider = o -> {
+                    setRO(o);
+                    o = objectUnwrapped;
+                    Object v = compareFunction.apply(o);
+                    if(v instanceof String && hc.ignoreCaseForColumnSorting(columnName)) {
+                        v = ((String)v).toLowerCase();
+                    }
+                    return (Comparable)v;
+                };
+                columnComparators.put(columnName, valueProvider);
+            }
             return r;
         }
 
-        private Renderer<T> renderer(Function<T, ?> htmlFunction) {
-            return renderer("<span inner-h-t-m-l=\"<1>\"></span>", htmlFunction);
+        private Renderer<T> renderer(String columnName, Function<T, ?> htmlFunction) {
+            return renderer(columnName,"<span inner-h-t-m-l=\"<1>\"></span>", htmlFunction);
         }
 
         void treeBuilt(String columnName) {
@@ -1288,7 +1347,11 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void constructColumn(String columnName, Renderer<T> renderer) {
-            acceptColumn(constructColumn(columnName, grid, renderer), columnName);
+            constructColumn(columnName, renderer, columnComparators == null ? null : columnComparators.get(columnName));
+        }
+
+        private void constructColumn(String columnName, Renderer<T> renderer, @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator) {
+            acceptColumn(constructColumn(columnName, grid, renderer, valueProviderForComparator), columnName);
         }
 
         /**
@@ -1297,14 +1360,21 @@ public interface HasColumns<T> extends ExecutableView {
          * "editable" column.
          *
          * @param grid Grid for which column needs to be created.
-         *
          * @param columnName Name of the column
          * @param renderer Renderer for the column
+         * @param valueProviderForComparator Value provider for setting the comparator used for in-memory sorting (Could be <code>null</code>)
+         *
          * @return Column created. Default implementation use the {@link Grid#addColumn(Renderer)} method to create the
-         * column.
+         * column and set the comparator if it is not <code>null</code>.
          */
-        @SuppressWarnings("unused")
-        protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer) {
+        @SuppressWarnings({"unused"})
+        protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer, @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator) {
+            if(valueProviderForComparator != null) {
+                Grid.Column<T> column = grid.addColumn(renderer, columnName);
+                //noinspection unchecked
+                column.setComparator(valueProviderForComparator);
+                return column;
+            }
             return grid.addColumn(renderer);
         }
 
