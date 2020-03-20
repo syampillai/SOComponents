@@ -52,6 +52,17 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
     }
 
     /**
+     * Check if a particular column is sortable or not. (By default, sorting is off.)
+     *
+     * @param columnName Column name
+     * @return True or false.
+     */
+    @Override
+    public boolean isColumnSortable(String columnName) {
+        return false;
+    }
+
+    /**
      * For internal use only.
      *
      * @return SO grid.

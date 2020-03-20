@@ -1,10 +1,10 @@
 # SO Components
 A set of Vaadin Flow Components and Abstractions
-
-(Sample screenshots are from a commercial application under development that uses this add-on)
+https://vaadin.com/directory/component/so-components
 
 ## Dependencies
-https://vaadin.com/directory/component/textfield-formatter Ver 4.0.0beta1 (for field formatting features).
+https://vaadin.com/directory/component/textfield-formatter Ver 4.1.4 or later (for field formatting features - use versions < 1.3.0 if you don't want this dependency).
+https://vaadin.com/directory/component/multiselect-combo-box Ver 2.3.1 or later (for TokensField - use versions < 1.7.0 if you don't want this dependency).
 https://xmlgraphics.apache.org/batik Ver 1.11 (for SVG image manipulation).
 
 ## Use Cases
@@ -13,7 +13,7 @@ There are 2 different ways of using this add-on.
 ### Normal Use
 It can be used to utilize the components (especially "fields" and "forms") available in this add-on.
 
-The "form" concept here supports a mechanism that doesn't require direct use of Vaadin'n "Binder" classes to create data entry forms.
+The "form" concept here supports a mechanism that doesn't require direct use of Vaadin's "Binder" classes to create data entry forms.
 A hidden binder does all the tricks.
 
 Also, there are two notable classes: DataGrid and TreeDataGrid. These classes are enhanced
@@ -36,6 +36,3 @@ application.
 ## Documentation
 Most classes are documented with some explanation about its usage. Please see the API
 documentation.
-
-## Source code
-Available at https://github.com/syampillai/SOComponents

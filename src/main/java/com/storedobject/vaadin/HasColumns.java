@@ -1185,27 +1185,9 @@ public interface HasColumns<T> extends ExecutableView {
             return true;
         }
 
-        private static boolean isVariable(String columnName) {
-            char c;
-            for(int i = 0; i < columnName.length(); i++) {
-                c = columnName.charAt(i);
-                if((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-                    continue;
-                }
-                if(i == 0) {
-                    return false;
-                }
-                if(!(c >= '0' && c <= '9')) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         @SafeVarargs
         private final Renderer<T> renderer(String columnName, String template, Function<T, ?>... functions) {
-            boolean isVar = hc != null && hc.isColumnSortable(columnName);
-            isVar = isVar && isVariable(columnName);
+            boolean sortable = hc != null && hc.isColumnSortable(columnName);
             if(template == null) {
                 StringBuilder s = new StringBuilder();
                 IntStream.range(0, functions.length - 1).forEach(i -> s.append('<').append(i).append('>').append("<br/>"));
@@ -1218,16 +1200,13 @@ public interface HasColumns<T> extends ExecutableView {
                 ++paramId;
                 ids[i] = paramId;
             }
-            if(isVar) {
-                template = template.replace("<1>", "[[item." + columnName + "]]");
-            }
-            for(i = isVar ? 1 : 0; i < ids.length; i++) {
+            for(i = 0; i < ids.length; i++) {
                 template = template.replace("<" + (i + 1) + ">", "[[item.so" + ids[i] + "]]");
             }
             TemplateRenderer<T> r = TemplateRenderer.of(template);
             for(i = 0; i < ids.length; i++) {
                 final Function<T, ?> function = functions[i];
-                r.withProperty((isVar && i == 0) ? columnName : ("so" + ids[i]), o -> {
+                r.withProperty("so" + ids[i], o -> {
                     setRO(o);
                     o = objectUnwrapped;
                     Object v = function.apply(o);
@@ -1237,7 +1216,7 @@ public interface HasColumns<T> extends ExecutableView {
                     return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(v);
                 });
             }
-            if(isVar) {
+            if(sortable) {
                 final Function<T, ?> compareFunction = functions[0];
                 @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProvider = o -> {
                     setRO(o);

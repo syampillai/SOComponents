@@ -11,10 +11,10 @@ import java.util.List;
  * createColumn methods. createColumn methods just return whether column can be created or not but, columns are created at a later stage
  * when all columns are defined and the ordinality of columns are determined. If you want to customize any Column, it can be done in
  * customizeColumn(String, Column) method or by invoking methods provided in this class
- * (See the implentation of the interface {@link HasColumns}).
+ * (See the implementation of the interface {@link HasColumns}).
  * Each column has a "column name" and it gets mapped to the Bean's getXXX
  * method just like in Vaadin's Bean Grid. However, if a getXXX method is available in the DataGrid itself, that will be used for sourcing the
- * data for the respective column. Each column uses its respective column name as the key.
+ * data for the respective column. Each column uses its respective column name as the key. By default, "multi-sorting" is on.
  *
  * @param <T> Bean type
  * @author Syam
@@ -43,6 +43,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
      */
     public DataGrid(Class<T> objectClass, Iterable<String> columns) {
         soGrid = new SOGrid<>(this, objectClass, columns);
+        setMultiSort(true);
     }
 
     /**
