@@ -1,10 +1,13 @@
 # SO Components
 A set of Vaadin Flow Components and Abstractions
+
 https://vaadin.com/directory/component/so-components
 
 ## Dependencies
 https://vaadin.com/directory/component/textfield-formatter Ver 4.1.4 or later (for field formatting features - use versions < 1.3.0 if you don't want this dependency).
+
 https://vaadin.com/directory/component/multiselect-combo-box Ver 2.3.1 or later (for TokensField - use versions < 1.7.0 if you don't want this dependency).
+
 https://xmlgraphics.apache.org/batik Ver 1.11 (for SVG image manipulation).
 
 ## Use Cases
