@@ -276,12 +276,22 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Rfresh a particular item in the grid.
+     * Refresh a particular item in the grid.
      *
      * @param item Item
      */
     default void refresh(T item) {
         getSOGrid().grid.getDataProvider().refreshItem(item);
+    }
+
+    /**
+     * Refresh a particular item in the tree grid. (This method is applicable only for tree grids).
+     *
+     * @param item Item
+     * @param refreshChildren Whether refresh children or not
+     */
+    default void refresh(T item, boolean refreshChildren) {
+        getSOGrid().grid.getDataProvider().refreshItem(item, refreshChildren);
     }
 
     /**
@@ -1244,18 +1254,22 @@ public interface HasColumns<T> extends ExecutableView {
             return treeColumnName != null;
         }
 
-        @SuppressWarnings("unchecked")
         private boolean createTreeColumn(String columnName, Method m) {
             if(treeCreated() || m == null) {
                 return false;
             }
-            if(grid instanceof HasColumns) {
+            if(hc != null) {
                 Function<T, ?> function = wrap(getMethodFunction(columnName, m));
+                Grid.Column<T> c;
                 if (HTMLGenerator.class.isAssignableFrom(m.getReturnType())) {
-                    return ((HasColumns<T>) grid).createHTMLHierarchyColumn(columnName, function) != null;
+                    c = hc.createHTMLHierarchyColumn(columnName, function);
                 } else {
-                    return ((HasColumns<T>) grid).createHierarchyColumn(columnName, function::apply) != null;
+                    c = hc.createHierarchyColumn(columnName, function::apply);
                 }
+                if(c != null && !hc.isColumnSortable(columnName)) {
+                    c.setSortable(false);
+                }
+                return c != null;
             }
             return false;
         }
@@ -1264,10 +1278,13 @@ public interface HasColumns<T> extends ExecutableView {
             if(treeCreated() || function == null) {
                 return false;
             }
-            if(grid instanceof HasColumns) {
+            if(hc != null) {
                 function = wrap(function);
-                //noinspection unchecked
-                return ((HasColumns<T>) grid).createHierarchyColumn(columnName, function::apply) != null;
+                Grid.Column<T> c = hc.createHierarchyColumn(columnName, function::apply);
+                if(c != null && !hc.isColumnSortable(columnName)) {
+                    c.setSortable(false);
+                }
+                return c != null;
             }
             return true;
         }
@@ -1336,7 +1353,7 @@ public interface HasColumns<T> extends ExecutableView {
         /**
          * This is where the column is finally constructed. If you have another implementation, this method can be
          * overridden. (For example, an "editable" grid such as Vaadin's GridPro, may construct an
-         * "editable" column.
+         * "editable" column).
          *
          * @param grid Grid for which column needs to be created.
          * @param columnName Name of the column
@@ -1393,17 +1410,15 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void customizeColumn(String columnName, Grid.Column<T> column) {
-            if(grid instanceof HasColumns) {
-                //noinspection unchecked
-                ((HasColumns<T>) grid).customizeColumn(columnName, column);
+            if(hc != null) {
+                hc.customizeColumn(columnName, column);
             }
         }
 
         private int getColumnOrder(String columnName) {
             try {
-                if (grid instanceof HasColumns) {
-                    //noinspection unchecked
-                    return ((HasColumns<Object>) grid).getColumnOrder(columnName);
+                if(hc != null) {
+                    return hc.getColumnOrder(columnName);
                 }
             } catch (AbstractDataForm.FieldError ignored) {
             }
@@ -1445,29 +1460,28 @@ public interface HasColumns<T> extends ExecutableView {
             return h == null ? cc().getColumnCaption(columnName) : h;
         }
 
-        @SuppressWarnings("unchecked")
         private View getView(boolean create) {
             if(view == null && create) {
-                if(grid instanceof HasColumns) {
-                    view = ((HasColumns<T>)grid).createView();
+                if(hc != null) {
+                    view = hc.createView();
                 }
             }
             if(view == null && create) {
-                String caption = grid instanceof HasColumns ? ((HasColumns<T>) grid).getCaption() : "Data View";
+                String caption = hc != null ? hc.getCaption() : "Data View";
                 view = new View(grid, caption) {
 
                     @Override
                     public boolean isCloseable() {
-                        if(grid instanceof HasColumns) {
-                            return ((HasColumns<T>) grid).isCloseable();
+                        if(hc != null) {
+                            return hc.isCloseable();
                         }
                         return grid instanceof CloseableView;
                     }
 
                     @Override
                     public void returnedFrom(View parent) {
-                        if(grid instanceof HasColumns) {
-                            ((HasColumns<T>) grid).returnedFrom(parent);
+                        if(hc != null) {
+                            hc.returnedFrom(parent);
                         }
                     }
 
@@ -1476,8 +1490,8 @@ public interface HasColumns<T> extends ExecutableView {
                         super.close();
                         View v = view;
                         view = null;
-                        if(grid instanceof HasColumns) {
-                            ((HasColumns<T>) grid).close();
+                        if(hc != null) {
+                            hc.close();
                         }
                         view = v;
                     }
@@ -1487,8 +1501,8 @@ public interface HasColumns<T> extends ExecutableView {
                         super.abort();
                         View v = view;
                         view = null;
-                        if(grid instanceof HasColumns) {
-                            ((HasColumns<T>) grid).abort();
+                        if(hc != null) {
+                            hc.abort();
                         }
                         view = v;
                     }
@@ -1498,24 +1512,24 @@ public interface HasColumns<T> extends ExecutableView {
                         super.clean();
                         View v = view;
                         view = null;
-                        if(grid instanceof HasColumns) {
-                            ((HasColumns<T>) grid).clean();
+                        if(hc != null) {
+                            hc.clean();
                         }
                         view = v;
                     }
 
                     @Override
                     public String getMenuIconName() {
-                        if(grid instanceof HasColumns) {
-                            return ((HasColumns<T>) grid).getMenuIconName();
+                        if(hc != null) {
+                            return hc.getMenuIconName();
                         }
                         return super.getMenuIconName();
                     }
 
                     @Override
                     public ApplicationMenuItem createMenuItem(Runnable menuAction) {
-                        if(grid instanceof HasColumns) {
-                            return ((HasColumns<T>) grid).createMenuItem(menuAction);
+                        if(hc != null) {
+                            return hc.createMenuItem(menuAction);
                         }
                         return super.createMenuItem(menuAction);
                     }

@@ -214,7 +214,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      *
      * @return Newly created object.
      */
-    public T newObject() {
+    public final T newObject() {
         return getForm().createObjectInstance();
     }
 

@@ -155,6 +155,15 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
 
     /**
      * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
+     *
+     * @return Menu item. May return <code>null</code> it the menu item is not yet created.
+     */
+    public final ApplicationMenuItem getMenuItem() {
+        return menuItem;
+    }
+
+    /**
+     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
      * This method is final but {@link #createMenuItem(Runnable)} can be overridden for customizing it.
      *
      * @param menuAction Action for the menu item to be created

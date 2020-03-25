@@ -281,7 +281,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
         if(host == null) {
             return null;
         }
-        Class[] params = new Class[] { getMethod.getReturnType() };
+        Class<?>[] params = new Class[] { getMethod.getReturnType() };
         try {
             Method m = host.getClass().getMethod("set" + fieldName, params);
             if(m != null && m.getDeclaringClass() == host.getClass()) {
@@ -324,7 +324,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * @return Field' "set" method (if method is found, it will returns <code>null</code>).
      */
     protected Method getFieldSetMethod(String fieldName, Method getMethod) {
-        Class[] params = new Class[] { getMethod.getReturnType() };
+        Class<?>[] params = new Class[] { getMethod.getReturnType() };
         try {
             return this.getClass().getMethod("set" + fieldName, params);
         } catch (NoSuchMethodException ignored) {
@@ -437,7 +437,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     public String getLabel(String fieldName) {
         if(getView() instanceof AbstractDataForm) {
             try {
-                return ((AbstractDataForm) getView()).getLabel(fieldName);
+                return ((AbstractDataForm<?>) getView()).getLabel(fieldName);
             } catch (AbstractDataForm.FieldError ignored) {
             }
         }
@@ -517,7 +517,11 @@ public class ObjectForm<D> extends AbstractForm<D> {
                     return null;
                 }
                 return m.invoke(actOn(m));
-            } catch (NullPointerException | IllegalAccessException | InvocationTargetException ignored) {
+            } catch (Throwable error) {
+                Application a = Application.get();
+                if(a != null) {
+                    a.log("Field: " + fieldName, error);
+                }
             }
             return null;
         }

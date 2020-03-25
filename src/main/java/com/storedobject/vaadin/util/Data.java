@@ -160,13 +160,13 @@ public class Data<T> extends HashMap<String, Object> {
         }
         fields.forEach((key, value) -> {
             boolean ro = false;
-            if (valueHandler.canHandle(key)) {
+            if(valueHandler.canHandle(key)) {
                 ro = !valueHandler.canSet(key);
             }
-            if (!ro) {
+            if(!ro) {
                 ro = !valueHandler.isEditable(value);
             }
-            if (!ro) {
+            if(!ro) {
                 ro = !valueHandler.isEditable(key);
             }
             value.setReadOnly(ro);

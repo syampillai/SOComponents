@@ -6,9 +6,7 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -31,8 +29,8 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     private FormConstructed formConstructed;
     private boolean formCreated = false;
     private HasContainer fieldContainerProvider;
-    private List<String> readOnly = new ArrayList<>(), hidden = new ArrayList<>();
-    private List<HasValue<?, ?>> readOnlyFields = new ArrayList<>(), hiddenFields = new ArrayList<>();
+    private Set<String> readOnly = new HashSet<>(), hidden = new HashSet<>();
+    private Set<HasValue<?, ?>> readOnlyFields = new HashSet<>(), hiddenFields = new HashSet<>();
 
     /**
      * Get the form embedded in this view.
@@ -478,9 +476,19 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
         if(fieldNames == null || fieldNames.length == 0) {
             return;
         }
+        HasValue<?, ?> field;
         for(String fieldName: fieldNames) {
+            if(fieldName == null || fieldName.isEmpty()) {
+                continue;
+            }
             hidden.remove(fieldName);
-            hiddenFields.remove(form.getField(fieldName));
+            field = form.getField(fieldName);
+            if(field != null) {
+                hiddenFields.remove(field);
+                if(field instanceof Component) {
+                    ((Component) field).setVisible(true);
+                }
+            }
         }
     }
 
@@ -493,9 +501,19 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
         if(fields == null || fields.length == 0) {
             return;
         }
+        String fieldName;
         for(HasValue<?, ?> field: fields) {
-            hidden.remove(form.getFieldName(field));
+            if(field == null) {
+                continue;
+            }
+            fieldName = form.getFieldName(field);
+            if(fieldName != null) {
+                hidden.remove(fieldName);
+            }
             hiddenFields.remove(field);
+            if(field instanceof Component) {
+                ((Component) field).setVisible(true);
+            }
         }
     }
 
@@ -543,9 +561,9 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
             }
             fieldName = form.getFieldName(field);
             if(fieldName != null) {
-                readOnly.add(fieldName);
+                hidden.add(fieldName);
             }
-            readOnlyFields.add(field);
+            hiddenFields.add(field);
         }
     }
 
@@ -578,9 +596,17 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
         if(fieldNames == null || fieldNames.length == 0) {
             return;
         }
+        HasValue<?, ?> field;
         for(String fieldName: fieldNames) {
+            if(fieldName == null || fieldName.isEmpty()) {
+                continue;
+            }
             readOnly.remove(fieldName);
-            readOnlyFields.remove(form.getField(fieldName));
+            field = form.getField(fieldName);
+            if(field != null) {
+                readOnlyFields.remove(field);
+                field.setReadOnly(false);
+            }
         }
     }
 
@@ -593,9 +619,17 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
         if(fields == null || fields.length == 0) {
             return;
         }
+        String fieldName;
         for(HasValue<?, ?> field: fields) {
-            readOnly.remove(form.getFieldName(field));
+            if(field == null) {
+                continue;
+            }
+            fieldName = form.getFieldName(field);
+            if(fieldName != null) {
+                readOnly.remove(fieldName);
+            }
             readOnlyFields.remove(field);
+            field.setReadOnly(false);
         }
     }
 
