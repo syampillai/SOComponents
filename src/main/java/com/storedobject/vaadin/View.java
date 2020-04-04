@@ -188,15 +188,10 @@ public class View implements ExecutableView {
 
         @Override
         public void onComponentEvent(GeneratedVaadinDialog.OpenedChangeEvent openedChangeEvent) {
-            if(view.internalWindowAction || openedChangeEvent.isOpened()) {
+            if(view.internalWindowAction) {
                 view.internalWindowAction = false;
-                return;
-            }
-            if(openedChangeEvent.isFromClient()) {
+            } else if(!openedChangeEvent.isOpened()) {
                 ((Dialog)openedChangeEvent.getSource()).open();
-                view.abort();
-            } else {
-                view.closeInt();
             }
         }
     }
@@ -208,10 +203,10 @@ public class View implements ExecutableView {
      */
     void setVisible(boolean visible) {
         if(component instanceof Dialog) {
+            internalWindowAction = true;
             if(visible) {
                 ((Dialog) component).open();
             } else {
-                internalWindowAction = true;
                 ((Dialog) component).close();
             }
         } else {

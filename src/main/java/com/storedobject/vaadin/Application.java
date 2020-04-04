@@ -39,7 +39,7 @@ import java.util.function.Predicate;
  *    {@literal @}Push(PushMode.MANUAL)
  *    {@literal @}BodySize(height = "100vh", width = "100vw")
  *    {@literal @}Theme(value = Lumo.class, variant = Lumo.LIGHT)
- *     public static class DemoView extends ApplicationView {
+ *     public static class DemoView extends ApplicationView implements AppShellConfigurator {
  *
  *        {@literal @}Override
  *         protected Application createApplication() {

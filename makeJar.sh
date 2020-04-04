@@ -1,3 +1,6 @@
+cd
+rm jdk
+ln -s jdkServer jdk
 cd ~/IdeaProjects/SOComponents
 cd src/main
 rm -fr resources
@@ -9,3 +12,6 @@ mvn clean install -Pdirectory
 mkdir -p zipTarget
 rm -f zipTarget/*.zip
 cp target/*.zip zipTarget
+cd
+rm jdk
+ln -s jdkLatest jdk

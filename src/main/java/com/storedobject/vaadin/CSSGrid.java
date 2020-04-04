@@ -10,7 +10,7 @@ import com.vaadin.flow.component.Tag;
  * @author Syam
  */
 @Tag("div")
-public class CSSGrid extends Component implements HasOrderedComponents<Component>, HasStyle, HasSize {
+public class CSSGrid extends Component implements HasOrderedComponents, HasStyle, HasSize {
     
     public enum Position { START, END, CENTER, STRETCH }
 
