@@ -73,10 +73,12 @@ public interface ApplicationLayout {
      */
     default void addView(View view) {
         Component c = view.getComponent();
-        if(!(c instanceof Dialog) && c instanceof HasSize) {
-            ((HasSize) c).setWidth("98%");
+        if(!(c instanceof Dialog)) {
+            if(c instanceof HasSize) {
+                ((HasSize) c).setWidth("98%");
+            }
+            getContent().getElement().appendChild(c.getElement());
         }
-        getContent().getElement().appendChild(c.getElement());
     }
 
     /**
