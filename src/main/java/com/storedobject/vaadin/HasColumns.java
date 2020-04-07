@@ -1383,12 +1383,14 @@ public interface HasColumns<T> extends ExecutableView {
         /**
          * This is where the column is finally constructed. If you have another implementation, this method can be
          * overridden. (For example, an "editable" grid such as Vaadin's GridPro, may construct an
-         * "editable" column).
+         * "editable" column). One of the parameters <code>valueProviderForComparator</code> and <code>comparator</code>
+         * will be <code>null</code> because their values are mutually exclusive.
          *
          * @param grid Grid for which column needs to be created.
          * @param columnName Name of the column
          * @param renderer Renderer for the column
          * @param valueProviderForComparator Value provider for setting the comparator used for in-memory sorting (Could be <code>null</code>)
+         * @param comparator Comparator used for sorting this column (Could be <code>null</code>)
          *
          * @return Column created. Default implementation use the {@link Grid#addColumn(Renderer)} method to create the
          * column and set the comparator if it is not <code>null</code>.
