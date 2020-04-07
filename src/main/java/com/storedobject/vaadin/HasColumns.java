@@ -125,7 +125,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Set the "theme" to make the appearence of this grid compact. It uses less space than normal and more rows will be visible.
+     * Set the "theme" to make the appearance of this grid compact. It uses less space than normal and more rows will be visible.
      */
     default void compact() {
         getSOGrid().compact();
@@ -435,6 +435,21 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
+     * Get a "sorter" for the column. This method will be invoked only if {@link #isColumnSortable(String)} returns
+     * <code>true</code>. Default implementation returns <code>null</code>. If this method returns
+     * <code>non-null</code>, it will be used for sorting the column. Else, if the column's value is an instance of
+     * {@link Comparable}, that will be used for sorting the column. Otherwise, a case-insensitive string sorting will
+     * be carried out for the value returned by the {@link ApplicationEnvironment#toDisplay(Object)} method for the
+     * corresponding column value.
+     *
+     * @param columnName Column name
+     * @return A {@link Comparator} to compare column values.
+     */
+    default Comparator<T> getColumnSorter(@SuppressWarnings("unused") String columnName) {
+        return null;
+    }
+
+    /**
      * This will be invoked for those columns that are sortable and contains text values. If returned <code>true</code>
      * from this method, case-insensitive sorting will be carried out.
      *
@@ -739,7 +754,8 @@ public interface HasColumns<T> extends ExecutableView {
         private Map<String, Boolean> columnFrozen = new HashMap<>();
         private Map<String, Class<?>> columnTypes = new HashMap<>();
         @SuppressWarnings("rawtypes")
-        private Map<String, ValueProvider<T, Comparable>> columnComparators = new HashMap<>();
+        private Map<String, ValueProvider<T, Comparable>> columnComparators1 = new HashMap<>();
+        private Map<String, Comparator<T>> columnComparators2 = new HashMap<>();
         private Object methodHandlerHost;
         private int paramId = 0;
         private ButtonIcon configure;
@@ -810,7 +826,8 @@ public interface HasColumns<T> extends ExecutableView {
             columnResizable = null;
             columnVisible = null;
             columnFrozen = null;
-            columnComparators = null;
+            columnComparators1 = null;
+            columnComparators2 = null;
             grid.getElement().setAttribute("theme", getDefaultThemes());
             if(grid instanceof HasColumns) {
                 hc.createHeaders();
@@ -1227,17 +1244,30 @@ public interface HasColumns<T> extends ExecutableView {
                 });
             }
             if(sortable) {
+                Comparator<T> columnSorter = hc.getColumnSorter(columnName);
+                if(columnSorter != null) {
+                    columnComparators2.put(columnName, columnSorter);
+                    return r;
+                }
                 final Function<T, ?> compareFunction = functions[0];
                 @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProvider = o -> {
                     setRO(o);
                     o = objectUnwrapped;
                     Object v = compareFunction.apply(o);
-                    if(v instanceof String && hc.ignoreCaseForColumnSorting(columnName)) {
-                        v = ((String)v).toLowerCase();
+                    if (!(v instanceof Comparable)) {
+                        ApplicationEnvironment ae = ApplicationEnvironment.get();
+                        if (ae == null) {
+                            v = v.toString();
+                        } else {
+                            v = ae.toDisplay(v);
+                        }
                     }
-                    return (Comparable)v;
+                    if (v instanceof String && hc.ignoreCaseForColumnSorting(columnName)) {
+                        v = ((String) v).toLowerCase();
+                    }
+                    return (Comparable<?>) v;
                 };
-                columnComparators.put(columnName, valueProvider);
+                columnComparators1.put(columnName, valueProvider);
             }
             return r;
         }
@@ -1343,11 +1373,11 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void constructColumn(String columnName, Renderer<T> renderer) {
-            constructColumn(columnName, renderer, columnComparators == null ? null : columnComparators.get(columnName));
+            constructColumn(columnName, renderer, columnComparators1 == null ? null : columnComparators1.get(columnName), columnComparators2.get(columnName));
         }
 
-        private void constructColumn(String columnName, Renderer<T> renderer, @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator) {
-            acceptColumn(constructColumn(columnName, grid, renderer, valueProviderForComparator), columnName);
+        private void constructColumn(String columnName, Renderer<T> renderer, @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator, Comparator<T> comparator) {
+            acceptColumn(constructColumn(columnName, grid, renderer, valueProviderForComparator, comparator), columnName);
         }
 
         /**
@@ -1364,11 +1394,16 @@ public interface HasColumns<T> extends ExecutableView {
          * column and set the comparator if it is not <code>null</code>.
          */
         @SuppressWarnings({"unused"})
-        protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer, @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator) {
-            if(valueProviderForComparator != null) {
+        protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer,
+                                                 @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator, Comparator<T> comparator) {
+            if(valueProviderForComparator != null || comparator != null) {
                 Grid.Column<T> column = grid.addColumn(renderer, columnName);
-                //noinspection unchecked
-                column.setComparator(valueProviderForComparator);
+                if(valueProviderForComparator != null) {
+                    //noinspection unchecked
+                    column.setComparator(valueProviderForComparator);
+                } else {
+                    column.setComparator(comparator);
+                }
                 return column;
             }
             return grid.addColumn(renderer);

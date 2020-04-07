@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 @SuppressWarnings("rawtypes")
 public class Data<T> extends HashMap<String, Object> {
 
+    private static final String FIELD_CANT_BE_EMPTY = "Field can't be empty!";
     private static ValidationResult OK = ValidationResult.ok();
     private static Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
     private FieldValueHandler valueHandler;
@@ -295,14 +296,14 @@ public class Data<T> extends HashMap<String, Object> {
 
     public <F> void addValidator(HasValue<?, F> field, Function<F, Boolean> validator, String errorMessage) {
         if(field == null) {
-            return;
+            throw new RuntimeException(FIELD_CANT_BE_EMPTY);
         }
         validator(field).add(new DataValidator<>(this, validator, errorMessage));
     }
 
     public <F> void setRequired(HasValue<?, F> field, boolean required, String errorMessage) {
         if(field == null) {
-            return;
+            throw new RuntimeException(FIELD_CANT_BE_EMPTY);
         }
         Object value = field.getValue();
         if(value != null) {
