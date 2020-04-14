@@ -340,7 +340,7 @@ public interface HasColumns<T> extends ExecutableView {
      */
     @SuppressWarnings("unchecked")
     default boolean createColumn(String columnName, Function<T, ?>... functions) {
-        return getSOGrid().createColumn(columnName, null, false, functions);
+        return getSOGrid().createColumn(columnName, null, functions);
     }
 
     /**
@@ -351,7 +351,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @return Whether a new column can be created or not.
      */
     default boolean createHTMLColumn(String columnName, Function<T, ?> htmlFunction) {
-        return getSOGrid().createColumn(columnName, null, true, htmlFunction);
+        return getSOGrid().createColumn(columnName, null, htmlFunction);
     }
 
     /**
@@ -366,7 +366,7 @@ public interface HasColumns<T> extends ExecutableView {
      */
     @SuppressWarnings("unchecked")
     default boolean createColumn(String columnName, String template, Function<T, ?>... functions) {
-        return getSOGrid().createColumn(columnName, template, false, functions);
+        return getSOGrid().createColumn(columnName, template, functions);
     }
 
     /**
@@ -1142,24 +1142,31 @@ public interface HasColumns<T> extends ExecutableView {
             if(renderers != null && renderers.containsKey(columnName)) {
                 return false;
             }
-            boolean html = false;
             Method m = getOutsideMethod(columnName);
             Function<T, ?> function = null;
             if(m != null) {
                 if(createTreeColumn(columnName, m)) {
                     return true;
                 }
-                html = HTMLGenerator.class.isAssignableFrom(m.getReturnType());
                 function = getMethodFunction(columnName, m);
             }
             if(function == null) {
-                function = getMethodFunction(columnName);
+                function = getColumnFunction(columnName);
+                if(function == null) {
+                    m = getColumnMethod(columnName);
+                    if(m == null) {
+                        function = item -> "?";
+                    } else {
+                        function = getMethodFunction(columnName, m);
+                    }
+                }
             }
             if(createTreeColumn(columnName, function)) {
                 return true;
             }
-            Renderer<T> r = html ? renderer(columnName, function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
-            hc.setRendererFunctions(columnName, html, function);
+            Class<?> type = getColumnValueType(columnName);
+            Renderer<T> r = HTMLGenerator.class.isAssignableFrom(type) || type == String.class ? renderer(columnName, function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
+            hc.setRendererFunctions(columnName, HTMLGenerator.class.isAssignableFrom(type) || type == String.class, function);
             if(renderers == null) {
                 constructColumn(columnName, r);
             } else {
@@ -1169,8 +1176,8 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         @SafeVarargs
-        private final boolean createColumn(String columnName, String template, boolean html, Function<T, ?>... functions) {
-            if (functions == null || functions.length == 0) {
+        private final boolean createColumn(String columnName, String template, Function<T, ?>... functions) {
+            if(functions == null || functions.length == 0) {
                 return createColumn(columnName);
             }
             if(functions.length == 1 && createTreeColumn(columnName, functions[0])) {
@@ -1179,8 +1186,9 @@ public interface HasColumns<T> extends ExecutableView {
             if(template == null) {
                 template = hc.getColumnTemplate(columnName);
             }
-            Renderer<T> r = html ? renderer(columnName, functions[0]) : renderer(columnName, template, functions);
-            hc.setRendererFunctions(columnName, html, functions);
+            Class<?> type = getColumnValueType(columnName);
+            Renderer<T> r = HTMLGenerator.class.isAssignableFrom(type) ? renderer(columnName, functions[0]) : renderer(columnName, template, functions);
+            hc.setRendererFunctions(columnName, HTMLGenerator.class.isAssignableFrom(type) || type == String.class, functions);
             if(renderers == null) {
                 constructColumn(columnName, r);
             } else {
@@ -1196,8 +1204,7 @@ public interface HasColumns<T> extends ExecutableView {
             if(createTreeColumn(columnName, method)) {
                 return true;
             }
-            return createColumn(columnName, null, HTMLGenerator.class.isAssignableFrom(method.getReturnType()),
-                    getMethodFunction(columnName, method));
+            return createColumn(columnName, null, getMethodFunction(columnName, method));
         }
 
         private boolean createColumn(String columnName, Renderer<T> renderer) {
@@ -1231,17 +1238,26 @@ public interface HasColumns<T> extends ExecutableView {
                 template = template.replace("<" + (i + 1) + ">", "[[item.so" + ids[i] + "]]");
             }
             TemplateRenderer<T> r = TemplateRenderer.of(template);
-            for(i = 0; i < ids.length; i++) {
-                final Function<T, ?> function = functions[i];
-                r.withProperty("so" + ids[i], o -> {
+            if(getColumnValueType(columnName) == String.class) {
+                final Function<T, ?> function = functions[0];
+                r.withProperty("so" + ids[0], o -> {
                     setRO(o);
                     o = objectUnwrapped;
-                    Object v = function.apply(o);
-                    if(v == null && grid instanceof TreeGrid) {
-                        v = "";
-                    }
-                    return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(v);
+                    return HTMLGenerator.encodeHTML((String)function.apply(o));
                 });
+            } else {
+                for (i = 0; i < ids.length; i++) {
+                    final Function<T, ?> function = functions[i];
+                    r.withProperty("so" + ids[i], o -> {
+                        setRO(o);
+                        o = objectUnwrapped;
+                        Object v = function.apply(o);
+                        if (v == null && grid instanceof TreeGrid) {
+                            v = "";
+                        }
+                        return Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(v);
+                    });
+                }
             }
             if(sortable) {
                 Comparator<T> columnSorter = hc.getColumnSorter(columnName);
@@ -1324,18 +1340,6 @@ public interface HasColumns<T> extends ExecutableView {
                 setRO(item);
                 return function.apply(objectUnwrapped);
             };
-        }
-
-        private Function<T, ?> getMethodFunction(String columnName) {
-            Function<T, ?> function = getColumnFunction(columnName);
-            if(function != null) {
-                return function;
-            }
-            Method m = getColumnMethod(columnName);
-            if(m == null) {
-                return item -> "?";
-            }
-            return getMethodFunction(columnName, m);
         }
 
         private Function<T, ?> getMethodFunction(String columnName, Method method) {
@@ -1483,13 +1487,21 @@ public interface HasColumns<T> extends ExecutableView {
         private ColumnTextAlign getTextAlign(String columnName) {
             ColumnTextAlign a = hc.getTextAlign(columnName);
             if(a == null) {
-                Class<?> type = columnTypes.get(columnName);
+                Class<?> type = getColumnValueType(columnName);
                 if(type == null) {
                     type = cc().getColumnValueType(columnName);
                 }
                 a = cc().getColumnTextAlign(columnName, type);
             }
             return a == null ? ColumnTextAlign.START : a;
+        }
+
+        private Class<?> getColumnValueType(String columnName) {
+            Class<?> type = columnTypes.get(columnName);
+            if(type == null) {
+                type = cc().getColumnValueType(columnName);
+            }
+            return type == null ? Object.class : type;
         }
 
         private String getHeader(String columnName) {

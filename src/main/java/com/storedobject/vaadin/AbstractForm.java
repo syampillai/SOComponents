@@ -296,8 +296,8 @@ public abstract class AbstractForm<D> {
     }
 
     /**
-     * Attach a field to the form. This is invoked whenever a field is added to the form. The default implementation adds the component of
-     * the field (if it is a component) to the field container.
+     * Attach a field to the form. This is invoked whenever a field is added to the form. The default implementation adds the field component
+     * (if it is a component) to the field container.
      *
      * @param fieldName Name of the field
      * @param field Field
@@ -317,8 +317,8 @@ public abstract class AbstractForm<D> {
     }
 
     /**
-     * Detach a field from the form. This is invoked whenever a field is removed to the form. The default implementation removes the component of
-     * the field (if it is a component) from the field container.
+     * Detach a field from the form. This is invoked whenever a field is removed to the form. The default implementation removes
+     * the field component (if it is a component) from the field container.
      *
      * @param fieldName Name of the field
      * @param field Field

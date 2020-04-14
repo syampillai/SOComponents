@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * A view that is used for creating "data entry forms". A {@link AbstractForm} is embedded in the view.
+ * A view that is used for creating "data entry forms". An {@link AbstractForm} is embedded in the view.
  *
  * @param <D> Type of data in the embedded form
  * @author Syam

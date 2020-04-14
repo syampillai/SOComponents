@@ -3,7 +3,6 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -21,7 +20,7 @@ import java.util.stream.Stream;
  * other class and set an instance of that class in the form using {@link #setMethodHandlerHost(Object)}. However, the signatures of the getXXX/setXXX
  * methods that are overridden like this take the object instance as an additional parameter as its first parameter. For example, let's assume that
  * our object class represents a "Person" and we want to override the "DateOfBirth" field's "set" method. In the Person class, we may be
- * having the getDateOfBirth() method that returns "date of birth" and setDateOfBirth(Date) to set the "date of birth". So, the overrriden "set"
+ * having the getDateOfBirth() method that returns "date of birth" and setDateOfBirth(Date) to set the "date of birth". So, the overridden "set"
  * method in the form should have signatures as follows: setDateOfBirth(Person, Date). If we want to overrdie the "get" method, it should look
  * like getDateOfBirth(Person).</p>
  * <p>The order of preceedence when it has to determine get/set methods - First preference is given to the available methods in the form, then the
