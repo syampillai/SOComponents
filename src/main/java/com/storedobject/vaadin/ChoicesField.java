@@ -19,7 +19,7 @@ public class ChoicesField extends CustomField<Integer> {
     private static final Integer ZERO = 0;
     private HasComponents container;
     private ArrayList<Checkbox> list = new ArrayList<>();
-    private int mask;
+    private int valueMask = 0;
     private RadioChoiceField fullSelect;
 
     /**
@@ -86,19 +86,20 @@ public class ChoicesField extends CustomField<Integer> {
      */
     public ChoicesField(String label, Collection<String> choices) {
         super(ZERO);
-        int n = choices.size();
-        mask = 1;
-        while(n-- > 0) {
-            mask <<= 1;
-        }
-        --mask;
         sanitize(choices).forEach(item -> {
             Checkbox cb = new Checkbox(item);
             this.list.add(cb);
         });
         createGrid(choices.size() > 4 ? 2 : 0, createContainer());
+        addValueChangeListener(e -> checkMask(e.getValue()));
         setValue(ZERO);
         setLabel(label);
+    }
+
+    private void checkMask(int newValue) {
+        if((newValue & valueMask) != valueMask) {
+            setValue(newValue | valueMask);
+        }
     }
 
     private static Collection<String> createList(Iterable<?> list) {
@@ -190,11 +191,6 @@ public class ChoicesField extends CustomField<Integer> {
     }
 
     @Override
-    public void setValue(Integer value) {
-        super.setValue(value & mask);
-    }
-
-    @Override
     protected Integer generateModelValue() {
         int v = 0, i = 1;
         for(Checkbox c: list) {
@@ -223,6 +219,16 @@ public class ChoicesField extends CustomField<Integer> {
         }
     }
 
+    /**
+     * A "mask" allows one to fix certain bits in the value of the field. For example, if the mask is set to
+     * 5 (bit pattern 101), the zeroth and the third bits from the right will be always set to 1.
+     *
+     * @param valueMask Mask to set.
+     */
+    public void setValueMask(int valueMask) {
+        this.valueMask = valueMask;
+        checkMask(getValue());
+    }
 
     @Override
     public void setReadOnly(boolean readOnly) {

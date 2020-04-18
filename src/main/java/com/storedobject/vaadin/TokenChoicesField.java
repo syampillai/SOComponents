@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A field that allows you to select multiple values from a fixed list of Strings. The value is returned as
@@ -11,6 +12,7 @@ import java.util.*;
 public class TokenChoicesField extends TranslatedField<Integer, Set<String>> {
     
     private static Integer ZERO = 0;
+    private int valueMask;
 
     /**
      * Constructor.
@@ -81,6 +83,13 @@ public class TokenChoicesField extends TranslatedField<Integer, Set<String>> {
     private TokenChoicesField(String label, List<String> choices) {
         super(new TField(choices), (f, s) -> ((TField)f).toValue(s), (f, i) -> ((TField)f).toSet(i), ZERO);
         setLabel(label);
+        addValueChangeListener(e -> checkMask(e.getValue()));
+    }
+
+    private void checkMask(int newValue) {
+        if((newValue & valueMask) != valueMask) {
+            setValue(newValue | valueMask);
+        }
     }
 
     private static List<String> createList(Iterable<?> list) {
@@ -95,6 +104,17 @@ public class TokenChoicesField extends TranslatedField<Integer, Set<String>> {
             }
         });
         return a;
+    }
+
+    /**
+     * A "mask" allows one to fix certain bits in the value of the field. For example, if the mask is set to
+     * 5 (bit pattern 101), the zeroth and the third bits from the right will be always set to 1.
+     *
+     * @param valueMask Mask to set.
+     */
+    public void setValueMask(int valueMask) {
+        this.valueMask = valueMask;
+        checkMask(getValue());
     }
 
     private static class TField extends TokensField<String> {

@@ -7,7 +7,7 @@ https://vaadin.com/directory/component/so-components
 https://vaadin.com/directory/component/textfield-formatter Ver 4.1.4 or later (for field formatting features).  
 Use versions < 1.3.0 if you don't want this dependency.
 
-https://vaadin.com/directory/component/multiselect-combo-box Ver 2.4.0 or later (for TokensField).  
+https://vaadin.com/directory/component/multiselect-combo-box Ver 3.0.0 or later (for TokensField).  
 Use versions < 1.7.0 if you don't want this dependency.
 
 https://xmlgraphics.apache.org/batik Ver 1.11 (for SVG image manipulation).
