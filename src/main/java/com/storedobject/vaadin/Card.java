@@ -4,11 +4,13 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 
 /**
- * Make a component look like an "elevated card" on the screen. In order to use this class, just wrap the component with this
+ * Make a component to appear like an "elevated card" on the screen. In order to use this class, just wrap the component with this
  * class.
  * <p>Example: Component c; new Card(c);</p>
+ *
+ * @author Syam
  */
-public class Card extends Composite {
+public class Card extends Composite<Component> {
 
     private Component component;
 

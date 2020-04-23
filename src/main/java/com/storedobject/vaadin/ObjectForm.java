@@ -21,12 +21,13 @@ import java.util.stream.Stream;
  * methods that are overridden like this take the object instance as an additional parameter as its first parameter. For example, let's assume that
  * our object class represents a "Person" and we want to override the "DateOfBirth" field's "set" method. In the Person class, we may be
  * having the getDateOfBirth() method that returns "date of birth" and setDateOfBirth(Date) to set the "date of birth". So, the overridden "set"
- * method in the form should have signatures as follows: setDateOfBirth(Person, Date). If we want to overrdie the "get" method, it should look
+ * method in the form should have signatures as follows: setDateOfBirth(Person, Date). If we want to override the "get" method, it should look
  * like getDateOfBirth(Person).</p>
- * <p>The order of preceedence when it has to determine get/set methods - First preference is given to the available methods in the form, then the
+ * <p>The order of precedence when it has to determine get/set methods - First preference is given to the available methods in the form, then the
  * available methods in the "method handler host" (if ones is set) and finally, in the object class itself. If it can't determine the "set" method
  * for a field, the field will be set as "read only".</p>
- * <p>What is the purpose of overrding get/set methods? One can implement extra logic such as value conversion, validation etc.
+ * <p>If a getXXX method of the "host" should not be treated like this, it can be annotated with {@link NoField}.</p>
+ * <p>What is the purpose of overriding get/set methods? One can implement extra logic such as value conversion, validation etc.
  * before getting/setting the values from/to the object instance. (It is better to add validators if that is the only purpose - see
  * {@link #addValidator(HasValue, Function)}, {@link #addValidator(HasValue, Function, String)}). When extra fields (see next paragraph)
  * need to be added, this mechanism is anyway required.</p>
@@ -252,6 +253,10 @@ public class ObjectForm<D> extends AbstractForm<D> {
         setM.put(fieldName, setMethod);
     }
 
+    private boolean isField(Method m) {
+        return m.getAnnotation(NoField.class) == null;
+    }
+
     private Method getGetMethodFromHost(String fieldName) {
         Object host = getHost();
         if(host == null) {
@@ -260,14 +265,14 @@ public class ObjectForm<D> extends AbstractForm<D> {
         Method m;
         try {
             m = host.getClass().getMethod("get" + fieldName);
-            if(m != null && m.getDeclaringClass() == host.getClass()) {
+            if(m != null && m.getDeclaringClass() == host.getClass() && isField(m)) {
                 return m;
             }
         } catch (NoSuchMethodException ignored) {
         }
         try {
             m = host.getClass().getMethod("is" + fieldName);
-            if(m != null && m.getDeclaringClass() == host.getClass()) {
+            if(m != null && m.getDeclaringClass() == host.getClass() && isField(m)) {
                 return m;
             }
         } catch (NoSuchMethodException ignored) {
