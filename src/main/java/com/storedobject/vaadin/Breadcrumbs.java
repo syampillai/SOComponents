@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Breadcrumbs component. A {@link ClickHandler} may be used as an optional feature and in that case, the {@link Breadcrumb} will
- * be clickable. If the {@link Breadcrumb} is clickable, the {@link ClickHandler}'s {@link ClickHandler#clicked(Component)}
+ * Breadcrumbs component. A {@link ClickHandler} may be used to make the {@link Breadcrumb}s clickable.
+ * If the {@link Breadcrumb}s are clickable, the {@link ClickHandler}'s {@link ClickHandler#clicked(Component)}
  * method will be invoked when it is clicked and the {@link Breadcrumb}s up to the clicked one will be pruned.
  *
  * @author Syam
