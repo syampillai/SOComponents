@@ -29,11 +29,14 @@ public class ID {
     }
 
     /**
-     * Set a unique id for the given component. (Id set will be of the format "soN" where N will be a unique long number)
+     * Set a unique id for the given component if it doesn't have an id now.
+     * (Id set will be of the format "soN" where N will be a unique long number).
      *
      * @param component Component for which id needs to be set.
      */
     public static void set(Component component) {
-        component.setId("so" + newID());
+        if(!component.getId().isPresent()) {
+            component.setId("so" + newID());
+        }
     }
 }

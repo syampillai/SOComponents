@@ -9,7 +9,6 @@ import com.vaadin.flow.component.notification.GeneratedVaadinNotification;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
@@ -209,9 +208,6 @@ public abstract class Application {
     }
 
     private void fireResized(int width, int height) {
-        if(width == deviceWidth && height == deviceHeight) {
-            return;
-        }
         if(resizeListeners != null) {
             resizeListeners.removeIf(w -> w.get() == null);
             resizeListeners.forEach(w -> {
@@ -837,8 +833,11 @@ public abstract class Application {
     }
 
     final void deviceSize(int width, int height) {
-        this.deviceWidth = width;
-        this.deviceHeight = height;
+        if(deviceWidth == width && deviceHeight == height) {
+            return;
+        }
+        deviceWidth = width;
+        deviceHeight = height;
         fireResized(width, height);
     }
 
@@ -1371,8 +1370,7 @@ public abstract class Application {
                 homeView = null;
             }
             contentMenu.remove(view);
-            Element element = view.getComponent().getElement();
-            element.removeFromParent();
+            applicationView.layout.removeView(view);
             stack.remove(view);
             homeStack.remove(view);
             View parent = parents.remove(view);

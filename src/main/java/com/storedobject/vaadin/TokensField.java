@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.ItemLabelGenerator;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.data.binder.HasItems;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
  * @param <T> Type of the item.
  * @author Syam
  */
+@CssImport(value = "./so/tokens/styles.css", themeFor = "multiselect-combo-box")
 public class TokensField<T> extends MultiselectComboBox<T> implements HasItems<T> {
 
     private Collection<T> items;

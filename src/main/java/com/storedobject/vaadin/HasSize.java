@@ -20,4 +20,13 @@ public interface HasSize extends com.vaadin.flow.component.HasSize {
         com.vaadin.flow.component.HasSize.super.setHeight(height);
         getElement().setAttribute("height", height);
     }
+
+    /**
+     * Set the size in such a way that it expands to the whole content area. The default height of the content area is
+     * 90vh when the default implementation of the {@link ApplicationLayout} is used.
+     */
+    default void setViewFull() {
+        setHeight("90vh");
+        setWidthFull();
+    }
 }

@@ -305,12 +305,20 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
         @Override
         protected Method getFieldGetMethod(String fieldName) {
+            Method m;
+            try {
+                m = getFieldCreator().getFieldGetMethod(fieldName);
+                if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                    return m;
+                }
+            } catch (FieldError ignored) {
+            }
             try {
                 return AbstractDataEditor.this.getFieldGetMethod(fieldName);
             } catch (FieldError ignored) {
             }
             try {
-                Method m = AbstractDataEditor.this.getClass().getMethod("get" + fieldName);
+                m = AbstractDataEditor.this.getClass().getMethod("get" + fieldName);
                 if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
                     return m;
                 }
@@ -325,13 +333,21 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
         @Override
         protected Method getFieldSetMethod(String fieldName, Method getMethod) {
+            Method m;
+            try {
+                m = getFieldCreator().getFieldSetMethod(fieldName, getMethod);
+                if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                    return m;
+                }
+            } catch (FieldError ignored) {
+            }
             try {
                 return AbstractDataEditor.this.getFieldSetMethod(fieldName, getMethod);
             } catch (FieldError ignored) {
             }
             Class<?>[] params = new Class[] { getMethod.getReturnType() };
             try {
-                Method m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
+                m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
                 if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
                     return m;
                 }

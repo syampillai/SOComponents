@@ -14,7 +14,7 @@ public interface ApplicationLayout {
     /**
      * Set the caption of the application.
      *
-     * @param caption Caption
+     * @param caption Caption component
      */
     default void setCaption(String caption) {
     }
@@ -68,6 +68,7 @@ public interface ApplicationLayout {
 
     /**
      * Add a "view" to the application. The default implementation adds the view's component to the "content" area.
+     * If the content of the view supports sizing and it's not a {@link Dialog} , the width will be set to 100% and height to 90vh.
      *
      * @param view View to be added.
      */
@@ -75,10 +76,20 @@ public interface ApplicationLayout {
         Component c = view.getComponent();
         if(!(c instanceof Dialog)) {
             if(c instanceof HasSize) {
-                ((HasSize) c).setWidth("98%");
+                ((HasSize)c).setWidth("100%");
+                ((HasSize)c).setHeight("90vh");
             }
             getContent().getElement().appendChild(c.getElement());
         }
+    }
+
+    /**
+     * Remove a "view" from the application. The default implementation removes view's component from its parent.
+     *
+     * @param view View to be removed.
+     */
+    default void removeView(View view) {
+        view.getComponent().getElement().removeFromParent();
     }
 
     /**

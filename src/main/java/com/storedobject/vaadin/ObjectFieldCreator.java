@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 /**
  * A class that implements this interface determines how fields ({@link HasValue}) are created for editing an "object". All methods of this
  * interface have default implementation.
+ *
  * @param <T> Type type of "object" for which fields need to be created
  * @author Syam
  */
@@ -39,7 +40,30 @@ public interface ObjectFieldCreator<T> {
     }
 
     /**
-     * Get additional field namaes (in addition to the ones got from {@link #getFieldGetMethods()}.
+     * Get the "getXXX" method for a given field name.
+     *
+     * @param fieldName Name of the field
+     * @return The default implementation returns <code>null</code>. If <code>null</code> is returned, reflection will be used on the object's
+     * class to determine the "getXXX" method. (For example, getFirstName() method for field named "FirsrName").
+     */
+    default Method getFieldGetMethod(String fieldName) {
+        return null;
+    }
+
+    /**
+     * Get the "setXXX" method for a given field name.
+     *
+     * @param fieldName Name of the field
+     * @param getMethod Get method for the field
+     * @return The default implementation returns <code>null</code>. If <code>null</code> is returned, reflection will be used on the object's
+     * class to determine the "setXXX" method. (For example, setFirstName(String firstName) method for field named "FirstName").
+     */
+    default Method getFieldSetMethod(String fieldName, Method getMethod) {
+        return null;
+    }
+
+    /**
+     * Get additional field names (in addition to the ones got from {@link #getFieldGetMethods()}.
      * @return Default implementation returns <code>null</code> (means no extra fields are added).
      */
     default Stream<String> getFieldNames() {
