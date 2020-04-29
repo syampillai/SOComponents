@@ -122,6 +122,15 @@ public abstract class ApplicationView extends Composite<Component> {
     }
 
     /**
+     * Get the current application. (For internal use only).
+     *
+     * @return Current application.
+     */
+    Application getApplication() {
+        return application;
+    }
+
+    /**
      * Get the name of the Application class.
      *
      * @return Fully qualified name of the Application class. (Default value returned is <code>null</code>).

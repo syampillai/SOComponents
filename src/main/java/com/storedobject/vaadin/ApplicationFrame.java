@@ -1,18 +1,15 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.dom.Style;
-import com.vaadin.flow.shared.Registration;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
 /**
  * An implementation of {@link ApplicationLayout} using Vaadin's {@link AppLayout}. The "drawer" area acts
@@ -23,7 +20,6 @@ import java.util.ArrayList;
 @CssImport(value = "./so/appframe/styles.css", themeFor = "vaadin-app-layout")
 public abstract class ApplicationFrame extends AppLayout implements ApplicationLayout {
 
-    private Content content;
     private Menu menu = new Menu();
     private Component logo;
     private HasText captionComponent, userNameComponent;
@@ -35,25 +31,17 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      */
     public ApplicationFrame() {
         ID.set(this);
-        content = new Content();
         Component c;
         addToNavbar(c = new DrawerToggle());
         Style s = c.getElement().getStyle();
         s.set("color", "var(--lumo-primary-contrast-color)");
         s.set("cursor", "pointer");
         c = getMenuSearcher();
-        if(c == null) {
-            menu.setHeightFull();
-        } else {
+        if(c != null) {
+            c.getElement().getStyle().set("flex-flow", "0");
             addToDrawer(c);
-            menu.setHeight("95%");
         }
         addToDrawer(menu);
-        setContent(content);
-    }
-
-    private void toGrow(Component c) {
-        c.getElement().getStyle().set("flex-grow", "1");
     }
 
     private void noWrap(Component c) {
@@ -62,6 +50,12 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         s.set("white-space", "nowrap");
         s.set("overflow", "hidden");
         s.set("text-overflow", "ellipsis");
+    }
+
+    private Span filler() {
+        Span filler = new Span();
+        filler.getElement().getStyle().set("flex-grow", "1");
+        return filler;
     }
 
     @Override
@@ -75,17 +69,12 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
                 addToNavbar(true, (Component)captionComponent);
                 noWrap((Component) captionComponent);
             }
+            addToNavbar(filler());
+            addToNavbar(true, filler());
             if(getUserNameComponent() != null && userNameComponent instanceof Component) {
                 addToNavbar(true, (Component)userNameComponent);
                 userNameComponent.getElement().getStyle().set("text-align", "right");
-                toGrow((Component) userNameComponent);
                 noWrap((Component) userNameComponent);
-            } else {
-                if(captionComponent instanceof Component) {
-                    toGrow((Component) captionComponent);
-                } else if(logo != null) {
-                    toGrow(logo);
-                }
             }
             if(getToolbox() != null) {
                 Style s = toolbox.getStyle();
@@ -173,85 +162,8 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     }
 
     @Override
-    public Component getContent() {
-        return content;
-    }
-
-    @Override
     public ApplicationMenu getMenu() {
         return menu;
-    }
-
-    /**
-     * Add a "content resized listener" to this layout so that the listener will be alerted whenever the content area is resized.
-     * This will be useful for those "views" that want to react to the content area size changes.
-     *
-     * @param listener Listener
-     *
-     * @return Registration.
-     */
-    public Registration addContentResizedListener(ContentResizedListener listener) {
-        return content.addContentResizedListener(listener);
-    }
-
-        @Tag("so-app-content")
-    @JsModule("./so/appframe/content.js")
-    private static class Content extends Component {
-
-        private ArrayList<WeakReference<ContentResizedListener>> resizeListeners;
-        private int width = -1, height = -1;
-
-        private Content() {
-            getElement().setProperty("idContent", "so" + ID.newID());
-        }
-
-        @Override
-        protected void onAttach(AttachEvent attachEvent) {
-            super.onAttach(attachEvent);
-            getElement().setProperty("size", "x");
-        }
-
-        @ClientCallable
-        private void resized(int w, int h) {
-            if(width == w && height == h) {
-                return;
-            }
-            this.width = w;
-            this.height = h;
-            if(resizeListeners != null) {
-                resizeListeners.removeIf(wr -> wr.get() == null);
-                resizeListeners.forEach(wr -> {
-                    ContentResizedListener l = wr.get();
-                    if(l != null) {
-                        l.contentResized(width, height);
-                    }
-                });
-            }
-        }
-
-        /**
-         * Add a browser resized listener to this application so that the listener will be alerted whenever the browser is resized.
-         *
-         * @param listener Listener
-         * @return Registration.
-         */
-        private Registration addContentResizedListener(ContentResizedListener listener) {
-            if(listener == null) {
-                return null;
-            }
-            if(resizeListeners == null) {
-                resizeListeners = new ArrayList<>();
-            }
-            resizeListeners.add(new WeakReference<>(listener));
-            return () -> {
-                for(WeakReference<ContentResizedListener> w: resizeListeners) {
-                    if(w.get() == listener) {
-                        resizeListeners.remove(w);
-                        return;
-                    }
-                }
-            };
-        }
     }
 
     /**
@@ -279,27 +191,11 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         setDrawerOpened(!isDrawerOpened());
     }
 
-    /**
-     * Speak out a sentence through the speaker.
-     *
-     * @param sentence Text to be spoken out.
-     */
-    @Override
-    public void speak(String sentence) {
-        if(sentence.indexOf('"') >= 0) {
-            sentence = sentence.replace("\"", "");
-        }
-        js("speak(\"" + sentence + "\")");
-    }
-
-    private void js(String js) {
-        Application.get().getPage().executeJs("document.getElementById('" + getId().orElse(null) + "')." + js + ";");
-    }
-
     private static class Menu extends Div implements ApplicationMenu, HasSize {
 
         public Menu() {
             ID.set(this);
+            getStyle().set("flex-grow", "1");
             new Scrollable(this);
         }
 
@@ -318,10 +214,5 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         private void top() {
             Application.get().getPage().executeJs("document.getElementById('" + getId().orElse(null) + "').scrollTop=0;");
         }
-    }
-
-    @FunctionalInterface
-    public interface ContentResizedListener {
-        void contentResized(int width, int height);
     }
 }

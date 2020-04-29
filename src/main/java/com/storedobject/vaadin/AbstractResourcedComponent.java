@@ -33,7 +33,7 @@ public abstract class AbstractResourcedComponent extends Component implements Re
         if(fileURI != null) {
             setURI(fileURI);
         }
-        setViewFull();
+        setSizeFull();
     }
 
     /**
@@ -47,7 +47,7 @@ public abstract class AbstractResourcedComponent extends Component implements Re
         if(streamResource != null) {
             setSource(streamResource);
         }
-        setViewFull();
+        setSizeFull();
     }
 
     /**

@@ -8,21 +8,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.polymertemplate.BundleParser;
-import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
-import com.vaadin.flow.component.polymertemplate.TemplateParser;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.shared.communication.PushMode;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import org.jsoup.nodes.Element;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 
 public class Demo extends Application {
 
@@ -51,16 +41,13 @@ public class Demo extends Application {
 
     private static class SimpleLayout extends HorizontalLayout implements ApplicationLayout, ApplicationMenu, AppMenu {
 
-        VerticalLayout menu = new VerticalLayout(), content = new VerticalLayout();
+        VerticalLayout menu = new VerticalLayout();
 
         private SimpleLayout() {
-            add(menu, content);
+            add(menu);
             menu.setMargin(false);
             menu.setHeight("100vh");
             menu.setWidth("");
-            content.setMargin(false);
-            content.setHeight("100vh");
-            content.setWidth("calc(100vw - 80px)");
             setHeight("100vh");
             setWidth("100vw");
             menu.getElement().getStyle().set("background-color", "lightblue");
@@ -72,6 +59,11 @@ public class Demo extends Application {
         }
 
         @Override
+        public void setContent(Component content) {
+            add(content);
+        }
+
+        @Override
         public ApplicationMenu getMenu() {
             return this;
         }
@@ -79,11 +71,6 @@ public class Demo extends Application {
         @Override
         public HasComponents getMenuPane() {
             return menu;
-        }
-
-        @Override
-        public Component getContent() {
-            return content;
         }
 
         @Override
