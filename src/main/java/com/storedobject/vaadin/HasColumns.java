@@ -752,7 +752,8 @@ public interface HasColumns<T> extends ExecutableView {
         private Map<String, Boolean> columnResizable = new HashMap<>();
         private Map<String, Boolean> columnVisible = new HashMap<>();
         private Map<String, Boolean> columnFrozen = new HashMap<>();
-        private Map<String, Class<?>> columnTypes = new HashMap<>();
+        private final Map<String, Class<?>> columnTypes = new HashMap<>();
+        private final Map<String, String> columnCaptions = new HashMap<>();
         @SuppressWarnings("rawtypes")
         private Map<String, ValueProvider<T, Comparable>> columnComparators1 = new HashMap<>();
         private Map<String, Comparator<T>> columnComparators2 = new HashMap<>();
@@ -807,6 +808,7 @@ public interface HasColumns<T> extends ExecutableView {
             }
             if(columns != null) {
                 columns.forEach(n -> {
+                    n = trimCaption(n);
                     if(includeColumn(n)) {
                         createColumn(n);
                     }
@@ -814,7 +816,7 @@ public interface HasColumns<T> extends ExecutableView {
             } else {
                 Stream<String> columnNames = getColumnNames();
                 if(columnNames != null) {
-                    columnNames.filter(this::includeColumn).forEach(this::createColumn);
+                    columnNames.map(this::trimCaption).filter(this::includeColumn).forEach(this::createColumn);
                 } else {
                     generateColumns();
                 }
@@ -843,6 +845,16 @@ public interface HasColumns<T> extends ExecutableView {
             }
             grid.setColumnReorderingAllowed(allowColumnReordering);
             constructed();
+        }
+
+        private String trimCaption(String columnName) {
+            int p = columnName.toLowerCase().indexOf(" as ");
+            if(p < 0) {
+                return columnName;
+            }
+            String cn = columnName.substring(0, p).trim();
+            columnCaptions.put(cn, columnName.substring(p + 4));
+            return cn;
         }
 
         private void compact() {
@@ -1176,7 +1188,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         @SafeVarargs
-        private final boolean createColumn(String columnName, String template, Function<T, ?>... functions) {
+        private boolean createColumn(String columnName, String template, Function<T, ?>... functions) {
             if(functions == null || functions.length == 0) {
                 return createColumn(columnName);
             }
@@ -1220,7 +1232,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         @SafeVarargs
-        private final Renderer<T> renderer(String columnName, String template, Function<T, ?>... functions) {
+        private Renderer<T> renderer(String columnName, String template, Function<T, ?>... functions) {
             boolean sortable = hc != null && hc.isColumnSortable(columnName);
             if(template == null) {
                 StringBuilder s = new StringBuilder();
@@ -1505,7 +1517,11 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private String getHeader(String columnName) {
-            String h = hc.getColumnCaption(columnName);
+            String h = columnCaptions.get(columnName);
+            if(h != null) {
+                return h;
+            }
+            h = hc.getColumnCaption(columnName);
             return h == null ? cc().getColumnCaption(columnName) : h;
         }
 
@@ -1525,6 +1541,14 @@ public interface HasColumns<T> extends ExecutableView {
                             return hc.isCloseable();
                         }
                         return grid instanceof CloseableView;
+                    }
+
+                    @Override
+                    public boolean isHomeView() {
+                        if(hc != null) {
+                            return hc.isHomeView();
+                        }
+                        return grid instanceof HomeView;
                     }
 
                     @Override

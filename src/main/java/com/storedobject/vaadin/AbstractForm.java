@@ -9,6 +9,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.dom.Element;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -97,11 +98,7 @@ public abstract class AbstractForm<D> {
      * @param includeField The "include field checker"
      */
     public void setIncludeFieldChecker(IncludeField includeField) {
-        if(includeField == null) {
-            this.includeField = name -> true;
-        } else {
-            this.includeField = includeField;
-        }
+        this.includeField = Objects.requireNonNullElseGet(includeField, () -> name -> true);
     }
 
     private static HasComponents createDefaultContainer() {
@@ -853,8 +850,8 @@ public abstract class AbstractForm<D> {
      */
     protected D createObjectInstance() {
         try {
-            return objectClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ignored) {
+            return objectClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
         }
         return null;
     }

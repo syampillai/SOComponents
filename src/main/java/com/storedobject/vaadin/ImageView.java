@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.server.AbstractStreamResource;
 
 /**
@@ -12,40 +13,45 @@ public class ImageView extends View implements HomeView {
     private Image image;
 
     /**
-     * Create the image from a URL.
+     * Create an empty image view. Image source can be set later.
+     */
+    public ImageView() {
+        this((Image)null);
+    }
+
+    /**
+     * Create the image view from a URL.
      *
      * @param url Image URL
      */
     public ImageView(String url) {
-        super("I");
-        init();
+        this((Image)null);
         setSource(url);
     }
 
     /**
-     * Create the image from a resource.
+     * Create the image view from a resource.
      *
      * @param resource Image resource
      */
     public ImageView(AbstractStreamResource resource) {
-        super("I");
-        init();
+        this((Image)null);
         setSource(resource);
     }
 
-    private void init() {
-        image = createImage();
-        image.setSizeFull();
-        setComponent(image);
+    /**
+     * Create the image view from the given image.
+     * @param image Image
+     */
+    public ImageView(Image image) {
+        super("I");
+        this.image = image == null ? new Image((String)null) : image;
     }
 
-    /**
-     * Construct the base image.
-     *
-     * @return Image
-     */
-    protected Image createImage() {
-        return new Image((String)null);
+    @Override
+    protected void initUI() {
+        Component c = getImageComponent(image);
+        setComponent(c == null ? image : c);
     }
 
     /**
@@ -64,5 +70,20 @@ public class ImageView extends View implements HomeView {
      */
     public void setSource(AbstractStreamResource source) {
         image.setSource(source);
+    }
+
+    /**
+     * Get the image component that will be set as the component of this view. The default implementation returns the
+     * image itself after setting its maximum width to (90vh - 10px). View components, typically, have 5 pixels margin on
+     * all sides and 90vh height. So, the image will be scaled to fill up the entire background, leaving 5 pixels
+     * margins.
+     *
+     * @param image Image of this view
+     * @return A component that will be set as the component of this view using {@link #setComponent(Component)}.
+     */
+    public Component getImageComponent(Image image) {
+        image.setSizeFull();
+        image.getElement().getStyle().set("max-height", "calc(90vh - 10px)");
+        return image;
     }
 }

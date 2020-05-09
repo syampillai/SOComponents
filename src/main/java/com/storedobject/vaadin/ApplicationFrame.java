@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -25,6 +26,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     private HasText captionComponent, userNameComponent;
     private ButtonLayout toolbox = new ButtonLayout();
     private boolean initialized = false;
+    private Focusable<?> menuSearcher;
 
     /**
      * Constructor.
@@ -38,6 +40,9 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         s.set("cursor", "pointer");
         c = getMenuSearcher();
         if(c != null) {
+            if(c instanceof Focusable) {
+                menuSearcher = (Focusable<?>) c;
+            }
             c.getElement().getStyle().set("flex-flow", "0");
             addToDrawer(c);
         }
@@ -172,6 +177,9 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     @Override
     public void openMenu() {
         setDrawerOpened(true);
+        if(menuSearcher != null) {
+            menuSearcher.focus();
+        }
     }
 
 
@@ -189,6 +197,21 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     @Override
     public void toggleMenu() {
         setDrawerOpened(!isDrawerOpened());
+        if(menuSearcher != null && isDrawerOpened()) {
+            menuSearcher.focus();
+        }
+    }
+
+    /**
+     * Closes the menu if it is displayed as an overlay.
+     *
+     * @param view Currently selected view
+     */
+    @Override
+    public void viewSelected(View view) {
+        if(isOverlay()) {
+            setDrawerOpened(false);
+        }
     }
 
     private static class Menu extends Div implements ApplicationMenu, HasSize {

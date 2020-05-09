@@ -139,8 +139,9 @@ public class PaintedImageResource extends StreamResource {
 
     private static class ImageStream implements InputStreamFactory {
 
-        private PaintedImage.Type imageType;
-        private int width, height;
+        private final PaintedImage.Type imageType;
+        private final int width;
+        private final int height;
         private ByteArrayInputStream bytestream = null;
         private Consumer<Graphics2D> painter;
 
@@ -180,18 +181,14 @@ public class PaintedImageResource extends StreamResource {
                 try {
                     if(imageType == PaintedImage.Type.SVG) {
                         OutputStreamWriter ow = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
-                        if (graphics != null) {
-                            ((SVGGraphics2D)graphics).stream(ow);
-                        }
+                        ((SVGGraphics2D)graphics).stream(ow);
                         ow.close();
                     } else {
                         ImageIO.write(Objects.requireNonNull(bi), imageType.toString().toLowerCase(), outputStream);
                     }
                     outputStream.close();
                     bytestream = new ByteArrayInputStream(outputStream.toByteArray());
-                    if (graphics != null) {
-                        graphics.dispose();
-                    }
+                    graphics.dispose();
                 } catch(Exception e) {
                     e.printStackTrace();
                 }

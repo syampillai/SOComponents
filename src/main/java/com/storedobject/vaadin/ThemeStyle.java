@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public enum ThemeStyle {
 
-    SUCESS, ERROR, PILL, CONTRAST, SMALL, PRIMARY, ICON, BADGE;
+    SUCCESS, ERROR, PILL, CONTRAST, SMALL, PRIMARY, ICON, BADGE;
 
     private static final String THEME = "theme";
 
@@ -71,7 +71,7 @@ public enum ThemeStyle {
             set(element, styles);
             return;
         }
-        String oldSet = theme + " " + theme + " ";
+        String oldSet = " " + theme + " ";
         String newSet = Arrays.stream(styles).map(Enum::toString).filter(s -> !oldSet.contains(s)).collect(Collectors.joining(" "));
         if(!newSet.isEmpty()) {
             element.setAttribute(THEME, theme + " " + newSet);
@@ -120,7 +120,7 @@ public enum ThemeStyle {
         if(theme == null || theme.isEmpty() || styles == null || styles.length == 0) {
             return;
         }
-        theme = theme + " " + theme + " ";
+        theme = " " + theme + " ";
         for(ThemeStyle s: styles) {
             theme = theme.replace(" " + s + " ", " ");
         }

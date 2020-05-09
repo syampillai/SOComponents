@@ -84,15 +84,69 @@ public abstract class DataForm extends AbstractDataForm<Object> {
         }
         buildFields();
         buildButtons();
+        Component c = (Component) v;
         if(windowMode) {
-            Window window = createWindow((Component)v);
+            Window window = createWindow(c);
             if(window == null) {
-                window = new Window((Component)v);
+                window = new Window(c);
             }
             setComponent(window);
+            getContent().getElement().getStyle().
+                    set("min-width", minMax(getMinimumContentWidth()) + "vw").
+                    set("min-height", minMax(getMinimumContentHeight()) + "vh").
+                    set("max-width", maxMin(getMaximumContentWidth()) + "vw").
+                    set("max-height", maxMin(getMaximumContentHeight()) + "vh");
         } else {
-            setComponent((Component)v);
+            setComponent(c);
         }
+    }
+
+    /**
+     * Get the minimum "content width" (Percentage value of the view port width). Value should be between 10 and 80.
+     * This value is used only in "window mode".
+     *
+     * @return Percentage value of the view port width. Default is 10%.
+     */
+    public int getMinimumContentWidth() {
+        return 10;
+    }
+
+    /**
+     * Get the maximum "content width" (Percentage value of the view port width). Value should be between 10 and 90.
+     * This value is used only in "window mode".
+     *
+     * @return Percentage value of the view port width. Default is 80%.
+     */
+    public int getMaximumContentWidth() {
+        return 80;
+    }
+
+    /**
+     * Get the minimum "content height" (Percentage value of the view port height. Value should be between 10 and 80.
+     * This value is used only in "window mode".
+     *
+     * @return Percentage value of the view port height. Default is 10%.
+     */
+    public int getMinimumContentHeight() {
+        return 10;
+    }
+
+    /**
+     * Get the maximum "content height" (Percentage value of the view port height. Value should be between 10 and 90.
+     * This value is used only in "window mode".
+     *
+     * @return Percentage value of the view port height. Default is 80%.
+     */
+    public int getMaximumContentHeight() {
+        return 80;
+    }
+
+    private static int minMax(int v) {
+        return Math.max(10, Math.min(80, v));
+    }
+
+    private static int maxMin(int v) {
+        return Math.min(90, Math.max(10, v));
     }
 
     @Override

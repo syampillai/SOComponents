@@ -3,6 +3,7 @@ package com.storedobject.vaadin;
 import com.storedobject.vaadin.util.NumericField;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Field to edit {@link BigDecimal} values.
@@ -148,7 +149,7 @@ public class BigDecimalField extends NumericField<BigDecimal> {
             return bd;
         }
         try {
-            return bd.setScale(decimals, BigDecimal.ROUND_DOWN);
+            return bd.setScale(decimals, RoundingMode.DOWN);
         } catch(Throwable ignored) {
         }
         return null;

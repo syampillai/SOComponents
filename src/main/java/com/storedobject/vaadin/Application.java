@@ -8,7 +8,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
@@ -101,15 +100,15 @@ import java.util.function.Predicate;
 public abstract class Application {
 
     private final static String APP_KEY = "so$app";
-    private AlertCloser alertCloser = new AlertCloser();
+    private final AlertCloser alertCloser = new AlertCloser();
     private ApplicationView applicationView;
     private ApplicationLayout applicationLayout;
     private UI ui;
     private ApplicationEnvironment environment;
-    private Map<Object, AlertList> alerts = new HashMap<>();
-    private Map<Object, Integer> pollIntervals = new HashMap<>();
+    private final Map<Object, AlertList> alerts = new HashMap<>();
+    private final Map<Object, Integer> pollIntervals = new HashMap<>();
     private ViewManager viewManager;
-    private ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
+    private final ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
     private String link;
     private int deviceWidth = -1, deviceHeight = -1;
     private final ArrayList<Command> commands = new ArrayList<>();
@@ -1302,9 +1301,10 @@ public abstract class Application {
 
         private final ApplicationMenu menu;
         private final ApplicationView applicationView;
-        private List<View> stack = new ArrayList<>(), homeStack = new ArrayList<>();
-        private Map<View, ApplicationMenuItem> contentMenu = new HashMap<>();
-        private Map<View, View> parents = new HashMap<>();
+        private final List<View> stack = new ArrayList<>();
+        private final List<View> homeStack = new ArrayList<>();
+        private final Map<View, ApplicationMenuItem> contentMenu = new HashMap<>();
+        private final Map<View, View> parents = new HashMap<>();
         private View homeView;
         private final Content content;
 
@@ -1344,7 +1344,7 @@ public abstract class Application {
                 return;
             }
             Component c = view.getComponent();
-            if(view instanceof HomeView && homeView != null && !(c instanceof Dialog)) {
+            if(view.isHomeView() && homeView != null && !(c instanceof Dialog)) {
                 homeStack.add(homeView);
                 homeView.setVisible(false);
                 homeView = null;
@@ -1370,12 +1370,11 @@ public abstract class Application {
             }
             stack.add(view);
             if(!(c instanceof Dialog)) {
-                c.getElement().getStyle().set("flex-grow", "1");
                 content.getElement().appendChild(c.getElement());
             }
             view.setVisible(true);
             ApplicationMenuItem m = view.getMenuItem(() -> select(view));
-            if(view instanceof HomeView) {
+            if(view.isHomeView()) {
                 if(!(view.getComponent() instanceof Dialog)) {
                     homeView = view;
                 }
@@ -1384,6 +1383,7 @@ public abstract class Application {
             }
             contentMenu.put(view, m);
             hilite(m);
+            applicationView.layout.viewSelected(view);
         }
 
         public void detach(View view) {
@@ -1398,7 +1398,7 @@ public abstract class Application {
             if(m == null) {
                 return;
             }
-            if(!(view instanceof HomeView)) {
+            if(!(view.isHomeView())) {
                 menu.remove(m);
             }
             if(view == homeView && !(view.getComponent() instanceof Dialog)) {
@@ -1459,6 +1459,7 @@ public abstract class Application {
             hilite(m);
             stack.remove(view);
             stack.add(view);
+            applicationView.layout.viewSelected(view);
             return true;
         }
 
@@ -1488,10 +1489,8 @@ public abstract class Application {
             public Content() {
                 Element e = getElement();
                 e.setProperty("idContent", "so" + ID.newID());
-                Style s = e.getStyle();
-                s.set("display", "flex");
-                s.set("flex-flow", "column");
-                s.set("flex-grow", "1");
+                e.getStyle().set("display", "flex").set("flex-flow", "column").set("align-content", "center").
+                        set("justify-content", "center").set("flex-grow", "1").set("margin", "5px");
                 applicationView.getApplication().addBrowserResizedListener((w, h) -> requestSize());
             }
 

@@ -5,14 +5,14 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>5.0.1</version>
+    <version>6.0.1</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>15.0.5</vaadin.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <vaadin.version>15.0.6</vaadin.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jetty.version>9.4.15.v20190215</jetty.version>
@@ -127,7 +127,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Batic library for SVG image support -->
+        <!-- Batik library for SVG image support -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-svggen</artifactId>
@@ -257,7 +257,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <source>8</source>
+                            <source>11</source>
                             <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                             <quiet>true</quiet>
                             <!--

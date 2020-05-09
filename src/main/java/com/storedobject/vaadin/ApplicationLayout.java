@@ -82,4 +82,12 @@ public interface ApplicationLayout {
      */
     default void closeMenu() {
     }
+
+    /**
+     * This method is invoked whenever a view is selected for display by application.
+     *
+     * @param view Currently selected view
+     */
+    default void viewSelected(View view) {
+    }
 }

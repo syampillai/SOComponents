@@ -6,6 +6,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.server.VaadinRequest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import java.util.function.Consumer;
 
@@ -115,8 +116,8 @@ public abstract class ApplicationView extends Composite<Component> {
      */
     protected Application createApplication() {
         try {
-            return (Application)Class.forName(getApplicationClassName()).newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
+            return (Application)Class.forName(getApplicationClassName()).getDeclaredConstructor().newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
         }
         return null;
     }

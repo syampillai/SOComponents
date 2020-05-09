@@ -9,7 +9,7 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
  *
  * @author Syam
  */
-public class ButtonLayout extends FlexLayout {
+public class ButtonLayout extends FlexLayout implements StickyElement {
 
     private int margin = 5;
 
@@ -25,9 +25,7 @@ public class ButtonLayout extends FlexLayout {
      * @param components Components to add
      */
     public ButtonLayout(Component... components) {
-        getStyle().set("flex-wrap", "wrap");
-        getStyle().set("align-items", "center");
-        getStyle().set("align-content", "space-around");
+        getStyle().set("flex-wrap", "wrap").set("align-items", "center").set("align-content", "space-around");
         if(components != null) {
             add(components);
         }

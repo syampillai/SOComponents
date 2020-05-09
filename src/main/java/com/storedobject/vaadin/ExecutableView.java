@@ -277,6 +277,18 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     }
 
     /**
+     * Check if this view is a "Home View" or not. A "Home View" will not show any menu when it gets executed.
+     * Typically, views that show background images or some sort of dash boards can be defined as "Home Views" so
+     * that they will always appear on the content portion of the {@link com.storedobject.vaadin.Application}.
+     *
+     * @return True if this view is a "Home View". By default if a view implements {@link HomeView}, this method
+     * return <code>true</code>.
+     */
+    default boolean isHomeView() {
+        return this instanceof HomeView;
+    }
+
+    /**
      * Speak out the given sentence if the {@link ApplicationLayout} is supporting it (The default layout
      * {@link ApplicationFrame} supports it). Please note that the speaker
      * must have been switched on before calling this (See {@link SpeakerButton}).
