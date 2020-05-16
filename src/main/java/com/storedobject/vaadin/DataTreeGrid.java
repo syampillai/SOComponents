@@ -29,7 +29,6 @@ import java.util.function.Function;
 public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;
-    private ApplicationMenuItem menuItem;
     private boolean firstFooter = true;
 
     /**
@@ -151,33 +150,6 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
                 withProperty("html", item -> Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(htmlFunction.apply((T)item))));
         soGrid.acceptColumn(column, columnName);
         return column;
-    }
-
-    /**
-     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
-     *
-     * @return Menu item. May return <code>null</code> it the menu item is not yet created.
-     */
-    public final ApplicationMenuItem getMenuItem() {
-        return menuItem;
-    }
-
-    /**
-     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
-     * This method is final but {@link #createMenuItem(Runnable)} can be overridden for customizing it.
-     *
-     * @param menuAction Action for the menu item to be created
-     * @return Menu item.
-     */
-    @Override
-    public final ApplicationMenuItem getMenuItem(Runnable menuAction) {
-        if(menuItem == null) {
-            menuItem = HasColumns.super.getMenuItem(menuAction);
-            if(menuItem == null) {
-                menuItem = getApplication().getEnvironment().createMenuItem(this, getCaption(), menuAction);
-            }
-        }
-        return menuItem;
     }
 
     @Override

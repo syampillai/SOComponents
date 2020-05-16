@@ -3,8 +3,10 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.treegrid.TreeGrid;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.function.ValueProvider;
@@ -351,7 +353,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @return Whether a new column can be created or not.
      */
     default boolean createHTMLColumn(String columnName, Function<T, ?> htmlFunction) {
-        return getSOGrid().createColumn(columnName, null, htmlFunction);
+        return getSOGrid().createColumn(columnName, true, null, htmlFunction);
     }
 
     /**
@@ -564,6 +566,16 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
+     * Get the menu item for this when displayed as view. This is the menu item displayed by the {@link Application}
+     * when its view is activated.
+     *
+     * @return Menu item. May return <code>null</code> it the menu item is not yet created.
+     */
+    default ApplicationMenuItem getMenuItem() {
+        return getSOGrid().view == null? null : getSOGrid().view.getMenuItem();
+    }
+
+    /**
      * Configure the columns.
      */
     default void configure() {
@@ -729,6 +741,68 @@ public interface HasColumns<T> extends ExecutableView {
     default void removeItemSelectedListener(ItemSelectedListener<T> itemSelectedListener) {
         if(getSOGrid().itemSelectedListeners != null) {
             getSOGrid().itemSelectedListeners.remove(itemSelectedListener);
+        }
+    }
+
+    /**
+     * Create "sort order" definition for the given column name. (It will be an "ascending order" definition). This
+     * method is useful to use as parameters to {@link #sort(GridSortOrder[])}.
+     *
+     * @param columnName Column name
+     * @return Sort order definition.
+     */
+    default GridSortOrder<T> sort(String columnName) {
+        return sort(columnName, true);
+    }
+
+    /**
+     * Create "sort order" definition for the given column name. This
+     * method is useful to use as parameters to {@link #sort(GridSortOrder[])}.
+     *
+     * @param columnName Column name
+     * @param ascending <code>True</code> for ascending order and <code>false</code> for descending order.
+     * @return Sort order definition.
+     */
+    default GridSortOrder<T> sort(String columnName, boolean ascending) {
+        Grid.Column<T> column = columnName == null ? null : getSOGrid().getColumnByKey(columnName);
+        return column == null ? null : new GridSortOrder<>(column, ascending ? SortDirection.ASCENDING : SortDirection.DESCENDING);
+    }
+
+    /**
+     * Sort the columns as defined in the "sort order definitions" passed. Typically, it is easy to write something
+     * like this to sort:<BR>
+     * <code>sort(sort("Age", false), sort("FirstName"));</code><BR>
+     * This will sort "Age" column in the descending order and then, the "FirstName" column in the ascending order.
+     *
+     * @param sortOrders Sort order definitions.
+     */
+    @SuppressWarnings("unchecked")
+    default void sort(GridSortOrder<T>... sortOrders) {
+        if(sortOrders != null) {
+            List<GridSortOrder<T>> sortOrderList = new ArrayList<>();
+            for(GridSortOrder<T> gso: sortOrders) {
+                if(gso != null) {
+                    sortOrderList.add(gso);
+                }
+            }
+            if(!sortOrderList.isEmpty()) {
+                getSOGrid().grid.sort(sortOrderList);
+            }
+        }
+    }
+
+    /**
+     * Sort the given columns in ascending order.
+     *
+     * @param columnNames Column names.
+     */
+    default void sort(String... columnNames) {
+        if(columnNames != null && columnNames.length > 0) {
+            @SuppressWarnings("unchecked") GridSortOrder<T>[] sortOrders = new GridSortOrder[columnNames.length];
+            for(int i = 0; i < columnNames.length; i++) {
+                sortOrders[i] = sort(columnNames[i]);
+            }
+            sort(sortOrders);
         }
     }
 
@@ -1177,8 +1251,9 @@ public interface HasColumns<T> extends ExecutableView {
                 return true;
             }
             Class<?> type = getColumnValueType(columnName);
-            Renderer<T> r = HTMLGenerator.class.isAssignableFrom(type) || type == String.class ? renderer(columnName, function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
-            hc.setRendererFunctions(columnName, HTMLGenerator.class.isAssignableFrom(type) || type == String.class, function);
+            boolean html = type != null && HTMLGenerator.class.isAssignableFrom(type);
+            Renderer<T> r = html ? renderer(columnName, function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
+            hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
                 constructColumn(columnName, r);
             } else {
@@ -1189,6 +1264,11 @@ public interface HasColumns<T> extends ExecutableView {
 
         @SafeVarargs
         private boolean createColumn(String columnName, String template, Function<T, ?>... functions) {
+            return createColumn(columnName, false, template, functions);
+        }
+
+        @SafeVarargs
+        private boolean createColumn(String columnName, boolean html, String template, Function<T, ?>... functions) {
             if(functions == null || functions.length == 0) {
                 return createColumn(columnName);
             }
@@ -1198,9 +1278,12 @@ public interface HasColumns<T> extends ExecutableView {
             if(template == null) {
                 template = hc.getColumnTemplate(columnName);
             }
-            Class<?> type = getColumnValueType(columnName);
-            Renderer<T> r = HTMLGenerator.class.isAssignableFrom(type) ? renderer(columnName, functions[0]) : renderer(columnName, template, functions);
-            hc.setRendererFunctions(columnName, HTMLGenerator.class.isAssignableFrom(type) || type == String.class, functions);
+            if(!html) {
+                Class<?> type = getColumnValueType(columnName);
+                html = type != null && HTMLGenerator.class.isAssignableFrom(type);
+            }
+            Renderer<T> r = html ? renderer(columnName, functions[0]) : renderer(columnName, template, functions);
+            hc.setRendererFunctions(columnName, html, functions);
             if(renderers == null) {
                 constructColumn(columnName, r);
             } else {
