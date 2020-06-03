@@ -36,13 +36,16 @@ public interface HTMLGenerator {
      * @return The default implementation returns the HTML text getHTML() returns after handling line-breaks and simple ampersand coded characters.
      */
     default Object getPrintText() {
-        String s = getHTML();
+        String string = getHTML();
+        if(string == null) {
+            string = "";
+        }
         for(int i = 2; i < CHAR_ENTITIES.length; i++) {
-            s = s.replace(CHAR_ENTITIES[i], CHAR_ENTITIES[i + 1]);
+            string = string.replace(CHAR_ENTITIES[i], CHAR_ENTITIES[i + 1]);
             ++i;
         }
-        s = s.replace(CHAR_ENTITIES[0], CHAR_ENTITIES[1]);
-        return s.replace("<BR>", "\n").replace("<br>", "\n");
+        string = string.replace(CHAR_ENTITIES[0], CHAR_ENTITIES[1]);
+        return string.replace("<BR>", "\n").replace("<br>", "\n");
     }
 
     /**
@@ -56,7 +59,7 @@ public interface HTMLGenerator {
             string = "";
         }
         for(int i = 0; i < CHAR_ENTITIES.length; i++) {
-            string = string.replace(CHAR_ENTITIES[i], CHAR_ENTITIES[i + 1]);
+            string = string.replace(CHAR_ENTITIES[i + 1], CHAR_ENTITIES[i]);
             ++i;
         }
         return string.replace("\n", "<br>");

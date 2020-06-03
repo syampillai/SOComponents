@@ -751,8 +751,8 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return Sort order definition.
      */
-    default GridSortOrder<T> sort(String columnName) {
-        return sort(columnName, true);
+    default GridSortOrder<T> sortOrder(String columnName) {
+        return sortOrder(columnName, true);
     }
 
     /**
@@ -763,7 +763,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param ascending <code>True</code> for ascending order and <code>false</code> for descending order.
      * @return Sort order definition.
      */
-    default GridSortOrder<T> sort(String columnName, boolean ascending) {
+    default GridSortOrder<T> sortOrder(String columnName, boolean ascending) {
         Grid.Column<T> column = columnName == null ? null : getSOGrid().getColumnByKey(columnName);
         return column == null ? null : new GridSortOrder<>(column, ascending ? SortDirection.ASCENDING : SortDirection.DESCENDING);
     }
@@ -800,7 +800,7 @@ public interface HasColumns<T> extends ExecutableView {
         if(columnNames != null && columnNames.length > 0) {
             @SuppressWarnings("unchecked") GridSortOrder<T>[] sortOrders = new GridSortOrder[columnNames.length];
             for(int i = 0; i < columnNames.length; i++) {
-                sortOrders[i] = sort(columnNames[i]);
+                sortOrders[i] = sortOrder(columnNames[i]);
             }
             sort(sortOrders);
         }
@@ -1251,7 +1251,7 @@ public interface HasColumns<T> extends ExecutableView {
                 return true;
             }
             Class<?> type = getColumnValueType(columnName);
-            boolean html = type != null && HTMLGenerator.class.isAssignableFrom(type);
+            boolean html = type != null && (type == String.class || HTMLGenerator.class.isAssignableFrom(type));
             Renderer<T> r = html ? renderer(columnName, function) : renderer(columnName, hc.getColumnTemplate(columnName), function);
             hc.setRendererFunctions(columnName, html, function);
             if(renderers == null) {
@@ -1280,7 +1280,7 @@ public interface HasColumns<T> extends ExecutableView {
             }
             if(!html) {
                 Class<?> type = getColumnValueType(columnName);
-                html = type != null && HTMLGenerator.class.isAssignableFrom(type);
+                html = type != null && (type == String.class || HTMLGenerator.class.isAssignableFrom(type));
             }
             Renderer<T> r = html ? renderer(columnName, functions[0]) : renderer(columnName, template, functions);
             hc.setRendererFunctions(columnName, html, functions);
@@ -1338,7 +1338,7 @@ public interface HasColumns<T> extends ExecutableView {
                 r.withProperty("so" + ids[0], o -> {
                     setRO(o);
                     o = objectUnwrapped;
-                    return HTMLGenerator.encodeHTML((String)function.apply(o));
+                    return HTMLGenerator.encodeHTML((String)function.apply(o)).replace("\n", "<br>");
                 });
             } else {
                 for (i = 0; i < ids.length; i++) {

@@ -25,6 +25,8 @@ public class Window extends Dialog {
     public Window(Component... components) {
         setCloseOnEsc(false);
         setCloseOnOutsideClick(false);
+        setDraggable(true);
+        setResizable(true);
         if(components != null) {
             add(components);
         }

@@ -12,7 +12,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 public class PopupButton extends Button {
 
     private ContextMenu menu;
-    private GridLayout container = new GridLayout(1);
+    private final GridLayout container = new GridLayout(1);
 
     /**
      * Constructor.

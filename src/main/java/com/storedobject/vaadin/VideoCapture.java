@@ -388,7 +388,7 @@ public class VideoCapture extends Video implements MediaCapture {
                     }
                     break;
                 case SHOW_PREVIEW:
-                    if (!VideoCapture.this.isVisible() || previewing == 1 || !VideoCapture.this.getParent().isPresent()) {
+                    if (!VideoCapture.this.isVisible() || previewing == 1 || VideoCapture.this.getParent().isEmpty()) {
                         done();
                         return;
                     }
@@ -401,7 +401,7 @@ public class VideoCapture extends Video implements MediaCapture {
                     }
                     break;
                 case START_RECORDING:
-                    if (!VideoCapture.this.isVisible() || recording == 1 || !VideoCapture.this.getParent().isPresent()) {
+                    if (!VideoCapture.this.isVisible() || recording == 1 || VideoCapture.this.getParent().isEmpty()) {
                         done();
                         return;
                     }

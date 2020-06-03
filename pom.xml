@@ -5,17 +5,17 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>6.0.2</version>
+    <version>7.0.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>15.0.6</vaadin.version>
+        <vaadin.version>16.0.0</vaadin.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jetty.version>9.4.15.v20190215</jetty.version>
+        <jetty.version>9.4.28.v20200408</jetty.version>
     </properties>
 
     <organization>
@@ -71,33 +71,6 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-core</artifactId>
-            <!-- Excluding all bower mode dependencies -->
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin.webjar</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.insites</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.polymer</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.polymerelements</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.vaadin</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.webcomponents</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -109,7 +82,7 @@
         <dependency>
             <groupId>org.vaadin</groupId>
             <artifactId>textfieldformatter</artifactId>
-            <version>4.2.0</version>
+            <version>5.0.0</version>
         </dependency>
 
         <!-- Vaadin add-on for Multiselect Combo -->
@@ -195,11 +168,6 @@
                     <supportedPackagings>
                         <supportedPackaging>jar</supportedPackaging>
                     </supportedPackagings>
-                    <webAppConfig>
-                        <!-- This is only needed to be able to unzip webjars
-                            directly into src/test/webjar-debug and modify them for testing -->
-                        <resourceBase>src/test/webjar-debug/META-INF/resources</resourceBase>
-                    </webAppConfig>
                 </configuration>
             </plugin>
         </plugins>
