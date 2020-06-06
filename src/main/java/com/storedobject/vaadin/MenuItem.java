@@ -4,7 +4,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.server.VaadinSession;
 
 import java.util.ArrayList;
 
@@ -20,7 +19,7 @@ public class MenuItem extends Div implements ApplicationMenuItem {
 
     final Icon icon;
     int level = 0;
-    private Span caption = new Span();
+    private final Span caption = new Span();
 
     MenuItem(String label, Icon icon, Runnable runnable, boolean closeable) {
         this.icon = icon;
@@ -44,10 +43,26 @@ public class MenuItem extends Div implements ApplicationMenuItem {
         add(caption);
     }
 
+    /**
+     * Create a menu item.
+     *
+     * @param menuLabel Label.
+     * @param icon Icon.
+     * @param menuAction Action.
+     * @return Menu item.
+     */
     public static ApplicationMenuItem create(String menuLabel, String icon, Runnable menuAction) {
         return new MenuItem(menuLabel, createIcon(icon), menuAction, false);
     }
 
+    /**
+     * Create a menu item for a {@link View}.
+     *
+     * @param view View.
+     * @param menuLabel Label.
+     * @param menuAction Action.
+     * @return Menu item.
+     */
     public static ApplicationMenuItem create(ExecutableView view, String menuLabel, Runnable menuAction) {
         boolean closeable = view.isCloseable();
         Icon icon = createIcon(closeable ? "vaadin:close-circle" : view.getMenuIconName());
@@ -58,6 +73,12 @@ public class MenuItem extends Div implements ApplicationMenuItem {
         return new MenuItem(menuLabel, icon, menuAction, closeable);
     }
 
+    /**
+     * Create a group menu item.
+     *
+     * @param menuLabel Label.
+     * @return Group menu item.
+     */
     public static ApplicationMenuItemGroup createGroup(String menuLabel) {
         return new MenuItemGroup(menuLabel);
     }
@@ -81,10 +102,15 @@ public class MenuItem extends Div implements ApplicationMenuItem {
         this.caption.setText(caption);
     }
 
+    /**
+     * Default implementation of {@link ApplicationMenuItemGroup}.
+     *
+     * @author Syam
+     */
     private static class MenuItemGroup extends MenuItem implements ApplicationMenuItemGroup {
 
         private boolean plus = true;
-        private ArrayList<MenuItem> items = new ArrayList<>();
+        private final ArrayList<MenuItem> items = new ArrayList<>();
 
         private MenuItemGroup(String label) {
             this(label, new Icon("vaadin:plus-circle"));

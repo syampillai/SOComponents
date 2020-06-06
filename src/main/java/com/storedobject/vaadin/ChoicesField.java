@@ -3,6 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.checkbox.Checkbox;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,7 +19,7 @@ public class ChoicesField extends CustomField<Integer> {
 
     private static final Integer ZERO = 0;
     private HasComponents container;
-    private ArrayList<Checkbox> list = new ArrayList<>();
+    private final ArrayList<Checkbox> list = new ArrayList<>();
     private int valueMask = 0;
     private RadioChoiceField fullSelect;
 

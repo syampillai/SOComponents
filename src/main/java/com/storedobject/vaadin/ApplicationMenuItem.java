@@ -3,9 +3,9 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.HasElement;
 
 /**
- * Application menu item definition. Only 3 methods are define for the {@link Application} to interact with it.
+ * Application menu item definition. Only 3 methods are defined for the {@link Application} to interact with it.
  * However, it should be "clickable" and should keep an associated {@link Runnable} to run as a response to the click
- * event or some keybord event. At a minimum a text label should be supported but a typical implementation should
+ * event or some keyboard event. At a minimum a text label should be supported but a typical implementation should
  * support a label and an icon. Also, it may support a "closable" attribute (by having a "close" icon) for those items
  * with an associated {@link View}.
  *

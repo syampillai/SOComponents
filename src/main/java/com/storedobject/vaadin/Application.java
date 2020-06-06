@@ -1079,6 +1079,7 @@ public abstract class Application {
      */
     void close(View view) {
         viewManager.detach(view);
+        viewDetached(view);
     }
 
     /**
@@ -1210,6 +1211,15 @@ public abstract class Application {
      */
     public View getViewFor(Component component) {
         return viewManager == null ? null : viewManager.getViewFor(component);
+    }
+
+    /**
+     * This method is invoked whenever a running {@link View} is detached. (Sometimes, the
+     * application wants to take some action when a view is detached).
+     *
+     * @param view View that is detached now.
+     */
+    protected void viewDetached(View view) {
     }
 
     private class AlertList extends ArrayList<Alert> {
