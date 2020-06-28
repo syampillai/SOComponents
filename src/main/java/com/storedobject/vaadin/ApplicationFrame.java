@@ -21,7 +21,7 @@ import com.vaadin.flow.dom.Style;
 @CssImport(value = "./so/appframe/styles.css", themeFor = "vaadin-app-layout")
 public abstract class ApplicationFrame extends AppLayout implements ApplicationLayout {
 
-    private Menu menu = new Menu();
+    private final Menu menu;
     private Component logo;
     private HasText captionComponent, userNameComponent;
     private ButtonLayout toolbox = new ButtonLayout();
@@ -32,6 +32,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      * Constructor.
      */
     public ApplicationFrame() {
+        menu = new Menu(this);
         ID.set(this);
         Component c;
         addToNavbar(c = new DrawerToggle());
@@ -176,12 +177,15 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      */
     @Override
     public void openMenu() {
+        if(menu.menuCount == 0) {
+            closeMenu();
+            return;
+        }
         setDrawerOpened(true);
-        if(menuSearcher != null) {
+        if(menuSearcher != null && menuSearcher instanceof Component && ((Component)menuSearcher).isVisible()) {
             menuSearcher.focus();
         }
     }
-
 
     /**
      * Close the side menu ("drawer" part of the {@link AppLayout}) programmatically.
@@ -203,6 +207,16 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     }
 
     /**
+     * Workaround for the bug.
+     *
+     * @param drawerOpened True or false
+     */
+    @Override
+    public void setDrawerOpened(boolean drawerOpened) {
+        getElement().setProperty("drawerOpened", drawerOpened);
+    }
+
+    /**
      * Closes the menu if it is displayed as an overlay.
      *
      * @param view Currently selected view
@@ -216,22 +230,40 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
 
     private static class Menu extends Div implements ApplicationMenu, HasSize {
 
-        public Menu() {
+        private int menuCount = 0;
+        private final ApplicationFrame frame;
+
+        public Menu(ApplicationFrame frame) {
+            this.frame = frame;
             ID.set(this);
             getStyle().set("flex-grow", "1");
             new Scrollable(this);
         }
 
         @Override
+        public void add(ApplicationMenuItem menuItem) {
+            ApplicationMenu.super.add(menuItem);
+            ++menuCount;
+        }
+
+        @Override
         public void insert(int position, ApplicationMenuItem menuItem) {
             ApplicationMenu.super.insert(position, menuItem);
             top();
+            ++menuCount;
+            if(menuCount == 1) {
+                frame.setDrawerOpened(true);
+            }
         }
 
         @Override
         public void remove(ApplicationMenuItem menuItem) {
             ApplicationMenu.super.remove(menuItem);
             top();
+            --menuCount;
+            if(menuCount == 0) {
+                frame.closeMenu();
+            }
         }
 
         private void top() {
