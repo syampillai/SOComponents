@@ -3,6 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -13,7 +14,7 @@ import java.util.*;
  */
 public class ListGrid<T> extends DataGrid<T> implements List<T> {
 
-    private List<T> data = new ArrayList<>();
+    private final List<T> data = new ArrayList<>();
 
     public ListGrid(Class<T> objectClass) {
         this(objectClass, null);
@@ -43,18 +44,21 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
         return data.contains(item);
     }
 
+    @Nonnull
     @Override
     public Iterator<T> iterator() {
         return data.iterator();
     }
 
+    @Nonnull
     @Override
     public Object[] toArray() {
         return data.toArray();
     }
 
+    @Nonnull
     @Override
-    public <T1> T1[] toArray(T1[] a) {
+    public <T1> T1[] toArray(@Nonnull T1[] a) {
         //noinspection SuspiciousToArrayCall
         return data.toArray(a);
     }
@@ -76,12 +80,12 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> collection) {
+    public boolean containsAll(@Nonnull Collection<?> collection) {
         return data.containsAll(collection);
     }
 
     @Override
-    public boolean addAll(Collection<? extends T> collection) {
+    public boolean addAll(@Nonnull Collection<? extends T> collection) {
         if(data.addAll(collection)) {
             refresh();
             return true;
@@ -90,7 +94,7 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends T> collection) {
+    public boolean addAll(int index, @Nonnull Collection<? extends T> collection) {
         if(data.addAll(index, collection)) {
             refresh();
             return true;
@@ -99,7 +103,7 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
     }
 
     @Override
-    public boolean removeAll(Collection<?> collection) {
+    public boolean removeAll(@Nonnull Collection<?> collection) {
         if(data.removeAll(collection)) {
             refresh();
             return true;
@@ -108,7 +112,7 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
     }
 
     @Override
-    public boolean retainAll(Collection<?> collection) {
+    public boolean retainAll(@Nonnull Collection<?> collection) {
         if(data.retainAll(collection)) {
             refresh();
             return true;
@@ -159,16 +163,19 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
         return data.lastIndexOf(item);
     }
 
+    @Nonnull
     @Override
     public ListIterator<T> listIterator() {
         return data.listIterator();
     }
 
+    @Nonnull
     @Override
     public ListIterator<T> listIterator(int index) {
         return data.listIterator(index);
     }
 
+    @Nonnull
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
         return data.subList(fromIndex, toIndex);

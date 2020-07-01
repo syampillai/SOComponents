@@ -1,7 +1,9 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.dom.Style;
 
 /**
  * A responsive layout that can be used to display components (typically Buttons horizontally).
@@ -76,9 +78,31 @@ public class ButtonLayout extends FlexLayout implements StickyElement {
         super.add(c);
     }
 
+    /**
+     * Create and add a filler component. A filler component is a special component that stretches to the whole
+     * horizontal length of the button layout. Any components added after this will be pushed to the
+     * right most end.
+     *
+     * @return The filler component that is created and added now.
+     */
+    public Component addFiller() {
+        Filler filler = new Filler();
+        add(filler);
+        return filler;
+    }
+
     private void m(Component c, int margin) {
         if(!(c instanceof InvisibleComponent)) {
             c.getElement().getStyle().set("margin-right", margin + "px");
+        }
+    }
+
+    private static class Filler extends Span implements InvisibleComponent {
+
+        private Filler() {
+            Style s = getStyle();
+            s.set("display", "flex");
+            s.set("flex-grow", "100");
         }
     }
 }

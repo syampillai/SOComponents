@@ -936,7 +936,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         /**
-         * Get the default themes to be set. Default is "row-stripes wrap-cell-content". This could be overriden in
+         * Get the default themes to be set. The default is "row-stripes wrap-cell-content". This could be overridden in
          * {@link HasColumns#constructed()} method if required.
          *
          * @return Default themes.
