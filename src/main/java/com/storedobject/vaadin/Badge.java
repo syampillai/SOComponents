@@ -10,7 +10,7 @@ import com.vaadin.flow.component.html.Span;
 public class Badge extends Span implements HasBadgeStyle {
 
     private Icon icon;
-    private Span text = new Span();
+    private final Span text = new Span();
 
     /**
      * Constructor.
@@ -23,7 +23,7 @@ public class Badge extends Span implements HasBadgeStyle {
      * Constructor.
      *
      * @param text Text to be displayed
-     * @param styles Stlyes
+     * @param styles Styles
      */
     public Badge(String text, ThemeStyle... styles) {
         this.text.setText(text);
@@ -36,7 +36,7 @@ public class Badge extends Span implements HasBadgeStyle {
      *
      * @param icon Icon
      * @param text Text to be displayed
-     * @param styles Stlyes
+     * @param styles Styles
      */
     public Badge(String icon, String text, ThemeStyle... styles) {
         this(text, styles);
@@ -48,7 +48,7 @@ public class Badge extends Span implements HasBadgeStyle {
      *
      * @param icon Icon
      * @param text Text to be displayed
-     * @param styles Stlyes
+     * @param styles Styles
      */
     public Badge(Icon icon, String text, ThemeStyle... styles) {
         this(text, styles);
