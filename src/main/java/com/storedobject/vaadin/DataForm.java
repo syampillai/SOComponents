@@ -168,7 +168,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     }
 
     /**
-     * This is where the fields are built. Typically, we create the fields and add it using {@link #addField(HasValue)} or
+     * This is where the fields are built. Typically, we create the fields and add it using {@link #addField(HasValue...)} or
      * {@link #addField(String, HasValue)} methods.
      */
     protected void buildFields() {

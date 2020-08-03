@@ -6,7 +6,9 @@ import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -29,8 +31,10 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     private FormConstructed formConstructed;
     private boolean formCreated = false;
     private HasContainer fieldContainerProvider;
-    private Set<String> readOnly = new HashSet<>(), hidden = new HashSet<>();
-    private Set<HasValue<?, ?>> readOnlyFields = new HashSet<>(), hiddenFields = new HashSet<>();
+    private final Set<String> readOnly = new HashSet<>();
+    private final Set<String> hidden = new HashSet<>();
+    private final Set<HasValue<?, ?>> readOnlyFields = new HashSet<>();
+    private final Set<HasValue<?, ?>> hiddenFields = new HashSet<>();
 
     /**
      * Get the form embedded in this view.
@@ -185,12 +189,16 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
-     * Add a field to the form. The field will not be having a "field name".
+     * Add fields to the form. These fields will not be having "field names".
      *
-     * @param field Field to be added
+     * @param fields Fields to be added
      */
-    public void addField(HasValue<?, ?> field) {
-        form.addField(field);
+    public void addField(HasValue<?, ?>... fields) {
+        if(fields != null) {
+            for(HasValue<?, ?> field: fields) {
+                form.addField(field);
+            }
+        }
     }
 
     /**
