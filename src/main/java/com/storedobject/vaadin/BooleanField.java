@@ -45,11 +45,12 @@ public class BooleanField extends CustomField<Boolean> {
         setLabel(label);
         add(checkbox);
         setValue(initialValue);
+        setTabIndex(-1);
     }
 
     @Override
     public void setValue(Boolean value) {
-        super.setValue(value == null ? false : value);
+        super.setValue(value != null && value);
     }
 
     @Override

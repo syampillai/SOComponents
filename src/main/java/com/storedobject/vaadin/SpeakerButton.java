@@ -15,7 +15,7 @@ import com.vaadin.flow.shared.Registration;
  * @author Syam
  */
 @Tag("span")
-public class SpeakerButton extends Component implements Application.SpeakerToggledListner {
+public class SpeakerButton extends Component implements Application.SpeakerToggledListener {
 
     private ImageButton icon;
     private Registration registration;

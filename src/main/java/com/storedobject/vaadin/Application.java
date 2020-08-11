@@ -90,7 +90,7 @@ import java.util.function.Predicate;
  * typically contains a 'menu' area and 'content' area. One can use Vaadin's <code>AppLayout</code> or similar components as the base for this.
  * The 'menu' area will contain {@link com.storedobject.vaadin.ApplicationMenuItem} instances and when a 'menu item' is clicked, the <code>Runnable</code>
  * action associated with it will be executed. One may associate any <code>Runnable</code> action with a 'menu item' such as generating a report or
- * invkoing a {@link com.storedobject.vaadin.View}. If a {@link com.storedobject.vaadin.View} is invoked, its associated 'view component' is
+ * invoking a {@link com.storedobject.vaadin.View}. If a {@link com.storedobject.vaadin.View} is invoked, its associated 'view component' is
  * displayed in the 'content' area and its 'caption' is inserted as a new 'menu item' in the 'menu' area. The 'content' area displays only the 'active
  * view' (currently selected or executed view) and hides all previously displayed 'views' but any those 'views' can be made active again
  * by licking on its respective 'menu item' created from its 'caption'.
@@ -115,10 +115,10 @@ public abstract class Application {
     private transient boolean closing = false;
     String error;
     private boolean speaker = false;
-    interface SpeakerToggledListner {
+    interface SpeakerToggledListener {
         void speaker(boolean on);
     }
-    private Set<SpeakerToggledListner> speakerToggledListeners;
+    private Set<SpeakerToggledListener> speakerToggledListeners;
     private ArrayList<WeakReference<ResizedListener>> resizeListeners;
 
     /**
@@ -271,8 +271,14 @@ public abstract class Application {
     }
 
     private void removeUI() {
+        removeUI(false);
+    }
+
+    private void removeUI(boolean removeContent) {
         if(ui != null) {
-            ui.removeAll();
+            if(removeContent) {
+                ui.removeAll();
+            }
             ui.close();
             ui = null;
         }
@@ -323,7 +329,7 @@ public abstract class Application {
     }
 
     /**
-     * This method is invoked when the applicationn comes up.
+     * This method is invoked when the application comes up.
      *
      * @param link The context path of the application.
      * @return True if application can go ahead. Otherwise, an "Initialization failed" message is displayed. Default return value is <code>true</code>.
@@ -340,7 +346,7 @@ public abstract class Application {
     protected abstract ApplicationLayout createLayout();
 
     /**
-     * An "application environment" may be created to specifiy certain behaviours of the applicaion. If this method returns <code>null</code>, a default
+     * An "application environment" may be created to specify certain behaviours of the application. If this method returns <code>null</code>, a default
      * "environment" will be created.
      *
      * @return Returns null by default.
@@ -430,10 +436,10 @@ public abstract class Application {
             }
             uis.removeIf(u -> u.isClosing() || get(u) == null);
             if(uis.isEmpty()) {
-                removeUI();
+                removeUI(true);
                 vs.close();
             } else {
-                removeUI();
+                removeUI(true);
             }
         }
         synchronized (commands) {
@@ -588,9 +594,9 @@ public abstract class Application {
         if(list == null) {
             return;
         }
-        List<Alert> listToremove = new ArrayList<>(list);
-        listToremove.removeIf(Alert::deleteOnClose);
-        listToremove.forEach(this::removeAlert);
+        List<Alert> listToRemove = new ArrayList<>(list);
+        listToRemove.removeIf(Alert::deleteOnClose);
+        listToRemove.forEach(this::removeAlert);
         if(list.isEmpty()) {
             alerts.remove(owner);
         }
@@ -1007,7 +1013,7 @@ public abstract class Application {
         return speaker;
     }
 
-    Registration addSpeakerToggedListener(SpeakerToggledListner listener) {
+    Registration addSpeakerToggedListener(SpeakerToggledListener listener) {
         if(listener == null) {
             return null;
         }

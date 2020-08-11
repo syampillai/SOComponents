@@ -2,9 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.combobox.ComboBox;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -15,59 +13,95 @@ import java.util.stream.Stream;
  */
 public class ComboField<T> extends ComboBox<T> {
 
-    private Collection<T> list;
+    private final List<T> list = new ArrayList<>();
 
+    /**
+     * Constructor.
+     *
+     * @param list Items.
+     */
     @SafeVarargs
     public ComboField(T... list) {
         this(null, list);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     * @param list Items.
+     */
     @SafeVarargs
     public ComboField(String label, T... list) {
         this(label, Arrays.asList(list));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param list Items.
+     */
     public ComboField(Collection<T> list) {
         this(null, list);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     * @param list Items.
+     */
     public ComboField(String label, Collection<T> list) {
-        super(label, list);
-        this.list = list;
+        super(label);
+        this.list.addAll(list);
+        super.setItems(list);
     }
 
+    /**
+     * Get the index of qn item.
+     *
+     * @param item Item.
+     * @return Index of the item or -1 if not found.
+     */
     public int getIndex(T item) {
         if(item == null) {
             return -1;
         }
-        if(list instanceof List) {
-            return ((List<T>) list).indexOf(item);
-        }
-        int i = 0;
-        for(T loop: list) {
-            if(loop.equals(item)) {
-                return i;
-            }
-            ++i;
-        }
-        return -1;
+        return list.indexOf(item);
     }
 
+    /**
+     * Get item for a given index.
+     *
+     * @param index Index.
+     * @return Item or null if not found.
+     */
     public T getValue(int index) {
         if(index < 0 || index >= list.size()) {
             return null;
         }
-        if(list instanceof List) {
-            return ((List<T>) list).get(index);
+        return list.get(index);
+    }
+
+    /**
+     * Set value via index. If the index is out of range, no value will be set.
+     *
+     * @param index Index.
+     */
+    public void setIndex(int index) {
+        if(index < 0 || index >= list.size()) {
+            return;
         }
-        int i = 0;
-        for(T loop: list) {
-            if(i == index) {
-                return loop;
-            }
-            ++i;
-        }
-        return null;
+        setValue(list.get(index));
+    }
+
+    /**
+     * Get the index of the current value.
+     *
+     * @return Index of the item or -1 if not found.
+     */
+    public int getIndex() {
+        return getIndex(getValue());
     }
 
     @Override
@@ -91,5 +125,109 @@ public class ComboField<T> extends ComboBox<T> {
      */
     public Stream<T> items() {
         return list.stream();
+    }
+
+    /**
+     * Set items.
+     *
+     * @param items Items.
+     */
+    @Override
+    public void setItems(Collection<T> items) {
+        list.clear();
+        addItems(items);
+    }
+
+    /**
+     * Set items.
+     *
+     * @param items Items.
+     */
+    @SafeVarargs
+    @Override
+    public final void setItems(T... items) {
+        list.clear();
+        addItems(items);
+    }
+
+    /**
+     * Set items.
+     *
+     * @param items Items.
+     */
+    @Override
+    public void setItems(Stream<T> items) {
+        list.clear();
+        addItems(items);
+    }
+
+    /**
+     * Remove items.
+     *
+     * @param items Items.
+     */
+    public void removeItems(Collection<T> items) {
+        removeItems(items.stream());
+    }
+
+    /**
+     * Remove items.
+     *
+     * @param items Items.
+     */
+    @SafeVarargs
+    public final void removeItems(T... items) {
+        removeItems(Arrays.asList(items));
+    }
+
+    /**
+     * Remove items.
+     *
+     * @param items Items.
+     */
+    public void removeItems(Stream<T> items) {
+        items.forEach(list::remove);
+        refresh();
+    }
+
+    /**
+     * Add items.
+     *
+     * @param items Items.
+     */
+    public void addItems(Collection<T> items) {
+        items.stream().filter(Objects::nonNull).forEach(list::add);
+        refresh();
+    }
+
+    /**
+     * Add items.
+     *
+     * @param items Items.
+     */
+    @SafeVarargs
+    public final void addItems(T... items) {
+        if(items != null) {
+            for(T item: items) {
+                if(item != null) {
+                    list.add(item);
+                }
+            }
+        }
+        refresh();
+    }
+
+    /**
+     * Add items.
+     *
+     * @param items Items.
+     */
+    public void addItems(Stream<T> items) {
+        items.filter(Objects::nonNull).forEach(list::add);
+        refresh();
+    }
+
+    private void refresh() {
+        super.setItems(list);
     }
 }
