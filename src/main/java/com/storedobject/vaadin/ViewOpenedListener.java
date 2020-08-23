@@ -8,5 +8,19 @@ package com.storedobject.vaadin;
  */
 @FunctionalInterface
 public interface ViewOpenedListener {
+
+    /**
+     * Invoked just before executing the view.
+     *
+     * @param view View that is being executed.
+     */
+    default void viewOpening(View view) {
+    }
+
+    /**
+     * Invoked when the view is executed.
+     *
+     * @param view View that is being executed.
+     */
     void viewOpened(View view);
 }

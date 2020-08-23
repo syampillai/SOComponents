@@ -112,8 +112,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @param column Grid column that may be customized
      */
-    default void customizeColumn(@SuppressWarnings("unused") String columnName,
-                                   @SuppressWarnings("unused") Grid.Column<T> column) {
+    default void customizeColumn(String columnName, Grid.Column<T> column) {
     }
 
 
@@ -148,7 +147,7 @@ public interface HasColumns<T> extends ExecutableView {
      *
      * @param object Currently rendered object.
      */
-    default void render(@SuppressWarnings("unused") T object) {
+    default void render(T object) {
     }
 
     /**
@@ -168,12 +167,12 @@ public interface HasColumns<T> extends ExecutableView {
      * @param object Currently rendered object.
      * @return Unwrapped object.
      */
-    default T unwrap(@SuppressWarnings("unused") T object) {
+    default T unwrap(T object) {
         return object;
     }
 
     /**
-     * Set the resizable artribute of a given column.
+     * Set the resizable attribute of a given column.
      *
      * @param columnName Name of the column
      * @param resizable Whether resizable or not
@@ -183,7 +182,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Check the resizable artribute of a given column.
+     * Check the resizable attribute of a given column.
      *
      * @param columnName Name of the column
      * @return Whether resizable or not
@@ -193,7 +192,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Set the visibility artribute of a given column.
+     * Set the visibility attribute of a given column.
      *
      * @param columnName Name of the column
      * @param visible Whether visible or not
@@ -203,17 +202,17 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Check the viibility artribute of a given column.
+     * Check the visibility attribute of a given column.
      *
      * @param columnName Name of the column
-     * @return Whether visble or not
+     * @return Whether visible or not
      */
     default boolean isColumnVisible(String columnName) {
         return getSOGrid().isColumnVisible(columnName);
     }
 
     /**
-     * Set the frozen artribute of a given column.
+     * Set the frozen attribute of a given column.
      *
      * @param columnName Name of the column
      * @param frozen Whether frozen or not
@@ -223,7 +222,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Check the frozen artribute of a given column.
+     * Check the frozen attribute of a given column.
      *
      * @param columnName Name of the column
      * @return Whether frozen or not
@@ -303,13 +302,13 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return Default implementation returns <code>null</code>.
      */
-    default Function<T, ?> getColumnFunction(@SuppressWarnings("unused") String columnName) {
+    default Function<T, ?> getColumnFunction(String columnName) {
         return null;
     }
 
     /**
      * Get the name of the method to determine column data. Normally, existence of getXXX(T object) or isXXX(T object) methods are checked to determine the
-     * method. However, this method can specifiy that otherwise. If the method name doesn't start with a lowercase character, "get" and "is"
+     * method. However, this method can specify that otherwise. If the method name doesn't start with a lowercase character, "get" and "is"
      * prefixes are added to the method name returned to check the existence of the method.
      * 
      * @param columnName Column name
@@ -400,7 +399,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return The default implementation returns null.
      */
-    default String getColumnTemplate(@SuppressWarnings("unused") String columnName) {
+    default String getColumnTemplate(String columnName) {
         return null;
     }
 
@@ -408,10 +407,10 @@ public interface HasColumns<T> extends ExecutableView {
      * Return value from this method determines the order in which columns are displayed. Numbers do not have to be continuous, columns with lower
      * numbers are displayed first.
      *
-     * @param columnName Column nmae.
+     * @param columnName Column name.
      * @return An integer number that denotes the column order.
      */
-    default int getColumnOrder(@SuppressWarnings("unused") String columnName) {
+    default int getColumnOrder(String columnName) {
         throw AbstractDataForm.FIELD_ERROR;
     }
 
@@ -422,7 +421,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return Default implementation returns true for all columns.
      */
-    default boolean includeColumn(@SuppressWarnings("unused") String columnName) {
+    default boolean includeColumn(String columnName) {
         throw AbstractDataForm.FIELD_ERROR;
     }
 
@@ -432,7 +431,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return Default implementation returns <code>true</code>.
      */
-    default boolean isColumnSortable(@SuppressWarnings("unused") String columnName) {
+    default boolean isColumnSortable(String columnName) {
         return true;
     }
 
@@ -447,7 +446,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return A {@link Comparator} to compare column values.
      */
-    default Comparator<T> getColumnSorter(@SuppressWarnings("unused") String columnName) {
+    default Comparator<T> getColumnSorter(String columnName) {
         return null;
     }
 
@@ -458,7 +457,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return Default implementation returns <code>true</code>.
      */
-    default boolean ignoreCaseForColumnSorting(@SuppressWarnings("unused") String columnName) {
+    default boolean ignoreCaseForColumnSorting(String columnName) {
         return true;
     }
 
@@ -468,7 +467,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param columnName Column name
      * @return Default implementation returns START for all columns.
      */
-    default ColumnTextAlign getTextAlign(@SuppressWarnings("unused") String columnName) {
+    default ColumnTextAlign getTextAlign(String columnName) {
         return null;
     }
 
@@ -477,9 +476,9 @@ public interface HasColumns<T> extends ExecutableView {
      * header.
      *
      * @param columnName Column name
-     * @return Default implemnentation returns null.
+     * @return Default implementation returns null.
      */
-    default Component getColumnHeaderComponent(@SuppressWarnings("unused") String columnName) {
+    default Component getColumnHeaderComponent(String columnName) {
         return null;
     }
 
@@ -487,9 +486,9 @@ public interface HasColumns<T> extends ExecutableView {
      * Get the text to display in the header. This will be invoked only if {@link #getColumnHeaderComponent} returns null.
      *
      * @param columnName Column name
-     * @return Text to display as header. By default it tries to determine this from the Application Envornment.
+     * @return Text to display as header. By default it tries to determine this from the Application Environment.
      */
-    default String getColumnCaption(@SuppressWarnings("unused") String columnName) {
+    default String getColumnCaption(String columnName) {
         return null;
     }
 
@@ -513,6 +512,7 @@ public interface HasColumns<T> extends ExecutableView {
         getSOGrid().methodHandlerHost = host;
     }
 
+    @Override
     default View getView(boolean create) {
         return getSOGrid().getView(create);
     }
@@ -644,7 +644,7 @@ public interface HasColumns<T> extends ExecutableView {
      * @param html Whether the renderer function returns HTML text or not (For HTML texts, only one function will be available)
      * @param functions List of functions
      */
-    @SuppressWarnings({"unchecked", "unused"})
+    @SuppressWarnings({"unchecked"})
     default void setRendererFunctions(String columnName, boolean html, Function<T, ?>... functions) {
     }
 
@@ -804,6 +804,15 @@ public interface HasColumns<T> extends ExecutableView {
             }
             sort(sortOrders);
         }
+    }
+
+    /**
+     * Get the component for creating the view - See {@link #getView(boolean)} and {@link #getView()}.
+     *
+     * @return The component for the view. By default, the grid itself is returned.
+     */
+    default Component getViewComponent() {
+        return getSOGrid().grid;
     }
 
     /**
@@ -1007,7 +1016,7 @@ public interface HasColumns<T> extends ExecutableView {
                 return false;
             }
             Boolean v = columnResizable.get(columnName);
-            return v == null ? false : v;
+            return v != null && v;
         }
 
         private void setColumnVisible(String columnName, boolean visible) {
@@ -1030,7 +1039,7 @@ public interface HasColumns<T> extends ExecutableView {
                 return false;
             }
             Boolean v = columnVisible.get(columnName);
-            return v == null ? false : v;
+            return v != null && v;
         }
 
         private void setColumnFrozen(String columnName, boolean frozen) {
@@ -1053,7 +1062,7 @@ public interface HasColumns<T> extends ExecutableView {
                 return false;
             }
             Boolean v = columnFrozen.get(columnName);
-            return v == null ? false : v;
+            return v != null && v;
         }
 
         private ButtonIcon getConfigureButton() {
@@ -1494,7 +1503,6 @@ public interface HasColumns<T> extends ExecutableView {
          * @return Column created. Default implementation use the {@link Grid#addColumn(Renderer)} method to create the
          * column and set the comparator if it is not <code>null</code>.
          */
-        @SuppressWarnings({"unused"})
         protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer,
                                                  @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator, Comparator<T> comparator) {
             if(valueProviderForComparator != null || comparator != null) {
@@ -1616,7 +1624,7 @@ public interface HasColumns<T> extends ExecutableView {
             }
             if(view == null && create) {
                 String caption = hc != null ? hc.getCaption() : "Data View";
-                view = new View(grid, caption) {
+                view = new View(hc == null ? grid : hc.getViewComponent(), caption) {
 
                     @Override
                     public boolean isCloseable() {

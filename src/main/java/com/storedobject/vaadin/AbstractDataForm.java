@@ -77,7 +77,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param component Form component to embed
      * @return A window with the form component added to it.
      */
-    protected Window createWindow(@SuppressWarnings("unused") Component component) {
+    protected Window createWindow(Component component) {
         return null;
     }
 
@@ -168,12 +168,22 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
+     * Set an external field customizer. If set, the method {@link FieldCustomizer#customizeField(String, HasValue)}
+     * will be invoked when each field gets created.
+     *
+     * @param fieldCustomizer Field customizer.
+     */
+    public void setFieldCustomizer(FieldCustomizer fieldCustomizer) {
+        ((ObjectForm<D>)this.form).setFieldCustomizer(fieldCustomizer);
+    }
+
+    /**
      * Create the field for a particular "field name".
      *
      * @param fieldName Field name
      * @return Field created.
      */
-    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName) {
+    protected HasValue<?, ?> createField(String fieldName) {
         return null;
     }
 
@@ -184,7 +194,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param label Label for the field
      * @return Field created.
      */
-    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") String label) {
+    protected HasValue<?, ?> createField(String fieldName, String label) {
         return null;
     }
 
@@ -236,7 +246,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     /**
      * Add components to the form's field container.
      *
-     * @param components Compoents to add
+     * @param components Components to add
      */
     public void add(Component... components) {
         form.add(components);
@@ -245,7 +255,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     /**
      * Remove components from the form's field container.
      *
-     * @param components Compoents to remove
+     * @param components Components to remove
      */
     public void remove(Component... components) {
         form.remove(components);
@@ -461,7 +471,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param fieldName Name of the field
      * @return True or false.
      */
-    public boolean isFieldVisible(@SuppressWarnings("unused") String fieldName) {
+    public boolean isFieldVisible(String fieldName) {
         return !hidden.contains(fieldName);
     }
 
@@ -471,7 +481,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param field Field
      * @return True or false.
      */
-    public boolean isFieldVisible(@SuppressWarnings("unused") HasValue<?, ?> field) {
+    public boolean isFieldVisible(HasValue<?, ?> field) {
         return !hiddenFields.contains(field);
     }
 
@@ -581,7 +591,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param fieldName Name of the field
      * @return True or false.
      */
-    public boolean isFieldEditable(@SuppressWarnings("unused") String fieldName) {
+    public boolean isFieldEditable(String fieldName) {
         return !readOnly.contains(fieldName);
     }
 
@@ -591,7 +601,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param field Field
      * @return True or false.
      */
-    public boolean isFieldEditable(@SuppressWarnings("unused") HasValue<?, ?> field) {
+    public boolean isFieldEditable(HasValue<?, ?> field) {
         return !readOnlyFields.contains(field);
     }
 
@@ -688,13 +698,13 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
-     * This method is invoked to determine the label used for dislaying the field. The default implementation determine it by invoking
+     * This method is invoked to determine the label used for displaying the field. The default implementation determine it by invoking
      * {@link ApplicationEnvironment#createLabel(String)}.
      *
      * @param fieldName Name of the field
      * @return Label
      */
-    protected String getLabel(@SuppressWarnings("unused") String fieldName) {
+    protected String getLabel(String fieldName) {
         throw FIELD_ERROR;
     }
 
@@ -746,7 +756,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param fieldName Name of the field
      * @param field Field
      */
-    protected void attachField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") HasValue<?, ?> field) {
+    protected void attachField(String fieldName, HasValue<?, ?> field) {
         throw FIELD_ERROR;
     }
 
@@ -757,7 +767,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @param fieldName Name of the field
      * @param field Field
      */
-    protected void detachField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") HasValue<?, ?> field) {
+    protected void detachField(String fieldName, HasValue<?, ?> field) {
         throw FIELD_ERROR;
     }
 
@@ -824,7 +834,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     /**
      * Get the column span of a component.
      *
-     * @param component omponent for which column span to be retrieved
+     * @param component Component for which column span to be retrieved
      * @return Column span for the component.
      */
     public int getColumnSpan(Component component) {

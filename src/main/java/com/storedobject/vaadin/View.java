@@ -25,7 +25,7 @@ public class View implements ExecutableView {
     private String caption;
     private boolean aborted = false;
     private boolean detachParent = false;
-    private View parent;
+    private View parent, embeddedView;
     private Registration windowMonitor;
     private boolean internalWindowAction = false;
     private boolean doFocus = true;
@@ -67,7 +67,7 @@ public class View implements ExecutableView {
     /**
      * Create a {@link CloseableView}. A helper method to create a {@link View} that is closeable.
      *
-     * @param component Compoment of the {@link View}
+     * @param component Component of the {@link View}
      * @param caption Caption
      * @return A closable view.
      */
@@ -81,7 +81,7 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Specifiy the scrollable attribute of the view. Scrollable views will scroll within the "content" area of the application.
+     * Specify the scrollable attribute of the view. Scrollable views will scroll within the "content" area of the application.
      *
      * @param scrollable Scrollable
      */
@@ -256,7 +256,7 @@ public class View implements ExecutableView {
      * @param skipFocus The focusable component
      * @return False if it should not be skipped (Default implementation returns false).
      */
-    public boolean skipFirstFocus(@SuppressWarnings("unused") Focusable<?> skipFocus) {
+    public boolean skipFirstFocus(Focusable<?> skipFocus) {
         return false;
     }
 
@@ -437,14 +437,44 @@ public class View implements ExecutableView {
     }
 
     /**
+     * Set view in which component of this view will be embedded. This is used when we want to make this view part
+     * pf another view.
+     *
+     * @param embeddedView View in which this view is embedded.
+     */
+    public void setEmbeddedView(View embeddedView) {
+        this.embeddedView = ev(embeddedView);
+    }
+
+    /**
+     * Get the embedded view of this view.
+     *
+     * @return The view in which this view is embedded in or this itself if the embedded view is not set.
+     */
+    public final View getEmbeddedView() {
+        return embeddedView == null ? this : ev(embeddedView);
+    }
+
+    private View ev(View p) {
+        if(p == null || p.embeddedView == null) {
+            return p;
+        }
+        if(p == this || p.embeddedView == this) {
+            return null;
+        }
+        return ev(p);
+    }
+
+    /**
      * Implementation of {@link ExecutableView#getView(boolean)}.
      *
      * @param create Whether to create or not.
-     * @return Always return this view.
+     * @return Always return this view unless embedded view is set. If embedded view is set,
+     * then, {@link #getEmbeddedView()} is returned.
      */
     @Override
     public View getView(boolean create) {
-        return this;
+        return getEmbeddedView();
     }
 
     /**
@@ -476,7 +506,7 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Execute this view and set its parent too. (In this case, parent view is not locked). The paent view is automatically selected
+     * Execute this view and set its parent too. (In this case, parent view is not locked). The parent view is automatically selected
      * when this view closes.
      *
      * @param parent Parent view to be set
@@ -501,9 +531,12 @@ public class View implements ExecutableView {
         if(this.parent != null && parent != null && this.parent != parent) {
             return;
         }
-        this.parent = parent;
+        this.parent = parent == null ? null : parent.getView(true);
         aborted = false;
-        getApplication().execute(this, doNotLock, parent);
+        if(openedListeners != null) {
+            openedListeners.forEach(listener -> listener.viewOpening(this));
+        }
+        getApplication().execute(getView(true), doNotLock, this.parent);
         if(openedListeners != null) {
             openedListeners.forEach(listener -> listener.viewOpened(this));
         }

@@ -50,6 +50,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     private final Map<String, Function<D, ?>> getF = new HashMap<>();
     private final Map<String, BiConsumer<D, ?>> setF = new HashMap<>();
     private ObjectFieldCreator<D> fCreator;
+    private FieldCustomizer fieldCustomizer;
 
     /**
      * Constructor
@@ -91,7 +92,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Set the method handler host. (See the documenation of the this class to get an idea).
+     * Set the method handler host. (See the documentation of the this class to get an idea).
      * @param host Method handler host
      */
     @SuppressWarnings("unchecked")
@@ -100,7 +101,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Get the class of the object being edtited. (Same as {@link #getDataClass()}.
+     * Get the class of the object being edited. (Same as {@link #getDataClass()}.
      * @return Object's class.
      */
     public Class<D> getObjectClass() {
@@ -108,7 +109,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Get the class of the object being edtited. (Same as {@link #getObjectClass()}.
+     * Get the class of the object being edited. (Same as {@link #getObjectClass()}.
      * @return Object's class.
      */
     public Class<D> getDataClass() {
@@ -176,7 +177,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * Add an extra field
      * @param fieldName Name of the field.
      * @param valueGetter Function that determines how to get the value to load the field
-     * @param valueSetter Function that determines how to commit value from the field to the obejct's instance
+     * @param valueSetter Function that determines how to commit value from the field to the object's instance
      */
     protected void addField(String fieldName, Function<D, ?> valueGetter, BiConsumer<D, ?> valueSetter) {
         if(!includeF(fieldName)) {
@@ -227,7 +228,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * Add an extra field
      * @param fieldName Name of the field.
      * @param getMethod Method that determines how to get the value to load the field
-     * @param setMethod Method that determines how to commit the value from the field to the obejct's instance
+     * @param setMethod Method that determines how to commit the value from the field to the object's instance
      */
     protected void addField(String fieldName, Method getMethod, Method setMethod) {
         if(!includeF(fieldName)) {
@@ -265,14 +266,14 @@ public class ObjectForm<D> extends AbstractForm<D> {
         Method m;
         try {
             m = host.getClass().getMethod("get" + fieldName);
-            if(m != null && m.getDeclaringClass() == host.getClass() && isField(m)) {
+            if(m.getDeclaringClass() == host.getClass() && isField(m)) {
                 return m;
             }
         } catch (NoSuchMethodException ignored) {
         }
         try {
             m = host.getClass().getMethod("is" + fieldName);
-            if(m != null && m.getDeclaringClass() == host.getClass() && isField(m)) {
+            if(m.getDeclaringClass() == host.getClass() && isField(m)) {
                 return m;
             }
         } catch (NoSuchMethodException ignored) {
@@ -288,7 +289,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
         Class<?>[] params = new Class[] { getMethod.getReturnType() };
         try {
             Method m = host.getClass().getMethod("set" + fieldName, params);
-            if(m != null && m.getDeclaringClass() == host.getClass()) {
+            if(m.getDeclaringClass() == host.getClass()) {
                 return m;
             }
         } catch (NoSuchMethodException ignored) {
@@ -374,7 +375,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
 
     /**
      * Get the order in which a field to appear in the form. Any integer value can be returned and the field is placed in the form in
-     * asceniding order of the values returned by this method. Default implementation try to obatin the value from the "field creator"
+     * ascending order of the values returned by this method. Default implementation try to obtain the value from the "field creator"
      * ({@link ObjectFieldCreator#getFieldOrder(String)}).
      * @param fieldName Name of the field
      * @return Field order.
@@ -419,16 +420,43 @@ public class ObjectForm<D> extends AbstractForm<D> {
             m = null;
         }
         HasValue<?, ?> field = super.createField(fieldName);
-        if(field != null) {
-            return field;
+        if(field == null) {
+            Class<?> returnType = m == null ? null : m.getReturnType();
+            field = createField(fieldName, returnType, getLabel(fieldName));
         }
-        Class<?> returnType = m == null ? null : m.getReturnType();
-        field = createField(fieldName, returnType, getLabel(fieldName));
         if(field != null) {
-            customizeField(fieldName, field);
-            getFieldCreator().customizeField(fieldName, field);
+            customize(fieldName, field);
         }
         return field;
+    }
+
+    /**
+     * Created fields are first customized via {@link #customizeField(String, HasValue)} and then, via
+     * {@link ObjectFieldCreator#customizeField(String, HasValue)}.
+     *
+     * @param fieldName Field name.
+     * @param field Field.
+     */
+    @Override
+    void customize(String fieldName, HasValue<?, ?> field) {
+        flag = false;
+        customizeField(fieldName, field);
+        getFieldCreator().customizeField(fieldName, field);
+        if(fieldCustomizer != null) {
+            fieldCustomizer.customizeField(fieldName, field);
+        }
+    }
+
+    /**
+     * Set an external field customizer. If set, the method {@link FieldCustomizer#customizeField(String, HasValue)}
+     * will be invoked when each field gets created. This will be invoked after
+     * {@link #customizeField(String, HasValue)} and {@link ObjectFieldCreator#customizeField(String, HasValue)} are
+     * invoked.
+     *
+     * @param fieldCustomizer Field customizer.
+     */
+    public void setFieldCustomizer(FieldCustomizer fieldCustomizer) {
+        this.fieldCustomizer = fieldCustomizer;
     }
 
     /**

@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
-    private HashMap<Method, Object> fixedValues = new HashMap<>();
+    private final HashMap<Method, Object> fixedValues = new HashMap<>();
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Get the class of the object being edtited. (Same as {@link #getDataClass()}.
+     * Get the class of the object being edited. (Same as {@link #getDataClass()}.
      * @return Object's class.
      */
     public Class<T> getObjectClass() {
@@ -54,7 +54,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Get the class of the object being edtited. (Same as {@link #getObjectClass()}.
+     * Get the class of the object being edited. (Same as {@link #getObjectClass()}.
      * @return Object's class.
      */
     public Class<T> getDataClass() {
@@ -75,7 +75,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @param fieldName Name of the field
      * @return Field' "get" method (if method is found, it will returns <code>null</code>).
      */
-    protected Method getFieldGetMethod(@SuppressWarnings("unused") String fieldName) {
+    protected Method getFieldGetMethod(String fieldName) {
         throw FIELD_ERROR;
     }
 
@@ -85,7 +85,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @param getMethod "get" method of this field (determined through {@link #getFieldGetMethod(String)})
      * @return Field' "set" method (if method is found, it will returns <code>null</code>).
      */
-    protected Method getFieldSetMethod(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") Method getMethod) {
+    protected Method getFieldSetMethod(String fieldName, Method getMethod) {
         throw FIELD_ERROR;
     }
 
@@ -118,7 +118,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * Add an extra field
      * @param fieldName Name of the field.
      * @param valueGetter Function that determines how to get the value to load the field
-     * @param valueSetter Function that determines how to commit value from the field to the obejct's instance
+     * @param valueSetter Function that determines how to commit value from the field to the object's instance
      */
     protected void addField(String fieldName, Function<T, ?> valueGetter, BiConsumer<T, ?> valueSetter) {
         getForm().addField(fieldName, valueGetter, valueSetter);
@@ -137,7 +137,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * Add an extra field
      * @param fieldName Name of the field.
      * @param getMethod Method that determines how to get the value to load the field
-     * @param setMethod Method that determines how to commit the value from the field to the obejct's instance
+     * @param setMethod Method that determines how to commit the value from the field to the object's instance
      */
     protected void addField(String fieldName, Method getMethod, Method setMethod) {
         getForm().addField(fieldName, getMethod, setMethod);
@@ -148,7 +148,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @param fieldName Name of the field.
      * @return True or false. (Default return value is <code>true</code>).
      */
-    protected boolean includeField(@SuppressWarnings("unused") String fieldName) {
+    protected boolean includeField(String fieldName) {
         throw FIELD_ERROR;
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @param label Label
      * @return Field
      */
-    protected HasValue<?, ?> createField(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") Class<?> fieldType, @SuppressWarnings("unused") String label) {
+    protected HasValue<?, ?> createField(String fieldName, Class<?> fieldType, String label) {
         return null;
     }
 
@@ -192,12 +192,12 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
     /**
      * Get the order in which a field to appear in the form. Any integer value can be returned and the field is placed in the form in
-     * asceniding order of the values returned by this method. Default implementation try to obatin the value from the "field creator"
+     * ascending order of the values returned by this method. Default implementation try to obtain the value from the "field creator"
      * ({@link ObjectFieldCreator#getFieldOrder(String)}).
      * @param fieldName Name of the field
      * @return Field order.
      */
-    protected int getFieldOrder(@SuppressWarnings("unused") String fieldName) {
+    protected int getFieldOrder(String fieldName) {
         throw FIELD_ERROR;
     }
 
@@ -279,10 +279,10 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @param error Error occurred while setting the value
      * @return Whether the error situation is handled or not.
      */
-    protected boolean handleValueSetError(@SuppressWarnings("unused") String fieldName, @SuppressWarnings("unused") HasValue<?, ?> field,
-                                          @SuppressWarnings("unused") Object fieldValue,
-                                          @SuppressWarnings("unused") Object objectValue,
-                                          @SuppressWarnings("unused") Throwable error) {
+    protected boolean handleValueSetError(String fieldName, HasValue<?, ?> field,
+                                          Object fieldValue,
+                                          Object objectValue,
+                                          Throwable error) {
         return true;
     }
 
@@ -319,7 +319,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
             }
             try {
                 m = AbstractDataEditor.this.getClass().getMethod("get" + fieldName);
-                if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                if (!m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
                     return m;
                 }
             } catch (NoSuchMethodException ignored) {
@@ -348,7 +348,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
             Class<?>[] params = new Class[] { getMethod.getReturnType() };
             try {
                 m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
-                if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                if (!m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
                     return m;
                 }
             } catch (NoSuchMethodException ignored) {

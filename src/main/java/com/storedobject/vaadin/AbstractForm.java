@@ -49,6 +49,10 @@ public abstract class AbstractForm<D> {
      * This will be used to check whether a field needs to be included or not.
      */
     IncludeField includeField = name -> true;
+    /**
+     * State flag used to keep track of certain states while fields being constructed.
+     */
+    boolean flag;
 
     /**
      * Construct a form.
@@ -77,7 +81,7 @@ public abstract class AbstractForm<D> {
      * @param container Field container of the form.
      * @param dummy Dummy value, not used
      */
-    protected AbstractForm(Class<D> objectClass, HasComponents container, @SuppressWarnings("unused") Object dummy) {
+    protected AbstractForm(Class<D> objectClass, HasComponents container, Object dummy) {
         this.objectClass = objectClass;
         this.data = new Data<>(this);
         this.container = container;
@@ -155,6 +159,7 @@ public abstract class AbstractForm<D> {
     }
 
     private HasValue<?, ?> createFieldInt(String fieldName, String label) {
+        flag = true;
         HasValue<?, ?> field = createField(fieldName, label);
         if(field == null) {
             field = createField(fieldName);
@@ -162,7 +167,20 @@ public abstract class AbstractForm<D> {
                 setFieldLabel(fieldName, label);
             }
         }
+        if(flag && field != null) {
+            customize(fieldName, field);
+        }
         return field;
+    }
+
+    /**
+     * This method acts as a hook to the field customizer.
+     *
+     * @param fieldName Field name.
+     * @param field Field.
+     */
+    void customize(String fieldName, HasValue<?, ?> field) {
+        flag = false;
     }
 
     /**
@@ -337,7 +355,7 @@ public abstract class AbstractForm<D> {
     /**
      * Add components to the form's field container.
      *
-     * @param components Compoents to add
+     * @param components Components to add
      */
     public void add(Component... components) {
         getContainer().add(components);
@@ -346,7 +364,7 @@ public abstract class AbstractForm<D> {
     /**
      * Remove components from the form's field container.
      *
-     * @param components Compoents to remove
+     * @param components Components to remove
      */
     public void remove(Component... components) {
         getContainer().remove(components);
@@ -405,7 +423,7 @@ public abstract class AbstractForm<D> {
     /**
      * Get the column span of a component. (This will work only when the container is of type {@link FormLayout}).
      *
-     * @param component omponent for which column span to be retrieved
+     * @param component Component for which column span to be retrieved
      * @return Column span for the component.
      */
     public int getColumnSpan(Component component) {
@@ -632,7 +650,7 @@ public abstract class AbstractForm<D> {
     }
 
     /**
-     * Error messages of the form are typcially displayed using {@link com.vaadin.flow.component.notification.Notification}. However,
+     * Error messages of the form are typically displayed using {@link com.vaadin.flow.component.notification.Notification}. However,
      * one can set any {@link HasText} for that.
      *
      * @param display Error messages will be displayed on this
