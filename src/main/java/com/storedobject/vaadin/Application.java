@@ -334,7 +334,7 @@ public abstract class Application {
      * @param link The context path of the application.
      * @return True if application can go ahead. Otherwise, an "Initialization failed" message is displayed. Default return value is <code>true</code>.
      */
-    protected boolean init(@SuppressWarnings("unused") String link) {
+    protected boolean init(String link) {
         return true;
     }
 
@@ -532,7 +532,7 @@ public abstract class Application {
      *
      * @param owner Alert owner
      */
-    public void alertCountChanged(@SuppressWarnings("unused") Object owner) {
+    public void alertCountChanged(Object owner) {
     }
 
     /**
