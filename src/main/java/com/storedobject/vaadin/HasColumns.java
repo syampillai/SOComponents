@@ -840,6 +840,7 @@ public interface HasColumns<T> extends ExecutableView {
         @SuppressWarnings("rawtypes")
         private Map<String, ValueProvider<T, Comparable>> columnComparators1 = new HashMap<>();
         private Map<String, Comparator<T>> columnComparators2 = new HashMap<>();
+        private Map<String, Integer> columnOrders = new HashMap<>();
         private Object methodHandlerHost;
         private int paramId = 0;
         private ButtonIcon configure;
@@ -908,6 +909,7 @@ public interface HasColumns<T> extends ExecutableView {
                     sorted(Comparator.comparingInt(this::getColumnOrder)).forEach(this::constructColumn);
             columns = null;
             renderers = null;
+            columnOrders = null;
             columnResizable = null;
             columnVisible = null;
             columnFrozen = null;
@@ -1559,22 +1561,35 @@ public interface HasColumns<T> extends ExecutableView {
             }
         }
 
-        private int getColumnOrder(String columnName) {
+        private int getColumnOrderCustom(String columnName) {
             try {
                 if(hc != null) {
                     return hc.getColumnOrder(columnName);
                 }
             } catch (AbstractDataForm.FieldError ignored) {
             }
-            int order = cc().getColumnOrder(columnName);
+            return cc().getColumnOrder(columnName);
+        }
+
+        private int getColumnOrder(String columnName) {
+            if(columnOrders != null) {
+                Integer o = columnOrders.get(columnName);
+                if(o != null) {
+                    return o;
+                }
+            }
+            int order = getColumnOrderCustom(columnName);
             if(order == Integer.MIN_VALUE && columns != null) {
                 order = 0;
                 for(String name: columns) {
-                    if(name.equals(columnName)) {
+                    if(trimCaption(name).equals(columnName)) {
                         break;
                     }
                     ++order;
                 }
+            }
+            if(columnOrders != null) {
+                columnOrders.put(columnName, order);
             }
             return order;
         }
@@ -1768,7 +1783,7 @@ public interface HasColumns<T> extends ExecutableView {
             itemSelectedListeners.forEach(isl -> {
                 if(isl instanceof ItemsSelectedListener) {
                     ((ItemsSelectedListener<T>) isl).itemsSelected(grid, selection);
-                } else if(!selection.isEmpty()) {
+                } else {
                     isl.itemSelected(grid, selection.stream().findAny().orElse(null));
                 }
             });

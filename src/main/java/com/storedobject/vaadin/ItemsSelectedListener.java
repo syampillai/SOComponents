@@ -6,8 +6,8 @@ import java.util.Set;
 
 /**
  * Interface for listening on selected items (especially in {@link com.vaadin.flow.component.grid.Grid}.
- * @param <T> Type of item selected.
  *
+ * @param <T> Type of item selected.
  * @author Syam
  */
 @FunctionalInterface

@@ -1228,6 +1228,55 @@ public abstract class Application {
     protected void viewDetached(View view) {
     }
 
+    /**
+     * Set some data in this application so that it can be retrieved later.
+     *
+     * @param anything Data of some kind.
+     * @param <T> Type of data.
+     */
+    public <T> void setData(T anything) {
+        if(anything != null) {
+            //noinspection unchecked
+            ComponentUtil.setData(getUI(), (Class<T>) anything.getClass(), anything);
+        }
+    }
+
+    /**
+     * Remove the data previously set in this application.
+     *
+     * @param anything Data to remove.
+     * @param <T> Type of data.
+     */
+    public <T> void removeData(T anything) {
+        if(anything != null) {
+            //noinspection unchecked
+            ComponentUtil.setData(getUI(), (Class<T>) anything.getClass(), null);
+        }
+    }
+
+    /**
+     * Remove the data previously set in this application.
+     *
+     * @param anyClass Class of the data to remove.
+     * @param <T> Type of data.
+     */
+    public <T> void removeData(Class<T> anyClass) {
+        if(anyClass != null) {
+            ComponentUtil.setData(getUI(), anyClass, null);
+        }
+    }
+
+    /**
+     * Get the data that was previously set in this application.
+     *
+     * @param anyClass Class of the data to get.
+     * @param <T> Type of data.
+     * @return Data if exists, otherwise <code>null</code>.
+     */
+    public <T> T getData(Class<T> anyClass) {
+        return anyClass == null ? null : ComponentUtil.getData(getUI(), anyClass);
+    }
+
     private class AlertList extends ArrayList<Alert> {
 
         private final Object owner;
