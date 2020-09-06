@@ -1,6 +1,8 @@
 package com.storedobject.vaadin.demo;
 
-import com.storedobject.vaadin.*;
+import com.storedobject.vaadin.Application;
+import com.storedobject.vaadin.DataGrid;
+import com.storedobject.vaadin.View;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
@@ -20,7 +22,7 @@ public class GridTest extends View {
 
         public Grid() {
             super(Person.class);
-            setDataProvider(new ListDataProvider<>(new Persons()));
+            setItems(new ListDataProvider<>(new Persons()));
         }
 
         @Override

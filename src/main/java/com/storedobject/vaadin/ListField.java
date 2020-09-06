@@ -1,17 +1,12 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.BasicComboList;
-import com.storedobject.vaadin.util.ElementClick;
-import com.vaadin.flow.component.customfield.CustomField;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.select.data.SelectListDataView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.select.Select}.
@@ -69,34 +64,37 @@ public class ListField<T> extends Select<T> {
      * Set item list.
      *
      * @param items Item list
+     * @return Data view
      */
-    public void setItems(Collection<T> items) {
+    public SelectListDataView<T> setItems(Collection<T> items) {
         this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
-        super.setItems(this.items);
+        return super.setItems(this.items);
     }
 
     /**
      * Set item list.
      *
      * @param items Item list
+     * @return Data view
      */
-    public void setItems(Iterable<T> items) {
+    public SelectListDataView<T> setItems(Iterable<T> items) {
         this.items = new ArrayList<>();
         for(T item: items) {
             this.items.add(item);
         }
-        super.setItems(this.items);
+        return super.setItems(this.items);
     }
 
     /**
      * Set item list.
      *
      * @param items Item list
+     * @return Data view
      */
-    public void setItems(T[] items) {
+    public SelectListDataView<T> setItems(T[] items) {
         this.items = new ArrayList<>();
         Collections.addAll(this.items, items);
-        super.setItems(this.items);
+        return super.setItems(this.items);
     }
 
     /**

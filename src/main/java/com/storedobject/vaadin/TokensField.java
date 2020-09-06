@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Field that enables selection of multiple items (as a Set) from a list of items. (Based on the {@link MultiselectComboBox} by Goran Atanasovski.
+ * Field that enables selection of multiple items (as a Set) from a list of items.
+ * (Based on the {@link MultiselectComboBox} by Goran Atanasovski.
  *
  * @param <T> Type of the item.
  * @author Syam
@@ -93,7 +94,12 @@ public class TokensField<T> extends MultiselectComboBox<T> implements HasItems<T
         if(value == null || value.isEmpty()) {
             return;
         }
-        setValue(new HashSet<T>() { { addAll(getValue()); addAll(value); } });
+        setValue(new HashSet<>() {
+            {
+                addAll(getValue());
+                addAll(value);
+            }
+        });
     }
 
     /**
@@ -116,7 +122,12 @@ public class TokensField<T> extends MultiselectComboBox<T> implements HasItems<T
         if(items == null || items.isEmpty()) {
             return;
         }
-        setItems(new ArrayList<T>() { { addAll(TokensField.this.items); addAll(items); } });
+        setItems(new ArrayList<>() {
+            {
+                addAll(TokensField.this.items);
+                addAll(items);
+            }
+        });
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import javax.annotation.Nonnull;
@@ -22,11 +21,7 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
 
     public ListGrid(Class<T> objectClass, Iterable<String> columns) {
         super(objectClass, columns);
-        super.setDataProvider(new ListDataProvider<>(data));
-    }
-
-    @Override
-    public void setDataProvider(DataProvider<T, ?> dataProvider) {
+        super.setItems(new ListDataProvider<>(data));
     }
 
     @Override
