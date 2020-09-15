@@ -1,9 +1,9 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.MultiselectComboBox;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.data.binder.HasItems;
-import org.vaadin.gatanaso.MultiselectComboBox;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 /**
  * Field that enables selection of multiple items (as a Set) from a list of items.
- * (Based on the {@link MultiselectComboBox} by Goran Atanasovski.
+ * (Based on the {@link MultiselectComboBox} by Goran Atanasovski).
  *
  * @param <T> Type of the item.
  * @author Syam
@@ -122,12 +122,9 @@ public class TokensField<T> extends MultiselectComboBox<T> implements HasItems<T
         if(items == null || items.isEmpty()) {
             return;
         }
-        setItems(new ArrayList<>() {
-            {
-                addAll(TokensField.this.items);
-                addAll(items);
-            }
-        });
+        ArrayList<T> list = new ArrayList<>(this.items);
+        list.addAll(items);
+        setItems(list);
     }
 
     /**

@@ -58,9 +58,9 @@ public abstract class DataForm extends AbstractDataForm<Object> {
         this.form.setView(this);
         setErrorDisplay(null);
         setCaption(caption);
-        ok = new Button(labelOK == null ? "Ok" : labelOK, "ok", this).asPrimary();
+        ok = new Button(labelOK == null || labelOK.isEmpty() ? "Ok" : labelOK,this).asPrimary();
         ok.setDisableOnClick(true);
-        cancel = new Button(labelCancel == null ? "Cancel" : labelCancel, "cancel", this);
+        cancel = new Button(labelCancel == null || labelCancel.isEmpty() ? "Cancel" : labelCancel, this);
         this.windowMode = windowMode;
         if(windowMode) {
             setColumns(1);

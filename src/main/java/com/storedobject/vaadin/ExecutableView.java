@@ -70,7 +70,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     View getView(boolean create);
 
     /**
-     * Default implmenentation is to invoke {@link #execute()}.
+     * Default implementation is to invoke {@link #execute()}.
      */
     default void run() {
         execute();
@@ -80,10 +80,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * Execute this by displaying it in a View.
      */
     default void execute() {
-        View v = getView(true);
-        if(v != null) {
-            v.execute();
-        }
+        execute(null);
     }
 
     /**
@@ -252,7 +249,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param menuAction Action for the menu item to be created
      * @return Menu item.
      */
-    default ApplicationMenuItem createMenuItem(@SuppressWarnings("unused") Runnable menuAction) {
+    default ApplicationMenuItem createMenuItem(Runnable menuAction) {
         return getApplication().getEnvironment().createMenuItem(this, getCaption(), menuAction);
     }
 

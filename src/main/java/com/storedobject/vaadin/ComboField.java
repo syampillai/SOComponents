@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.data.provider.ListDataProvider;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 public class ComboField<T> extends ComboBox<T> {
 
     private final List<T> list = new ArrayList<>();
+    private final ListDataProvider<T> dataProvider;
 
     /**
      * Constructor.
@@ -54,7 +56,8 @@ public class ComboField<T> extends ComboBox<T> {
     public ComboField(String label, Collection<T> list) {
         super(label);
         this.list.addAll(list);
-        super.setItems(list);
+        this.dataProvider = new ListDataProvider<>(this.list);
+        setDataProvider(dataProvider);
     }
 
     /**
@@ -228,6 +231,10 @@ public class ComboField<T> extends ComboBox<T> {
     }
 
     private void refresh() {
-        super.setItems(list);
+        if(getDataProvider() == dataProvider) {
+            dataProvider.refreshAll();
+        } else {
+            setDataProvider(dataProvider);
+        }
     }
 }
