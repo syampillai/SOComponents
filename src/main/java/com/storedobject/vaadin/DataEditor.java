@@ -203,6 +203,15 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
         buttonPanel.add(save, cancel);
     }
 
+    @Override
+    protected void execute(View parent, boolean doNotLock) {
+        getComponent();
+        if(getObject() == null) {
+            setObject(newObject());
+        }
+        super.execute(parent, doNotLock);
+    }
+
     /**
      * This method is invoked to carry out the "cancel". By default it processes the "cancel action" if defined.
      */
@@ -221,6 +230,24 @@ public class DataEditor<T> extends AbstractDataEditor<T> {
         if(saveAction != null) {
             saveAction.accept(getObject());
         }
+    }
+
+    /**
+     * Set the "save action" that will be used to save the instance.
+     *
+     * @param saveAction Save action (Will be called when the "save" button is pressed and data is validated)
+     */
+    public void setSaveAction(Consumer<T> saveAction) {
+        this.saveAction = saveAction;
+    }
+
+    /**
+     * Set the "cancel action" that will be used when "cancel" button is pressed.
+     *
+     * @param cancelAction Cancel action (Will be called when the "cancel" button is pressed)
+     */
+    public void setCancelAction(Consumer<T> cancelAction) {
+        this.cancelAction = cancelAction;
     }
 
     /**

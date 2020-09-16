@@ -52,4 +52,13 @@ public class MapComboField<T> extends ComboBox<T> {
         ApplicationEnvironment ae = ApplicationEnvironment.get();
         return ae == null ? (value == null ? "" : value.toString()) : ae.toDisplay(value);
     }
+
+    /**
+     * Get the map.
+     *
+     * @return The map.
+     */
+    public Map<T, ?> getMap() {
+        return map;
+    }
 }
