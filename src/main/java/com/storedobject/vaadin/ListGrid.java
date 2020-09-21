@@ -1,27 +1,111 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.shared.Registration;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
- * A grid that implements a List data model.
- * @param <T> Data type of the grid
+ * A grid that implements a {@link List} data model.
  *
+ * @param <T> Data type of the grid
  * @author Syam
  */
 public class ListGrid<T> extends DataGrid<T> implements List<T> {
 
-    private final List<T> data = new ArrayList<>();
+    private boolean wrapped;
+    private final Refresher refresher = new Refresher();
+    private DataList<T> data;
 
+    /**
+     * Constructor.
+     *
+     * @param objectClass Class of objects stored.
+     */
     public ListGrid(Class<T> objectClass) {
-        this(objectClass, null);
+        this(objectClass, null, null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param objectClass Class of objects stored.
+     * @param columns Column names.
+     */
     public ListGrid(Class<T> objectClass, Iterable<String> columns) {
+        this(objectClass, null, columns);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param objectClass Class of objects stored.
+     * @param data Data to be set. Same data may be used on multiple {@link ListGrid}s.
+     */
+    public ListGrid(Class<T> objectClass, List<T> data) {
+        this(objectClass, data, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param objectClass Class of objects stored.
+     * @param data Data to be set. Same data may be used on multiple {@link ListGrid}s.
+     * @param columns Column names.
+     */
+    public ListGrid(Class<T> objectClass, List<T> data, Iterable<String> columns) {
         super(objectClass, columns);
-        super.setItems(new ListDataProvider<>(data));
+        setData(data);
+    }
+
+    /**
+     * Get the data of this list. If the data is not an instance of {@link DataList} and
+     * is directly manipulated, {@link #refresh()} or {@link #refresh(Object)} should be
+     * invoked to reflect the changes on the grid.
+     *
+     * @return Data of this list.
+     */
+    public List<T> getData() {
+        return wrapped ? data.getData() : data;
+    }
+
+    /**
+     * Set the data of this list.
+     *
+     * @param data Data to be set. Same data may be used on multiple {@link ListGrid}s.
+     */
+    public void setData(List<T> data) {
+        if(data == null) {
+            data = new DataList<>();
+        }
+        DataList<T> list;
+        if(data instanceof DataList) {
+            list = (DataList<T>) data;
+            wrapped = false;
+        } else {
+            list = new DataList<>(data);
+            wrapped = true;
+        }
+        this.data = list;
+        super.setItems(new ListDataProvider<>(this.data));
+        refresher.change();
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+        refresher.set();
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+        refresher.remove();
     }
 
     @Override
@@ -60,18 +144,12 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
 
     @Override
     public boolean add(T item) {
-        data.add(item);
-        refresh();
-        return true;
+        return data.add(item);
     }
 
     @Override
     public boolean remove(Object item) {
-        if(data.remove(item)) {
-            refresh();
-            return true;
-        }
-        return false;
+        return data.remove(item);
     }
 
     @Override
@@ -81,44 +159,42 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
 
     @Override
     public boolean addAll(@Nonnull Collection<? extends T> collection) {
-        if(data.addAll(collection)) {
-            refresh();
-            return true;
-        }
-        return false;
+        return data.addAll(collection);
     }
 
     @Override
     public boolean addAll(int index, @Nonnull Collection<? extends T> collection) {
-        if(data.addAll(index, collection)) {
-            refresh();
-            return true;
-        }
-        return false;
+        return data.addAll(index, collection);
     }
 
     @Override
     public boolean removeAll(@Nonnull Collection<?> collection) {
-        if(data.removeAll(collection)) {
-            refresh();
-            return true;
-        }
-        return false;
+        return data.removeAll(collection);
+    }
+
+    @Override
+    public boolean removeIf(Predicate<? super T> filter) {
+        return data.removeIf(filter);
     }
 
     @Override
     public boolean retainAll(@Nonnull Collection<?> collection) {
-        if(data.retainAll(collection)) {
-            refresh();
-            return true;
-        }
-        return false;
+        return data.retainAll(collection);
+    }
+
+    @Override
+    public void replaceAll(UnaryOperator<T> operator) {
+        data.replaceAll(operator);
+    }
+
+    @Override
+    public void sort(Comparator<? super T> comparator) {
+        data.sort(comparator);
     }
 
     @Override
     public void clear() {
         data.clear();
-        refresh();
     }
 
     @Override
@@ -128,24 +204,17 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
 
     @Override
     public T set(int index, T item) {
-        T d = data.set(index, item);
-        refresh(item);
-        return d;
+        return data.set(index, item);
     }
 
     @Override
     public void add(int index, T item) {
         data.add(index, item);
-        refresh();
     }
 
     @Override
     public T remove(int index) {
-        T item = data.remove(index);
-        if(item != null) {
-            refresh();
-        }
-        return item;
+        return data.remove(index);
     }
 
     @Override
@@ -174,5 +243,73 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
         return data.subList(fromIndex, toIndex);
+    }
+
+    @Override
+    public ListDataProvider<T> getDataProvider() {
+        //noinspection unchecked
+        return (ListDataProvider<T>) super.getDataProvider();
+    }
+
+    /**
+     * Set a filter. (All previously added filters will be cleared).
+     *
+     * @param filter Filter to set.
+     */
+    public void setFilter(Predicate<T> filter) {
+        getDataProvider().setFilter(filter::test);
+    }
+
+    /**
+     * Add a filter.
+     *
+     * @param filter Filter to add.
+     */
+    public void addFilter(Predicate<T> filter) {
+        getDataProvider().addFilter(filter::test);
+    }
+
+    /**
+     * Clear all filters.
+     */
+    public void clearFilters() {
+        getDataProvider().clearFilters();
+    }
+
+    private class Refresher implements DataList.RefreshListener<T> {
+
+        private Registration registration;
+
+        void change() {
+            if(registration != null) {
+                registration.remove();
+                registration = data.addRefreshListener(this);
+                refresh();
+            }
+        }
+
+        void set() {
+            if(registration == null) {
+                registration = data.addRefreshListener(this);
+                refresh();
+            }
+        }
+
+        void remove() {
+            if(registration != null) {
+                registration.remove();
+                registration = null;
+            }
+        }
+
+        @Override
+        public void refresh() {
+            ListGrid.this.refresh();
+        }
+
+        @Override
+        public void refresh(T item) {
+            ListGrid.this.refresh(item);
+        }
     }
 }
