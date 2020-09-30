@@ -2,10 +2,7 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.Data;
 import com.storedobject.vaadin.util.FieldValueHandler;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.HasText;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.dom.Element;
 
@@ -24,7 +21,7 @@ import java.util.stream.Stream;
  * @param <D> Type of data object in the form
  * @author Syam
  */
-public abstract class AbstractForm<D> {
+public abstract class AbstractForm<D> extends Composite<Component> {
 
     /**
      * Class of the data object in the form.
@@ -85,6 +82,16 @@ public abstract class AbstractForm<D> {
         this.objectClass = objectClass;
         this.data = new Data<>(this);
         this.container = container;
+    }
+
+    @Override
+    protected final Component initContent() {
+        return (Component) container;
+    }
+
+    @Override
+    public final Component getContent() {
+        return (Component) container;
     }
 
     /**
@@ -250,6 +257,21 @@ public abstract class AbstractForm<D> {
      */
     public void addField(HasValue<?, ?> field) {
         attachF(data.addField(field), field);
+    }
+
+    /**
+     * Add multiple fields to the form. These fields will not be having "field names".
+     *
+     * @param fields Fields to be added
+     */
+    public void addFields(HasValue<?, ?>... fields) {
+        if(fields != null) {
+            for(HasValue<?, ?> f: fields) {
+                if(f != null) {
+                    addField(f);
+                }
+            }
+        }
     }
 
     /**
@@ -920,6 +942,11 @@ public abstract class AbstractForm<D> {
         }
     }
 
+    /**
+     * Basic value-handler implementation.
+     *
+     * @author Syam
+     */
     protected class ValueHandler implements FieldValueHandler {
 
         @Override

@@ -11,10 +11,18 @@ import java.net.Inet4Address;
  */
 public class IPAddressField extends TranslatedField<Inet4Address, String> {
 
+    /**
+     * Constructor.
+     */
     public IPAddressField() {
         this(null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     */
     public IPAddressField(String label) {
         super(new IPAddressTextField(), (f, a) -> IPAddressTextField.getAddress(a), (f, a) -> IPAddressTextField.getAddress(a));
         setLabel(label);

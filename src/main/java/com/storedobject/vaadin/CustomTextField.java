@@ -89,7 +89,7 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
      *
      * @param textField Internal text field
      */
-    protected void customizeTextField(@SuppressWarnings("unused") HasTextValue textField) {
+    protected void customizeTextField(HasTextValue textField) {
     }
 
     @Override
@@ -98,6 +98,12 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         super.onAttach(attachEvent);
     }
 
+    /**
+     * Create the model value from the string value passed.
+     *
+     * @param string String value to convert.
+     * @return Model value created from the string value.
+     */
     protected abstract T getModelValue(String string);
 
     @Override
@@ -116,6 +122,12 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         getField().setValue(format(value));
     }
 
+    /**
+     * Format the value to display it as a string.
+     *
+     * @param value Value to format.
+     * @return Displayable string.
+     */
     protected String format(T value) {
         return value == null ? "" : value.toString();
     }

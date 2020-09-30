@@ -14,7 +14,17 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
  */
 public abstract class DataForm extends AbstractDataForm<Object> {
 
-    protected Button ok, cancel;
+    /**
+     * The Ok button.
+     */
+    protected Button ok;
+    /**
+     * The Cancel button.
+     */
+    protected Button cancel;
+    /**
+     * Button panel where buttons are added.
+     */
     protected HasComponents buttonPanel;
     private boolean buttonsAtTop = false;
     private final boolean windowMode;

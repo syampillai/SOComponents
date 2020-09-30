@@ -19,58 +19,110 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * Class that is internally handling Vaadin's {@link Binder}.
+ *
+ * @param <T> Type of the bean.
+ * @author Syam
+ */
 @SuppressWarnings("rawtypes")
 public class Data<T> extends HashMap<String, Object> {
 
     private static final String FIELD_CANT_BE_EMPTY = "Field can't be empty!";
-    private static ValidationResult OK = ValidationResult.ok();
-    private static Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
+    private static final ValidationResult OK = ValidationResult.ok();
+    private static final Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
     private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
     private final Map<HasValue<?, ?>, DataValidators<T, ?>> validators = new HashMap<>();
     private final Map<HasValue<?, ?>, Binder.Binding<T, ?>> bindings = new HashMap<>();
     private Map<HasValue<?, ?>, List<Registration>> connections;
-    private Binder<T> binder;
+    private final Binder<T> binder;
     private boolean readOnly;
     private final AbstractForm<T> form;
     private Required requiredCache;
     private boolean extraErrors = false;
 
+    /**
+     * Constructor.
+     *
+     * @param form Form that contains the fields.
+     */
     public Data(AbstractForm<T> form) {
         this.form = form;
         binder = new Binder<>();
         binder.setStatusLabel(errorText);
     }
 
+    /**
+     * Get the embedded binder.
+     *
+     * @return The binder.
+     */
     public Binder<T> getBinder() {
         return binder;
     }
 
+    /**
+     * Set the error display (If not set, a default mechanism is used to display errors and warnings).
+     *
+     * @param display Display to set.
+     */
     public void setErrorDisplay(HasText display) {
         binder.setStatusLabel(display == null ? errorText : display);
     }
 
+    /**
+     * Get the current error display.
+     *
+     * @return Get the current error display.
+     */
     public HasText getErrorDisplay() {
         return binder.getStatusLabel().orElse(errorText);
     }
 
+    /**
+     * Set extra errors flag.
+     */
     public void setExtraErrors() {
         this.extraErrors = true;
     }
 
+    /**
+     * Set the field value handler.
+     *
+     * @param valueHandler Field value handler.
+     */
     public void setFieldValueHandler(FieldValueHandler valueHandler) {
         this.valueHandler = valueHandler;
     }
 
+    /**
+     * Get the current field value handler.
+     *
+     * @return The field value handler.
+     */
     public FieldValueHandler getFieldValueHandler() {
         return valueHandler;
     }
 
+    /**
+     * Add a field with auto-generated filed name.
+     *
+     * @param field The field to add.
+     * @return Name of the field.
+     */
     public String addField(HasValue<?, ?> field) {
         return addField(null, field);
     }
 
+    /**
+     * Add a field.
+     *
+     * @param fieldName Field name.
+     * @param field The field to add.
+     * @return Name of the field.
+     */
     @SuppressWarnings("unchecked")
     public String addField(String fieldName, HasValue<?, ?> field) {
         if(field == null) {
@@ -106,6 +158,12 @@ public class Data<T> extends HashMap<String, Object> {
         return fieldName;
     }
 
+    /**
+     * Connect a collection of fields so that their values will be updated whenever any of the field value is changed.
+     *
+     * @param fields Collection of fields to connect together.
+     * @return Returns true if the field list contains at least 2 fields.
+     */
     public boolean connect(Collection<HasValue<?, ?>> fields) {
         List<HasValue<?, ?>> fieldList = new ArrayList<>(fields);
         if(fieldList.size() <= 1) {
@@ -146,10 +204,20 @@ public class Data<T> extends HashMap<String, Object> {
         return dv;
     }
 
+    /**
+     * Is this read-only?
+     *
+     * @return True or false.
+     */
     public boolean isReadOnly() {
         return readOnly;
     }
 
+    /**
+     * Set this as read-only.
+     *
+     * @param readOnly True or false.
+     */
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         if(readOnly) {
@@ -194,6 +262,12 @@ public class Data<T> extends HashMap<String, Object> {
         put(fieldName, value);
     }
 
+    /**
+     * Remove a field.
+     *
+     * @param fieldName Name of the field to remove.
+     * @return The field that is removed.
+     */
     public HasValue<?, ?> removeField(String fieldName) {
         if(fieldName == null || fieldName.isEmpty()) {
             return null;
@@ -217,35 +291,70 @@ public class Data<T> extends HashMap<String, Object> {
         return field;
     }
 
+    /**
+     * Get the name of the given field.
+     *
+     * @param field Filed.
+     * @return Name of the field.
+     */
     public String getName(HasValue<?, ?> field) {
         return fieldNames.get(field);
     }
 
+    /**
+     * Get the field for the given field name.
+     *
+     * @param fieldName Field name.
+     * @return Field if found.
+     */
     public HasValue<?, ?> getField(String fieldName) {
         return fields.get(fieldName);
     }
 
+    /**
+     * Get the number of fields.
+     *
+     * @return Number of fields.
+     */
     public int getFieldCount() {
         return fields.size();
     }
 
+    /**
+     * Get the names of all the fields.
+     *
+     * @return Names of all the fields.
+     */
     public Stream<String> getFieldNames() {
         return fields.keySet().stream();
     }
 
+    /**
+     * Get all the fields.
+     *
+     * @return All the fields.
+     */
     public Stream<HasValue<?, ?>> getFields() {
         return fieldNames.keySet().stream();
     }
 
+    /**
+     * Load all the fields from the bean.
+     */
     public void loadValues() {
         binder.readBean(form.getObject());
         setReadOnly(!readOnly);
         setReadOnly(!readOnly);
     }
 
+    /**
+     * Save all the field values to the bean.
+     *
+     * @return True if the save is successful.
+     */
     @SuppressWarnings("unchecked")
     public boolean saveValues() {
-        binder.getStatusLabel().ifPresent(errDisp -> errDisp.setText(""));
+        binder.getStatusLabel().ifPresent(errDisplay -> errDisplay.setText(""));
         for(HasValue<?, ?> field: fields.values()) {
             if(field instanceof HasValidation && ((HasValidation) field).isInvalid()) {
                 showErr(field);
@@ -283,6 +392,9 @@ public class Data<T> extends HashMap<String, Object> {
         hasText.setText(m);
     }
 
+    /**
+     * Clear all errors.
+     */
     public void clearErrors() {
         fields.values().forEach(AbstractForm::clearError);
         if(errorText.equals(binder.getStatusLabel().orElse(null))) {
@@ -290,10 +402,21 @@ public class Data<T> extends HashMap<String, Object> {
         }
     }
 
+    /**
+     * Clear all field values.
+     */
     public void clearFields() {
         fields.values().forEach(HasValue::clear);
     }
 
+    /**
+     * Add a validator for the given field.
+     *
+     * @param field Field.
+     * @param validator Validator.
+     * @param errorMessage Error message to show when validation fails.
+     * @param <F> Field value type.
+     */
     public <F> void addValidator(HasValue<?, F> field, Function<F, Boolean> validator, String errorMessage) {
         if(field == null) {
             throw new RuntimeException(FIELD_CANT_BE_EMPTY);
@@ -301,6 +424,14 @@ public class Data<T> extends HashMap<String, Object> {
         validator(field).add(new DataValidator<>(this, validator, errorMessage));
     }
 
+    /**
+     * Set the "required" attribute of the field.
+     *
+     * @param field Field.
+     * @param required True/false.
+     * @param errorMessage Error message to show when empty.
+     * @param <F> Field value type.
+     */
     public <F> void setRequired(HasValue<?, F> field, boolean required, String errorMessage) {
         if(field == null) {
             throw new RuntimeException(FIELD_CANT_BE_EMPTY);
@@ -349,6 +480,12 @@ public class Data<T> extends HashMap<String, Object> {
         return requiredCache;
     }
 
+    /**
+     * Get the label for the given field.
+     *
+     * @param field Field.
+     * @return Label string if exists, otherwise null.
+     */
     public static String getLabel(HasValue<?, ?> field) {
         try {
             return (String) (field.getClass().getMethod("getLabel")).invoke(field);
@@ -404,7 +541,7 @@ public class Data<T> extends HashMap<String, Object> {
     private static class DataValidator<D, F> implements Validator<F> {
 
         private static final String INVALID = "Not valid";
-        private Function<F, Boolean> validator;
+        private final Function<F, Boolean> validator;
         private String errorMessage;
         private final Data<D> data;
 
@@ -436,8 +573,8 @@ public class Data<T> extends HashMap<String, Object> {
 
     private static class DataValidators<D, F> extends ArrayList<Validator<F>> implements Validator<D> {
 
-        private ValueContext valueContext;
-        private HasValue<?, F> field;
+        private final ValueContext valueContext;
+        private final HasValue<?, F> field;
 
         private DataValidators(HasValue<?, F> field) {
             this.field = field;

@@ -8,5 +8,9 @@ package com.storedobject.vaadin;
  */
 @FunctionalInterface
 public interface FormConstructed {
+
+    /**
+     * Invoked when the form is constructed.
+     */
     void formConstructed();
 }

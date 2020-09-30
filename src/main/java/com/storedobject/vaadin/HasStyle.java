@@ -11,6 +11,11 @@ import com.vaadin.flow.dom.Style;
  */
 public interface HasStyle extends com.vaadin.flow.component.HasStyle {
 
+    /**
+     * Get the internal element to which style will be applied.
+     *
+     * @return The internal element.
+     */
     default Element getInternalElement() {
         return getElement();
     }

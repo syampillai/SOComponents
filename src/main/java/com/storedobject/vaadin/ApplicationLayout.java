@@ -62,7 +62,7 @@ public interface ApplicationLayout {
      *
      * @param application Application.
      */
-    default void loggedin(@SuppressWarnings("unused") Application application) {
+    default void loggedin(Application application) {
     }
 
     /**

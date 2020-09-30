@@ -13,6 +13,9 @@ import com.vaadin.flow.component.HasValue;
  */
 public class Form extends AbstractForm<Object> {
 
+    /**
+     * Constructor.
+     */
     public Form() {
         super(Object.class);
     }

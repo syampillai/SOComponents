@@ -22,9 +22,9 @@ public class UploadField extends CustomField<Integer> {
 
     private final Upload upload;
     private int fileCount = 0, maxFileCount = Integer.MAX_VALUE;
-    private BiConsumer<InputStream, String> processor;
+    private final BiConsumer<InputStream, String> processor;
     private String fileName;
-    private Div description = new Div();
+    private final Div description = new Div();
     private UI ui;
 
     /**
@@ -102,10 +102,20 @@ public class UploadField extends CustomField<Integer> {
         super.setValue(fileCount);
     }
 
+    /**
+     * Whether to show the description or not.
+     *
+     * @param show True/false.
+     */
     public void showDescription(boolean show) {
         description.setVisible(show);
     }
 
+    /**
+     * Set the description to show.
+     *
+     * @param description Description to show.
+     */
     public void setDescription(String description) {
         getU();
         if(ui == null) {

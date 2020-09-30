@@ -221,6 +221,11 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
         form.addField(fieldName, field);
     }
 
+    /**
+     * Remove a field from the form.
+     *
+     * @param fieldName Name of the field to be removed.
+     */
     public void removeField(String fieldName) {
         form.removeField(fieldName);
     }

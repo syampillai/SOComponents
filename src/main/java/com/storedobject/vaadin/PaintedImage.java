@@ -16,8 +16,27 @@ public class PaintedImage extends Image {
 
     /**
      * Image type.
+     *
+     * @author Syam
      */
-    public enum Type { SVG, PNG, JPG, GIF }
+    public enum Type {
+        /**
+         * SVG type.
+         */
+        SVG,
+        /**
+         * PNG type.
+         */
+        PNG,
+        /**
+         * JPEG type.
+         */
+        JPG,
+        /**
+         * GIF type.
+         */
+        GIF
+    }
     private final Type type;
     private int widthInPixels, heightInPixels;
 

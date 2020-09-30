@@ -11,8 +11,30 @@ import com.vaadin.flow.component.Tag;
  */
 @Tag("div")
 public class CSSGrid extends Component implements HasOrderedComponents, HasStyle, HasSize {
-    
-    public enum Position { START, END, CENTER, STRETCH }
+
+    /**
+     * Enums for positions.
+     *
+     * @author Syam
+     */
+    public enum Position {
+        /**
+         * Start (Left position for left-to-right system).
+         */
+        START,
+        /**
+         * End (Right position for left-to-right system).
+         */
+        END,
+        /**
+         * Center.
+         */
+        CENTER,
+        /**
+         * Stretch.
+         */
+        STRETCH
+    }
 
     /**
      * Constructor.
@@ -76,6 +98,12 @@ public class CSSGrid extends Component implements HasOrderedComponents, HasStyle
         setRowGap((Math.max(size, 0)) + "px");
     }
 
+    /**
+     * Set a style attribute.
+     *
+     * @param styleName Style name.
+     * @param styleValue Style value.
+     */
     protected void style(String styleName, String styleValue) {
         getStyle().set(styleName, styleValue);
     }

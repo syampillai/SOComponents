@@ -14,7 +14,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 public class Box extends Composite<Component> {
 
     private static final String BACKGROUND = "var(--lumo-contrast-20pct)";
-    private Component component;
+    private final Component component;
 
     /**
      * Put a component inside a box. Default behaviour of the box:

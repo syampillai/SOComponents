@@ -8,5 +8,11 @@ package com.storedobject.vaadin;
  */
 @FunctionalInterface
 public interface ViewClosedListener {
+
+    /**
+     * Invoked when view is closed.
+     *
+     * @param view The view that was closed.
+     */
     void viewClosed(View view);
 }

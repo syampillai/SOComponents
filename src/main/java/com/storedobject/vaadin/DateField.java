@@ -18,18 +18,37 @@ public class DateField extends TranslatedField<Date, LocalDate> {
 
     private static Date today = null;
 
+    /**
+     * Constructor.
+     */
     public DateField() {
         this(null, null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     */
     public DateField(String label) {
         this(label, null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param initialValue Initial value.
+     */
     public DateField(Date initialValue) {
         this(null, initialValue);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     * @param initialValue Initial value.
+     */
     public DateField(String label, Date initialValue) {
         super(new DatePicker(), (f, d) -> create(d), (f, d) -> create(d), null);
         setLabel(label);
@@ -50,10 +69,21 @@ public class DateField extends TranslatedField<Date, LocalDate> {
         return today;
     }
 
+    /**
+     * Set the value of "today". (In a business application, it could be the "working date").
+     *
+     * @param today Today.
+     */
     public static void setToday(Date today) {
         DateField.today = today;
     }
 
+    /**
+     * Create an instance of a {@link Date} from a {@link LocalDate} instance.
+     *
+     * @param date Instance to convert.
+     * @return Converted value.
+     */
     public static Date create(LocalDate date) {
         if(date == null) {
             return today();
@@ -61,6 +91,13 @@ public class DateField extends TranslatedField<Date, LocalDate> {
         return create(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
     }
 
+    /**
+     * Create an instance of a {@link LocalDate} from a {@link Date} instance.
+     *
+     * @param date Instance to convert.
+     * @param <D> Type of instance to convert.
+     * @return Converted value.
+     */
     public static <D extends java.util.Date> LocalDate create(D date) {
         if(date == null) {
             return LocalDate.now();
@@ -96,36 +133,76 @@ public class DateField extends TranslatedField<Date, LocalDate> {
         return (DatePicker) super.getField();
     }
 
+    /**
+     * Set the minimum value allowed.
+     *
+     * @param value Minimum value allowed.
+     */
     public void setMin(Date value) {
         getField().setMin(value == null ? null : create(value));
     }
 
+    /**
+     * Set the maximum value allowed.
+     *
+     * @param value Maximum value allowed.
+     */
     public void setMax(Date value) {
         getField().setMax(value == null ? null : create(value));
     }
 
+    /**
+     * Get the allowed minimum value that is currently set. Null is returned of no minimum value was set.
+     *
+     * @return Minimum value.
+     */
     public Date getMin() {
         LocalDate d = getField().getMin();
         return d == null ? null : create(d);
     }
 
+    /**
+     * Get the allowed maximum value that is currently set. Null is returned of no maximum value was set.
+     *
+     * @return Maximum value.
+     */
     public Date getMax() {
         LocalDate d = getField().getMax();
         return d == null ? null : create(d);
     }
 
+    /**
+     * Does it allow empty?
+     *
+     * @return False if allows, otherwise true.
+     */
     public boolean isRequired() {
         return getField().isRequired();
     }
 
+    /**
+     * Set whether empty value is allowed or not.
+     *
+     * @param required Set to false if empty value should be allowed.
+     */
     public void setRequired(boolean required) {
         getField().setRequired(required);
     }
 
+    /**
+     * Set the visibility of "week numbers" while accepting the value.
+     *
+     * @param weekNumbersVisible True if visible.
+     */
     public void setWeekNumbersVisible(boolean weekNumbersVisible) {
         getField().setWeekNumbersVisible(weekNumbersVisible);
     }
 
+    /**
+     * Check the visibility of "week numbers" while accepting the value.
+     *
+     * @return True if visible.
+     */
     public boolean isWeekNumbersVisible() {
         return getField().isWeekNumbersVisible();
     }

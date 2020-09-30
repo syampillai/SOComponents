@@ -13,7 +13,38 @@ import java.util.stream.Collectors;
  */
 public enum ThemeStyle {
 
-    SUCCESS, ERROR, PILL, CONTRAST, SMALL, PRIMARY, ICON, BADGE;
+    /**
+     * Success.
+     */
+    SUCCESS,
+    /**
+     * Error.
+     */
+    ERROR,
+    /**
+     * Pill.
+     */
+    PILL,
+    /**
+     * Contrast.
+     */
+    CONTRAST,
+    /**
+     * Small.
+     */
+    SMALL,
+    /**
+     * Primary.
+     */
+    PRIMARY,
+    /**
+     * Icon.
+     */
+    ICON,
+    /**
+     * Badge.
+     */
+    BADGE;
 
     private static final String THEME = "theme";
 

@@ -1132,6 +1132,12 @@ public abstract class Application {
         return viewManager.getActiveView();
     }
 
+    /**
+     * Set the polling interval with this application as the owner.
+     * (Please see {@link #setPollInterval(Object, int)} ).
+     *
+     * @param intervalInMillis Interval in milliseconds
+     */
     public void setPollInterval(int intervalInMillis) {
         setPollInterval(this, intervalInMillis);
     }
@@ -1231,13 +1237,13 @@ public abstract class Application {
     /**
      * Set some data in this application so that it can be retrieved later.
      *
-     * @param anything Data of some kind.
+     * @param anyClass Kind of data.
+     * @param anything Data of some anyClass.
      * @param <T> Type of data.
      */
-    public <T> void setData(T anything) {
+    public <T> void setData(Class<T> anyClass, T anything) {
         if(anything != null) {
-            //noinspection unchecked
-            ComponentUtil.setData(getUI(), (Class<T>) anything.getClass(), anything);
+            ComponentUtil.setData(getUI(), anyClass, anything);
         }
     }
 

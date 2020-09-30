@@ -16,16 +16,30 @@ import java.util.stream.Collectors;
  */
 public class CompoundField extends CustomField<String> {
 
-    private ButtonLayout layout = new ButtonLayout();
+    private final ButtonLayout layout = new ButtonLayout();
 
+    /**
+     * Constructor.
+     */
     public CompoundField() {
         this((String)null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param components Components to add.
+     */
     public CompoundField(Component... components) {
         this(null, components);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     * @param components Components to add.
+     */
     public CompoundField(String label, Component... components) {
         super.add(layout);
         add(components);

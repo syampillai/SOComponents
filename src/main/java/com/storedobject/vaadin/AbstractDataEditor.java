@@ -286,8 +286,18 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
         return true;
     }
 
+    /**
+     * Form to be used internally.
+     *
+     * @author Syam
+     */
     protected class DForm extends ObjectForm<T> {
 
+        /**
+         * Constructor.
+         *
+         * @param objectClass Object class.
+         */
         public DForm(Class<T> objectClass) {
             super(objectClass);
             setView(AbstractDataEditor.this);

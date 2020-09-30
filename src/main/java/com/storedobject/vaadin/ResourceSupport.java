@@ -1,6 +1,9 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.server.*;
+import com.vaadin.flow.server.AbstractStreamResource;
+import com.vaadin.flow.server.StreamRegistration;
+import com.vaadin.flow.server.StreamResourceRegistry;
+import com.vaadin.flow.server.VaadinSession;
 
 /**
  * A class to support resource handling.
@@ -13,6 +16,11 @@ public class ResourceSupport {
     private AbstractStreamResource streamResource;
     private final ResourcedComponent component;
 
+    /**
+     * Constructor.
+     *
+     * @param component Component for which support is required.
+     */
     public ResourceSupport(ResourcedComponent component) {
         this.component = component;
     }
