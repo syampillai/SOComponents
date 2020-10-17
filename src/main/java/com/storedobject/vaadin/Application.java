@@ -11,6 +11,7 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.WebBrowser;
 import com.vaadin.flow.shared.Registration;
 
 import java.io.Closeable;
@@ -120,6 +121,7 @@ public abstract class Application {
     }
     private Set<SpeakerToggledListener> speakerToggledListeners;
     private ArrayList<WeakReference<ResizedListener>> resizeListeners;
+    private WebBrowser webBrowser;
 
     /**
      * This method is invoked by {@link ApplicationView} class.
@@ -128,6 +130,7 @@ public abstract class Application {
      * @param request Vaadin Request
      */
     protected void init(VaadinRequest request) {
+        webBrowser = VaadinSession.getCurrent().getBrowser();
         String link = request.getContextPath();
         if (link != null && link.length() > 1 && link.startsWith("/")) {
             link = link.substring(1);
@@ -167,6 +170,15 @@ public abstract class Application {
                 }
             }).start();
         }
+    }
+
+    /**
+     * Get the representation of current the "web browser".
+     *
+     * @return Current web browser.
+     */
+    public WebBrowser getWebBrowser() {
+        return webBrowser;
     }
 
     /**
@@ -1037,7 +1049,7 @@ public abstract class Application {
      * @return IP address.
      */
     public String getIPAddress() {
-        return VaadinSession.getCurrent().getBrowser().getAddress();
+        return webBrowser.getAddress();
     }
 
     /**
@@ -1046,7 +1058,7 @@ public abstract class Application {
      * @return Ab identifier derived from the browser information.
      */
     public String getIdentifier() {
-        return VaadinSession.getCurrent().getBrowser().getBrowserApplication();
+        return webBrowser.getBrowserApplication();
     }
 
     /**
@@ -1055,7 +1067,7 @@ public abstract class Application {
      * @return Major version number.
      */
     public int getMajorVersion() {
-        return VaadinSession.getCurrent().getBrowser().getBrowserMajorVersion();
+        return webBrowser.getBrowserMajorVersion();
     }
 
     /**
@@ -1064,7 +1076,7 @@ public abstract class Application {
      * @return Minor version number.
      */
     public int getMinorVersion() {
-        return VaadinSession.getCurrent().getBrowser().getBrowserMinorVersion();
+        return webBrowser.getBrowserMinorVersion();
     }
 
     /**

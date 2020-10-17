@@ -1,9 +1,9 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.MultiselectComboBox;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.data.binder.HasItems;
+import org.vaadin.gatanaso.MultiselectComboBox;
 
 import java.util.*;
 import java.util.stream.Collectors;

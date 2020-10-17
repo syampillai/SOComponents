@@ -6,6 +6,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 
 import java.util.Objects;
@@ -134,17 +135,30 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
 
     /**
      * Set text to be displayed when the value of the field is empty.
-     * @param placeholder Text to be displayed
+     *
+     * @param emptyDisplay Text to be displayed
+     */
+    public void setEmptyDisplay(String emptyDisplay) {
+        this.emptyDisplay = emptyDisplay;
+        if(emptyDisplay == null) {
+            return;
+        }
+        if(Objects.equals(getValue(), getEmptyValue()) && emptyDisplay.equals(getField().getValue())) {
+            return;
+        }
+        getField().setValue(emptyDisplay);
+    }
+
+    /**
+     * Set text to be displayed as placeholder when the value of the field is empty.
+     *
+     * @param placeholder Placeholder to be displayed
      */
     public void setPlaceholder(String placeholder) {
-        this.emptyDisplay = placeholder;
-        if(placeholder == null) {
-            return;
+        HasTextValue f = getField();
+        if(f instanceof TextField) {
+            ((TextField) f).setPlaceholder(placeholder);
         }
-        if(Objects.equals(getValue(), getEmptyValue()) && placeholder.equals(getField().getValue())) {
-            return;
-        }
-        getField().setValue(placeholder);
     }
 
     @Override

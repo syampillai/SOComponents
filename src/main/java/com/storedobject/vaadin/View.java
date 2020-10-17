@@ -438,7 +438,7 @@ public class View implements ExecutableView {
 
     /**
      * Set view in which component of this view will be embedded. This is used when we want to make this view part
-     * pf another view.
+     * of another view.
      *
      * @param embeddedView View in which this view is embedded.
      */
