@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.vaadin</groupId>
             <artifactId>textfieldformatter</artifactId>
-            <version>5.2.0.pre</version>
+            <version>5.2.0</version>
         </dependency>
 
         <!-- Vaadin add-on for Multiselect Combo -->
