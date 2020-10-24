@@ -4,7 +4,7 @@ A set of Vaadin Flow Components and Abstractions
 https://vaadin.com/directory/component/so-components
 
 ## Dependencies
-https://vaadin.com/directory/component/textfield-formatter Ver 5.2.0.pre or later (for field formatting features).  
+https://vaadin.com/directory/component/textfield-formatter Ver 5.2.0 or later (for field formatting features).  
 Use versions < 1.3.0 if you don't want this dependency.
 
 https://vaadin.com/directory/component/multiselect-combo-box Ver 3.0.2 or later (for TokensField).  
