@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.dom.Style;
 
 import java.util.function.BooleanSupplier;
 
@@ -221,9 +222,26 @@ public class ActionForm extends DataForm {
     }
 
     private static Component createLabel(String message) {
-        Span s = new Span(message);
-        s.getStyle().set("color", "red");
+        Span s;
+        if(message == null || !message.contains("\n")) {
+            s = new Span(message);
+            hilite(s.getStyle());
+        } else {
+            s = new Span();
+            message.lines().forEach(m -> {
+                Div div = new Div();
+                div.setText(m);
+                hilite(div.getStyle());
+                s.add(div);
+            });
+        }
         return s;
+    }
+
+    private static void hilite(Style style) {
+        style.set("font-size", "15px");
+        style.set("font-weight", "BOLD");
+        style.set("color", "red");
     }
 
     /**

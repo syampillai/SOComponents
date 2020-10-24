@@ -628,7 +628,9 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
             field = form.getField(fieldName);
             if(field != null) {
                 readOnlyFields.remove(field);
-                field.setReadOnly(false);
+                if(!isReadOnly()) {
+                    field.setReadOnly(false);
+                }
             }
         }
     }
@@ -652,7 +654,9 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
                 readOnly.remove(fieldName);
             }
             readOnlyFields.remove(field);
-            field.setReadOnly(false);
+            if(!isReadOnly()) {
+                field.setReadOnly(false);
+            }
         }
     }
 

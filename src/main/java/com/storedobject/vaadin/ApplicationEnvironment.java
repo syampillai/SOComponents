@@ -12,7 +12,7 @@ public interface ApplicationEnvironment {
      * @return Field creator.
      */
     default ObjectFieldCreator<?> getObjectFieldCreator() {
-        return new ObjectFieldCreator() {
+        return new ObjectFieldCreator<>() {
         };
     }
 
@@ -21,7 +21,7 @@ public interface ApplicationEnvironment {
      * @return Column creator.
      */
     default ObjectColumnCreator<?> getObjectColumnCreator() {
-        return new ObjectColumnCreator() {
+        return new ObjectColumnCreator<>() {
         };
     }
 
