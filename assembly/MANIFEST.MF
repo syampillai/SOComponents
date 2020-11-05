@@ -4,3 +4,4 @@ Vaadin-Addon: ${project.build.finalName}.${project.packaging}
 Implementation-Vendor: ${organization.name}
 Implementation-Title: ${project.name}
 Implementation-Version: ${project.version}
+

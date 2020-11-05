@@ -1,11 +1,13 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import java.util.function.Consumer;
 
 /**
- * A TextField that triggers a Consumer action (when value changed or "Enter" key is pressed).
+ * A TextField that triggers a Consumer action (when value changed or "Enter" key is pressed). A value-change-timeout
+ * of 1000 milliseconds is set as the default but it may be changed.
  *
  * @author Syam
  */
@@ -70,6 +72,8 @@ public class ActionTextField extends TextField {
             }
             act();
         });
+        setValueChangeMode(ValueChangeMode.TIMEOUT);
+        setValueChangeTimeout(1000);
     }
 
     /**
