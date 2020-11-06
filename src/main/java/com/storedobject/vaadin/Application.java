@@ -1247,6 +1247,19 @@ public abstract class Application {
     }
 
     /**
+     * Execute a command.
+     *
+     * @param command Command to execute by invoking its {@link Runnable#run()} method.
+     * @param clearViews If <code>true</code> is passed, all {@link View}s will be closed (by invoking
+     *                   {@link View#abort()} calls) before the command is executed.
+     */
+    public void execute(Runnable command, boolean clearViews) {
+        if(viewManager != null) {
+            viewManager.execute(command, clearViews);
+        }
+    }
+
+    /**
      * Set some data in this application so that it can be retrieved later.
      *
      * @param anyClass Kind of data.
@@ -1389,6 +1402,7 @@ public abstract class Application {
         private final Map<View, ApplicationMenuItem> contentMenu = new HashMap<>();
         private final Map<View, View> parents = new HashMap<>();
         private View homeView;
+        private Runnable pendingToRun;
         private final Content content;
 
         public ViewManager(ApplicationView applicationView) {
@@ -1401,6 +1415,37 @@ public abstract class Application {
         public void loggedin(Application application) {
             applicationView.layout.loggedin(application);
             applicationView.layout.drawMenu(application);
+        }
+
+        private void runPending() {
+            if(pendingToRun != null) {
+                Runnable r = pendingToRun;
+                pendingToRun = null;
+                r.run();
+            }
+        }
+        
+        public void execute(Runnable runnable, boolean clearViews) {
+            if(runnable == null) {
+                runnable = () -> { };
+            }
+            if(pendingToRun != null) {
+                pendingToRun = runnable;
+                return;
+            }
+            if(!clearViews || clearViewStack(runnable)) {
+                runnable.run();
+            }
+        }
+
+        private boolean clearViewStack(Runnable pending) {
+            View view = contentMenu.keySet().stream().filter(v -> !v.isHomeView()).findAny().orElse(null);
+            if(view == null) {
+                return true;
+            }
+            pendingToRun = pending;
+            view.abort();
+            return false;
         }
 
         private View getViewFor(Component c) {
@@ -1479,6 +1524,7 @@ public abstract class Application {
             }
             ApplicationMenuItem m = contentMenu.get(view);
             if(m == null) {
+                runPending();
                 return;
             }
             if(!(view.isHomeView())) {
@@ -1493,6 +1539,10 @@ public abstract class Application {
             homeStack.remove(view);
             View parent = parents.remove(view);
             if(parent != null) {
+                if(pendingToRun != null) {
+                    parent.abort();
+                    return;
+                }
                 m = contentMenu.get(parent);
                 if(m != null) {
                     m.getElement().setEnabled(true);
@@ -1511,8 +1561,14 @@ public abstract class Application {
                         homeView = homeStack.remove(homeStack.size() - 1);
                         homeView.setVisible(true);
                     }
+                    runPending();
                 } else {
-                    select(stack.get(stack.size() - 1));
+                    view = stack.get(stack.size() - 1);
+                    if(pendingToRun != null) {
+                        view.abort();
+                        return;
+                    }
+                    select(view);
                 }
             }
         }
