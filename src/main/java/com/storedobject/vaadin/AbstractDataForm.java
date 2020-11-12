@@ -5,10 +5,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.shared.Registration;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -28,7 +27,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * Form embedded in this view.
      */
     protected AbstractForm<D> form;
-    private FormConstructed formConstructed;
+    private List<ConstructedListener> constructedListeners;
     private boolean formCreated = false;
     private HasContainer fieldContainerProvider;
     private final Set<String> readOnly = new HashSet<>();
@@ -46,29 +45,37 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
-     * This method is invoked when the form is constructed. The default implementation invokes {@link FormConstructed} action if set.
+     * This method is invoked when the form is constructed.
      */
     protected void formConstructed() {
+    }
+
+    /**
+     * This method is invoked to inform all {@link ConstructedListener}s when the form is constructed.
+     */
+    protected final void fireFormConstructed() {
         formCreated = true;
-        if(formConstructed != null) {
-            formConstructed.formConstructed();
+        formConstructed();
+        if(constructedListeners != null) {
+            constructedListeners.forEach(cl -> cl.constructed(this));
         }
     }
 
     /**
-     * Set the action to be carried out when the form is constructed.
+     * Add a {@link ConstructedListener} so that we will be informed about when the UI part is constructed.
      *
-     * @param formConstructed Action to be set
-     * @see #formConstructed()
+     * @param constructedListener Listener.
+     * @return Registration.
      */
-    public void setFormConstructedAction(FormConstructed formConstructed) {
-        if(formCreated) {
-            if(formConstructed != null) {
-                formConstructed.formConstructed();
-            }
-            return;
+    public Registration addConstructedListener(ConstructedListener constructedListener) {
+        if(constructedListeners == null) {
+            constructedListeners = new ArrayList<>();
         }
-        this.formConstructed = formConstructed;
+        constructedListeners.add(constructedListener);
+        if(formCreated) {
+            constructedListener.constructed(this);
+        }
+        return () -> constructedListeners.remove(constructedListener);
     }
 
     /**

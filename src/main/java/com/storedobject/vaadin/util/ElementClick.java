@@ -1,7 +1,8 @@
 package com.storedobject.vaadin.util;
 
 import com.storedobject.vaadin.EnhancedClickEvent;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
@@ -9,8 +10,8 @@ import elemental.json.JsonObject;
 
 public class ElementClick implements ClickNotifier {
 
-    private Component component;
-    private Listeners listeners = new ClickListeners();
+    private final Component component;
+    private final Listeners listeners = new ClickListeners();
 
     public ElementClick(Component component) {
         this(component, null);

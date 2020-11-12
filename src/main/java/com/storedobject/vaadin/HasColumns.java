@@ -10,6 +10,7 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.flow.shared.Registration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,6 +27,21 @@ import java.util.stream.Stream;
  * @author Syam
  */
 public interface HasColumns<T> extends ExecutableView {
+
+    /**
+     * Add a {@link ConstructedListener} so that we will be informed about when the columns are constructed.
+     *
+     * @param constructedListener Listener.
+     * @return Registration.
+     */
+    Registration addConstructedListener(ConstructedListener constructedListener);
+
+    /**
+     * Get the stream of {@link ConstructedListener}s what were added to this.
+     *
+     * @return Stream of {@link ConstructedListener}s.
+     */
+    Stream<ConstructedListener> streamConstructedListeners();
 
     /**
      * This method is invoked once all the columns are built and the grid is ready to display.
@@ -881,8 +897,8 @@ public interface HasColumns<T> extends ExecutableView {
 
         private void constructed() {
             if(grid instanceof HasColumns) {
-                //noinspection unchecked
-                ((HasColumns<T>) grid).constructed();
+                ((HasColumns<?>) grid).constructed();
+                ((HasColumns<?>) grid).streamConstructedListeners().forEach(cl -> cl.constructed(grid));
             }
         }
 

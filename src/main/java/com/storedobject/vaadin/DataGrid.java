@@ -2,8 +2,11 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.shared.Registration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Enhancement to Vaadin's Grid to handle Java Beans in a specialized way. Please note that this is not supporting the functionality supported
@@ -24,6 +27,7 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;
     private boolean firstFooter = true;
+    private List<ConstructedListener> constructedListeners;
 
     /**
      * Constructor that will generate columns from the Bean's properties.
@@ -53,6 +57,23 @@ public class DataGrid<T> extends Grid<T> implements HasColumns<T> {
     @Override
     public final SOGrid<T> getSOGrid() {
         return soGrid;
+    }
+
+    @Override
+    public Registration addConstructedListener(ConstructedListener constructedListener) {
+        if(constructedListeners == null) {
+            constructedListeners = new ArrayList<>();
+        }
+        constructedListeners.add(constructedListener);
+        if(soGrid.rendered()) {
+            constructedListener.constructed(this);
+        }
+        return () -> constructedListeners.remove(constructedListener);
+    }
+
+    @Override
+    public Stream<ConstructedListener> streamConstructedListeners() {
+        return constructedListeners == null ? Stream.empty() : constructedListeners.stream();
     }
 
     @Override

@@ -195,7 +195,7 @@ public abstract class AbstractForm<D> extends Composite<Component> {
      */
     protected void constructed() {
         if(view instanceof AbstractDataForm) {
-            ((AbstractDataForm<?>) view).formConstructed();
+            ((AbstractDataForm<?>) view).fireFormConstructed();
         }
     }
 

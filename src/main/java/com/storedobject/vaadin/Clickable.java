@@ -2,7 +2,10 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.ClickNotifier;
 import com.storedobject.vaadin.util.ElementClick;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.shared.Registration;
 
 /**
@@ -15,8 +18,8 @@ import com.vaadin.flow.shared.Registration;
  */
 public class Clickable<T extends Component> extends Composite<T> implements ClickNotifier {
 
-    private T component;
-    private ElementClick click;
+    private final T component;
+    private final ElementClick click;
 
     /**
      * Constructor.

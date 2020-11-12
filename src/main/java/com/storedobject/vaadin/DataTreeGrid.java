@@ -6,10 +6,13 @@ import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.function.ValueProvider;
+import com.vaadin.flow.shared.Registration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Enhancement to Vaadin's TreeGrid to handle Java Beans in a specialized way. Please note that this is not supporting the functionality supported
@@ -17,7 +20,7 @@ import java.util.function.Function;
  * createColumn methods. createColumn methods just return whether column can be created or not but, columns are created at a later stage
  * when all columns are defined and the ordinality of columns are determined. If you want to customize any Column, it can be done in
  * customizeColumn(String, Column) method or by invoking methods provided in this claas
- * (See the implentation of the interface {@link HasColumns}).
+ * (See the implementation of the interface {@link HasColumns}).
  * Each column has a "column name" and it gets mapped to the Bean's getXXX
  * method just like in Vaadin's Bean Grid. However, if a getXXX method is available in the DataGrid itself, that will be used for sourcing the
  * data for the respective column. Each column uses its respective column name as the key.
@@ -30,6 +33,7 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
 
     private final SOGrid<T> soGrid;
     private boolean firstFooter = true;
+    private List<ConstructedListener> constructedListeners;
 
     /**
      * Constructor that will generate columns from the Bean's properties.
@@ -69,6 +73,23 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
     @Override
     public final SOGrid<T> getSOGrid() {
         return soGrid;
+    }
+
+    @Override
+    public Registration addConstructedListener(ConstructedListener constructedListener) {
+        if(constructedListeners == null) {
+            constructedListeners = new ArrayList<>();
+        }
+        constructedListeners.add(constructedListener);
+        if(soGrid.rendered()) {
+            constructedListener.constructed(this);
+        }
+        return () -> constructedListeners.remove(constructedListener);
+    }
+
+    @Override
+    public Stream<ConstructedListener> streamConstructedListeners() {
+        return constructedListeners == null ? Stream.empty() : constructedListeners.stream();
     }
 
     @Override

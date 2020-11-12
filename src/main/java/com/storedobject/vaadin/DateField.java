@@ -9,8 +9,8 @@ import java.util.GregorianCalendar;
 import static java.util.Calendar.*;
 
 /**
- * A field to edit {@link Date}. Even though developers should start using {@link LocalDate}, almost all databases are still
- * using {@link Date}.
+ * A field to edit {@link Date}. Even though developers should start using {@link LocalDate}, almost all databases
+ * are still using {@link Date}.
  *
  * @author Syam
  */

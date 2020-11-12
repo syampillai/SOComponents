@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.upload.Upload;
 
@@ -10,14 +11,19 @@ import java.util.function.BiConsumer;
 
 /**
  * A class to process uploaded content. The content will be available to the "processor" as an {@link InputStream}.
- * The content must be read in completely from the stream by the processor's {@link BiConsumer}
+ * The content must be read completely from the stream by the processor's {@link BiConsumer}
  * because the stream is automatically closed after invoking this method.
  *
- * This component is a {@link com.vaadin.flow.component.HasValue} and the value returned is the number of files
- * successfully uploaded.
+ * <p>This component is a {@link com.vaadin.flow.component.HasValue} and the value returned is the number of files
+ * successfully uploaded.</p>
+ *
+ * <p>The default maximum file size is set to 10000000 bytes but it can be changed via the
+ * {@link Upload#setMaxFileSize(int)} method and the {@link Upload} component can be obtained via the
+ * {@link #getUploadComponent()} method.</p>
  *
  * @author Syam
  */
+@CssImport(value = "./so/upload/styles.css", themeFor = "vaadin-upload-file")
 public class UploadField extends CustomField<Integer> {
 
     private final Upload upload;
@@ -62,18 +68,31 @@ public class UploadField extends CustomField<Integer> {
         super(0);
         upload = new Upload(this::createStream);
         upload.setMaxFiles(maxFileCount);
-        upload.addFailedListener(e -> getU().access(() -> setReadOnly(true)));
+        upload.setMaxFileSize(10000000);
+        upload.addFileRejectedListener(e -> getU().access(() ->
+                inform("Rejected: " + e.getErrorMessage())));
+        upload.addFailedListener(e -> getU().access(() -> {
+            inform("Error: Upload Failed");
+            setReadOnly(true);
+        }));
         upload.addFinishedListener(e -> {
+            inform(null);
             ++fileCount;
-            String s = "Files: " + fileCount;
-            if(maxFileCount < Integer.MAX_VALUE) {
-                s += "/" + maxFileCount;
-            }
-            description.setText(s);
         });
         add(upload, description);
         setLabel(label);
         this.processor = processor;
+    }
+
+    private void inform(String m) {
+        String s = "Files: " + (fileCount + 1);
+        if(maxFileCount < Integer.MAX_VALUE) {
+            s += "/" + maxFileCount;
+        }
+        if(m != null) {
+            s += " - " + m;
+        }
+        description.setText(s);
     }
 
     /**
@@ -135,40 +154,50 @@ public class UploadField extends CustomField<Integer> {
     }
 
     private OutputStream createStream(String fileName, String mimeType) {
-        Application a = Application.get();
-        if(a != null) {
-            a.startPolling(this);
-        }
+        Application a = Application.get(ui);
         this.fileName = fileName;
         PipedOutputStream out = new PipedOutputStream();
         try {
             PipedInputStream in = new PipedInputStream(out);
+            if(a != null) {
+                a.startPolling(in);
+            }
             new Thread(() -> {
                 try {
                     process(in, mimeType);
-                } catch (Throwable ignored) {
+                } catch(Throwable processingError) {
+                    if(a != null) {
+                        a.log(processingError);
+                    } else {
+                        processingError.printStackTrace();
+                    }
+                    StyledText error = new StyledText("<span style=\"color:red\">Processing error!</span>");
+                    ui.access(() -> {
+                        UploadField.this.add(error);
+                        setReadOnly(true);
+                    });
                 }
                 try {
                     //noinspection StatementWithEmptyBody
                     while (in.read() != -1);
                 } catch(IOException ignore) {
                 }
-                try {
-                    out.close();
-                } catch (IOException ignore) {
-                }
-                try {
-                    in.close();
-                } catch (IOException ignore) {
-                }
-                if(a != null) {
-                   a.stopPolling(UploadField.this);
-                }
                 if(fileCount == maxFileCount) {
                     ui.access(() -> {
                         new Box(description);
                         setReadOnly(true);
                     });
+                }
+                try {
+                    out.close();
+                } catch (IOException ignore) {
+                }
+                try {
+                    if(a != null) {
+                        a.stopPolling(in);
+                    }
+                    in.close();
+                } catch (IOException ignore) {
                 }
             }).start();
         } catch (IOException ignored) {
