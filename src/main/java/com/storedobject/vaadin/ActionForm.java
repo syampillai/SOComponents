@@ -329,7 +329,7 @@ public class ActionForm extends DataForm {
     }
 
     /**
-     * Overriden to implement "preconfirm" check.
+     * Overridden to implement "preconfirm" check.
      *
      * @see #setPreconfirm(BooleanSupplier)
      * @param parent Parent view to lock
@@ -341,6 +341,7 @@ public class ActionForm extends DataForm {
             return;
         }
         super.execute(parent, doNotLock);
+        getContent().getElement().getStyle().set("min-height", "10px");
     }
 
     /**

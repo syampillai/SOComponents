@@ -58,6 +58,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
         formConstructed();
         if(constructedListeners != null) {
             constructedListeners.forEach(cl -> cl.constructed(this));
+            constructedListeners = null;
         }
     }
 
@@ -68,13 +69,14 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      * @return Registration.
      */
     public Registration addConstructedListener(ConstructedListener constructedListener) {
+        if(formCreated) {
+            constructedListener.constructed(this);
+            return () -> {};
+        }
         if(constructedListeners == null) {
             constructedListeners = new ArrayList<>();
         }
         constructedListeners.add(constructedListener);
-        if(formCreated) {
-            constructedListener.constructed(this);
-        }
         return () -> constructedListeners.remove(constructedListener);
     }
 

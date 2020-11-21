@@ -44,6 +44,11 @@ public interface HasColumns<T> extends ExecutableView {
     Stream<ConstructedListener> streamConstructedListeners();
 
     /**
+     * Clear all {@link ConstructedListener}s.
+     */
+    void clearConstructedListeners();
+
+    /**
      * This method is invoked once all the columns are built and the grid is ready to display.
      */
     default void constructed() {
@@ -892,13 +897,16 @@ public interface HasColumns<T> extends ExecutableView {
             this.columns = columns;
             grid.addAttachListener(e -> init());
             grid.getElement().getClassList().add("so-grid");
+            grid.setSizeFull();
             getApplication();
         }
 
         private void constructed() {
             if(grid instanceof HasColumns) {
-                ((HasColumns<?>) grid).constructed();
-                ((HasColumns<?>) grid).streamConstructedListeners().forEach(cl -> cl.constructed(grid));
+                HasColumns<?> hc = (HasColumns<?>) grid;
+                hc.constructed();
+                hc.streamConstructedListeners().forEach(cl -> cl.constructed(grid));
+                hc.clearConstructedListeners();
             }
         }
 

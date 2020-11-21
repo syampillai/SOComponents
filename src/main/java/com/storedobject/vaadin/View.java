@@ -133,10 +133,7 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Set the "content" of the view. Unless it is a {@link Dialog} component, it will be displayed with 5 pixels margins
-     * and centered in a "CSS flex" container by the {@link Application} when the view is executed. So, it is possible
-     * to set "flex item" properties for the component if required. The value of "flex-grow" property will be set
-     * to "1" by this method.
+     * Set the "content" of the view.
      *
      * @param component Component to be displayed.
      */
@@ -154,9 +151,6 @@ public class View implements ExecutableView {
             parent.appendChild(component.getElement());
         }
         this.component = component;
-        if(!(component instanceof Dialog)) {
-            component.getElement().getStyle().set("flex-grow", "1");
-        }
     }
 
     private Element parent() {

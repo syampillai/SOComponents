@@ -7,7 +7,8 @@ import com.vaadin.flow.dom.Style;
 
 /**
  * A responsive layout that can be used to display components (typically Buttons horizontally).
- * Unlike {@link com.vaadin.flow.component.orderedlayout.HorizontalLayout}, this wraps its components to more than one row if required.
+ * Unlike {@link com.vaadin.flow.component.orderedlayout.HorizontalLayout}, this wraps its components to more than
+ * one row if required.
  *
  * @author Syam
  */

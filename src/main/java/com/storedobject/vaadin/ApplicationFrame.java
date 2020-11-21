@@ -1,9 +1,6 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Focusable;
-import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -90,6 +87,26 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
             }
         }
         super.onAttach(attachEvent);
+        UI.getCurrent().getElement().getStyle().set("--so-header-height", getHeaderHeight());
+    }
+
+    /**
+     * Get the height of the header area.
+     *
+     * @return Height. Default value is "9vh".
+     */
+    public String getHeaderHeight() {
+        return "9vh";
+    }
+
+    @Override
+    public String getContentWidth() {
+        return "calc(100vw - var(--vaadin-app-layout-drawer-offset-left))";
+    }
+
+    @Override
+    public String getContentHeight() {
+        return "calc(100vh - var(--so-header-height))";
     }
 
     /**
@@ -107,6 +124,9 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     private Component getLogoInt() {
         if(logo == null) {
             logo = getLogo();
+            if(logo instanceof com.vaadin.flow.component.HasSize) {
+                ((com.vaadin.flow.component.HasSize) logo).setHeight(getHeaderHeight());
+            }
         }
         return logo;
     }

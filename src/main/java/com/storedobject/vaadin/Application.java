@@ -8,6 +8,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
@@ -1247,7 +1248,16 @@ public abstract class Application {
     }
 
     /**
-     * Execute a command.
+     * Get the number of active {@link View}s ({@link HomeView}s are not counted).
+     *
+     * @return Number of active views.
+     */
+    public int getActiveViewCount() {
+        return (int) viewManager.contentMenu.keySet().stream().filter(v -> !v.isHomeView()).count();
+    }
+
+    /**
+     * Execute a command. (The command will be executed only if the current UI is associated with this application).
      *
      * @param command Command to execute by invoking its {@link Runnable#run()} method.
      * @param clearViews If <code>true</code> is passed, all {@link View}s will be closed (by invoking
@@ -1255,7 +1265,24 @@ public abstract class Application {
      */
     public void execute(Runnable command, boolean clearViews) {
         if(viewManager != null) {
-            viewManager.execute(command, clearViews);
+            UI ui = getUI();
+            if(ui != null && UI.getCurrent() == ui) {
+                viewManager.execute(command, clearViews);
+            }
+        }
+    }
+
+    /**
+     * Execute a command. (The command will be executed only if the current UI is associated with this application).
+     *
+     * @param command Command to execute by invoking its {@link Runnable#run()} method.
+     */
+    public void execute(Runnable command) {
+        if(viewManager != null) {
+            UI ui = getUI();
+            if(ui != null && UI.getCurrent() == ui) {
+                command.run();
+            }
         }
     }
 
@@ -1408,7 +1435,7 @@ public abstract class Application {
         public ViewManager(ApplicationView applicationView) {
             this.applicationView = applicationView;
             this.menu = applicationView.layout.getMenu();
-            this.content = new Content();
+            this.content = new Content(applicationView.layout);
             applicationView.layout.setContent(this.content);
         }
 
@@ -1489,7 +1516,7 @@ public abstract class Application {
                 if(!doNotLock) {
                     ApplicationMenuItem m = contentMenu.get(parent);
                     if(m != null) {
-                        m.getElement().setEnabled(false);
+                        m.setEnabled(false);
                     }
                 }
             }
@@ -1545,7 +1572,7 @@ public abstract class Application {
                 }
                 m = contentMenu.get(parent);
                 if(m != null) {
-                    m.getElement().setEnabled(true);
+                    m.setEnabled(true);
                 }
                 boolean selected = select(parent);
                 parent.returnedFrom(view);
@@ -1565,6 +1592,10 @@ public abstract class Application {
                 } else {
                     view = stack.get(stack.size() - 1);
                     if(pendingToRun != null) {
+                        if(view instanceof HomeView) {
+                            runPending();
+                            return;
+                        }
                         view.abort();
                         return;
                     }
@@ -1591,7 +1622,7 @@ public abstract class Application {
             if(m == null) {
                 return false;
             }
-            if(!m.getElement().isEnabled()) {
+            if(!m.isEnabled()) {
                 return true;
             }
             hideAllContent(view);
@@ -1607,7 +1638,7 @@ public abstract class Application {
         }
 
         private void hilite(ApplicationMenuItem menuItem) {
-            menuItem.getElement().setEnabled(true);
+            menuItem.setEnabled(true);
             contentMenu.values().forEach(mi -> {
                 if(mi == menuItem) {
                     mi.hilite();
@@ -1619,46 +1650,32 @@ public abstract class Application {
 
         @Tag("so-app-content")
         @JsModule("./so/appcontent/content.js")
-        private class Content extends Component {
+        private static class Content extends Component {
 
             private final ArrayList<WeakReference<ResizedListener>> resizeListeners = new ArrayList<>();
             private int width = -1, height = -1;
-            private int x = 0; // Size change request
 
-            public Content() {
+            public Content(ApplicationLayout applicationLayout) {
                 Element e = getElement();
                 e.setProperty("idContent", "so" + ID.newID());
-                e.getStyle().set("display", "flex").set("flex-flow", "column").set("align-content", "center").
-                        set("justify-content", "center").set("flex-grow", "1").set("margin", "5px");
-                applicationView.getApplication().addBrowserResizedListener((w, h) -> requestSize());
-            }
-
-            @Override
-            protected void onAttach(AttachEvent attachEvent) {
-                super.onAttach(attachEvent);
-                requestSize();
-            }
-
-            private void requestSize() {
-                if(++x > 9) {
-                    x = 0;
-                }
-                getElement().setProperty("x", "" + x);
+                Style s = UI.getCurrent().getElement().getStyle();
+                String size = applicationLayout.getContentWidth();
+                s.set("--so-content-width", size == null ? "100vh" : size);
+                size = applicationLayout.getContentHeight();
+                s.set("--so-content-height", size == null ? "100vh" : size);
             }
 
             @ClientCallable
             private void resized(int w, int h) {
-                if(!(width == w && height == h)) {
-                    this.width = w;
-                    this.height = h;
-                    resizeListeners.removeIf(wr -> wr.get() == null);
-                    resizeListeners.forEach(wr -> {
-                        ResizedListener l = wr.get();
-                        if (l != null) {
-                            l.resized(width, height);
-                        }
-                    });
-                }
+                this.width = w;
+                this.height = h;
+                resizeListeners.removeIf(wr -> wr.get() == null);
+                resizeListeners.forEach(wr -> {
+                    ResizedListener l = wr.get();
+                    if (l != null) {
+                        l.resized(width, height);
+                    }
+                });
             }
 
             Registration addContentResizedListener(ResizedListener listener) {

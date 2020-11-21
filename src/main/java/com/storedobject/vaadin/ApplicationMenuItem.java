@@ -29,4 +29,22 @@ public interface ApplicationMenuItem extends HasElement {
      * @param caption Caption
      */
     void setLabel(String caption);
+
+    /**
+     * Enable or disable this menu item. (A disabled item should not be clickable).
+     *
+     * @param enabled Whether to enable or not.
+     */
+    default void setEnabled(boolean enabled) {
+        getElement().setEnabled(enabled);
+    }
+
+    /**
+     * Is this menu item enabled?
+     *
+     * @return True/false.
+     */
+    default boolean isEnabled() {
+        return getElement().isEnabled();
+    }
 }

@@ -1,11 +1,11 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Default implementation of {@link ApplicationMenuItem} and {@link ApplicationMenuItemGroup}.
@@ -21,7 +21,7 @@ public class MenuItem extends Div implements ApplicationMenuItem {
     int level = 0;
     private final Span caption = new Span();
 
-    MenuItem(String label, Icon icon, Runnable runnable, boolean closeable) {
+    public MenuItem(String label, Icon icon, Runnable runnable, boolean closeable) {
         this.icon = icon;
         setClassName("so-menu");
         setLabel(label);
@@ -32,12 +32,7 @@ public class MenuItem extends Div implements ApplicationMenuItem {
             icon.getStyle().set("min-width", "1.25em");
         }
         if(runnable != null) {
-            new Clickable<>(closeable ? caption : this, e -> {
-                UI ui = getUI().orElse(null);
-                if(ui != null && UI.getCurrent() == ui) {
-                    runnable.run();
-                }
-            });
+            new Clickable<>(closeable ? caption : this, e -> Application.get().execute(runnable));
         }
         caption.getStyle().set("flex-grow", "100");
         add(caption);
@@ -102,6 +97,16 @@ public class MenuItem extends Div implements ApplicationMenuItem {
         this.caption.setText(caption);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return super.isEnabled();
+    }
+
     /**
      * Default implementation of {@link ApplicationMenuItemGroup}.
      *
@@ -110,7 +115,7 @@ public class MenuItem extends Div implements ApplicationMenuItem {
     private static class MenuItemGroup extends MenuItem implements ApplicationMenuItemGroup {
 
         private boolean plus = true;
-        private final ArrayList<MenuItem> items = new ArrayList<>();
+        private final List<MenuItem> items = new ArrayList<>();
 
         private MenuItemGroup(String label) {
             this(label, new Icon("vaadin:plus-circle"));

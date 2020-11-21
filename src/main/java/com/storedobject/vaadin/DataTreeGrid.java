@@ -77,19 +77,25 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
 
     @Override
     public Registration addConstructedListener(ConstructedListener constructedListener) {
+        if(soGrid.rendered()) {
+            constructedListener.constructed(this);
+            return () -> {};
+        }
         if(constructedListeners == null) {
             constructedListeners = new ArrayList<>();
         }
         constructedListeners.add(constructedListener);
-        if(soGrid.rendered()) {
-            constructedListener.constructed(this);
-        }
         return () -> constructedListeners.remove(constructedListener);
     }
 
     @Override
     public Stream<ConstructedListener> streamConstructedListeners() {
         return constructedListeners == null ? Stream.empty() : constructedListeners.stream();
+    }
+
+    @Override
+    public void clearConstructedListeners() {
+        constructedListeners = null;
     }
 
     @Override

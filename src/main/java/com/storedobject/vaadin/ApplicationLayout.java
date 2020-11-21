@@ -25,6 +25,24 @@ public interface ApplicationLayout {
     Component getComponent();
 
     /**
+     * Get the width o the content area.
+     *
+     * @return Width.
+     */
+    default String getContentWidth() {
+        return null;
+    }
+
+    /**
+     * Get the height o the content area.
+     *
+     * @return Height.
+     */
+    default String getContentHeight() {
+        return null;
+    }
+
+    /**
      * Set the "content" portion of the "layout". (Content portion - This is where the content of all {@link View}s
      * get added to.) This will the set by the {@link Application} instance.
      *
