@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
@@ -151,6 +152,28 @@ public class View implements ExecutableView {
             parent.appendChild(component.getElement());
         }
         this.component = component;
+    }
+
+    /**
+     * This will be invoked by the {@link Application} just before making the component of this view visible.
+     * The default implementation does the following to the component:
+     * <p>If it is a {@link Dialog}, just returns without making any changes.</p>
+     * <p>Will set the size to 'full' by invoking {@link HasSize#setSizeFull()} if it is an instance of
+     * {@link com.vaadin.flow.component.HasSize} so that it covers the entire content area.</p>
+     * <p>If the component is an instance of {@link Div}, its "display" style will be set to "flex" and its
+     * "flex-direction" will be set to "column".</p>
+     */
+    public void decorateComponent() {
+        Component c = getComponent();
+        if(c instanceof Dialog) {
+            return;
+        }
+        if(c instanceof HasSize) {
+            ((HasSize) c).setSizeFull();
+        }
+        if(c instanceof Div) {
+            c.getElement().getStyle().set("display", "flex").set("flex-direction", "column");
+        }
     }
 
     private Element parent() {

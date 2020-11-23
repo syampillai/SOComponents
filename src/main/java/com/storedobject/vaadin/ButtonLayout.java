@@ -92,7 +92,7 @@ public class ButtonLayout extends FlexLayout implements StickyElement {
         return filler;
     }
 
-    private void m(Component c, int margin) {
+    private static void m(Component c, int margin) {
         if(!(c instanceof InvisibleComponent)) {
             c.getElement().getStyle().set("margin-right", margin + "px");
         }

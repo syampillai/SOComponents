@@ -19,15 +19,17 @@ import java.util.stream.Stream;
  */
 public class Tabs extends Composite<Div> {
 
-    private Div container = new Div();
-    private com.vaadin.flow.component.tabs.Tabs tabs;
+    private final Div container = new Div();
+    private final com.vaadin.flow.component.tabs.Tabs tabs;
     private List<ComponentEventListener<SelectedChangeEvent>> listeners;
-    private Map<Tab, List<Component>> componentMap = new HashMap<>();
+    private final Map<Tab, List<Component>> componentMap = new HashMap<>();
 
     /**
      * Constructor.
      */
     public Tabs() {
+        this.container.getStyle().set("display", "flex").set("flex-direction", "column");
+        this.container.setSizeFull();
         this.tabs = new com.vaadin.flow.component.tabs.Tabs(false);
         this.tabs.addSelectedChangeListener(e -> {
             SelectedChangeEvent sce = new SelectedChangeEvent(this, e.getPreviousTab(), e.isFromClient());
@@ -137,7 +139,7 @@ public class Tabs extends Composite<Div> {
      */
     public void remove(Tab... tabs) {
         for(Tab tab: tabs) {
-            getChildren(tab).forEach(c -> container.remove(c));
+            getChildren(tab).forEach(container::remove);
             componentMap.remove(tab);
         }
         this.tabs.remove(tabs);

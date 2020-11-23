@@ -72,6 +72,7 @@ public class UploadField extends CustomField<Integer> {
         upload.addFileRejectedListener(e -> getU().access(() ->
                 inform("Rejected: " + e.getErrorMessage())));
         upload.addFailedListener(e -> getU().access(() -> {
+            --fileCount;
             inform("Error: Upload Failed");
             setReadOnly(true);
         }));

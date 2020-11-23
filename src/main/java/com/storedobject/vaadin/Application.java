@@ -1524,6 +1524,7 @@ public abstract class Application {
                 hideAllContent(null);
             }
             stack.add(view);
+            view.decorateComponent();
             if(!(c instanceof Dialog)) {
                 content.getElement().appendChild(c.getElement());
             }
