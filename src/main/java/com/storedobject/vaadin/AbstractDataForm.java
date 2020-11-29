@@ -779,6 +779,15 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
+     * This method is invoked whenever a field is attached to the form.
+     *
+     * @param fieldName Name of the field
+     * @param field Field
+     */
+    protected void fieldAttached(String fieldName, HasValue<?, ?> field) {
+    }
+
+    /**
      * Detach a field from the form. This is invoked whenever a field is removed to the form. The default implementation removes the component of
      * the field (if it is a component) from the field container.
      *
@@ -787,6 +796,15 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      */
     protected void detachField(String fieldName, HasValue<?, ?> field) {
         throw FIELD_ERROR;
+    }
+
+    /**
+     * This method is invoked whenever a field is detached from the form.
+     *
+     * @param fieldName Name of the field
+     * @param field Field
+     */
+    protected void fieldDetached(String fieldName, HasValue<?, ?> field) {
     }
 
     /**

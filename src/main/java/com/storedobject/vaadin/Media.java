@@ -121,7 +121,7 @@ public abstract class Media extends Component implements HasSize {
         registrations.clear();
         resources.clear();
         getElement().removeAllChildren();
-        getElement().setText("Media not suppoted on this browser!");
+        getElement().setText("Media not supported on this browser!");
     }
 
     @Override

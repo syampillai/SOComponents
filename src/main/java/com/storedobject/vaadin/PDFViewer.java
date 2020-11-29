@@ -1,8 +1,6 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.server.AbstractStreamResource;
 
 /**
@@ -40,6 +38,7 @@ public class PDFViewer extends AbstractResourcedComponent {
      * This will be invoked by the constructor for initial set up.
      */
     protected void init() {
+        super.init();
         getElement().setAttribute("type", "application/pdf");
     }
 

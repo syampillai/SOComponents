@@ -323,12 +323,18 @@ public abstract class AbstractForm<D> extends Composite<Component> {
             if(field instanceof ViewDependent && view != null) {
                 ((ViewDependent) field).setDependentView(view);
             }
+            if(view instanceof AbstractDataForm) {
+                ((AbstractDataForm<?>) view).fieldAttached(fieldName, field);
+            }
         }
     }
 
     private void detachF(String fieldName, HasValue<?, ?> field) {
         if(fieldName != null && field != null) {
             detachField(fieldName, field);
+            if(view instanceof AbstractDataForm) {
+                ((AbstractDataForm<?>) view).fieldDetached(fieldName, field);
+            }
         }
     }
 

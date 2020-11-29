@@ -8,6 +8,8 @@ import com.vaadin.flow.server.StreamResource;
 
 /**
  * Abstract "resourced component" that knows how to register/unregister the resource during attach/detach events.
+ * By default, it will set he "display" style to "flex" and size to "full". Inherited classes may override this if
+ * required.
  *
  * @author Syam
  */
@@ -27,13 +29,11 @@ public abstract class AbstractResourcedComponent extends Component implements Re
      * @param fileURI URI of the file to view
      */
     public AbstractResourcedComponent(String fileURI) {
-        ID.set(this);
         init();
         resourceSupport = new ResourceSupport(this);
         if(fileURI != null) {
             setURI(fileURI);
         }
-        setSizeFull();
     }
 
     /**
@@ -41,19 +41,21 @@ public abstract class AbstractResourcedComponent extends Component implements Re
      * @param streamResource Stream resource
      */
     public AbstractResourcedComponent(AbstractStreamResource streamResource) {
-        ID.set(this);
         init();
         resourceSupport = new ResourceSupport(this);
         if(streamResource != null) {
             setSource(streamResource);
         }
-        setSizeFull();
     }
 
     /**
-     * This will be invoked by the constructor for initial set up. The default implementation does nothing.
+     * This will be invoked by the constructor for initial set up. The default implementation sets the
+     * "display" style to "flex" and size to "full". I also sets a unique "id" attribute.
      */
     protected void init() {
+        ID.set(this);
+        getElement().getStyle().set("display", "flex");
+        setSizeFull();
     }
 
     /**
