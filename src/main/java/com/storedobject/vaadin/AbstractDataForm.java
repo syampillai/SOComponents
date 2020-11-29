@@ -550,6 +550,34 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
+     * Set fields visible. (By default fields are visible).
+     *
+     * @param visible To make it visible or not
+     * @param fieldNames Field names
+     */
+    public void setFieldVisible(boolean visible, String... fieldNames) {
+        if(visible) {
+            setFieldVisible(fieldNames);
+        } else {
+            setFieldHidden(fieldNames);
+        }
+    }
+
+    /**
+     * Set fields visible. (By default fields are visible).
+     *
+     * @param visible To make it visible or not
+     * @param fields Fields
+     */
+    public void setFieldVisible(boolean visible, HasValue<?, ?>... fields) {
+        if(visible) {
+            setFieldVisible(fields);
+        } else {
+            setFieldHidden(fields);
+        }
+    }
+
+    /**
      * Set fields hidden. (By default fields are visible).
      *
      * @param fieldNames Field names
@@ -712,6 +740,34 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
                 readOnly.add(fieldName);
             }
             readOnlyFields.add(field);
+        }
+    }
+
+    /**
+     * Set fields read only. (By default fields are editable).
+     *
+     * @param readOnly Read-only or not.
+     * @param fieldNames Field names
+     */
+    public void setFieldReadOnly(boolean readOnly, String... fieldNames) {
+        if(readOnly) {
+            setFieldReadOnly(fieldNames);
+        } else {
+            setFieldEditable(fieldNames);
+        }
+    }
+
+    /**
+     * Set fields read only. (By default fields are editable).
+     *
+     * @param readOnly Read-only or not.
+     * @param fields Fields
+     */
+    public void setFieldReadOnly(boolean readOnly, HasValue<?, ?>... fields) {
+        if(readOnly) {
+            setFieldReadOnly(fields);
+        } else {
+            setFieldEditable(fields);
         }
     }
 
