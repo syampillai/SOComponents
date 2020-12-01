@@ -5,12 +5,12 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>8.3.4</version>
+    <version>8.4.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>17.0.10</vaadin.version>
+        <vaadin.version>17.0.11</vaadin.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

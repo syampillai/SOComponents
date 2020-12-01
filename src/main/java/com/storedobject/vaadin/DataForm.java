@@ -98,7 +98,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
         if(windowMode) {
             Window window = createWindow(c);
             if(window == null) {
-                window = new Window(c);
+                window = new Window(new WindowDecorator(this), c);
             }
             setComponent(window);
             getContent().getElement().getStyle().

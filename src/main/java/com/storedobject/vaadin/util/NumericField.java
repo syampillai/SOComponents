@@ -18,6 +18,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
 
     protected NumericField(T defaultValue) {
         super(defaultValue);
+        ((TextField)getField()).setAutoselect(true);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.shared.Registration;
@@ -136,7 +138,10 @@ public class DetailComponent extends Composite<Div> implements HasSize {
         ButtonLayout summaryLayout = new ButtonLayout();
         HasComponents titleComponent = createHeader(header);
         if(!(titleComponent instanceof Component)) {
-            titleComponent = new H3(header);
+            titleComponent = new Span(header);
+            ((HasStyle)titleComponent).getStyle()
+                    .set("font-size", "var(--lumo-font-size-xl)")
+                    .set("font-weight", "bold");
         }
         Style style = titleComponent.getElement().getStyle();
         style.set("padding", "0px");

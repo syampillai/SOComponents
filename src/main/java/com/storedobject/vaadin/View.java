@@ -34,6 +34,10 @@ public class View implements ExecutableView {
     private Focusable<?> firstFocus;
     private Application application;
     private ApplicationMenuItem menuItem;
+    /**
+     * Window decorator when this is a {@link Window}.
+     */
+    WindowDecorator windowDecorator;
 
     /**
      * Create a View with no caption.
@@ -387,9 +391,12 @@ public class View implements ExecutableView {
      */
     @Override
     public void setCaption(String caption) {
-        this.caption = caption;
+        this.caption = caption == null ? "" : caption;
         if(menuItem != null) {
             menuItem.setLabel(caption);
+        }
+        if(windowDecorator != null) {
+            windowDecorator.setCaption(caption);
         }
     }
 

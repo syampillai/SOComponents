@@ -17,7 +17,7 @@ import com.vaadin.flow.shared.Registration;
 @Tag("span")
 public class SpeakerButton extends Component implements Application.SpeakerToggledListener {
 
-    private ImageButton icon;
+    private final ImageButton icon;
     private Registration registration;
 
     /**
@@ -35,6 +35,7 @@ public class SpeakerButton extends Component implements Application.SpeakerToggl
         getElement().setAttribute("title", "Toggle speaker output");
         getElement().setAttribute("onclick", "window.speechSynthesis.speak(new SpeechSynthesisUtterance('Speaker output toggled'));this.blur()");
         getElement().appendChild(icon.getElement());
+        icon.setColor("var(--lumo-primary-contrast-color)");
     }
 
     @Override
@@ -94,4 +95,12 @@ public class SpeakerButton extends Component implements Application.SpeakerToggl
         return this;
     }
 
+    /**
+     * Set color.
+     *
+     * @param color Color to set.
+     */
+    public void setColor(String color) {
+        icon.setColor(color);
+    }
 }

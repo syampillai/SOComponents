@@ -2,7 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
@@ -12,8 +12,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  */
 public class WindowDecorator extends Composite<ButtonLayout> {
 
-    private ButtonLayout content = new ButtonLayout();
-    private H3 titleText;
+    private static final String COLOR = "var(--lumo-primary-contrast-color)";
+    private final ButtonLayout content = new ButtonLayout();
+    private final Span titleText;
 
     /**
      * Constructor.
@@ -22,25 +23,30 @@ public class WindowDecorator extends Composite<ButtonLayout> {
      * @param headerComponents Additional header components to be added just before "close" button
      */
     public WindowDecorator(View view, Component... headerComponents) {
-        titleText = new H3("");
-        titleText.getStyle().set("color", "var(--lumo-primary-contrast-color)");
-        titleText.getStyle().set("padding", "0px");
-        titleText.getStyle().set("margin", "0px");
-        titleText.getStyle().set("display", "flex");
-        titleText.getStyle().set("flex-grow", "100");
+        titleText = new Span("");
+        titleText.getStyle()
+                .set("color", COLOR)
+                .set("font-size", "var(--lumo-font-size-xl)")
+                .set("font-weight", "bold")
+                .set("padding", "0px").set("margin", "0px 0px 0px 2px").set("display", "flex").set("flex-grow", "100")
+                .set("text-overflow", "ellipsis");
         content.setWidthFull();
         ImageButton close = new ImageButton(VaadinIcon.CLOSE, view instanceof DataForm ? e -> ((DataForm) view).cancel() : e -> view.abort());
+        close.withBox();
+        close.setColor(COLOR);
         content.add(titleText);
         if(headerComponents != null) {
             content.add(headerComponents);
         }
         close.getElement().setAttribute("title", view instanceof DataForm ? "Cancel" : "Close");
-        content.add(close.withBox());
+        content.add(close);
+        close.getStyle().set("margin-right", "2px");
         Box box = new Box(content);
         box.alignSizing();
-        content.getStyle().set("background-color", "var(--lumo-primary-color-50pct)");
-        content.getStyle().set("color", "var(--lumo-primary-contrast-color)");
+        box.setStyle("background-color", "var(--lumo-contrast-50pct)");
+        content.getStyle().set("flex-wrap", "nowrap");
         setCaption(view.getCaption());
+        view.windowDecorator = this;
     }
 
     @Override
