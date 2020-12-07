@@ -57,6 +57,12 @@ public class ImageView extends View implements HomeView {
         setComponent(c == null ? image : c);
     }
 
+    @Override
+    public void decorateComponent() {
+        super.decorateComponent();
+        getComponent().getElement().getStyle().set("padding", "0px");
+    }
+
     /**
      * Set the URL resource of the image content.
      *

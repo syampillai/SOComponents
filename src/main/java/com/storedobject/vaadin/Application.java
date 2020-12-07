@@ -1661,9 +1661,15 @@ public abstract class Application {
                 e.setProperty("idContent", "so" + ID.newID());
                 Style s = UI.getCurrent().getElement().getStyle();
                 String size = applicationLayout.getContentWidth();
-                s.set("--so-content-width", size == null ? "100vh" : size);
+                if(size == null) {
+                    size = "100vw";
+                }
+                s.set("--so-content-width", size);
                 size = applicationLayout.getContentHeight();
-                s.set("--so-content-height", size == null ? "100vh" : size);
+                if(size == null) {
+                    size = "100vh";
+                }
+                s.set("--so-content-height", size);
             }
 
             @ClientCallable

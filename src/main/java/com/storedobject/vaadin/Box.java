@@ -13,7 +13,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 @CssImport("./so/hover/styles.css")
 public class Box extends Composite<Component> {
 
-    private static final String BACKGROUND = "var(--lumo-contrast-20pct)";
+    private static final String BACKGROUND = "var(--lumo-contrast-10pct)";
     private final Component component;
 
     /**
@@ -145,6 +145,7 @@ public class Box extends Composite<Component> {
 
     /**
      * Align the box in such way that total width/height of the box will be same as component's width/height.
+     * However, margin is still accounted for while computing the size.
      */
     public void alignSizing() {
         setStyle("box-sizing", "border-box");

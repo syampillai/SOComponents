@@ -164,6 +164,8 @@ public class View implements ExecutableView {
      * <p>If it is a {@link Dialog}, just returns without making any changes.</p>
      * <p>Will set the size to 'full' by invoking {@link HasSize#setSizeFull()} if it is an instance of
      * {@link com.vaadin.flow.component.HasSize} so that it covers the entire content area.</p>
+     * <p>Padding will be set to 5px and box-sizing to border-box. So, if you want to fill the component to
+     * the entire content area, you will have to override this method and set the padding to 0px.</p>
      * <p>If the component is an instance of {@link Div}, its "display" style will be set to "flex" and its
      * "flex-direction" will be set to "column".</p>
      */
@@ -178,6 +180,7 @@ public class View implements ExecutableView {
         if(c instanceof Div) {
             c.getElement().getStyle().set("display", "flex").set("flex-direction", "column");
         }
+        c.getElement().getStyle().set("padding", "5px").set("box-sizing", "border-box");
     }
 
     private Element parent() {

@@ -25,7 +25,7 @@ public interface ApplicationLayout {
     Component getComponent();
 
     /**
-     * Get the width o the content area.
+     * Get the width of the content area.
      *
      * @return Width.
      */
@@ -34,7 +34,7 @@ public interface ApplicationLayout {
     }
 
     /**
-     * Get the height o the content area.
+     * Get the height of the content area.
      *
      * @return Height.
      */
