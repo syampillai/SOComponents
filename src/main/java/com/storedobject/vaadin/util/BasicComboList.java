@@ -1,6 +1,7 @@
 package com.storedobject.vaadin.util;
 
 import com.vaadin.flow.component.listbox.ListBox;
+import com.vaadin.flow.component.listbox.dataview.ListBoxListDataView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,14 +22,14 @@ public class BasicComboList<T> extends ListBox<T> {
     }
 
     @Override
-    public void setItems(Collection<T> items) {
+    public ListBoxListDataView<T> setItems(Collection<T> items) {
         if(items == null) {
-            setItems(new ArrayList<>());
-            return;
+            return setItems(new ArrayList<>());
         }
         this.list = new ArrayList<>(items);
-        super.setItems(this.list);
+        ListBoxListDataView<T> r = super.setItems(this.list);
         setFirstValue();
+        return r;
     }
 
     protected void setFirstValue() {

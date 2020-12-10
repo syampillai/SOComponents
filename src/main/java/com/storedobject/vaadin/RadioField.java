@@ -1,7 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.component.radiobutton.dataview.RadioButtonGroupListDataView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class RadioField<T> extends RadioButtonGroup<T> {
 
-    private List<T> items = new ArrayList<>();
+    private RadioButtonGroupListDataView<T> view;
 
     /**
      * Constructor.
@@ -59,8 +59,7 @@ public class RadioField<T> extends RadioButtonGroup<T> {
      * @param choices Choices
      */
     public RadioField(String label, Iterable<T> choices) {
-        this.items = createList(choices);
-        setItems();
+        setItems(createList(choices));
         setLabel(label);
     }
 
@@ -70,28 +69,15 @@ public class RadioField<T> extends RadioButtonGroup<T> {
         return a;
     }
 
-    /**
-     * This does not do anything.
-     * @param dataProvider Data provider
-     */
     @Override
-    public void setDataProvider(DataProvider<T, ?> dataProvider) {
-    }
-
-    @Override
-    public void setItems(Collection<T> items) {
-        this.items.clear();
-        this.items.addAll(items);
-        setItems();
+    public RadioButtonGroupListDataView<T> setItems(Collection<T> items) {
+        view = super.setItems(items);
+        if(!items.isEmpty()) {
+            setValue(view.getItem(0));
+        }
+        return view;
     }
     
-    private void setItems() {
-        super.setDataProvider(DataProvider.ofCollection(items));
-        if(!items.isEmpty()) {
-            setValue(items.get(0));
-        }
-    }
-
     /**
      * Get the index of the current value.
      * @return Index of the current value.
@@ -106,7 +92,12 @@ public class RadioField<T> extends RadioButtonGroup<T> {
      * @return Index of a value.
      */
     public int getIndex(T value) {
-        return items.indexOf(value);
+        for(int i = 0; i < view.getItemCount(); i++) {
+            if(view.getItem(i).equals(value)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -115,8 +106,8 @@ public class RadioField<T> extends RadioButtonGroup<T> {
      * @return Value for the index.
      */
     public T getValue(int index) {
-        if(index >= 0 && index < items.size()) {
-            return items.get(index);
+        if(index >= 0 && index < view.getItemCount()) {
+            return view.getItem(index);
         }
         return null;
     }
@@ -126,8 +117,8 @@ public class RadioField<T> extends RadioButtonGroup<T> {
      * @param index Index
      */
     public void setIndex(int index) {
-        if(index >= 0 && index < items.size()) {
-            setValue(items.get(index));
+        if(index >= 0 && index < view.getItemCount()) {
+            setValue(view.getItem(index));
         }
     }
 }

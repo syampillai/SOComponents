@@ -1,8 +1,8 @@
 package com.storedobject.vaadin.util;
 
+import com.storedobject.helper.ID;
 import com.storedobject.vaadin.AbstractForm;
 import com.storedobject.vaadin.Alert;
-import com.storedobject.vaadin.ID;
 import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;

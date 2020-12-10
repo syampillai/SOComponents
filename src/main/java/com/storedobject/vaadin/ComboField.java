@@ -1,9 +1,11 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.component.combobox.dataview.ComboBoxListDataView;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -14,8 +16,7 @@ import java.util.stream.Stream;
  */
 public class ComboField<T> extends ComboBox<T> {
 
-    private final List<T> list = new ArrayList<>();
-    private final ListDataProvider<T> dataProvider;
+    private ComboBoxListDataView<T> view;
 
     /**
      * Constructor.
@@ -55,9 +56,7 @@ public class ComboField<T> extends ComboBox<T> {
      */
     public ComboField(String label, Collection<T> list) {
         super(label);
-        this.list.addAll(list);
-        this.dataProvider = new ListDataProvider<>(this.list);
-        setDataProvider(dataProvider);
+        setItems(list);
     }
 
     /**
@@ -67,10 +66,12 @@ public class ComboField<T> extends ComboBox<T> {
      * @return Index of the item or -1 if not found.
      */
     public int getIndex(T item) {
-        if(item == null) {
-            return -1;
+        for(int i = 0; i < view.getItemCount(); i++) {
+            if(view.getItem(i).equals(item)) {
+                return i;
+            }
         }
-        return list.indexOf(item);
+        return -1;
     }
 
     /**
@@ -80,10 +81,10 @@ public class ComboField<T> extends ComboBox<T> {
      * @return Item or null if not found.
      */
     public T getValue(int index) {
-        if(index < 0 || index >= list.size()) {
+        if(index < 0 || index >= view.getItemCount()) {
             return null;
         }
-        return list.get(index);
+        return view.getItem(index);
     }
 
     /**
@@ -92,10 +93,10 @@ public class ComboField<T> extends ComboBox<T> {
      * @param index Index.
      */
     public void setIndex(int index) {
-        if(index < 0 || index >= list.size()) {
+        if(index < 0 || index >= view.getItemCount()) {
             return;
         }
-        setValue(list.get(index));
+        setValue(view.getItem(index));
     }
 
     /**
@@ -118,7 +119,7 @@ public class ComboField<T> extends ComboBox<T> {
      * @return Number of items.
      */
     public int size() {
-        return list.size();
+        return view.getItemCount();
     }
 
     /**
@@ -127,7 +128,7 @@ public class ComboField<T> extends ComboBox<T> {
      * @return Stream of items from the combo.
      */
     public Stream<T> items() {
-        return list.stream();
+        return view.getItems();
     }
 
     /**
@@ -136,9 +137,9 @@ public class ComboField<T> extends ComboBox<T> {
      * @param items Items.
      */
     @Override
-    public void setItems(Collection<T> items) {
-        list.clear();
-        addItems(items);
+    public ComboBoxListDataView<T> setItems(Collection<T> items) {
+        view = super.setItems(items);
+        return view;
     }
 
     /**
@@ -148,20 +149,8 @@ public class ComboField<T> extends ComboBox<T> {
      */
     @SafeVarargs
     @Override
-    public final void setItems(T... items) {
-        list.clear();
-        addItems(items);
-    }
-
-    /**
-     * Set items.
-     *
-     * @param items Items.
-     */
-    @Override
-    public void setItems(Stream<T> items) {
-        list.clear();
-        addItems(items);
+    public final ComboBoxListDataView<T> setItems(T... items) {
+        return setItems(Arrays.asList(items));
     }
 
     /**
@@ -169,8 +158,9 @@ public class ComboField<T> extends ComboBox<T> {
      *
      * @param items Items.
      */
-    public void removeItems(Collection<T> items) {
-        removeItems(items.stream());
+    public ComboBoxListDataView<T> removeItems(Collection<T> items) {
+        view.removeItems(items);
+        return view;
     }
 
     /**
@@ -179,8 +169,8 @@ public class ComboField<T> extends ComboBox<T> {
      * @param items Items.
      */
     @SafeVarargs
-    public final void removeItems(T... items) {
-        removeItems(Arrays.asList(items));
+    public final ComboBoxListDataView<T> removeItems(T... items) {
+        return removeItems(Arrays.asList(items));
     }
 
     /**
@@ -188,9 +178,9 @@ public class ComboField<T> extends ComboBox<T> {
      *
      * @param items Items.
      */
-    public void removeItems(Stream<T> items) {
-        items.forEach(list::remove);
-        refresh();
+    public ComboBoxListDataView<T> removeItems(Stream<T> items) {
+        items.forEach(view::removeItem);
+        return view;
     }
 
     /**
@@ -198,9 +188,9 @@ public class ComboField<T> extends ComboBox<T> {
      *
      * @param items Items.
      */
-    public void addItems(Collection<T> items) {
-        items.stream().filter(Objects::nonNull).forEach(list::add);
-        refresh();
+    public ComboBoxListDataView<T> addItems(Collection<T> items) {
+        view.addItems(items);
+        return view;
     }
 
     /**
@@ -209,15 +199,15 @@ public class ComboField<T> extends ComboBox<T> {
      * @param items Items.
      */
     @SafeVarargs
-    public final void addItems(T... items) {
+    public final ComboBoxListDataView<T> addItems(T... items) {
         if(items != null) {
             for(T item: items) {
                 if(item != null) {
-                    list.add(item);
+                    view.addItem(item);
                 }
             }
         }
-        refresh();
+        return view;
     }
 
     /**
@@ -225,16 +215,8 @@ public class ComboField<T> extends ComboBox<T> {
      *
      * @param items Items.
      */
-    public void addItems(Stream<T> items) {
-        items.filter(Objects::nonNull).forEach(list::add);
-        refresh();
-    }
-
-    private void refresh() {
-        if(getDataProvider() == dataProvider) {
-            dataProvider.refreshAll();
-        } else {
-            setDataProvider(dataProvider);
-        }
+    public ComboBoxListDataView<T> addItems(Stream<T> items) {
+        items.filter(Objects::nonNull).forEach(view::addItem);
+        return view;
     }
 }

@@ -5,12 +5,12 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>8.5.0</version>
+    <version>9.0.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>17.0.11</vaadin.version>
+        <vaadin.version>18.0.2</vaadin.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,6 +76,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Vaadin add-on SO Helper -->
+        <dependency>
+            <groupId>com.storedobject.helper</groupId>
+            <artifactId>so-helper</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- Vaadin add-on for text input formatting -->

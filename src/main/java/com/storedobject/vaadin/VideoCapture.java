@@ -1,5 +1,7 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
+import com.storedobject.helper.LitComponent;
 import com.storedobject.vaadin.util.MediaStreamVariable;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
@@ -7,10 +9,8 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.server.StreamReceiver;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.templatemodel.TemplateModel;
 import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
@@ -50,13 +50,9 @@ public class VideoCapture extends Video implements MediaCapture {
     public VideoCapture(com.vaadin.flow.component.html.Image image) {
         ID.set(this);
         camera = new Camera();
-        embedCamera();
+        getElement().appendChild(camera.getElement());
         camera.getElement().setAttribute("videoid", getId().orElse(""));
         attachImage(image);
-    }
-
-    private void embedCamera() {
-        getElement().appendChild(camera.getElement());
     }
 
     @Override
@@ -257,7 +253,7 @@ public class VideoCapture extends Video implements MediaCapture {
 
     @Tag("so-camera")
     @JsModule("./so/media/camera.js")
-    private class Camera extends PolymerTemplate<TemplateModel> {
+    private class Camera extends LitComponent {
 
         private final String STOP_CAMERA = "stopCamera";
         private final String START_RECORDING = "startRecording";
@@ -407,20 +403,8 @@ public class VideoCapture extends Video implements MediaCapture {
                     }
                     break;
             }
-            getApplication().getPage().executeJs("let v=document.getElementById('" + getId().orElse(null) +
-                    "');if(v!=null){v." + js + "();return 0;}else return 1;").
-                    then(Integer.class, r -> {
-                        if (r == 1) {
-                            lost(js);
-                        } else {
-                            prevCommand = js;
-                        }
-                    }, err -> getApplication().log(err));
-        }
-
-        private void lost(String pendingCommand) {
-            embedCamera();
-            _js(pendingCommand);
+            executeJS(js);
+            prevCommand = js;
         }
     }
 }

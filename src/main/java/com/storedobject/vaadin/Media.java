@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;
@@ -17,9 +18,9 @@ import java.util.ArrayList;
  */
 public abstract class Media extends Component implements HasSize {
 
-    private ArrayList<StreamResource> resources = new ArrayList<>();
-    private ArrayList<StreamRegistration> registrations = new ArrayList<>();
-    private ArrayList<Element> uriSources = new ArrayList<>();
+    private final ArrayList<StreamResource> resources = new ArrayList<>();
+    private final ArrayList<StreamRegistration> registrations = new ArrayList<>();
+    private final ArrayList<Element> uriSources = new ArrayList<>();
 
     /**
      * Constructor.

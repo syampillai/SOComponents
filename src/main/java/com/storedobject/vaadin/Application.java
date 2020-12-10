@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dialog.Dialog;

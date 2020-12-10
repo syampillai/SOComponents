@@ -1,15 +1,15 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
+import com.storedobject.helper.LitComponent;
 import com.storedobject.vaadin.util.MediaStreamVariable;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.server.StreamReceiver;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.templatemodel.TemplateModel;
 import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
 import elemental.json.JsonValue;
@@ -38,12 +38,8 @@ public class AudioCapture extends Audio implements MediaCapture {
     public AudioCapture() {
         ID.set(this);
         mic = new Mic();
-        embedMic();
-        mic.getElement().setAttribute("audioid", getId().orElse(""));
-    }
-
-    private void embedMic() {
         getElement().appendChild(mic.getElement());
+        mic.getElement().setAttribute("audioid", getId().orElse(""));
     }
 
     @Override
@@ -145,7 +141,7 @@ public class AudioCapture extends Audio implements MediaCapture {
 
     @Tag("so-audio")
     @JsModule("./so/media/audio.js")
-    private class Mic extends PolymerTemplate<TemplateModel> {
+    private class Mic extends LitComponent {
 
         private final String STOP_MIC = "stopMic";
         private final String START_RECORDING = "startRecording";
@@ -244,26 +240,14 @@ public class AudioCapture extends Audio implements MediaCapture {
                     }
                     break;
                 case START_RECORDING:
-                    if(!AudioCapture.this.isVisible() || recording == 1 || !AudioCapture.this.getParent().isPresent()) {
+                    if(!AudioCapture.this.isVisible() || recording == 1 || AudioCapture.this.getParent().isEmpty()) {
                         done();
                         return;
                     }
                     break;
             }
-            getApplication().getPage().executeJs("let v=document.getElementById('" + getId().orElse(null) +
-                    "');if(v!=null){v." + js + "();return 0;}else return 1;").
-                    then(Integer.class, r -> {
-                        if (r == 1) {
-                            lost(js);
-                        } else {
-                            prevCommand = js;
-                        }
-                    }, err -> getApplication().log(err));
-        }
-
-        private void lost(String pendingCommand) {
-            embedMic();
-            _js(pendingCommand);
+            executeJS(js);
+            prevCommand = js;
         }
     }
 }

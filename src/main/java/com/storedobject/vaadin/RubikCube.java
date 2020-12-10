@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.Tag;

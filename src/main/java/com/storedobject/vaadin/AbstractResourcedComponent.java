@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.DetachEvent;

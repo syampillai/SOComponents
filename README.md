@@ -4,6 +4,8 @@ A set of Vaadin Flow Components and Abstractions
 https://vaadin.com/directory/component/so-components
 
 ## Dependencies
+https://vaadin.com/directory/component/so-helper Ver 1.0.0 or later (Helper classes).
+
 https://vaadin.com/directory/component/textfield-formatter Ver 5.2.0 or later (for field formatting features).  
 Use versions < 1.3.0 if you don't want this dependency.
 
