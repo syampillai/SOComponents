@@ -717,6 +717,12 @@ public interface HasColumns<T> extends ExecutableView {
     default void clearAlerts() {
         ExecutableView.super.clearAlerts();
         View v = getSOGrid().getView(false);
+        if(v == null) {
+            Application a = Application.get();
+            if(a != null) {
+                v = a.getActiveView();
+            }
+        }
         if(v != null) {
             Application.clearAlerts(v);
         }

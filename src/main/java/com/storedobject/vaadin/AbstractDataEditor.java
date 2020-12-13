@@ -232,7 +232,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @param object Object to set
      */
     public void setObject(T object) {
-        form.setObject(object);
+        setObject(object, true);
     }
 
     /**

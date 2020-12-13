@@ -609,7 +609,7 @@ public abstract class Application {
             return;
         }
         List<Alert> listToRemove = new ArrayList<>(list);
-        listToRemove.removeIf(Alert::deleteOnClose);
+        listToRemove.removeIf(a -> !a.deleteOnClose());
         listToRemove.forEach(this::removeAlert);
         if(list.isEmpty()) {
             alerts.remove(owner);
