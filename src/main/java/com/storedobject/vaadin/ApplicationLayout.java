@@ -1,6 +1,8 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.dom.Style;
 
 /**
  * {@link Application} requires an instance of this class to determine the "layout" of its page.
@@ -49,6 +51,29 @@ public interface ApplicationLayout {
      * @param content Content component to be set
      */
     void setContent(Component content);
+
+    /**
+     * Resize the "content" portion of the "layout" to the desired size. This default implementation is suitable
+     * for almost all the cases. Otherwise, your overridden method should invoke this as part of your
+     * implementation because this sets some important style variables for sizing the "content" area.
+     */
+    default void resizeContent() {
+        UI ui = UI.getCurrent();
+        if(ui == null) {
+            return;
+        }
+        Style s = ui.getElement().getStyle();
+        String size = getContentWidth();
+        if(size == null) {
+            size = "100vw";
+        }
+        s.set("--so-content-width", size);
+        size = getContentHeight();
+        if(size == null) {
+            size = "100vh";
+        }
+        s.set("--so-content-height", size);
+    }
 
     /**
      * The "menu" of the layout.

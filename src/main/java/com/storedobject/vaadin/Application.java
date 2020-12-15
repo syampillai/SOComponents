@@ -9,7 +9,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
@@ -273,6 +272,17 @@ public abstract class Application {
         }
         if(!aList.contains(this)) {
             aList.add(this);
+        }
+        if(this.ui == null) { // Default styles for the first time only
+            ui.getElement().getStyle().
+                    set("--so-header-color", "var(--lumo-primary-contrast-color)").
+                    set("--so-header-background", "var(--lumo-primary-color)").
+                    set("--so-header-height", "9vh").
+                    set("--so-menu-drawer-color", "var(--so-header-color)").
+                    set("--so-header-background-50pct", "var(--lumo-primary-color-50pct)").
+                    set("--so-hover-background", "var(--lumo-primary-color-50pct)").
+                    set("--so-grid-selected-background", "var(--lumo-primary-color-50pct)").
+                    set("--so-grid-stripes-background", "var(--lumo-primary-color-10pct)");
         }
         this.ui = ui;
         attached();
@@ -1660,17 +1670,7 @@ public abstract class Application {
             public Content(ApplicationLayout applicationLayout) {
                 Element e = getElement();
                 e.setProperty("idContent", "so" + ID.newID());
-                Style s = UI.getCurrent().getElement().getStyle();
-                String size = applicationLayout.getContentWidth();
-                if(size == null) {
-                    size = "100vw";
-                }
-                s.set("--so-content-width", size);
-                size = applicationLayout.getContentHeight();
-                if(size == null) {
-                    size = "100vh";
-                }
-                s.set("--so-content-height", size);
+                applicationLayout.resizeContent();
             }
 
             @ClientCallable

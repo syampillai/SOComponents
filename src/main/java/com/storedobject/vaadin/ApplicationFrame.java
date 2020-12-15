@@ -19,23 +19,38 @@ import com.vaadin.flow.dom.Style;
 @CssImport(value = "./so/appframe/styles.css", themeFor = "vaadin-app-layout")
 public abstract class ApplicationFrame extends AppLayout implements ApplicationLayout {
 
-    private final Menu menu;
+    private ApplicationMenu menu;
     private Component logo;
     private HasText captionComponent, userNameComponent;
     private ButtonLayout toolbox = new ButtonLayout();
     private boolean initialized = false;
     private Focusable<?> menuSearcher;
+    private boolean drawer = false;
 
     /**
      * Constructor.
      */
     public ApplicationFrame() {
-        menu = new Menu(this);
         ID.set(this);
+    }
+
+    /**
+     * Create the menu. The component of the menu should be added to appropriate place within this method.
+     * The default implementation adds the menu to the "drawer" area along with the "menu searcher"
+     * {@link #getMenuSearcher()} if one is available.
+     *
+     * @return Menu.
+     */
+    protected ApplicationMenu createMenu() {
+        return createMenuInt();
+    }
+
+    private ApplicationMenu createMenuInt() {
+        menu = new Menu(this);
         Component c;
         addToNavbar(c = new DrawerToggle());
         Style s = c.getElement().getStyle();
-        s.set("color", "var(--lumo-primary-contrast-color)");
+        s.set("color", "var(--so-menu-drawer-color)");
         s.set("cursor", "pointer");
         c = getMenuSearcher();
         if(c != null) {
@@ -45,7 +60,14 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
             c.getElement().getStyle().set("flex-flow", "0");
             addToDrawer(c);
         }
-        addToDrawer(menu);
+        addToDrawer((Component) menu);
+        return menu;
+    }
+
+    @Override
+    public final void addToDrawer(Component... components) {
+        super.addToDrawer(components);
+        drawer = true;
     }
 
     private void noWrap(Component c) {
@@ -65,6 +87,12 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         if(!initialized) {
+            if(menu == null) {
+                menu = createMenu();
+            }
+            if(menu == null) {
+                menu = createMenuInt();
+            }
             initialized = true;
             if(getLogoInt() != null) {
                 addToNavbar(logo);
@@ -88,7 +116,29 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
             }
         }
         super.onAttach(attachEvent);
-        UI.getCurrent().getElement().getStyle().set("--so-header-height", getHeaderHeight());
+        styles("--so-header-background", getHeaderBackground(), "--so-header-color", getHeaderColor());
+        resizeContent();
+    }
+
+    private void styles(String... var_val) {
+        UI ui = UI.getCurrent();
+        if(ui == null) {
+            return;
+        }
+        Style s = ui.getElement().getStyle();
+        for(int i = 0; i < (var_val.length - 1); i++) {
+            if(var_val[i + 1] != null) {
+                s.set(var_val[i], var_val[i + 1]);
+            }
+            ++i;
+        }
+    }
+
+    @Override
+    public void resizeContent() {
+        ApplicationLayout.super.resizeContent();
+        styles("--so-header-height", getHeaderHeight());
+        getLogoInt();
     }
 
     /**
@@ -97,7 +147,25 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      * @return Height. Default value is "9vh".
      */
     public String getHeaderHeight() {
-        return "9vh";
+        return null;
+    }
+
+    /**
+     * Get the background color of the header area.
+     *
+     * @return Background color. Default is "var(--lumo-primary-color)";
+     */
+    public String getHeaderBackground() {
+        return null;
+    }
+
+    /**
+     * Get the foreground color of the header area.
+     *
+     * @return Color. Default is "var(--lumo-primary-contrast-color)";
+     */
+    public String getHeaderColor() {
+        return null;
     }
 
     @Override
@@ -126,7 +194,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         if(logo == null) {
             logo = getLogo();
             if(logo instanceof com.vaadin.flow.component.HasSize) {
-                ((com.vaadin.flow.component.HasSize) logo).setHeight(getHeaderHeight());
+                ((com.vaadin.flow.component.HasSize) logo).setHeight("var(--so-header-height)");
             }
         }
         return logo;
@@ -164,7 +232,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     public HasText getCaptionComponent() {
         if(captionComponent == null) {
             H2 c = new H2();
-            c.getStyle().set("color", "var(--lumo-primary-contrast-color)");
+            c.getStyle().set("color", "var(--so-header-color)");
             captionComponent = c;
         }
         return captionComponent;
@@ -179,17 +247,18 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     public HasText getUserNameComponent() {
         if(userNameComponent == null) {
             userNameComponent = new Span();
+            userNameComponent.getElement().getStyle().set("color", "var(--so-header-color)");
         }
         return userNameComponent;
     }
 
     @Override
-    public Component getComponent() {
+    public final Component getComponent() {
         return this;
     }
 
     @Override
-    public ApplicationMenu getMenu() {
+    public final ApplicationMenu getMenu() {
         return menu;
     }
 
@@ -198,7 +267,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      */
     @Override
     public void openMenu() {
-        if(menu.menuCount == 0) {
+        if(menu instanceof Menu && ((Menu) menu).menuCount == 0) {
             closeMenu();
             return;
         }
@@ -234,7 +303,9 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      */
     @Override
     public void setDrawerOpened(boolean drawerOpened) {
-        getElement().setProperty("drawerOpened", drawerOpened);
+        if(drawer) {
+            getElement().setProperty("drawerOpened", drawerOpened);
+        }
     }
 
     /**
@@ -244,7 +315,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      */
     @Override
     public void viewSelected(View view) {
-        if(isOverlay()) {
+        if(drawer && isOverlay()) {
             setDrawerOpened(false);
         }
     }

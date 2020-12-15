@@ -3,5 +3,5 @@
 }
 
 .so-hover:hover {
-    background-color: var(--lumo-primary-color-50pct);
+    background-color: var(--so-hover-background);
 }

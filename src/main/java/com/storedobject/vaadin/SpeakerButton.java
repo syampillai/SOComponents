@@ -35,7 +35,7 @@ public class SpeakerButton extends Component implements Application.SpeakerToggl
         getElement().setAttribute("title", "Toggle speaker output");
         getElement().setAttribute("onclick", "window.speechSynthesis.speak(new SpeechSynthesisUtterance('Speaker output toggled'));this.blur()");
         getElement().appendChild(icon.getElement());
-        icon.setColor("var(--lumo-primary-contrast-color)");
+        icon.setColor("var(--so-header-color)");
     }
 
     @Override

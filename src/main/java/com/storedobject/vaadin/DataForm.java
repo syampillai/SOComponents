@@ -241,7 +241,6 @@ public abstract class DataForm extends AbstractDataForm<Object> {
      * method did not raise any exception.
      * @throws Exception Exception raised will be displayed as a warning message.
      */
-    @SuppressWarnings("RedundantThrows")
     protected void validateData() throws Exception {
     }
 }

@@ -12,7 +12,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
  */
 public class WindowDecorator extends Composite<ButtonLayout> {
 
-    private static final String COLOR = "var(--lumo-primary-contrast-color)";
+    private static final String COLOR = "var(--so-header-color)";
     private final ButtonLayout content = new ButtonLayout();
     private final Span titleText;
 
@@ -43,7 +43,7 @@ public class WindowDecorator extends Composite<ButtonLayout> {
         close.getStyle().set("margin-right", "2px");
         Box box = new Box(content);
         box.alignSizing();
-        box.setStyle("background-color", "var(--lumo-contrast-50pct)");
+        box.setStyle("background-color", "var(--so-header-background-50pct)");
         content.getStyle().set("flex-wrap", "nowrap");
         setCaption(view.getCaption());
         view.windowDecorator = this;

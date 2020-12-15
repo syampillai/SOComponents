@@ -6,21 +6,21 @@
     padding: 4px;
     border-radius: 5px;
     border-width: 2px;
-    border-color: var(--lumo-contrast-20pct);
+    border-color: var(--so-menu-border-color, var(--lumo-contrast-20pct));
     border-style: solid;
 }
 
 .so-menu:hover {
-    background-color: var(--lumo-primary-color-50pct);
-    color: var(--lumo-primary-contrast-color);
+    background-color: var(--so-menu-hover-background, var(--lumo-primary-color-50pct));
+    color: var(--so-menu-hover-color, var(--lumo-primary-contrast-color));
 }
 
 .so-menu-active {
-    background-color: var(--lumo-primary-contrast-color);
-    color: var(--lumo-primary-text-color);
+    background-color: var(--so-menu-active-background, var(--lumo-primary-contrast-color));
+    color: var(--so-menu-active-color, var(--lumo-primary-text-color));
 }
 
 .so-menu-hilite {
-    background-color: var(--lumo-primary-color);
-    color: var(--lumo-primary-contrast-color);
+    background-color: var(--so-menu-hilite-background, var(--lumo-primary-color));
+    color: var(--so-menu-hilite-color, var(--lumo-primary-contrast-color));
 }
