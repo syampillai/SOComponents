@@ -1245,8 +1245,11 @@ public interface HasColumns<T> extends ExecutableView {
                 return grid.getClass().getMethod("is" + columnName, params);
             } catch (NoSuchMethodException ignore) {
             }
-            if(columnName.equals(columnName.toLowerCase())) {
-                return getOutsideMethod(Character.toUpperCase(columnName.charAt(0)) + columnName.substring(1), objectClass);
+            if(columnName.equals(columnName.toLowerCase())) { // Lowercase column name
+                columnName = Character.toUpperCase(columnName.charAt(0)) + columnName.substring(1);
+                if(!columnName.equals(columnName.toLowerCase())) { // Not fully non-alphabetic
+                    return getOutsideMethod(columnName, objectClass);
+                }
             }
             return null;
         }

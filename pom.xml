@@ -5,12 +5,12 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>9.1.0</version>
+    <version>9.1.1</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>18.0.2</vaadin.version>
+        <vaadin.version>18.0.3</vaadin.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -238,6 +238,17 @@
                             <!--
                             <additionalparam>-Xdoclint:none</additionalparam>
                             -->
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <!-- Generated file that shouldn't be included in add-ons -->
+                            <excludes>
+                                <exclude>META-INF/VAADIN/</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
