@@ -323,7 +323,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Get the field's "set" method. The default implementation checks both availability of setXXX method.
+     * Get the field's "set" method. The default implementation checks the availability of setXXX method.
      * @param fieldName Name of the field
      * @param getMethod "get" method of this field (determined through {@link #getFieldGetMethod(String)})
      * @return Field' "set" method (if method is found, it will returns <code>null</code>).
@@ -497,7 +497,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Handle errors while setting (committing)  values. Default implementation returns <code>true</code> without doing anything.
+     * Handle errors while setting (committing) values. Default implementation returns <code>true</code> without doing anything.
      * @param fieldName Name of the field
      * @param field Field
      * @param fieldValue Field's value that's being committed
