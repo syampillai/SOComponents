@@ -1506,6 +1506,12 @@ public abstract class Application {
         }
 
         public void attach(View view, boolean doNotLock, View parent) {
+            synchronized(stack) {
+                attachInt(view, doNotLock, parent);
+            }
+        }
+
+        private void attachInt(View view, boolean doNotLock, View parent) {
             if(select(view)) {
                 return;
             }
@@ -1554,6 +1560,12 @@ public abstract class Application {
         }
 
         public void detach(View view) {
+            synchronized(stack) {
+                detachInt(view);
+            }
+        }
+
+        private void detachInt(View view) {
             View child = child(view);
             if(child != null && executing(child)) {
                 child.detachParentOnClose();
