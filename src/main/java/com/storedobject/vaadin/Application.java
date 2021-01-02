@@ -1529,13 +1529,19 @@ public abstract class Application {
                 }
             }
             if(parent != null) {
-                parents.put(view, parent);
                 if(!doNotLock) {
+                    if(abortChild(parent, false)) {
+                        if(abortChild(parent, false)) {
+                            warning("Unable to run: " + view.getCaption());
+                            return;
+                        }
+                    }
                     ApplicationMenuItem m = contentMenu.get(parent);
                     if(m != null) {
                         m.setEnabled(false);
                     }
                 }
+                parents.put(view, parent);
             }
             if(!window) {
                 hideAllContent(null);
@@ -1559,6 +1565,19 @@ public abstract class Application {
             applicationView.layout.viewSelected(view);
         }
 
+        private boolean abortChild(View view, boolean suicide) {
+            View child = child(view);
+            if(child != null && executing(child)) {
+                if(suicide) {
+                    child.detachParentOnClose();
+                }
+                select(child);
+                child.abort();
+                return true;
+            }
+            return false;
+        }
+
         public void detach(View view) {
             synchronized(stack) {
                 detachInt(view);
@@ -1566,11 +1585,7 @@ public abstract class Application {
         }
 
         private void detachInt(View view) {
-            View child = child(view);
-            if(child != null && executing(child)) {
-                child.detachParentOnClose();
-                select(child);
-                child.abort();
+            if(abortChild(view, true)) {
                 return;
             }
             ApplicationMenuItem m = contentMenu.get(view);
