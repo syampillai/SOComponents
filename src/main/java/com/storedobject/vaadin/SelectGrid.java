@@ -17,7 +17,17 @@ import java.util.function.Consumer;
 public class SelectGrid<T> extends ListGrid<T> {
 
     private String emptyRowsMessage = "No entries found!";
+    /**
+     * The button layout at the top.
+     */
+    protected final ButtonLayout buttonLayout = new ButtonLayout();
+    /**
+     * The "Proceed" button.
+     */
     protected final Button proceed = new Button("Proceed", e -> act());
+    /**
+     * The "Cancel" button.
+     */
     protected final Button cancel = new Button("Cancel", e -> cancel());
     private final Consumer<Object> consumer;
 
@@ -89,7 +99,15 @@ public class SelectGrid<T> extends ListGrid<T> {
 
     @Override
     public final Component createHeader() {
-        return new ButtonLayout(proceed, cancel);
+        addExtraButtons();
+        buttonLayout.add(proceed, cancel);
+        return buttonLayout;
+    }
+
+    /**
+     * Add extra buttons if required. You can add anything to {@link #buttonLayout}.
+     */
+    public void addExtraButtons() {
     }
 
     @Override
@@ -105,6 +123,9 @@ public class SelectGrid<T> extends ListGrid<T> {
 
     private void act() {
         if(getSelectionModel() instanceof GridMultiSelectionModel) {
+            if(!validate()) {
+                return;
+            }
             close();
             Set<T> selected = getSelectedItems();
             if(consumer == null) {
@@ -120,6 +141,9 @@ public class SelectGrid<T> extends ListGrid<T> {
     private void act(T selected) {
         if(selected == null) {
             warning("Please select an entry");
+            return;
+        }
+        if(!validate()) {
             return;
         }
         close();
@@ -167,6 +191,17 @@ public class SelectGrid<T> extends ListGrid<T> {
      */
     public void setEmptyRowsMessage(String emptyRowsMessage) {
         this.emptyRowsMessage = emptyRowsMessage;
+    }
+
+    /**
+     * This method is called just before closing the grid's view and before the selected item/items are handed over
+     * to the consumer. If <code>false</code> is returned from this method
+     * grid's view will not be closed and consumer will not be fed with the item/items.
+     *
+     * @return True/false. Default implementation returns <code>true</code>.
+     */
+    protected boolean validate() {
+        return true;
     }
 
     private class SelectView extends View {

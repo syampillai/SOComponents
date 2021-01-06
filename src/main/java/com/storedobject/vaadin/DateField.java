@@ -5,6 +5,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import static java.util.Calendar.*;
 
@@ -63,8 +64,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
 
     private static Date today() {
         if(today == null) {
-            LocalDate d = LocalDate.now();
-            today = create(d.getYear(), d.getMonthValue(), d.getDayOfMonth());
+            today = create(LocalDate.now());
         }
         return today;
     }
@@ -88,7 +88,10 @@ public class DateField extends TranslatedField<Date, LocalDate> {
         if(date == null) {
             return today();
         }
-        return create(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+        @SuppressWarnings("MagicConstant")
+        GregorianCalendar c = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
+        c.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return new Date(c.getTimeInMillis());
     }
 
     /**
@@ -121,11 +124,6 @@ public class DateField extends TranslatedField<Date, LocalDate> {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(date);
         return c.get(field);
-    }
-
-    private static Date create(int year, int month, int day) {
-        @SuppressWarnings("MagicConstant") GregorianCalendar c = new GregorianCalendar(year, month - 1, day);
-        return new Date(c.getTimeInMillis());
     }
 
     @Override
