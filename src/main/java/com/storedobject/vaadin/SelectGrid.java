@@ -172,7 +172,7 @@ public class SelectGrid<T> extends ListGrid<T> {
     private class SelectView extends View {
 
         private SelectView() {
-            super("Select an Entry");
+            super("Select " + (SelectGrid.this instanceof MultiSelectGrid ? "Entries" : "an Entry"));
             setComponent(SelectGrid.this);
             setWindowMode(true);
         }

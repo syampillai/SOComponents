@@ -3,6 +3,7 @@ package com.storedobject.vaadin.util;
 import com.storedobject.helper.ID;
 import com.storedobject.vaadin.AbstractForm;
 import com.storedobject.vaadin.Alert;
+import com.storedobject.vaadin.RequiredField;
 import com.storedobject.vaadin.ValueRequired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
@@ -435,6 +436,9 @@ public class Data<T> extends HashMap<String, Object> {
     public <F> void setRequired(HasValue<?, F> field, boolean required, String errorMessage) {
         if(field == null) {
             throw new RuntimeException(FIELD_CANT_BE_EMPTY);
+        }
+        if(field instanceof RequiredField) {
+            ((RequiredField) field).setRequired(required);
         }
         Object value = field.getValue();
         if(value != null) {

@@ -3,7 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.HasValue;
 
 /**
- * Field customizer may be set on {@link ObjectForm} or
+ * Field customizer may be set on {@link ObjectForm}.
  *
  * @author Syam
  */
