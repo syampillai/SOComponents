@@ -355,13 +355,15 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
                 return AbstractDataEditor.this.getFieldSetMethod(fieldName, getMethod);
             } catch (FieldError ignored) {
             }
-            Class<?>[] params = new Class[] { getMethod.getReturnType() };
-            try {
-                m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
-                if (!m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
-                    return m;
+            if(!"Caption".equals(fieldName)) {
+                Class<?>[] params = new Class[]{getMethod.getReturnType()};
+                try {
+                    m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
+                    if(!m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                        return m;
+                    }
+                } catch(NoSuchMethodException ignored) {
                 }
-            } catch (NoSuchMethodException ignored) {
             }
             return super.getFieldSetMethod(fieldName, getMethod);
         }

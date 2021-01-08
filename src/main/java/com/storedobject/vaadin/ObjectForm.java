@@ -263,6 +263,9 @@ public class ObjectForm<D> extends AbstractForm<D> {
         if(host == null) {
             return null;
         }
+        if(host instanceof View && "Caption".equals(fieldName)) {
+            return null;
+        }
         Method m;
         try {
             m = host.getClass().getMethod("get" + fieldName);
@@ -284,6 +287,9 @@ public class ObjectForm<D> extends AbstractForm<D> {
     private Method getSetMethodFromHost(String fieldName, Method getMethod) {
         Object host = getHost();
         if(host == null) {
+            return null;
+        }
+        if(host instanceof View && "Caption".equals(fieldName)) {
             return null;
         }
         Class<?>[] params = new Class[] { getMethod.getReturnType() };
