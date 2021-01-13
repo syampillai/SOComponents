@@ -8,7 +8,9 @@ import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -81,7 +83,7 @@ public abstract class GridRow {
      */
     public Cell join(Collection<String> names) {
         if(names == null || names.isEmpty()) {
-            return join(names);
+            return join((String[])null);
         }
         String[] colNames = new String[names.size()];
         names.toArray(colNames);
@@ -164,7 +166,7 @@ public abstract class GridRow {
     }
 
     private Object getCell(Grid.Column<?> column) {
-        if(column == null) {
+        if(column == null || column.isFrozen()) {
             return null;
         }
         return row instanceof HeaderRow ? ((HeaderRow)row).getCell(column) : ((FooterRow)row).getCell(column);
@@ -180,7 +182,7 @@ public abstract class GridRow {
         Object prev = null, cell;
         for(Object column: grid.getColumns()) {
             cell = getCell((Grid.Column<?>) column);
-            if(cell == prev) {
+            if(cell == null || cell == prev) {
                 continue;
             }
             prev = cell;
