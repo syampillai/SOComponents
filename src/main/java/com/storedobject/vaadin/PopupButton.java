@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
@@ -104,13 +105,18 @@ public class PopupButton extends Button {
     }
 
     /**
-     * Add components from the pop up.
+     * Add components to the pop up.
      *
-     * @param components Components to remove
+     * @param components Components to add
      */
     public void add(Component... components) {
         if(components != null) {
             container.add(components);
+            for(Component c: components) {
+                if(c instanceof HasSize) {
+                    ((HasSize) c).setWidth("100%");
+                }
+            }
         }
     }
 
@@ -173,7 +179,7 @@ public class PopupButton extends Button {
     }
 
     /**
-     * Justfiy (horizontally) a component within its grid cell.
+     * Justify (horizontally) a component within its grid cell.
      *
      * @param component Component
      * @param position Position

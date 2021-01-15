@@ -263,13 +263,18 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Set the minimum/maximum width of the column.
+     * This method is invoked when the real column is created to determine the relative width
+     * of the column. It can be any positive integer and applied relative to the values returned for other columns.
+     * A value of zero means that the column width is fixed.
+     * <p>Note: This is set to the column via the {@link com.vaadin.flow.component.grid.Grid.Column#setFlexGrow(int)}
+     * method. So, if you directly use the {@link com.vaadin.flow.component.grid.Grid.Column#setFlexGrow(int)}
+     * method, this can be overridden.</p>
      *
-     * @param perColumnWidthInPixels Minimum width (in pixels) per column
-     * @param maxWidthInPixels Maximum width of the grid in pixels
+     * @param columnName Name of the column.
+     * @return Default implementation returns -1, meaning the value should not be applied.
      */
-    default void setMinWidth(int perColumnWidthInPixels, int maxWidthInPixels) {
-        getSOGrid().setMinWidth(perColumnWidthInPixels, maxWidthInPixels);
+    default int getRelativeColumnWidth(String columnName) {
+        return -1;
     }
 
     /**
@@ -1109,17 +1114,6 @@ public interface HasColumns<T> extends ExecutableView {
             grid.recalculateColumnWidths();
         }
 
-        private void setMinWidth(String width) {
-            grid.getElement().getStyle().set("min-width", width);
-        }
-
-        private void setMinWidth(int perColumnWidthInPixels, int maxWidthInPixels) {
-            if(maxWidthInPixels <= 10) {
-                maxWidthInPixels = 800;
-            }
-            setMinWidth(Math.min(maxWidthInPixels, perColumnWidthInPixels * getColumnCount()) + "px");
-        }
-
         /**
          * Get the columns of the grid. (Delegated method).
          *
@@ -1585,6 +1579,10 @@ public interface HasColumns<T> extends ExecutableView {
             column.setTextAlign(getTextAlign(columnName));
             column.setAutoWidth(true);
             column.setResizable(true);
+            int rw = hc.getRelativeColumnWidth(columnName);
+            if(rw >= 0) {
+                column.setFlexGrow(rw);
+            }
             customizeColumn(columnName, column);
         }
 
