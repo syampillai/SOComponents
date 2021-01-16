@@ -172,8 +172,9 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * @param valueGetter Function that determines how to get the value to load the field.
      * @return A field name will be generated (starting with an underscore character followed by a random number)
      * and returned.
+     * @param <V> Value type of the field.
      */
-    protected String addField(HasValue<?, ?> field, Function<D, ?> valueGetter) {
+    protected <V> String addField(HasValue<?, V> field, Function<D, V> valueGetter) {
         return addField(field, valueGetter, null);
     }
 
@@ -184,8 +185,9 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * @param valueSetter Function that determines how to commit value from the field to the object's instance.
      * @return A field name will be generated (starting with an underscore character followed by a random number)
      * and returned.
+     * @param <V> Value type of the field.
      */
-    protected String addField(HasValue<?, ?> field, Function<D, ?> valueGetter, BiConsumer<D, ?> valueSetter) {
+    protected <V> String addField(HasValue<?, V> field, Function<D, V> valueGetter, BiConsumer<D, V> valueSetter) {
         String fieldName = "_" + ID.newID();
         extras.put(fieldName, field);
         if(valueGetter != null) {
