@@ -42,7 +42,7 @@ public class CSSGrid extends Component implements HasOrderedComponents, HasStyle
     public CSSGrid() {
         style("display", "grid");
         style("align-items", "center");
-        style("justify-items", "center");
+        style("justify-items", "start");
         setGap("4px");
         style("transition", "all 1s");
     }

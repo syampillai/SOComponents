@@ -149,7 +149,7 @@ public class ChoicesField extends CustomField<Integer> {
             if (columns > 0) {
                 GridLayout layout = new GridLayout(columns);
                 if (list.size() > 4) {
-                    fullSelect = new RadioChoiceField(new String[]{"All", "None"});
+                    fullSelect = new RadioChoiceField(new String[] {"All", "None"});
                     fullSelect.setValue(1);
                     fullSelect.addValueChangeListener(e -> {
                         if(!isReadOnly()) {

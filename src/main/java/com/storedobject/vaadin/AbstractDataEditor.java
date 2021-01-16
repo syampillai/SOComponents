@@ -107,6 +107,29 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
     /**
      * Add an extra field
+     * @param field Field.
+     * @param valueGetter Function that determines how to get the value to load the field
+     * @return A field name will be generated (starting with an underscore character followed by a random number)
+     * and returned.
+     */
+    protected String addField(HasValue<?, ?> field, Function<T, ?> valueGetter) {
+        return getForm().addField(field, valueGetter);
+    }
+
+    /**
+     * Add an extra field
+     * @param field Field.
+     * @param valueGetter Function that determines how to get the value to load the field
+     * @param valueSetter Function that determines how to commit value from the field to the object's instance
+     * @return A field name will be generated (starting with an underscore character followed by a random number)
+     * and returned.
+     */
+    protected String addField(HasValue<?, ?> field, Function<T, ?> valueGetter, BiConsumer<T, ?> valueSetter) {
+        return getForm().addField(field, valueGetter, valueSetter);
+    }
+
+    /**
+     * Add an extra field
      * @param fieldName Name of the field.
      * @param valueGetter Function that determines how to get the value to load the field.
      */

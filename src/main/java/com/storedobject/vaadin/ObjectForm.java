@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
 
@@ -49,6 +50,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     private final Map<String, Method> setM = new HashMap<>();
     private final Map<String, Function<D, ?>> getF = new HashMap<>();
     private final Map<String, BiConsumer<D, ?>> setF = new HashMap<>();
+    private final Map<String, HasValue<?, ?>> extras = new HashMap<>();
     private ObjectFieldCreator<D> fCreator;
     private FieldCustomizer fieldCustomizer;
 
@@ -162,6 +164,37 @@ public class ObjectForm<D> extends AbstractForm<D> {
                 addField(fieldName, valueGetterM, valueSetterM);
             }
         }
+    }
+
+    /**
+     * Add an extra field
+     * @param field Field.
+     * @param valueGetter Function that determines how to get the value to load the field.
+     * @return A field name will be generated (starting with an underscore character followed by a random number)
+     * and returned.
+     */
+    protected String addField(HasValue<?, ?> field, Function<D, ?> valueGetter) {
+        return addField(field, valueGetter, null);
+    }
+
+    /**
+     * Add an extra field.
+     * @param field Field.
+     * @param valueGetter Function that determines how to get the value to load the field.
+     * @param valueSetter Function that determines how to commit value from the field to the object's instance.
+     * @return A field name will be generated (starting with an underscore character followed by a random number)
+     * and returned.
+     */
+    protected String addField(HasValue<?, ?> field, Function<D, ?> valueGetter, BiConsumer<D, ?> valueSetter) {
+        String fieldName = "_" + ID.newID();
+        extras.put(fieldName, field);
+        if(valueGetter != null) {
+            getF.put(fieldName, valueGetter);
+        }
+        if(valueSetter != null) {
+            setF.put(fieldName, valueSetter);
+        }
+        return fieldName;
     }
 
     /**
@@ -420,12 +453,19 @@ public class ObjectForm<D> extends AbstractForm<D> {
      */
     @Override
     protected final HasValue<?, ?> createField(String fieldName) {
+        HasValue<?, ?> field;
+        if(fieldName.startsWith("_")) {
+            field = extras.get(fieldName);
+            if(field != null) {
+                return field;
+            }
+        }
         Method m = getM.get(fieldName);
         if(m == dummyGET) {
             getM.remove(fieldName);
             m = null;
         }
-        HasValue<?, ?> field = super.createField(fieldName);
+        field = super.createField(fieldName);
         if(field == null) {
             Class<?> returnType = m == null ? null : m.getReturnType();
             field = createField(fieldName, returnType, getLabel(fieldName));
