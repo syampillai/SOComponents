@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Application is the base class for creating a 'single page' web applications. The 'single page' should be defined
@@ -1265,6 +1266,15 @@ public abstract class Application {
      */
     public int getActiveViewCount() {
         return (int) viewManager.contentMenu.keySet().stream().filter(v -> !v.isHomeView()).count();
+    }
+
+    /**
+     * Get active {@link View}s ({@link HomeView}s are not included).
+     *
+     * @return Stream of active views.
+     */
+    public Stream<View> getActiveViews() {
+        return viewManager.contentMenu.keySet().stream().filter(v -> !v.isHomeView());
     }
 
     /**

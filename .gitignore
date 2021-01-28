@@ -1,1 +1,6 @@
-/assembly/
+/node_modules/
+/zipTarget/
+/target/
+/.idea/libraries/
+/.idea/
+/backup/
