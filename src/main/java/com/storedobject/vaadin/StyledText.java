@@ -12,7 +12,7 @@ import com.vaadin.flow.component.html.Span;
  */
 public class StyledText extends Composite<Span> implements HasText, HasSize, HTMLGenerator {
 
-    private Span content = new Span();
+    private final Span content = new Span();
     private String text;
 
     /**
@@ -29,6 +29,7 @@ public class StyledText extends Composite<Span> implements HasText, HasSize, HTM
      */
     public StyledText(String htmlText) {
         setText(htmlText);
+        content.getStyle().set("display", "inline");
     }
 
     @Override
