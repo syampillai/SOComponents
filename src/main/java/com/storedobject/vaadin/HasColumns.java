@@ -278,6 +278,17 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
+     * This method is invoked when the real column is created to determine whether the column requires fixed and
+     * inflexible width or not. The value returned should be a CSS compatible width attribute such as "80px" etc.
+     *
+     * @param columnName Name of the column.
+     * @return Default implementation returns null, meaning the value should not be applied.
+     */
+    default String getFixedColumnWidth(String columnName) {
+        return null;
+    }
+
+    /**
      * Get the column count of the grid.
      *
      * @return Number of columns.
@@ -1582,6 +1593,10 @@ public interface HasColumns<T> extends ExecutableView {
             int rw = hc.getRelativeColumnWidth(columnName);
             if(rw >= 0) {
                 column.setFlexGrow(rw);
+            }
+            String w = hc.getFixedColumnWidth(columnName);
+            if(w != null) {
+                column.setAutoWidth(false).setWidth(w).setFlexGrow(0);
             }
             customizeColumn(columnName, column);
         }

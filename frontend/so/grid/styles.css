@@ -2,6 +2,7 @@
     [part~='footer-cell'] ::slotted(vaadin-grid-cell-content) {
     font-size: var(--lumo-font-size-s);
     font-weight: 900;
+    white-space: normal;
 }
 :host(.so-grid) [part~="row"][selected] [part~="body-cell"]:not([part~="details-cell"]) {
     background: var(--so-grid-selected-background, var(--lumo-primary-color-50pct));
