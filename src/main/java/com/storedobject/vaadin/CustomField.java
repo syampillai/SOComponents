@@ -67,7 +67,7 @@ public abstract class CustomField<T> extends com.vaadin.flow.component.customfie
             return false;
         }
         if(component instanceof Focusable) {
-            Focusable focusable = (Focusable) component;
+            Focusable<?> focusable = (Focusable<?>) component;
             if(!focusable.isEnabled()) {
                 return false;
             }
