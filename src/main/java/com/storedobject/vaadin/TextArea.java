@@ -1,13 +1,13 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.HasText;
+import com.storedobject.vaadin.util.HasTextValue;
 
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.textfield.TextArea}.
  *
  * @author Syam
  */
-public class TextArea extends com.vaadin.flow.component.textfield.TextArea implements HasText {
+public class TextArea extends com.vaadin.flow.component.textfield.TextArea implements HasTextValue {
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea imple
      */
     public TextArea(int rows, int columns) {
         setRows(rows);
-        setColumss(columns);
+        setColumns(columns);
     }
 
     /**
@@ -66,7 +66,7 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea imple
     public TextArea(String label, int rows, int columns) {
         super(label);
         setRows(rows);
-        setColumss(columns);
+        setColumns(columns);
     }
 
     /**
@@ -80,7 +80,7 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea imple
     public TextArea(String label, String placeholder, int rows, int columns) {
         super(label, placeholder);
         setRows(rows);
-        setColumss(columns);
+        setColumns(columns);
     }
 
     /**
@@ -95,7 +95,7 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea imple
     public TextArea(String label, String initialValue, String placeholder, int rows, int columns) {
         super(label, initialValue, placeholder);
         setRows(rows);
-        setColumss(columns);
+        setColumns(columns);
     }
 
     /**
@@ -160,7 +160,7 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea imple
      *
      * @param minimumVisibleColumns Columns to be made visible
      */
-    public void setColumss(int minimumVisibleColumns) {
+    public void setColumns(int minimumVisibleColumns) {
         if(minimumVisibleColumns < 5) {
             return;
         }
@@ -170,6 +170,10 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea imple
     @Override
     public void setValue(String value) {
         super.setValue(value == null ? "" : value);
+    }
+
+    @Override
+    public void setPattern(String pattern) {
     }
 
     @Override

@@ -79,6 +79,7 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
                 if(field instanceof Component) {
                     add((Component) field);
                 }
+                field.setWidthFull();
                 customizeTextField(field);
             }
         }

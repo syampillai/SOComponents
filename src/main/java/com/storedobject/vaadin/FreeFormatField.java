@@ -1,9 +1,8 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Focusable;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.ItemLabelGenerator;
+import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.textfield.TextField;
 
 /**
  * A field that accepts free format text and converts it into a value of specific type. The value of the field is
@@ -14,43 +13,57 @@ import com.vaadin.flow.component.ItemLabelGenerator;
  */
 public abstract class FreeFormatField<T> extends CustomTextField<T> {
 
-    private final TextField display = new TextField();
     private ItemLabelGenerator<T> displayGenerator;
 
     /**
      * Constructor.
      *
-     * @param defaultValue Default value
+     * @param label Label.
+     * @param defaultValue Default value.
      */
     protected FreeFormatField(String label, T defaultValue) {
+        this(label, defaultValue, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     * @param defaultValue Default value.
+     * @param displayComponent Display component to use. The display component should be a {@link Component}
+     *                         and it should implement {@link Focusable} and {@link HasSize}.
+     *                         (If passed null, {@link TextField} will be used).
+     */
+    protected FreeFormatField(String label, T defaultValue, HasValue<?, String> displayComponent) {
         super(defaultValue);
-        add(display);
+        HasValue<?, String> display = displayComponent == null ? new TextField() : displayComponent;
+        add((Component) display);
         setItemLabelGenerator(null);
         //noinspection unchecked
         ((HasValue<?, String>)getField()).addValueChangeListener(e -> {
-            display.setText(displayGenerator.apply(getModelValue(e.getValue())));
-            display.setVisible(true);
+            display.setValue(displayGenerator.apply(getModelValue(e.getValue())));
+            ((Component) display).setVisible(true);
             ((Component)getField()).setVisible(false);
         });
         ((Focusable<?>)getField()).addBlurListener(e -> {
-            display.setVisible(true);
+            ((Component) display).setVisible(true);
             ((Component)getField()).setVisible(false);
         });
-        display.addFocusListener(e -> {
+        ((Focusable<?>)display).addFocusListener(e -> {
             boolean ro = isReadOnly();
-            display.setVisible(ro);
+            ((Component) display).setVisible(ro);
             ((Component)getField()).setVisible(!ro);
             ((Focusable<?>)getField()).focus();
         });
-        new Clickable<>(display, e -> {
+        new Clickable<>((Component) display, e -> {
             if(!isReadOnly()) {
-                display.setVisible(false);
+                ((Component) display).setVisible(false);
                 ((Component)getField()).setVisible(true);
                 ((Focusable<?>)getField()).focus();
             }
         });
-        display.setWidthFull();
-        display.setVisible(true);
+        ((HasSize)display).setWidthFull();
+        ((Component) display).setVisible(true);
         display.setReadOnly(true);
         ((Component)getField()).setVisible(false);
         if(label != null) {
