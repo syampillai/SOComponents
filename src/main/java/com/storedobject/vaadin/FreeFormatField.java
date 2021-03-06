@@ -80,6 +80,15 @@ public abstract class FreeFormatField<T> extends CustomTextField<T> {
     }
 
     @Override
+    public void setValue(T value) {
+        if(value == null) {
+            value = getEmptyValue();
+        }
+        getField().setValue(displayGenerator.apply(value));
+        super.setValue(value);
+    }
+
+    @Override
     protected final String format(T value) {
         String v = getField().getValue();
         return v == null || v.isBlank() ? displayGenerator.apply(value) : v;
