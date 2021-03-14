@@ -112,26 +112,57 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
     /**
      * Close this.
      */
-    void close();
+    default void close() {
+        View v = getView(false);
+        if(v != null && v != this) {
+            v.close();
+        }
+    }
 
     /**
      * Abort this.
      */
-    void abort();
+    default void abort() {
+        View v = getView(false);
+        if(v != null && v != this) {
+            v.abort();
+        }
+    }
+
+    /**
+     * Clean this up by closing resources if any.
+     */
+    default void clean() {
+        View v = getView(false);
+        if(v != null && v != this) {
+            v.clean();
+        }
+    }
 
     /**
      * Get the caption for this view.
      *
      * @return Caption.
      */
-    String getCaption();
+    default String getCaption() {
+        View v = getView(false);
+        if(v != null && v != this) {
+            return v.getCaption();
+        }
+        return null;
+    }
 
     /**
      * Set the caption
      *
      * @param caption Caption
      */
-    void setCaption(String caption);
+    default void setCaption(String caption) {
+        View v = getView(false);
+        if(v != null && v != this) {
+            v.setCaption(caption);
+        }
+    }
 
     /**
      * Track value changes of a field {@link HasValue}. Whenever a value is changed, {@link #valueChanged(HasValue.ValueChangeEvent)}

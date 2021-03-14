@@ -623,6 +623,7 @@ public class View implements ExecutableView {
      * This method is invoked when the view is removed from the {@link Application}.
      * The default implementation does nothing.
      */
+    @Override
     public void clean() {
     }
 

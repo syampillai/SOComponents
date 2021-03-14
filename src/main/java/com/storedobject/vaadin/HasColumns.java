@@ -565,41 +565,13 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Closes the view if that exists.
-     */
-    @Override
-    default void close() {
-        getSOGrid().close();
-    }
-
-    /**
-     * Closes the view by aborting if that exists.
-     */
-    @Override
-    default void abort() {
-        getSOGrid().abort();
-    }
-
-    /**
-     * Close resources if any that are left opened.
-     * This method is invoked when the grid is removed from the {@link Application}.
-     * The default implementation invokes the clean method of the view if it exists.
-     */
-    default void clean() {
-        getSOGrid().clean();
-    }
-
-    /**
      * Set caption used when displaying the grid in a View.
      *
      * @param caption Caption
      */
     default void setCaption(String caption) {
         getSOGrid().caption = caption;
-        View v = getView();
-        if(v != null) {
-            v.setCaption(caption);
-        }
+        ExecutableView.super.setCaption(caption);
     }
 
     /**
@@ -1684,101 +1656,9 @@ public interface HasColumns<T> extends ExecutableView {
                 }
             }
             if(view == null && create) {
-                String caption = hc != null ? hc.getCaption() : "Data View";
-                view = new View(hc == null ? grid : hc.getViewComponent(), caption) {
-
-                    @Override
-                    public boolean isCloseable() {
-                        if(hc != null) {
-                            return hc.isCloseable();
-                        }
-                        return grid instanceof CloseableView;
-                    }
-
-                    @Override
-                    public boolean isHomeView() {
-                        if(hc != null) {
-                            return hc.isHomeView();
-                        }
-                        return grid instanceof HomeView;
-                    }
-
-                    @Override
-                    public void returnedFrom(View parent) {
-                        if(hc != null) {
-                            hc.returnedFrom(parent);
-                        }
-                    }
-
-                    @Override
-                    public void close() {
-                        super.close();
-                        View v = view;
-                        view = null;
-                        if(hc != null) {
-                            hc.close();
-                        }
-                        view = v;
-                    }
-
-                    @Override
-                    public void abort() {
-                        super.abort();
-                        View v = view;
-                        view = null;
-                        if(hc != null) {
-                            hc.abort();
-                        }
-                        view = v;
-                    }
-
-                    @Override
-                    public void clean() {
-                        super.clean();
-                        View v = view;
-                        view = null;
-                        if(hc != null) {
-                            hc.clean();
-                        }
-                        view = v;
-                    }
-
-                    @Override
-                    public String getMenuIconName() {
-                        if(hc != null) {
-                            return hc.getMenuIconName();
-                        }
-                        return super.getMenuIconName();
-                    }
-
-                    @Override
-                    public ApplicationMenuItem createMenuItem(Runnable menuAction) {
-                        if(hc != null) {
-                            return hc.createMenuItem(menuAction);
-                        }
-                        return super.createMenuItem(menuAction);
-                    }
-                };
+                view = new WrappedView(hc == null ? grid : hc.getViewComponent(), hc != null ? hc.getCaption() : "Data View");
             }
             return view;
-        }
-
-        private void close() {
-            if(view != null) {
-                view.close();
-            }
-        }
-
-        private void abort() {
-            if(view != null) {
-                view.abort();
-            }
-        }
-
-        private void clean() {
-            if(view != null) {
-                view.clean();
-            }
         }
 
         private void select(Iterable<T> items) {
