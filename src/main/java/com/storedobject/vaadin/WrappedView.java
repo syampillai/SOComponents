@@ -54,7 +54,7 @@ public class WrappedView extends View {
 
     @Override
     public void returnedFrom(View parent) {
-        if(executableViewComponent != null) {
+        if(executableViewComponent instanceof ExecutableView) {
             ((ExecutableView) executableViewComponent).returnedFrom(parent);
         }
     }

@@ -18,7 +18,7 @@ public class Video extends Media {
     }
 
     /**
-     * Consructor.
+     * Constructor.
      * @param resources Sources to be set
      */
     public Video(StreamResource... resources) {
