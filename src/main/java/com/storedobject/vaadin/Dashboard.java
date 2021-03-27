@@ -1,12 +1,11 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Dashboard is a "view" that can show multiple embedded "sub-views". Dashboard divides the display area into rows and columns and each
@@ -173,7 +172,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
                 ((ExecutableView) c).getView(true);
             }
             if(boxing) {
-                new Box(c);
+                new Box(c).alignSizing();
             }
             if(c instanceof HasSize) {
                 ((HasSize)c).setWidth("100%");
@@ -226,7 +225,8 @@ public class Dashboard extends CSSGrid implements ExecutableView {
      * @param create If true is passed, a view will be created if no current view exists
      * @return A View with this grid as the component.
      */
-    public View getView(boolean create) {
+    @Override
+    public final View getView(boolean create) {
         if(view != null) {
             return view;
         }
