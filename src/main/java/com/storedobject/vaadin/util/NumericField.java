@@ -3,6 +3,7 @@ package com.storedobject.vaadin.util;
 import com.storedobject.vaadin.CustomTextField;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import org.vaadin.textfieldformatter.NumeralFieldFormatter;
 
 import java.math.RoundingMode;
@@ -46,6 +47,12 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
     public void setAllowNegative(boolean allowNegative) {
         this.allowNegative = allowNegative;
         setPattern();
+    }
+
+    @Override
+    protected void customizeTextField(HasTextValue textField) {
+        super.customizeTextField(textField);
+        ((TextField)getField()).addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
     }
 
     @Override
