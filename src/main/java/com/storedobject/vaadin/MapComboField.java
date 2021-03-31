@@ -40,6 +40,14 @@ public class MapComboField<T> extends ComboBox<T> {
         }
     }
 
+    @Override
+    public void setValue(T value) {
+        if(value != null && map.get(value) == null) {
+            value = null;
+        }
+        super.setValue(value);
+    }
+
     /**
      * Refresh the combo. This should be called to refresh the combo if the map is updated from outside.
      */
