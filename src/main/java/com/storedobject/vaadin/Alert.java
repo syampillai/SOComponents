@@ -10,7 +10,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.shared.Registration;
 
-import java.io.Closeable;
 import java.util.function.Consumer;
 
 /**
@@ -21,6 +20,7 @@ import java.util.function.Consumer;
  */
 public class Alert extends Notification implements HasText, ClickNotifier {
 
+    private static Notification.Position DEFAULT_POSITION = Position.BOTTOM_START;
     private final StyledText content;
     private final ElementClick click;
     private final Consumer<Alert> clickAction;
@@ -136,6 +136,7 @@ public class Alert extends Notification implements HasText, ClickNotifier {
         if(style != null) {
             addThemeVariants(style);
         }
+        setPosition(DEFAULT_POSITION);
     }
 
     private static StyledText styled(String caption, String text) {
@@ -238,5 +239,14 @@ public class Alert extends Notification implements HasText, ClickNotifier {
      */
     public boolean deleteOnClose() {
         return clickAction == null;
+    }
+
+    /**
+     * Set the default position of alerts.
+     *
+     * @param defaultPosition Position.
+     */
+    public static void setDefaultPosition(Position defaultPosition) {
+        DEFAULT_POSITION = defaultPosition;
     }
 }
