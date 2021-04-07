@@ -17,7 +17,7 @@ import java.util.Objects;
  * @param <T> Value type
  * @author Syam
  */
-public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix, HasStyle {
+public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix, HasStyle, DisablePaste {
 
     private HasTextValue field;
     private String emptyDisplay;
@@ -62,6 +62,14 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         ((TF)field).setPreventInvalidInput(true);
         customizeTextField(field);
         return field;
+    }
+
+    @Override
+    public void disablePaste() {
+        createField();
+        if(field instanceof DisablePaste) {
+            ((DisablePaste) field).disablePaste();
+        }
     }
 
     /**
@@ -207,6 +215,6 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         return field.getElement();
     }
 
-    private static class TF extends com.vaadin.flow.component.textfield.TextField implements HasSize, HasTextValue {
+    private static class TF extends com.vaadin.flow.component.textfield.TextField implements HasSize, HasTextValue, DisablePaste {
     }
 }

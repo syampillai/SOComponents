@@ -7,7 +7,7 @@ import com.vaadin.flow.component.HasText;
  *
  * @author Syam
  */
-public class TextField extends com.vaadin.flow.component.textfield.TextField implements HasText {
+public class TextField extends com.vaadin.flow.component.textfield.TextField implements HasText, DisablePaste {
 
     /**
      * Constructor.
