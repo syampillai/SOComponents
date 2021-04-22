@@ -296,7 +296,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Handle errors while setting (committing)  values. Default implementation returns <code>true</code> without doing anything.
+     * Handle errors while setting (committing) values.
+     * Default implementation returns <code>true</code> without doing anything.
      * @param fieldName Name of the field
      * @param field Field
      * @param fieldValue Field's value that's being committed

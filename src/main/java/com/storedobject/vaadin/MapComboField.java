@@ -38,6 +38,7 @@ public class MapComboField<T> extends ComboBox<T> {
         if(label != null) {
             setLabel(label);
         }
+        setPlaceholder("Select");
     }
 
     @Override

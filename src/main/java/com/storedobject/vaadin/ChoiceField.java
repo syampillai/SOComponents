@@ -1,5 +1,7 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.select.Select;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -78,7 +80,8 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     @SuppressWarnings("unchecked")
     public ChoiceField(String label, Collection<String> list) {
         super(new ListField<>(sanitize(list)), (f, s) -> ((ListField<String>) f).getIndex(s),
-                (f, v) -> ((ListField<String>) f).getValue(v));
+                (f, v) -> v == null ? null : ((ListField<String>) f).getValue(v));
+        setPlaceholder("Select");
         setValue(0);
         setLabel(label);
     }
@@ -183,5 +186,22 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
         ListField<String> f = (ListField<String>) getField();
         f.setItems(choices);
         f.setValue(f.getValue(v));
+    }
+
+    /**
+     * Set placeholder for this field.
+     *
+     * @param placeholder Placeholder.
+     */
+    public void setPlaceholder(String placeholder) {
+        ((Select<?>)getField()).setPlaceholder(placeholder);
+    }
+
+    /**
+     * Get the placeholder of this field.
+     * @return Placeholder.
+     */
+    public String getPlaceholder() {
+        return ((Select<?>)getField()).getPlaceholder();
     }
 }
