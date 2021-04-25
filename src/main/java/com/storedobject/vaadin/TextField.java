@@ -1,12 +1,14 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.dependency.CssImport;
 
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.textfield.TextField}.
  *
  * @author Syam
  */
+@CssImport(value = "./so/textfield/styles.css", themeFor = "vaadin-text-field")
 public class TextField extends com.vaadin.flow.component.textfield.TextField implements HasText, DisablePaste {
 
     /**
@@ -76,5 +78,32 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField imp
     @Override
     public void setText(String text) {
         setValue(text);
+    }
+
+    /**
+     * Convert input into uppercase characters.
+     */
+    public void uppercase() {
+        getClassNames().remove("lowercase");
+        getClassNames().remove("capitalize");
+        getClassNames().add("uppercase");
+    }
+
+    /**
+     * Convert input into lowercase characters.
+     */
+    public void lowercase() {
+        getClassNames().add("lowercase");
+        getClassNames().remove("capitalize");
+        getClassNames().remove("uppercase");
+    }
+
+    /**
+     * Capitalize words while inputting.
+     */
+    public void capitalize() {
+        getClassNames().remove("lowercase");
+        getClassNames().add("capitalize");
+        getClassNames().remove("uppercase");
     }
 }
