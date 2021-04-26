@@ -26,6 +26,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     private boolean initialized = false;
     private Focusable<?> menuSearcher;
     private boolean drawer = false;
+    private final DrawerToggle drawerToggle = new DrawerToggle();
 
     /**
      * Constructor.
@@ -47,11 +48,11 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
 
     private ApplicationMenu createMenuInt() {
         menu = new Menu(this);
-        Component c;
-        addToNavbar(c = new DrawerToggle());
-        Style s = c.getElement().getStyle();
+        addToNavbar(drawerToggle);
+        Style s = drawerToggle.getElement().getStyle();
         s.set("color", "var(--so-menu-drawer-color)");
         s.set("cursor", "pointer");
+        Component c;
         c = getMenuSearcher();
         if(c != null) {
             if(c instanceof Focusable) {
@@ -221,6 +222,15 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
             toolbox = new ButtonLayout();
         }
         return toolbox;
+    }
+
+    /**
+     * Get the drawer-toggle button.
+     *
+     * @return The drawer-toggle button.
+     */
+    public final DrawerToggle getDrawerToggle() {
+        return drawerToggle;
     }
 
     /**
