@@ -30,6 +30,7 @@ public class TimerComponent extends LitComponent implements HasStyle {
      * Constructor.
      */
     public TimerComponent() {
+        executeJS("initComp");
     }
 
     /**
@@ -64,6 +65,35 @@ public class TimerComponent extends LitComponent implements HasStyle {
      */
     public void countDown(int seconds) {
         executeJS("count", -seconds);
+    }
+
+    /**
+     * Abort the timer.
+     */
+    public void abort() {
+        countDown(0);
+    }
+
+    /**
+     * Set a prefix for the display. This value will be displayed as a prefix to the timer value.
+     * <p>For example, you may want to display something like "Waiting for 23 seconds". Here, "Waiting for " is the
+     * prefix and " seconds" is the suffix.</p>
+     *
+     * @param prefix Prefix.
+     */
+    public void setPrefix(String prefix) {
+        executeJS("setDPrefix", prefix);
+    }
+
+    /**
+     * Set a suffix for the display. This value will be displayed as a prefix to the timer value.
+     * <p>For example, you may want to display something like "Waiting for 23 seconds". Here, "Waiting for " is the
+     * prefix and " seconds" is the suffix.</p>
+     *
+     * @param suffix Suffix.
+     */
+    public void setSuffix(String suffix) {
+        executeJS("setDSuffix", suffix);
     }
 
     @Override
