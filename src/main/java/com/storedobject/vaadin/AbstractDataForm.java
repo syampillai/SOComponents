@@ -166,7 +166,6 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
         return null;
     }
 
-
     /**
      * Set "include field checker". It will determine if a field can be added or not.
      *
@@ -174,6 +173,17 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      */
     public void setIncludeFieldChecker(IncludeField includeField) {
         getForm().setIncludeFieldChecker(includeField);
+    }
+
+    /**
+     * Add an "include field checker" to the existing chain. If any one of the {@link IncludeField} in the chain
+     * returns <code>false</code> for a specific field, the field will not be included in the form.
+     *
+     * @param includeField The "include field checker" to add.
+     * @return Registration.
+     */
+    public Registration addIncludeFieldChecker(IncludeField includeField) {
+        return getForm().addIncludeFieldChecker(includeField);
     }
 
     /**
@@ -985,5 +995,11 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
      */
     public final Stream<String> streamFieldNamesCreated() {
         return form.streamFieldNamesCreated();
+    }
+
+    @Override
+    public void clearAlerts() {
+        super.clearAlerts();
+        getForm().data.getErrorDisplay().setText(null);
     }
 }

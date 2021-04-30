@@ -15,6 +15,7 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField imp
      * Constructor.
      */
     public TextField() {
+        setSpellCheck(false);
     }
 
     /**
@@ -24,6 +25,7 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField imp
      */
     public TextField(String label) {
         super(label);
+        setSpellCheck(false);
     }
 
     /**
@@ -34,6 +36,7 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField imp
      */
     public TextField(String label, String placeholder) {
         super(label, placeholder);
+        setSpellCheck(false);
     }
 
     /**
@@ -45,6 +48,7 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField imp
      */
     public TextField(String label, String initialValue, String placeholder) {
         super(label, initialValue, placeholder);
+        setSpellCheck(false);
     }
 
     /**
@@ -105,5 +109,14 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField imp
         getClassNames().remove("lowercase");
         getClassNames().add("capitalize");
         getClassNames().remove("uppercase");
+    }
+
+    /**
+     * Set spelling check on/off. (Default is off.)
+     *
+     * @param on True to set it on.
+     */
+    public void setSpellCheck(boolean on) {
+        getElement().setAttribute("spellcheck", "" + on);
     }
 }

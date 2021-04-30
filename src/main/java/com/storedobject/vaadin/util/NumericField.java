@@ -1,5 +1,6 @@
 package com.storedobject.vaadin.util;
 
+import com.storedobject.vaadin.Application;
 import com.storedobject.vaadin.CustomTextField;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.textfield.TextField;
@@ -71,6 +72,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         return 0;
     }
 
+    @Override
     protected String format(T value) {
         if(value == null) {
             value = getEmptyValue();
@@ -88,9 +90,39 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         }
         String s = format.format(value);
         if(grouping) {
+            if(getThousandGroupStyle() == NumeralFieldFormatter.ThousandsGroupStyle.LAKH) {
+                return indianStyle(s);
+            }
             return s;
         }
         return s.replace(",", "");
+    }
+
+    private static String indianStyle(String v) {
+        v = v.replace(",", "");
+        int i = v.indexOf('.');
+        StringBuilder s;
+        if(i >= 0) {
+            s = new StringBuilder(v.substring(i));
+            v = v.substring(0, i);
+        } else {
+            s = new StringBuilder();
+        }
+        if(v.length() <= 3) {
+            return v + s;
+        }
+        s.insert(0, v.substring(v.length() - 3));
+        v = v.substring(0, v.length() - 3);
+        while(v.length() > 0) {
+            s.insert(0, ",");
+            if(v.length() <= 2) {
+                s.insert(0, v);
+                break;
+            }
+            s.insert(0, v.substring(v.length() - 2));
+            v = v.substring(0, v.length() - 2);
+        }
+        return s.toString();
     }
 
     protected abstract int getDefaultLength();
@@ -122,11 +154,17 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         if(allowNegative) {
             --w;
         }
-        formatter = new NumeralFieldFormatter(grouping ? "," : "", ".", w, getDecimals(), !allowNegative);
+        formatter = new NumeralFieldFormatter(grouping ? "," : "", ".", w, getDecimals(), !allowNegative,
+                getThousandGroupStyle(), false, true, null);
         if(getUI().isPresent()) {
             formatter.extend((TextField) getField());
             formatted = true;
         }
         setPresentationValue(getValue());
+    }
+
+    protected NumeralFieldFormatter.ThousandsGroupStyle getThousandGroupStyle() {
+        Application a = Application.get();
+        return a == null ? NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND : a.getThousandGroupStyle();
     }
 }

@@ -6,7 +6,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.dom.Element;
 
 import java.util.Objects;
@@ -61,6 +60,11 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         add((TF)field);
         ((TF)field).setPreventInvalidInput(true);
         customizeTextField(field);
+        ((TF)field).addValueChangeListener(e -> {
+           if(e.isFromClient()) {
+               field.setValue(format(getModelValue(e.getValue())));
+           }
+        });
         return field;
     }
 
@@ -208,6 +212,25 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         if(field instanceof HasEnabled) {
             ((HasEnabled)field).setEnabled(enabled);
         }
+        ((TextField)getField()).isAutoselect();
+    }
+
+    /**
+     * Set auto-select mode.
+     *
+     * @param autoselect True to turn it on.
+     */
+    public void setAutoselect(boolean autoselect) {
+        ((TextField)getField()).setAutoselect(autoselect);
+    }
+
+    /**
+     * Is in auto-select mode?
+     *
+     * @return True/false.
+     */
+    public boolean isAutoselect() {
+        return ((TextField)getField()).isAutoselect();
     }
 
     @Override
@@ -215,6 +238,6 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         return field.getElement();
     }
 
-    private static class TF extends com.vaadin.flow.component.textfield.TextField implements HasSize, HasTextValue, DisablePaste {
+    private static class TF extends TextField implements HasSize, HasTextValue, DisablePaste {
     }
 }

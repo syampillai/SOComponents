@@ -5,6 +5,7 @@ import com.storedobject.vaadin.util.FieldValueHandler;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.shared.Registration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -45,7 +46,7 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     /**
      * This will be used to check whether a field needs to be included or not.
      */
-    IncludeField includeField = name -> true;
+    IncludeField includeField = new IncludeFieldArray();
     /**
      * State flag used to keep track of certain states while fields being constructed.
      */
@@ -109,7 +110,25 @@ public abstract class AbstractForm<D> extends Composite<Component> {
      * @param includeField The "include field checker"
      */
     public void setIncludeFieldChecker(IncludeField includeField) {
-        this.includeField = Objects.requireNonNullElseGet(includeField, () -> name -> true);
+        ((IncludeFieldArray)this.includeField).clear();
+        if(includeField != null) {
+            ((IncludeFieldArray)this.includeField).add(includeField);
+        }
+    }
+
+    /**
+     * Add an "include field checker" to the existing chain. If any one of the {@link IncludeField} in the chain
+     * returns <code>false</code> for a specific field, the field will not be included in the form.
+     *
+     * @param includeField The "include field checker" to add.
+     * @return Registration.
+     */
+    public Registration addIncludeFieldChecker(IncludeField includeField) {
+        if(includeField == null) {
+            return () -> {};
+        }
+        ((IncludeFieldArray)this.includeField).add(includeField);
+        return () -> ((IncludeFieldArray)this.includeField).remove(includeField);
     }
 
     private static HasComponents createDefaultContainer() {
@@ -997,6 +1016,14 @@ public abstract class AbstractForm<D> extends Composite<Component> {
         @Override
         public boolean isEditable(HasValue<?, ?> field) {
             return isFieldEditable(field);
+        }
+    }
+
+    private static class IncludeFieldArray extends ArrayList<IncludeField> implements IncludeField {
+
+        @Override
+        public boolean includeField(String fieldName) {
+            return stream().allMatch(i -> i.includeField(fieldName));
         }
     }
 }

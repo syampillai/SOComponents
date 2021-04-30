@@ -14,6 +14,7 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.WebBrowser;
 import com.vaadin.flow.shared.Registration;
+import org.vaadin.textfieldformatter.NumeralFieldFormatter;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -1311,7 +1312,7 @@ public abstract class Application {
      * Set some data in this application so that it can be retrieved later.
      *
      * @param anyClass Kind of data.
-     * @param anything Data of some anyClass.
+     * @param anything Data (An instance of anyClass).
      * @param <T> Type of data.
      */
     public <T> void setData(Class<T> anyClass, T anything) {
@@ -1354,6 +1355,16 @@ public abstract class Application {
      */
     public <T> T getData(Class<T> anyClass) {
         return anyClass == null ? null : ComponentUtil.getData(getUI(), anyClass);
+    }
+
+    /**
+     * Return the number grouping style. This can be overridden to return a user-specific value. This value is
+     * used when formatting numbers by {@link com.storedobject.vaadin.util.NumericField}.
+     *
+     * @return Number grouping style.
+     */
+    public NumeralFieldFormatter.ThousandsGroupStyle getThousandGroupStyle() {
+        return NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND;
     }
 
     private class AlertList extends ArrayList<Alert> {
