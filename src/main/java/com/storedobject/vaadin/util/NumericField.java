@@ -90,7 +90,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         }
         String s = format.format(value);
         if(grouping) {
-            if(getThousandGroupStyle() == NumeralFieldFormatter.ThousandsGroupStyle.LAKH) {
+            if(getCountry().equals("IN")) {
                 return indianStyle(s);
             }
             return s;
@@ -163,8 +163,18 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         setPresentationValue(getValue());
     }
 
-    protected NumeralFieldFormatter.ThousandsGroupStyle getThousandGroupStyle() {
+    protected String getCountry() {
         Application a = Application.get();
-        return a == null ? NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND : a.getThousandGroupStyle();
+        return a == null ? "US" : a.getCountry();
+    }
+
+    private NumeralFieldFormatter.ThousandsGroupStyle getThousandGroupStyle() {
+        switch(getCountry()) {
+            case "IN":
+                return NumeralFieldFormatter.ThousandsGroupStyle.LAKH;
+            case "CN":
+                return NumeralFieldFormatter.ThousandsGroupStyle.WAN;
+        }
+        return NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND;
     }
 }

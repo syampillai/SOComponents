@@ -14,7 +14,6 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.WebBrowser;
 import com.vaadin.flow.shared.Registration;
-import org.vaadin.textfieldformatter.NumeralFieldFormatter;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -1358,13 +1357,13 @@ public abstract class Application {
     }
 
     /**
-     * Return the number grouping style. This can be overridden to return a user-specific value. This value is
-     * used when formatting numbers by {@link com.storedobject.vaadin.util.NumericField}.
+     * Get ISO 2-character the country-code of the user in capital letters. (Examples: "US" for US, "IN" for India).
+     * This information is used for formatting the numbers in {@link com.storedobject.vaadin.util.NumericField}.
      *
-     * @return Number grouping style.
+     * @return ISO country code. (Default is "US").
      */
-    public NumeralFieldFormatter.ThousandsGroupStyle getThousandGroupStyle() {
-        return NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND;
+    public String getCountry() {
+        return "US";
     }
 
     private class AlertList extends ArrayList<Alert> {
