@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * @param <T> Type of the field's value.
  * @author Syam
  */
-public class ComboField<T> extends ComboBox<T> {
+public class ComboField<T> extends ComboBox<T> implements SpellCheck {
 
     private ComboBoxListDataView<T> view;
 

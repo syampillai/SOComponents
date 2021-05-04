@@ -1,12 +1,14 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.HasTextValue;
+import com.vaadin.flow.component.dependency.CssImport;
 
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.textfield.TextArea}.
  *
  * @author Syam
  */
+@CssImport(value = "./so/textarea/styles.css", themeFor = "vaadin-text-area")
 public class TextArea extends com.vaadin.flow.component.textfield.TextArea implements HasTextValue {
 
     /**

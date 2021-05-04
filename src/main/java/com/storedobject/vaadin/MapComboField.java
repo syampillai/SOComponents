@@ -12,7 +12,7 @@ import java.util.Map;
  * @param <T> Type of the field-value.
  * @author Syam
  */
-public class MapComboField<T> extends ComboBox<T> {
+public class MapComboField<T> extends ComboBox<T> implements SpellCheck {
 
     private final Map<T, ?> map;
 
