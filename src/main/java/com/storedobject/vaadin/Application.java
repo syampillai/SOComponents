@@ -175,6 +175,45 @@ public abstract class Application {
     }
 
     /**
+     * Get the query parameter value passed to this application. This is typically used by some logic that
+     * brings up the opening view of the application. It is advisable to remove the parameter after its usage
+     * by invoking {@link #removeQueryParameter(String)} or {@link #removeQueryParameters()}
+     * due to security reasons. Otherwise, some other logic may access it.
+     * <p>Note: Only one parameter is allowed per key. If multiple values are passed for the same key,
+     * only one will be made available.</p>
+     *
+     * @param key Key for which value needs to be obtained.
+     * @return Value corresponding to the key or <code>null</code> if no such key exists.
+     */
+    public String getQueryParameter(String key) {
+        return applicationView.queryParams == null ? null : applicationView.queryParams.get(key);
+    }
+
+    /**
+     * Remove the query parameter value passed to this application.
+     *
+     * @param key Key for which value needs to be removed.
+     */
+    public void removeQueryParameter(String key) {
+        if(applicationView.queryParams != null) {
+            applicationView.queryParams.remove(key);
+            if(applicationView.queryParams.isEmpty()) {
+                applicationView.queryParams = null;
+            }
+        }
+    }
+
+    /**
+     * Remove all query parameter values passed to this application.
+     */
+    public void removeQueryParameters() {
+        if(applicationView.queryParams != null) {
+            applicationView.queryParams.clear();
+            applicationView.queryParams = null;
+        }
+    }
+
+    /**
      * Get the representation of current the "web browser".
      *
      * @return Current web browser.

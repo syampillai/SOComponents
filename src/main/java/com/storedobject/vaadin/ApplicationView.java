@@ -4,10 +4,15 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.Location;
 import com.vaadin.flow.server.VaadinRequest;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -17,7 +22,7 @@ import java.util.function.Consumer;
  * @see Application
  * @author Syam
  */
-public abstract class ApplicationView extends Composite<Component> {
+public abstract class ApplicationView extends Composite<Component> implements BeforeEnterObserver {
 
     /**
      * The application layout.
@@ -26,6 +31,10 @@ public abstract class ApplicationView extends Composite<Component> {
     private final Application application;
     private Locale locale;
     private boolean firstTime = true;
+    /**
+     * Query parameters. (Used by {@link Application}.
+     */
+    Map<String, String> queryParams;
 
     /**
      * Default constructor.
@@ -117,7 +126,11 @@ public abstract class ApplicationView extends Composite<Component> {
     protected Application createApplication() {
         try {
             return (Application)Class.forName(getApplicationClassName()).getDeclaredConstructor().newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
+        } catch (ClassNotFoundException |
+                InstantiationException |
+                IllegalAccessException |
+                NoSuchMethodException |
+                InvocationTargetException ignored) {
         }
         return null;
     }
@@ -138,5 +151,15 @@ public abstract class ApplicationView extends Composite<Component> {
      */
     protected String getApplicationClassName() {
         return null;
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        queryParams = new HashMap<>();
+        Location location = beforeEnterEvent.getLocation();
+        location.getQueryParameters().getParameters().forEach((key, v) -> queryParams.put(key, v.get(0)));
+        if(queryParams.isEmpty()) {
+            queryParams = null;
+        }
     }
 }
