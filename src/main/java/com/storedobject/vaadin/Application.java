@@ -472,10 +472,12 @@ public abstract class Application {
      * Application instance exists, it will also be closed.
      */
     public synchronized void close() {
-        for(Object owner: alerts.keySet()) {
-            alerts.get(owner).forEach(Alert::remove);
+        synchronized(alerts) {
+            for(Object owner: alerts.keySet()) {
+                alerts.get(owner).forEach(Alert::remove);
+            }
+            alerts.clear();
         }
-        alerts.clear();
         closing = true;
         VaadinSession vs = VaadinSession.getCurrent();
         if(vs != null) {
@@ -637,7 +639,9 @@ public abstract class Application {
         if(a == null) {
             return;
         }
-        new ArrayList<>(a.alerts.keySet()).forEach(a::clrAlerts);
+        synchronized(a.alerts) {
+            new ArrayList<>(a.alerts.keySet()).forEach(a::clrAlerts);
+        }
     }
 
     /**
@@ -650,7 +654,9 @@ public abstract class Application {
         if(a == null) {
             return;
         }
-        a.clrAlerts(owner);
+        synchronized(a.alerts) {
+            a.clrAlerts(owner);
+        }
     }
 
     private void clrAlerts(Object owner) {
@@ -685,11 +691,13 @@ public abstract class Application {
      * @param alert Alert to be removed
      */
     final void removeAlert(Alert alert) {
-        for(AlertList list: alerts.values()) {
-            if(list.remove(alert)) {
-                if(list.isEmpty()) {
-                    alerts.remove(list.owner);
-                    break;
+        synchronized(alerts) {
+            for(AlertList list : alerts.values()) {
+                if(list.remove(alert)) {
+                    if(list.isEmpty()) {
+                        alerts.remove(list.owner);
+                        break;
+                    }
                 }
             }
         }
@@ -826,7 +834,7 @@ public abstract class Application {
         switch (messageType) {
             case 1: // Warning
                 messageType = 20000;
-                n.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+                n.addThemeVariants(NotificationVariant.LUMO_CONTRAST);
                 break;
             case 2: // Error
                 messageType = Integer.MAX_VALUE;
@@ -848,7 +856,9 @@ public abstract class Application {
     private void regAlert(Alert alert, Object owner) {
         alert.addOpenedChangeListener(alertCloser);
         if(owner != null) {
-            alerts.computeIfAbsent(owner, k -> new AlertList(owner)).add(alert);
+            synchronized(alerts) {
+                alerts.computeIfAbsent(owner, k -> new AlertList(owner)).add(alert);
+            }
         }
     }
 
@@ -1707,8 +1717,7 @@ public abstract class Application {
         }
 
         private View child(View view) {
-            Optional<View> c = parents.keySet().stream().filter(k -> parents.get(k) == view).findAny();
-            return c.orElse(null);
+            return parents.keySet().stream().filter(k -> parents.get(k) == view).findAny().orElse(null);
         }
 
         private void hideAllContent(View except) {

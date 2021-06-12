@@ -103,7 +103,7 @@ public interface ObjectFieldCreator<T> {
             return new DateField(label);
         }
         if(fieldType == java.util.Date.class) {
-            return new com.storedobject.vaadin.util.DateField(label);
+            return new com.storedobject.vaadin.LegacyDateField(label);
         }
         if(fieldType == LocalDate.class) {
             return new DatePicker(label);

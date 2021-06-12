@@ -18,12 +18,13 @@ import static java.util.Calendar.*;
 public class DateField extends TranslatedField<Date, LocalDate> {
 
     private static Date today = null;
+    static Date nullValue = new Date(-5364662400000L);
 
     /**
      * Constructor.
      */
     public DateField() {
-        this(null, null);
+        this((String) null);
     }
 
     /**
@@ -32,7 +33,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      * @param label Label.
      */
     public DateField(String label) {
-        this(label, null);
+        this(label, today());
     }
 
     /**
@@ -59,10 +60,16 @@ public class DateField extends TranslatedField<Date, LocalDate> {
 
     @Override
     public void setValue(Date value) {
-        super.setValue(value == null ? today() : value);
+        super.setValue(value == null || value.equals(nullValue) ? null : value);
     }
 
-    private static Date today() {
+    @Override
+    public Date getValue() {
+        Date d = super.getValue();
+        return d == null ? nullValue : d;
+    }
+
+    static Date today() {
         if(today == null) {
             today = create(LocalDate.now());
         }
@@ -75,7 +82,13 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      * @param today Today.
      */
     public static void setToday(Date today) {
-        DateField.today = today;
+        if(today != null) {
+            boolean setNullToo = DateField.today == DateField.nullValue;
+            DateField.today = today;
+            if(setNullToo) {
+                DateField.nullValue = today;
+            }
+        }
     }
 
     /**
@@ -86,7 +99,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      */
     public static Date create(LocalDate date) {
         if(date == null) {
-            return today();
+            return null;
         }
         @SuppressWarnings("MagicConstant")
         GregorianCalendar c = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
@@ -102,10 +115,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      * @return Converted value.
      */
     public static <D extends java.util.Date> LocalDate create(D date) {
-        if(date == null) {
-            return LocalDate.now();
-        }
-        return LocalDate.of(getYear(date), getMonth(date), getDay(date));
+        return date == null ? null : LocalDate.of(getYear(date), getMonth(date), getDay(date));
     }
 
     private static <D extends java.util.Date> int getYear(D date) {
@@ -203,5 +213,30 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      */
     public boolean isWeekNumbersVisible() {
         return getField().isWeekNumbersVisible();
+    }
+
+    /**
+     * Set the null value. This value will be considered as the null value. When this value is set to the
+     * {@link DateField}, it will be considered as null. Also, this value will be returned when the field value is
+     * null. The default value of this is set to Jan 1, 1800 but you could set it to <code>null</code> if desired.
+     *
+     * @param nullValue Null value to set.
+     */
+    public static void setNullValue(Date nullValue) {
+        DateField.nullValue = nullValue;
+        LegacyDateField.setNullValue();
+    }
+
+    @Override
+    protected boolean valueEquals(Date value1, Date value2) {
+        if(nullValue != null) {
+            if(value1 != null && value1.getTime() == nullValue.getTime()) {
+                value1 = null;
+            }
+            if(value2 != null && value2.getTime() == nullValue.getTime()) {
+                value2 = null;
+            }
+        }
+        return super.valueEquals(value1, value2);
     }
 }
