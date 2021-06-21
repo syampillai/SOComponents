@@ -1,10 +1,7 @@
 package com.storedobject.vaadin.util;
 
 import com.storedobject.helper.ID;
-import com.storedobject.vaadin.AbstractForm;
-import com.storedobject.vaadin.Alert;
-import com.storedobject.vaadin.RequiredField;
-import com.storedobject.vaadin.ValueRequired;
+import com.storedobject.vaadin.*;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.HasValidation;
@@ -31,7 +28,6 @@ public class Data<T> extends HashMap<String, Object> {
 
     private static final String FIELD_CANT_BE_EMPTY = "Field can't be empty!";
     private static final ValidationResult OK = ValidationResult.ok();
-    private static final Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
     private FieldValueHandler valueHandler;
     private final Map<String, HasValue<?, ?>> fields= new HashMap<>();
     private final Map<HasValue<?, ?>, String> fieldNames = new HashMap<>();
@@ -43,6 +39,7 @@ public class Data<T> extends HashMap<String, Object> {
     private final AbstractForm<T> form;
     private Required requiredCache;
     private boolean extraErrors = false;
+    private Alert errorText;
 
     /**
      * Constructor.
@@ -52,7 +49,19 @@ public class Data<T> extends HashMap<String, Object> {
     public Data(AbstractForm<T> form) {
         this.form = form;
         binder = new Binder<>();
-        binder.setStatusLabel(errorText);
+        binder.setStatusLabel(errorText());
+    }
+
+    private Alert errorText() {
+        if(errorText == null) {
+            Application a = Application.get();
+            if(a == null) {
+                errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
+            } else {
+                errorText = a.getCommonAlert();
+            }
+        }
+        return errorText;
     }
 
     /**
@@ -70,7 +79,7 @@ public class Data<T> extends HashMap<String, Object> {
      * @param display Display to set.
      */
     public void setErrorDisplay(HasText display) {
-        binder.setStatusLabel(display == null ? errorText : display);
+        binder.setStatusLabel(display == null ? errorText() : display);
     }
 
     /**
@@ -79,7 +88,7 @@ public class Data<T> extends HashMap<String, Object> {
      * @return Get the current error display.
      */
     public HasText getErrorDisplay() {
-        return binder.getStatusLabel().orElse(errorText);
+        return binder.getStatusLabel().orElse(errorText());
     }
 
     /**
@@ -199,7 +208,7 @@ public class Data<T> extends HashMap<String, Object> {
     private <F> DataValidators<T, F> validator(HasValue<?, F> field) {
         @SuppressWarnings("unchecked") DataValidators<T, F> dv = (DataValidators<T, F>) validators.get(field);
         if(dv == null) {
-            dv = new DataValidators<>(field);
+            dv = new DataValidators<>(field, errorText());
             validators.put(field, dv);
         }
         return dv;
@@ -398,8 +407,8 @@ public class Data<T> extends HashMap<String, Object> {
      */
     public void clearErrors() {
         fields.values().forEach(AbstractForm::clearError);
-        if(errorText.equals(binder.getStatusLabel().orElse(null))) {
-            errorText.close();
+        if(errorText().equals(binder.getStatusLabel().orElse(null))) {
+            errorText().close();
         }
     }
 
@@ -580,7 +589,7 @@ public class Data<T> extends HashMap<String, Object> {
         private final ValueContext valueContext;
         private final HasValue<?, F> field;
 
-        private DataValidators(HasValue<?, F> field) {
+        private DataValidators(HasValue<?, F> field, Alert errorText) {
             this.field = field;
             valueContext = new ValueContext(field instanceof Component ? (Component)field : errorText, field);
         }

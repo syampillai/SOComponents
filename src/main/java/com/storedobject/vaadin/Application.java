@@ -124,6 +124,7 @@ public abstract class Application {
     private Set<SpeakerToggledListener> speakerToggledListeners;
     private ArrayList<WeakReference<ResizedListener>> resizeListeners;
     private WebBrowser webBrowser;
+    private final Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
 
     /**
      * This method is invoked by {@link ApplicationView} class.
@@ -269,6 +270,16 @@ public abstract class Application {
                 }
             });
         }
+    }
+
+    /**
+     * Get the {@link Alert} that can be used for showing common messages. Please note that others may clear your
+     * messages if you use this to display messages.
+     *
+     * @return Alert instance.
+     */
+    public Alert getCommonAlert() {
+        return errorText;
     }
 
     /**
