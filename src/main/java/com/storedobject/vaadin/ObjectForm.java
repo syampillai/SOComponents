@@ -472,9 +472,6 @@ public class ObjectForm<D> extends AbstractForm<D> {
             Class<?> returnType = m == null ? null : m.getReturnType();
             field = createField(fieldName, returnType, getLabel(fieldName));
         }
-        if(field != null) {
-            customize(fieldName, field);
-        }
         return field;
     }
 
@@ -487,7 +484,6 @@ public class ObjectForm<D> extends AbstractForm<D> {
      */
     @Override
     void customize(String fieldName, HasValue<?, ?> field) {
-        flag = false;
         customizeField(fieldName, field);
         getFieldCreator().customizeField(fieldName, field);
         if(fieldCustomizer != null) {

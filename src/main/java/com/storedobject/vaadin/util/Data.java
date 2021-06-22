@@ -446,6 +446,10 @@ public class Data<T> extends HashMap<String, Object> {
         if(field == null) {
             throw new RuntimeException(FIELD_CANT_BE_EMPTY);
         }
+        String fieldName = getName(field);
+        if(fieldName != null && !valueHandler.canSet(fieldName)) {
+            return;
+        }
         if(field instanceof RequiredField) {
             ((RequiredField) field).setRequired(required);
         }

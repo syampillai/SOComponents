@@ -47,10 +47,6 @@ public abstract class AbstractForm<D> extends Composite<Component> {
      * This will be used to check whether a field needs to be included or not.
      */
     IncludeField includeField = new IncludeFieldArray();
-    /**
-     * State flag used to keep track of certain states while fields being constructed.
-     */
-    boolean flag;
 
     /**
      * Construct a form.
@@ -185,16 +181,12 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     private HasValue<?, ?> createFieldInt(String fieldName, String label) {
-        flag = true;
         HasValue<?, ?> field = createField(fieldName, label);
         if(field == null) {
             field = createField(fieldName);
             if(field != null && label != null) {
                 setFieldLabel(fieldName, label);
             }
-        }
-        if(flag && field != null) {
-            customize(fieldName, field);
         }
         return field;
     }
@@ -206,7 +198,6 @@ public abstract class AbstractForm<D> extends Composite<Component> {
      * @param field Field.
      */
     void customize(String fieldName, HasValue<?, ?> field) {
-        flag = false;
     }
 
     /**
@@ -223,6 +214,7 @@ public abstract class AbstractForm<D> extends Composite<Component> {
             return;
         }
         data.addField(fieldName, field);
+        customize(fieldName, field);
         attachF(fieldName, field);
     }
 
