@@ -265,8 +265,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Set the first focusable component. (If this is not set, it will try to find out the first focusable component by traversing the
-     * component tree).
+     * Set the first focusable component. (If this is not set, it will try to find out the first focusable component
+     * by traversing the component tree).
      *
      * @param firstFocus Component to be focused
      */
@@ -275,7 +275,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Check if this component to be skipped while traversing the component tree to find the first focusable component or not.
+     * Check if this component to be skipped while traversing the component tree to find the first focusable component
+     * or not.
      *
      * @param skipFocus The focusable component
      * @return False if it should not be skipped (Default implementation returns false).
@@ -290,6 +291,7 @@ public class View implements ExecutableView {
     public void focus() {
         if(firstFocus != null) {
             firstFocus.focus();
+            return;
         }
         if(focus(getContent())) {
             return;
