@@ -160,7 +160,10 @@ public abstract class Application {
                 while (!closing) {
                     synchronized (commands) {
                         if(!commands.isEmpty()) {
-                            ui.access(commands.remove(0));
+                            ui.access(() -> {
+                                commands.remove(0);
+                                ui.push();
+                            });
                             if(!commands.isEmpty()) {
                                 continue;
                             }
@@ -394,20 +397,25 @@ public abstract class Application {
     }
 
     /**
-     * Lock the UI and execute a command.
+     * Lock the UI and execute a command. After executing the command, UI changes, if any, will be sent to the browser.
      *
      * @param command Command to execute.
      * @return A future that can be used to check for task completion and to cancel the command.
      */
     public Future<Void> access(Command command) {
-        return getUI().access(command);
+        UI ui = getUI();
+        return ui.access(() -> {
+            command.execute();
+            ui.push();
+        });
     }
 
     /**
      * This method is invoked when the application comes up.
      *
      * @param link The context path of the application.
-     * @return True if application can go ahead. Otherwise, an "Initialization failed" message is displayed. Default return value is <code>true</code>.
+     * @return True if application can go ahead. Otherwise, an "Initialization failed" message is displayed.
+     * Default return value is <code>true</code>.
      */
     protected boolean init(String link) {
         return true;
@@ -450,7 +458,8 @@ public abstract class Application {
      *
      * @param label Label of the menu item
      * @param menuAction Action to execute when menu item is clicked
-     * @return Menu item. By default, the menu item will be created from the "application environment" {@link ApplicationEnvironment#createMenuItem(String, String, Runnable)}
+     * @return Menu item. By default, the menu item will be created from the "application environment"
+     * {@link ApplicationEnvironment#createMenuItem(String, String, Runnable)}
      */
     public ApplicationMenuItem createMenuItem(String label, Runnable menuAction) {
         return createMenuItem(label, null, menuAction);
@@ -462,7 +471,8 @@ public abstract class Application {
      * @param label Label of the menu item
      * @param icon Icon to be used
      * @param menuAction Action to execute when menu item is clicked
-     * @return Menu item. By default, the menu item will be created from the "application environment" {@link ApplicationEnvironment#createMenuItem(String, String, Runnable)}
+     * @return Menu item. By default, the menu item will be created from the "application environment"
+     * {@link ApplicationEnvironment#createMenuItem(String, String, Runnable)}
      */
     public ApplicationMenuItem createMenuItem(String label, String icon, Runnable menuAction) {
         return getEnvironment().createMenuItem(label, icon, menuAction);
@@ -472,7 +482,8 @@ public abstract class Application {
      * Create a menu item.
      *
      * @param label Label of the menu item
-     * @return Menu item. By default, the menu item will be created from the "application environment" {@link ApplicationEnvironment#createMenuItemGroup(String)}
+     * @return Menu item. By default, the menu item will be created from the "application environment"
+     * {@link ApplicationEnvironment#createMenuItemGroup(String)}
      */
     public ApplicationMenuItemGroup createMenuItemGroup(String label) {
         return getEnvironment().createMenuItemGroup(label);
@@ -557,7 +568,8 @@ public abstract class Application {
         }
         UI u = ui;
         //noinspection unchecked
-        return ((ArrayList<Application>)VaadinSession.getCurrent().getAttribute(APP_KEY)).stream().filter(a -> a.ui == u).findAny().orElse(null);
+        return ((ArrayList<Application>)VaadinSession.getCurrent().getAttribute(APP_KEY)).stream()
+                .filter(a -> a.ui == u).findAny().orElse(null);
     }
 
     /**
@@ -716,8 +728,8 @@ public abstract class Application {
     }
 
     /**
-     * Show a warning message from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
-     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     * Show a warning message from the parameter passed. The parameter will be converted to <code>String</code> by
+     * invoking the method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
      *
      * @param message Message.
      */
@@ -726,8 +738,8 @@ public abstract class Application {
     }
 
     /**
-     * Show a message on the tray from the parameter passed. The parameter will be converted to <code>String</code> by invoking the
-     * method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
+     * Show a message on the tray from the parameter passed. The parameter will be converted to <code>String</code> by
+     * invoking the method {@link com.storedobject.vaadin.ApplicationEnvironment#toDisplay(Object)}.
      *
      * @param message Message.
      */
