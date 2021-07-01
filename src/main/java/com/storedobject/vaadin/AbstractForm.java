@@ -978,7 +978,7 @@ public abstract class AbstractForm<D> extends Composite<Component> {
 
         @Override
         public boolean canSet(String fieldName) {
-            return false;
+            return true;
         }
 
         @Override

@@ -41,7 +41,20 @@ public class BooleanRadioField extends TranslatedField<Boolean, String> {
      * @param initialValue Initial value.
      */
     public BooleanRadioField(String label, boolean initialValue) {
-        super(new RadioField<>(yesNo), (f, s) -> "Yes".equals(s), (f, b) -> yesNo[b ? 0 : 1]);
+        this(label, (Boolean) initialValue);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param label Label.
+     * @param initialValue Initial value. If you pass <code>null</code>, no value will be set.
+     */
+    public BooleanRadioField(String label, Boolean initialValue) {
+        super(new RadioField<>(yesNo),
+                (f, s) -> s == null ? null : "Yes".equals(s),
+                (f, b) -> b == null ? null : (yesNo[b ? 0 : 1]),
+                null);
         if(label != null) {
             setLabel(label);
         }

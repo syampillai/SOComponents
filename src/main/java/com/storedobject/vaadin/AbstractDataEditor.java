@@ -174,7 +174,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @return True or false. (Default return value is <code>true</code>).
      */
     protected boolean includeField(String fieldName) {
-        throw FIELD_ERROR;
+        return true;
     }
 
     /**
@@ -183,7 +183,6 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      * @param field Field
      */
     protected void customizeField(String fieldName, HasValue<?, ?> field) {
-        throw FIELD_ERROR;
     }
 
     /**
@@ -402,11 +401,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
         @Override
         protected boolean includeField(String fieldName) {
-            try {
-                return AbstractDataEditor.this.includeField(fieldName);
-            } catch (FieldError e) {
-                return super.includeField(fieldName);
-            }
+            return AbstractDataEditor.this.includeField(fieldName) && super.includeField(fieldName);
         }
 
         @Override
@@ -440,11 +435,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
 
         @Override
         protected void customizeField(String fieldName, HasValue<?, ?> field) {
-            try {
-                AbstractDataEditor.this.customizeField(fieldName, field);
-            } catch (FieldError e) {
-                super.customizeField(fieldName, field);
-            }
+            AbstractDataEditor.this.customizeField(fieldName, field);
+            super.customizeField(fieldName, field);
         }
 
         @Override

@@ -544,7 +544,8 @@ public class Data<T> extends HashMap<String, Object> {
                 return OK;
             }
             String fieldName = this.data.getName(field);
-            if(fieldName != null && this.data.valueHandler.canHandle(fieldName) && !this.data.valueHandler.canSet(fieldName)) {
+            if(fieldName != null && this.data.valueHandler.canHandle(fieldName)
+                    && !this.data.valueHandler.canSet(fieldName)) {
                 return OK;
             }
             String m = errorMessage;
