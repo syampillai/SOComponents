@@ -11,15 +11,17 @@ import com.vaadin.flow.shared.Registration;
 import java.util.*;
 
 /**
- * View represents an independent piece of information (typically a "data entry form" or some information dashboard) to be displayed
- * in the content area of the {@link Application}. View implements {@link Runnable} interface. So, it can be associated with a {@link MenuItem}.
- * When a {@link MenuItem} is clicked, the {@link Runnable#run()} method of the view is invoked and we say the "view is executed". When a
- * view is executed, its component (specified using the {@link View#setComponent(Component)}) is displayed in the "content" area of the application.
+ * View represents an independent piece of information (typically a "data entry form" or some information dashboard)
+ * to be displayed in the content area of the {@link Application}. View implements {@link Runnable} interface. So,
+ * it can be associated with a {@link MenuItem}. When a {@link MenuItem} is clicked, the {@link Runnable#run()} method
+ * of the view is invoked and we say the "view is executed". When a view is executed, its component (specified using
+ * the {@link View#setComponent(Component)}) is displayed in the "content" area of the application.
  *
  * @author Syam
  */
 public class View implements ExecutableView {
 
+    private static int DEFAULT_PADDING = 5;
     private Set<ViewClosedListener> closedListeners;
     private Set<ViewOpenedListener> openedListeners;
     private Component component;
@@ -86,7 +88,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Specify the scrollable attribute of the view. Scrollable views will scroll within the "content" area of the application.
+     * Specify the scrollable attribute of the view. Scrollable views will scroll within the "content" area of the
+     * application.
      *
      * @param scrollable Scrollable
      */
@@ -104,9 +107,9 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Get the component that represents the "content" of the view. It may be different from the actual component displayed by the
-     * application. For example, if a view may be displayed as a {@link Dialog} and in such cases, the "content" of the {@link Dialog} is
-     * the "content" of the view.
+     * Get the component that represents the "content" of the view. It may be different from the actual component
+     * displayed by the application. For example, if a view may be displayed as a {@link Dialog} and in such cases,
+     * the "content" of the {@link Dialog} is the "content" of the view.
      *
      * @return The "content" as a component.
      */
@@ -130,7 +133,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * This method is invoked when the view wants to determine its "content" to be displayed and nothing exists at that moment.
+     * This method is invoked when the view wants to determine its "content" to be displayed and nothing exists at
+     * that moment.
      *
      * {@link #setComponent(Component)} may be called from within this method.
      */
@@ -164,8 +168,9 @@ public class View implements ExecutableView {
      * <p>If it is a {@link Dialog}, just returns without making any changes.</p>
      * <p>Will set the size to 'full' by invoking {@link HasSize#setSizeFull()} if it is an instance of
      * {@link com.vaadin.flow.component.HasSize} so that it covers the entire content area.</p>
-     * <p>Padding will be set to 5px and box-sizing to border-box. So, if you want to fill the component to
-     * the entire content area, you will have to override this method and set the padding to 0px.</p>
+     * <p>Padding will be set to 5px (unless changed via {@link #setDefaultPadding(int)}) and box-sizing to border-box.
+     * So, if you want to fill the component to the entire content area, you will have to override this method and set
+     * the padding to 0px.</p>
      * <p>If the component is an instance of {@link Div}, its "display" style will be set to "flex" and its
      * "flex-direction" will be set to "column".</p>
      */
@@ -180,7 +185,7 @@ public class View implements ExecutableView {
         if(c instanceof Div) {
             c.getElement().getStyle().set("display", "flex").set("flex-direction", "column");
         }
-        c.getElement().getStyle().set("padding", "5px").set("box-sizing", "border-box");
+        c.getElement().getStyle().set("padding", DEFAULT_PADDING + "px").set("box-sizing", "border-box");
     }
 
     private Element parent() {
@@ -312,7 +317,8 @@ public class View implements ExecutableView {
      * Focus a component (or its focusable child component).
      *
      * @param component Component to focus
-     * @return False if no focusable component exists (must be a field ({@link HasValue}), must be "visible" and should not be "read only").
+     * @return False if no focusable component exists (must be a field ({@link HasValue}), must be "visible" and should
+     * not be "read only").
      */
     public boolean focus(Component component) {
         return focus(component, true);
@@ -362,7 +368,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
+     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is
+     * activated.
      *
      * @return Menu item. May return <code>null</code> it the menu item is not yet created.
      */
@@ -371,8 +378,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is activated.
-     * It will create one if it is not yet created.
+     * Get the menu item for this view. This is the menu item displayed by the {@link Application} when the view is
+     * activated. It will create one if it is not yet created.
      * This method is final but {@link #createMenuItem(Runnable)} can be overridden for customizing it.
      *
      * @param menuAction Action for the menu item to be created
@@ -389,8 +396,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Set caption for this view. Caption is displayed as a {@link MenuItem} by the {@link Application} so that the view can be selected
-     * (only one view is displayed at a time) by clicking it.
+     * Set caption for this view. Caption is displayed as a {@link MenuItem} by the {@link Application} so that the
+     * view can be selected (only one view is displayed at a time) by clicking it.
      *
      * @param caption Caption
      */
@@ -535,8 +542,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Execute this view and set its parent too. (In this case, parent view is not locked). The parent view is automatically selected
-     * when this view closes.
+     * Execute this view and set its parent too. (In this case, parent view is not locked). The parent view is
+     * automatically selected when this view closes.
      *
      * @param parent Parent view to be set
      */
@@ -658,7 +665,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Add a "view opened listener". The {@link ViewOpenedListener#viewOpened(View)} will be invoked whenever this view is executed.
+     * Add a "view opened listener". The {@link ViewOpenedListener#viewOpened(View)} will be invoked whenever this
+     * view is executed.
      *
      * @param listener View opened listener
      * @return Registration that can be used for removing the listener.
@@ -675,7 +683,8 @@ public class View implements ExecutableView {
     }
 
     /**
-     * Add a "view closed listener". The {@link ViewClosedListener#viewClosed(View)} will be invoked whenever this view is closed/aborted.
+     * Add a "view closed listener". The {@link ViewClosedListener#viewClosed(View)} will be invoked whenever this
+     * view is closed/aborted.
      *
      * @param listener View closed listener
      * @return Registration that can be used for removing the listener.
@@ -689,5 +698,14 @@ public class View implements ExecutableView {
         }
         closedListeners.add(listener);
         return () -> closedListeners.remove(listener);
+    }
+
+    /**
+     * Set the default padding to be used by all views. (By default, it is 5 pixels.) See {@link #decorateComponent()}.
+     *
+     * @param padding Padding to be set.
+     */
+    public static void setDefaultPadding(int padding) {
+        DEFAULT_PADDING = padding;
     }
 }

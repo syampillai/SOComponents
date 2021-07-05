@@ -744,7 +744,7 @@ public abstract class Application {
      * @param message Message.
      */
     public static void tray(Object message) {
-        notification(null, message,1, Notification.Position.BOTTOM_END, false);
+        notification(null, null, message,1, Notification.Position.BOTTOM_END, false);
     }
 
     /**
@@ -792,7 +792,7 @@ public abstract class Application {
      * @param message Message.
      */
     public static void tray(Object owner, Object message) {
-        notification(owner, message,1, Notification.Position.BOTTOM_END, false);
+        notification(null, owner, message,1, Notification.Position.BOTTOM_END, false);
     }
 
     /**
@@ -823,15 +823,22 @@ public abstract class Application {
     }
 
     private static void notification(Object owner, Object message, int messageType) {
-        notification(owner, message, messageType, null, true);
+        notification(null, owner, message, messageType, null, true);
     }
 
-    private static void notification(Object owner, Object message, int messageType, Notification.Position position, boolean log) {
+    private static void notification(Application a, Object owner, Object message, int messageType,
+                                     Notification.Position position, boolean log) {
+        if(a == null) {
+            a = get();
+        }
         if(message instanceof Notification) {
-            ((Notification)message).open();
+            if(a != null) {
+                a.access(((Notification) message)::open);
+            } else {
+                ((Notification) message).open();
+            }
             return;
         }
-        Application a = get();
         String m = null;
         if(log && (a == null || messageType == 2)) {
             if(message instanceof Throwable) {
@@ -869,11 +876,13 @@ public abstract class Application {
                 break;
         }
         n.setDuration(messageType);
-        n.open();
         if(a == null) {
-            return;
+            System.err.println(m);
+            n.open();
+        } else {
+            a.access(n::open);
+            a.regAlert(n, owner);
         }
-        a.regAlert(n, owner);
     }
 
     private void regAlert(Alert alert, Object owner) {
@@ -1016,7 +1025,7 @@ public abstract class Application {
      * @param text Text of the notification
      */
     public void showNotification(String caption, String text) {
-        notification(caption, text, 2, Notification.Position.BOTTOM_END,false);
+        notification(this, caption, text, 2, Notification.Position.BOTTOM_END,false);
     }
 
     /**
@@ -1039,7 +1048,7 @@ public abstract class Application {
         if(!e.toLowerCase().contains("error")) {
             e = "Error: " + e;
         }
-        notification(caption, e,2, Notification.Position.BOTTOM_END,false);
+        notification(this, caption, e,2, Notification.Position.BOTTOM_END,false);
     }
 
     /**
