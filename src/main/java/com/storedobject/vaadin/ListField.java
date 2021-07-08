@@ -57,7 +57,8 @@ public class ListField<T> extends Select<T> {
      * @return Item at the index.
      */
     public T getValue(int index) {
-        return index < 0 || index >= items.size() ? (isRequiredBoolean() && !items.isEmpty() ? items.get(0) : null) : items.get(index);
+        return index < 0 || index >= items.size() ? (isRequiredBoolean() && !items.isEmpty() ? items.get(0) : null)
+                : items.get(index);
     }
 
     /**

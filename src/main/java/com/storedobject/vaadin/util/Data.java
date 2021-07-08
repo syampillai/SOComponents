@@ -453,13 +453,6 @@ public class Data<T> extends HashMap<String, Object> {
         if(field instanceof RequiredField) {
             ((RequiredField) field).setRequired(required);
         }
-        Object value = field.getValue();
-        if(value != null) {
-            Class<?> valueClass = value.getClass();
-            if(valueClass == boolean.class || valueClass == Boolean.class) {
-                return;
-            }
-        }
         field.setRequiredIndicatorVisible(required);
         DataValidators<T, F> dv = validator(field);
         if(!required) {

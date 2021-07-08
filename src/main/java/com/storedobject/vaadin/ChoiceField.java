@@ -80,7 +80,7 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     @SuppressWarnings("unchecked")
     public ChoiceField(String label, Collection<String> list) {
         super(new ListField<>(sanitize(list)), (f, s) -> ((ListField<String>) f).getIndex(s),
-                (f, v) -> v == null ? null : ((ListField<String>) f).getValue(v));
+                (f, v) -> v == null ? null : ((ListField<String>) f).getValue(v), null);
         setPlaceholder("Select");
         setValue(0);
         setLabel(label);
@@ -131,11 +131,6 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
      */
     public void setChoice(String value) {
         getField().setValue(value);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getValue() < 0;
     }
 
     /**

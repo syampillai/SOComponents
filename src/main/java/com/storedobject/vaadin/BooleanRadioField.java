@@ -5,7 +5,7 @@ package com.storedobject.vaadin;
  *
  * @author Syam
  */
-public class BooleanRadioField extends TranslatedField<Boolean, String> {
+public class BooleanRadioField extends TranslatedField<Boolean, String> implements ValueRequired {
 
     private static final String[] yesNo = new String[] { "Yes", "No" };
 
