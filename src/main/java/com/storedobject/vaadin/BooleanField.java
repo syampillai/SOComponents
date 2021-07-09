@@ -74,4 +74,9 @@ public class BooleanField extends CustomField<Boolean> {
         super.setEnabled(enabled);
         checkbox.setEnabled(enabled);
     }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }
