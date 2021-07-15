@@ -398,16 +398,31 @@ public abstract class Application {
 
     /**
      * Lock the UI and execute a command. After executing the command, UI changes, if any, will be sent to the browser.
+     * <p>Note: All errors are silently ignored. If you want any control over errors/exceptions, please handle it
+     * in the commands itself.</p>
      *
      * @param command Command to execute.
      * @return A future that can be used to check for task completion and to cancel the command.
      */
     public Future<Void> access(Command command) {
         UI ui = getUI();
-        return ui.access(() -> {
-            command.execute();
-            ui.push();
-        });
+        Future<Void> result = null;
+        try {
+            result = ui.access(() -> {
+                try {
+                    command.execute();
+                } catch(Throwable ignored) {
+                }
+                if(ui.getPushConfiguration().getPushMode().isEnabled()) {
+                    try {
+                        ui.push();
+                    } catch(Throwable ignored) {
+                    }
+                }
+            });
+        } catch(Throwable ignored) {
+        }
+        return result;
     }
 
     /**
