@@ -934,7 +934,7 @@ public interface HasColumns<T> extends ExecutableView {
             columnComparators1 = null;
             columnComparators2 = null;
             grid.getElement().setAttribute("theme", getDefaultThemes());
-            if(grid instanceof HasColumns) {
+            if(grid instanceof HasColumns && ((HasColumns<?>) grid).getColumnCount() > 0) {
                 hc.createHeaders();
                 Component component = hc.createHeader();
                 if(component != null) {

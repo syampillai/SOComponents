@@ -54,8 +54,12 @@ public class MultiSelectGrid<T> extends SelectGrid<T> {
      * @param consumer Consumer to consume the selected item.
      */
     public MultiSelectGrid(Class<T> objectClass, List<T> items, Iterable<String> columns, Consumer<Set<T>> consumer) {
-        //noinspection unchecked
-        super(objectClass, items, columns, o -> consumer.accept((Set<T>) o), true);
+        super(objectClass, items, columns, o -> {
+            if(consumer != null) {
+                //noinspection unchecked
+                consumer.accept((Set<T>) o);
+            }
+        }, true);
     }
 
     /**
