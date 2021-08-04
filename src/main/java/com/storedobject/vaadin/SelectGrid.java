@@ -210,6 +210,10 @@ public class SelectGrid<T> extends ListGrid<T> {
             super("Select " + (SelectGrid.this instanceof MultiSelectGrid ? "Entries" : "an Entry"));
             setComponent(SelectGrid.this);
             setWindowMode(true);
+            String c = SelectGrid.this.getCaption();
+            if(c != null && !c.isEmpty()) {
+                setCaption(c);
+            }
         }
     }
 }
