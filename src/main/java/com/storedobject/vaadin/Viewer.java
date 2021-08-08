@@ -34,7 +34,7 @@ public class Viewer extends View implements CloseableView {
     /**
      * Create the "window" to show the content. This should be invoked to obtain the {@link Window} component
      * only if the {@link View} has to appear as a popped-up window. The window will have a size of 80vw X 80vh by
-     * default unless .
+     * default unless the methods {@link #getViewWidth()} and {@link #getViewHeight()} are overridden.
      *
      * @param component Component containing the actual content to display.
      * @return A window containing the content that is passed.

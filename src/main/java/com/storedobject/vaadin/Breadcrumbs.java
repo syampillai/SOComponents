@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -8,6 +9,8 @@ import com.vaadin.flow.shared.Registration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Breadcrumbs component. A {@link ClickHandler} may be used to make the {@link Breadcrumb}s clickable.
@@ -18,8 +21,8 @@ import java.util.List;
  */
 public class Breadcrumbs extends Composite<ButtonLayout> {
 
-    private List<Breadcrumb> breadcrumbs = new ArrayList<>();
-    private ButtonLayout layout = new ButtonLayout();
+    private final List<Breadcrumb> breadcrumbs = new ArrayList<>();
+    private final ButtonLayout layout = new ButtonLayout();
     private final ClickHandler clickHandler;
 
     /**
@@ -109,10 +112,55 @@ public class Breadcrumbs extends Composite<ButtonLayout> {
     }
 
     /**
+     * Get the parent of the given breadcrumb.
+     *
+     * @param breadcrumb Breadcrumb for which parent needs to be obtained.
+     * @return Parent or <code>null</code> if it is the first breadcrumb.
+     */
+    public Breadcrumb getParent(Breadcrumb breadcrumb) {
+        int i = breadcrumbs.indexOf(breadcrumb);
+        return i <= 0 ? null : breadcrumbs.get(i - 1);
+    }
+
+    /**
+     * Get the child of the given breadcrumb.
+     *
+     * @param breadcrumb Breadcrumb for which child needs to be obtained.
+     * @return Parent or <code>null</code> if it is the last breadcrumb.
+     */
+    public Breadcrumb getChild(Breadcrumb breadcrumb) {
+        int i = breadcrumbs.indexOf(breadcrumb);
+        if(i < 0) {
+            return null;
+        }
+        ++i;
+        return i < breadcrumbs.size() ? breadcrumbs.get(i) : null;
+    }
+
+    /**
+     * Get the head breadcrumb.
+     *
+     * @return The breadcrumb at the head. Could be <code>null</code>.
+     */
+    public Breadcrumb getHead() {
+        return breadcrumbs.isEmpty() ? null : breadcrumbs.get(0);
+    }
+
+    /**
+     * Stream all child breadcrumbs.
+     *
+     * @return Stream of child breadcrumbs.
+     */
+    public Stream<Breadcrumb> streamChildren() {
+        return breadcrumbs.stream();
+    }
+
+    /**
      * Component that represents a "breadcrumb".
      */
     public static class Breadcrumb extends Badge {
 
+        private final long id = ID.newID();
         private final Breadcrumbs bc;
         private Icon icon;
         private boolean disabled = true;
@@ -177,7 +225,7 @@ public class Breadcrumbs extends Composite<ButtonLayout> {
 
         @Override
         public int hashCode() {
-            return getText().hashCode();
+            return Objects.hashCode(id);
         }
 
         /**
