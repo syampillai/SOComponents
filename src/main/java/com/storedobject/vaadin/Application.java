@@ -9,10 +9,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.server.Command;
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.server.WebBrowser;
+import com.vaadin.flow.server.*;
 import com.vaadin.flow.shared.Registration;
 
 import java.io.Closeable;
@@ -540,7 +537,18 @@ public abstract class Application {
             uis.removeIf(u -> u.isClosing() || get(u) == null);
             if(uis.isEmpty()) {
                 removeUI(true);
-                vs.close();
+                try {
+                    VaadinService.getCurrentRequest().getWrappedSession().invalidate();
+                } catch(Throwable ignored) {
+                }
+                try {
+                    vs.getSession().invalidate();
+                } catch(Throwable ignored) {
+                }
+                try {
+                    vs.close();
+                } catch(Throwable ignored) {
+                }
             } else {
                 removeUI(true);
             }
