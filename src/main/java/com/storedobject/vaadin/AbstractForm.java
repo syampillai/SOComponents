@@ -902,20 +902,22 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Create an instance of the data object. Default implementation tries to invoke the default constructor to create an instance.
+     * Create an instance of the data object. Default implementation tries to invoke the default constructor
+     * to create an instance.
      * @return Newly created data object.
      */
     protected D createObjectInstance() {
         try {
             return objectClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException
+                | InvocationTargetException ignored) {
         }
         return null;
     }
 
     /**
-     * Get the instance of the currently editing data object. (A new data object will be created by invoking {@link #createObjectInstance()} if there
-     * is no current object instance set).
+     * Get the instance of the currently editing data object. (A new data object will be created by invoking
+     * {@link #createObjectInstance()} if there is no current object instance set).
      * @return Instance of the currently loaded object.
      */
     public D getObject() {
@@ -923,8 +925,9 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Get the instance of the currently editing data object. A new data object will be created by invoking {@link #createObjectInstance()} if there
-     * is no current object instance set and the parameter passed is <code>true</code>.
+     * Get the instance of the currently editing data object. A new data object will be created by invoking
+     * {@link #createObjectInstance()} if there is no current object instance set and the parameter passed
+     * is <code>true</code>.
      * @param create Whether to create a new instance or not
      * @return Instance of the currently loaded object.
      */

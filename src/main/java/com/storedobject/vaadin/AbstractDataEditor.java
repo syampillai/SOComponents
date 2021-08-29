@@ -12,9 +12,9 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * A view that is used for creating "data entry forms" for a particular type of object. The "form" embedded in this is an {@link ObjectForm}.
- * Please refer to {@link ObjectForm} for a detailed explanation of how the "form" is generated. Many of the methods in this are delegated to
- * the embedded "form".
+ * A view that is used for creating "data entry forms" for a particular type of object. The "form" embedded in this
+ * is an {@link ObjectForm}. Please refer to {@link ObjectForm} for a detailed explanation of how the "form" is
+ * generated. Many of the methods in this are delegated to the embedded "form".
  * @param <T> Type of object to be edited
  * @author Syam
  */
@@ -37,7 +37,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
      */
     public AbstractDataEditor(Class<T> objectClass, String caption) {
         this.form = new DForm(objectClass);
-        setCaption(caption == null || caption.isEmpty() ? Objects.requireNonNull(Application.get()).getEnvironment().createLabel(getObjectClass()) : caption);
+        setCaption(caption == null || caption.isEmpty() ? Objects.requireNonNull(Application.get()).getEnvironment()
+                .createLabel(getObjectClass()) : caption);
     }
 
     @Override
@@ -186,8 +187,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Create the field for the particular name.. Default implementation try to obtain the value from the "field creator"
-     * ({@link ObjectFieldCreator#createField(String, Class, String)}).
+     * Create the field for the particular name.. Default implementation try to obtain the value from the
+     * "field creator" ({@link ObjectFieldCreator#createField(String, Class, String)}).
      * @param fieldName Name of the field
      * @param fieldType Type of the field's value
      * @param label Label
@@ -207,7 +208,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Get the "field creator" for this form. By default, it tries to obtain it from {@link ApplicationEnvironment#getObjectFieldCreator()}.
+     * Get the "field creator" for this form. By default, it tries to obtain it from
+     * {@link ApplicationEnvironment#getObjectFieldCreator()}.
      * @return Field creator.
      */
     protected ObjectFieldCreator<T> getFieldCreator() {
@@ -215,9 +217,9 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Get the order in which a field to appear in the form. Any integer value can be returned and the field is placed in the form in
-     * ascending order of the values returned by this method. Default implementation try to obtain the value from the "field creator"
-     * ({@link ObjectFieldCreator#getFieldOrder(String)}).
+     * Get the order in which a field to appear in the form. Any integer value can be returned and the field is
+     * placed in the form in ascending order of the values returned by this method. Default implementation try to
+     * obtain the value from the "field creator" ({@link ObjectFieldCreator#getFieldOrder(String)}).
      * @param fieldName Name of the field
      * @return Field order.
      */
@@ -226,7 +228,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Create an instance of the object. Default implementation tries to invoke the default constructor to create an instance.
+     * Create an instance of the object. Default implementation tries to invoke the default constructor to create
+     * an instance and fixed values will be set if defined.
      * @return Newly created object.
      */
     protected T createObjectInstance() {
@@ -243,8 +246,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Get the instance of the currently editing object. (A new object will be created by invoking {@link #createObjectInstance()} if there
-     * is no current object instance set).
+     * Get the instance of the currently editing object. (A new object will be created by invoking
+     * {@link #createObjectInstance()} if there is no current object instance set).
      * @return Instance of the currently loaded object.
      */
     public T getObject() {
@@ -269,29 +272,49 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
-     * Set a fixed value for a field. If a fixed value is set, the field value will not be changed.
+     * Set a fixed value for a field. If a fixed value is set, that value will be set to the corresponding
+     * attribute of the object when a new instance is created. (The field value may be still overwritten).
      * @param fieldName Name of the field
      * @param value Value to be set as fixed value
      */
     public void setFixedValue(String fieldName, Object value) {
-        Arrays.stream(getObjectClass().getMethods()).filter(m -> checkSetMethod(m, fieldName, value)).forEach(m -> fixedValues.put(m, value));
+        Arrays.stream(getObjectClass().getMethods()).filter(m -> checkSetMethod(m, fieldName, value))
+                .forEach(m -> fixedValues.put(m, value));
     }
 
     private static boolean checkSetMethod(Method m, String fieldName, Object value) {
-        if(!m.getName().equals("set" + fieldName) || m.getParameterCount() != 1 || !Modifier.isPublic(m.getModifiers()) ||
-                Modifier.isStatic(m.getModifiers())) {
+        if(!m.getName().equals("set" + fieldName) || m.getParameterCount() != 1 || !Modifier.isPublic(m.getModifiers())
+                || Modifier.isStatic(m.getModifiers())) {
             return false;
         }
         return value == null || m.getParameterTypes()[0].isAssignableFrom(value.getClass());
     }
 
     /**
-     * Set a fixed value for a field. If a fixed value is set, the field value will not be changed.
+     * Set a fixed value for a field. If a fixed value is set, that value will be set to the corresponding
+     * attribute of the object when a new instance is created. (The field value may be still overwritten).
      * @param field Field
      * @param value Value to be set as fixed value
      */
     public void setFixedValue(HasValue<?, ?> field, Object value) {
         setFixedValue(getFieldName(field), value);
+    }
+
+    /**
+     * Set the attributes of the object with "fixed values" from the respective fields if fixed values are
+     * defined using {@link #setFixedValue(String, Object)} or {@link #setFixedValue(HasValue, Object)} method
+     * for those attributes.
+     * @param object Object to which fixed values to be set.
+     */
+    public void setFixedValues(T object) {
+        if (object != null) {
+            fixedValues.forEach((m, v) -> {
+                try {
+                    m.invoke(object, v);
+                } catch (Exception ignored) {
+                }
+            });
+        }
     }
 
     /**
@@ -332,7 +355,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
         @Override
         protected void generateFieldNames() {
             try {
-                AbstractDataEditor.this.getFieldNames().filter(this::includeField).forEach(n -> addField(n, getFieldGetMethod(n), null));
+                AbstractDataEditor.this.getFieldNames().filter(this::includeField)
+                        .forEach(n -> addField(n, getFieldGetMethod(n), null));
             } catch (FieldError e) {
                 super.generateFieldNames();
             }
@@ -413,6 +437,12 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
             }
         }
 
+        /**
+         * Create an instance of the data object. Default implementation tries to invoke the default constructor
+         * to create an instance. Fixed values will be set to the created object instance by invoking
+         * {@link #setFixedValues(Object)}.
+         * @return Newly created data object.
+         */
         @Override
         protected T createObjectInstance() {
             T object;
@@ -421,15 +451,7 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
             } catch (FieldError e) {
                 object = super.createObjectInstance();
             }
-            T o = object;
-            if (object != null) {
-                fixedValues.forEach((m, v) -> {
-                    try {
-                        m.invoke(o, v);
-                    } catch (Exception ignored) {
-                    }
-                });
-            }
+            setFixedValues(object);
             return object;
         }
 
@@ -440,7 +462,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
         }
 
         @Override
-        protected boolean handleValueSetError(String fieldName, HasValue<?, ?> field, Object fieldValue, Object objectValue, Throwable error) {
+        protected boolean handleValueSetError(String fieldName, HasValue<?, ?> field, Object fieldValue,
+                                              Object objectValue, Throwable error) {
             return AbstractDataEditor.this.handleValueSetError(fieldName, field, fieldValue, objectValue, error);
         }
     }
