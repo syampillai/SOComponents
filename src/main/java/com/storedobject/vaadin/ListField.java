@@ -110,4 +110,14 @@ public class ListField<T> extends Select<T> {
             super.setItems(items);
         }
     }
+
+    @Override
+    protected void setRequired(boolean required) {
+        super.setRequired(required);
+    }
+
+    @Override
+    protected boolean isRequiredBoolean() {
+        return super.isRequiredBoolean();
+    }
 }

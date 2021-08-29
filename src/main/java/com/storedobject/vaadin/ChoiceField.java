@@ -79,11 +79,17 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
      */
     @SuppressWarnings("unchecked")
     public ChoiceField(String label, Collection<String> list) {
-        super(new ListField<>(sanitize(list)), (f, s) -> ((ListField<String>) f).getIndex(s),
+        super(createField(list), (f, s) -> ((ListField<String>) f).getIndex(s),
                 (f, v) -> v == null ? null : ((ListField<String>) f).getValue(v), null);
         setPlaceholder("Select");
         setValue(0);
         setLabel(label);
+    }
+
+    private static ListField<String> createField(Collection<String> list) {
+        ListField<String> field = new ListField<>(sanitize(list));
+        field.setRequired(true);
+        return field;
     }
 
     private static Collection<String> createList(Iterable<?> list) {
@@ -198,5 +204,23 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
      */
     public String getPlaceholder() {
         return ((Select<?>)getField()).getPlaceholder();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        ((ListField<?>) getField()).setRequired(required);
+    }
+
+    @Override
+    public boolean isRequired() {
+        return ((ListField<?>) getField()).isRequiredBoolean();
+    }
+
+    @Override
+    public void setValue(Integer value) {
+        if(value == null && isRequired()) {
+            value = 0;
+        }
+        super.setValue(value);
     }
 }

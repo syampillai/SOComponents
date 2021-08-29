@@ -17,7 +17,8 @@ public interface ApplicationEnvironment {
     }
 
     /**
-     * Create a "column creator" for the application when an {@link Object} is viewed in a {@link com.vaadin.flow.component.grid.Grid}.
+     * Create a "column creator" for the application when an {@link Object} is viewed in a
+     * {@link com.vaadin.flow.component.grid.Grid}.
      * @return Column creator.
      */
     default ObjectColumnCreator<?> getObjectColumnCreator() {
@@ -26,7 +27,8 @@ public interface ApplicationEnvironment {
     }
 
     /**
-     * Converts an object into a displable form (String). The default implementation converts it by invoking {@link Object#toString()}.
+     * Converts an object into a displayable form (String). The default implementation converts it by invoking
+     * {@link Object#toString()}.
      * @param any Object to convert
      * @return Converted string.
      */
@@ -39,8 +41,8 @@ public interface ApplicationEnvironment {
     }
 
     /**
-     * Converts an object into a displayable form (String). The default implementation converts {@link Exception} to its message and rest of the
-     * types to {@link #toString(Object)}.
+     * Converts an object into a displayable form (String). The default implementation converts {@link Exception} to
+     * its message and rest of the types to {@link #toString(Object)}.
      * @param any Object to convert
      * @return Converted string.
      */
@@ -58,8 +60,9 @@ public interface ApplicationEnvironment {
     }
 
     /**
-     * Create a label for the attribute name passed. This is typically used for creating labels for field names. THe default
-     * implementation converts the name to camel case words. For example, "firstName" will be converted to "First Name".
+     * Create a label for the attribute name passed. This is typically used for creating labels for field names.
+     * The default implementation converts the name to camel case words. For example, "firstName" will be converted
+     * to "First Name".
      * @param attributeName Attribute name
      * @return Label.
      */
@@ -78,9 +81,9 @@ public interface ApplicationEnvironment {
     }
 
     /**
-     * Create a label for displaying for a particular class. (A class's name may have to be displayed in some part of the application and this method
-     * is invoked for that). The default implementation strips of the "pakage" portion and invokes {@link #createLabel(String)} with the
-     * rest of the class name.
+     * Create a label for displaying a particular class name. (A class's name may have to be displayed in some part
+     * of the application and this method is invoked for that). The default implementation strips of the "package"
+     * portion and invokes {@link #createLabel(String)} with the rest of the class name.
      * @param aClass Class to be displayed
      * @return Label.
      */
@@ -97,7 +100,8 @@ public interface ApplicationEnvironment {
 
     /**
      * This method is used to determine the name of the icon to be displayed on a {@link Button} from its label.
-     * The default implementation returns certain basic names. For example, for labels like "save", "ok", "yes" etc., it returns "check".
+     * The default implementation returns certain basic names. For example, for labels like "save", "ok", "yes" etc.,
+     * it returns "check".
      * @param label Label on the button
      * @return Name of the icon (Icons are created using {@link Icon} class).
      */
