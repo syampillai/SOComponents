@@ -1,9 +1,8 @@
 package com.storedobject.vaadin;
 
-import com.storedobject.vaadin.util.ElementClick;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.shared.Registration;
 
 /**
  * A button that shows only an icon. Since no text is displayed, it saves screen real estate.
@@ -12,7 +11,6 @@ import com.vaadin.flow.shared.Registration;
  */
 public class ImageButton extends Icon implements HasBadgeStyle, HasEnabled {
 
-    private ElementClick click;
     private boolean enabled = true;
     private String color = null, disabledColor = "var(--lumo-disabled-text-color)";
 
@@ -63,27 +61,11 @@ public class ImageButton extends Icon implements HasBadgeStyle, HasEnabled {
 
     private void init(ClickHandler clickHandler, String title) {
         getElement().getStyle().set("cursor", "pointer");
-        click = new ElementClick(this);
         addClickHandler(clickHandler);
         if(title != null) {
             setAttribute("title", title);
         }
         setColor(color);
-    }
-
-    /**
-     * Add click handler.
-     *
-     * @param clickHandler Click handler
-     * @return Registration.
-     */
-    @SuppressWarnings("UnusedReturnValue")
-    public Registration addClickHandler(ClickHandler clickHandler) {
-        return click.addClickListener(e -> {
-            if(enabled && clickHandler != null) {
-                clickHandler.onComponentEvent(e);
-            }
-        });
     }
 
     /**
@@ -125,7 +107,7 @@ public class ImageButton extends Icon implements HasBadgeStyle, HasEnabled {
         if(sizeInPixels < 5) {
             sizeInPixels = 25;
         }
-        Box box = new Box(this);
+        Box box = new Box((Component) icon);
         setSize(sizeInPixels + "px");
         box.alignSizing();
         box.grey();

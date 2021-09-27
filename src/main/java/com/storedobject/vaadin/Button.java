@@ -6,7 +6,8 @@ import com.vaadin.flow.shared.Registration;
 
 /**
  * Enhancements to Vaadin {@link com.vaadin.flow.component.button.Button}.
- * Main features are: (1) A {@link ClickHandler} can e defined as the action when button is clicked. (2) From the text on the button,
+ * Main features are: (1) A {@link ClickHandler} can e defined as the action when button is clicked.
+ * (2) From the text on the button,
  * it will try to create an {@link Icon} (unless an icon is already specified).
  * @author Syam
  */
@@ -105,7 +106,7 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
      * @param icon Vaadin icon
      */
     public void setIcon(VaadinIcon icon) {
-        super.setIcon(new Icon(icon));
+        setIcon(new Icon(icon));
     }
 
     /**
@@ -114,7 +115,7 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
      * @param icon Name of the icon
      */
     public void setIcon(String icon) {
-        super.setIcon(new Icon(icon));
+        setIcon(new Icon(icon));
     }
 
     /**

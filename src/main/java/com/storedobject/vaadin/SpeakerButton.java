@@ -33,7 +33,9 @@ public class SpeakerButton extends Component implements Application.SpeakerToggl
         icon.getElement().setAttribute("onclick", "this.blur()");
         icon.getElement().setAttribute("tabindex", "-1");
         getElement().setAttribute("title", "Toggle speaker output");
-        getElement().setAttribute("onclick", "window.speechSynthesis.speak(new SpeechSynthesisUtterance('Speaker output toggled'));this.blur()");
+        getElement().setAttribute("onclick",
+                "window.speechSynthesis.speak(new SpeechSynthesisUtterance('Speaker output toggled'));this.blur()"
+        );
         getElement().appendChild(icon.getElement());
         icon.setColor("var(--so-header-color)");
     }
@@ -70,7 +72,7 @@ public class SpeakerButton extends Component implements Application.SpeakerToggl
     }
 
     /**
-     * Draw a box around ans set the overall size to 25x25 pixels.
+     * Draw a box around and set the overall size to 25x25 pixels.
      *
      * @return Self
      */
@@ -85,13 +87,7 @@ public class SpeakerButton extends Component implements Application.SpeakerToggl
      * @return Self
      */
     public SpeakerButton withBox(int sizeInPixels) {
-        if(sizeInPixels < 5) {
-            sizeInPixels = 25;
-        }
-        Box box = new Box(icon);
-        icon.setSize(sizeInPixels + "px");
-        box.alignSizing();
-        box.grey();
+        icon.withBox(sizeInPixels);
         return this;
     }
 

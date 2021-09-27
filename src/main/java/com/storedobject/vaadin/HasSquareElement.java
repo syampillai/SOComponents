@@ -11,11 +11,16 @@ public interface HasSquareElement extends HasElement, HasSize {
 
     /**
      * Set the size (Width and height)
-     * @param size Width/height of the square. Null value will reset the size to the default.
+     * @param size Width/height of the square. Null value will remove the width/height styles.
      */
     default void setSize(String size) {
-        setWidth(size);
-        setHeight(size);
+        if (size == null) {
+            getElement().getStyle().remove("width");
+            getElement().getStyle().remove("height");
+        } else {
+            setWidth(size);
+            setHeight(size);
+        }
     }
 
     /**

@@ -94,7 +94,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Set the method handler host. (See the documentation of the this class to get an idea).
+     * Set the method handler host. (See the documentation of this class to get an idea).
      * @param host Method handler host
      */
     @SuppressWarnings("unchecked")
@@ -103,7 +103,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Get the class of the object being edited. (Same as {@link #getDataClass()}.
+     * Get the class of the object being edited. (Same as {@link #getDataClass()}).
      * @return Object's class.
      */
     public Class<D> getObjectClass() {
@@ -111,7 +111,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Get the class of the object being edited. (Same as {@link #getObjectClass()}.
+     * Get the class of the object being edited. (Same as {@link #getObjectClass()}).
      * @return Object's class.
      */
     public Class<D> getDataClass() {
@@ -341,7 +341,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     /**
      * Get the field's "get" method. The default implementation checks for both getXXX and isXXX methods.
      * @param fieldName Name of the field
-     * @return Field' "get" method (if method is found, it will returns <code>null</code>).
+     * @return Field' "get" method (if method is found, it will return <code>null</code>).
      */
     protected Method getFieldGetMethod(String fieldName) {
         try {
@@ -367,7 +367,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * Get the field's "set" method. The default implementation checks the availability of setXXX method.
      * @param fieldName Name of the field
      * @param getMethod "get" method of this field (determined through {@link #getFieldGetMethod(String)})
-     * @return Field' "set" method (if method is found, it will returns <code>null</code>).
+     * @return Field' "set" method (if method is found, it will return <code>null</code>).
      */
     protected Method getFieldSetMethod(String fieldName, Method getMethod) {
         Class<?>[] params = new Class[] { getMethod.getReturnType() };
@@ -521,7 +521,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
     }
 
     /**
-     * Create the field for the particular name.. Default implementation try to obtain the value from the "field creator"
+     * Create the field for the particular name. Default implementation try to obtain the value from the "field creator"
      * ({@link ObjectFieldCreator#createField(String, Class, String)}).
      * @param fieldName Name of the field
      * @param fieldType Type of the field's value

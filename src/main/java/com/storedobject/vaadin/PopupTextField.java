@@ -92,7 +92,7 @@ public class PopupTextField extends TextField {
 
     private void init() {
         Icon pop = new Icon(VaadinIcon.ELLIPSIS_DOTS_H);
-        pop.getElement().getStyle().set("cursor", "pointer");
+        pop.setStyle("cursor", "pointer");
         setSuffixComponent(pop);
         pop.addClickListener(e -> pop());
     }

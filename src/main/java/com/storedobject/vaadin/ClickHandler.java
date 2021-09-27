@@ -20,7 +20,7 @@ public interface ClickHandler extends ComponentEventListener<ClickEvent<? extend
     void clicked(Component c);
 
     /**
-     * This method is invoked from {@link #clicked(ClickEvent)} when a component is double clicked.
+     * This method is invoked from {@link #clicked(ClickEvent)} when a component is double-clicked.
      * Default implementation invokes {@link #clicked(Component)}.
      *
      * @param c Component
@@ -30,7 +30,7 @@ public interface ClickHandler extends ComponentEventListener<ClickEvent<? extend
     }
 
     /**
-     * This method is invoked from {@link #clicked(ClickEvent)} when a is right clicked.
+     * This method is invoked from {@link #clicked(ClickEvent)} when right-clicked.
      * Default implementation invokes {@link #clicked(Component)}.
      *
      * @param c Component
@@ -69,7 +69,7 @@ public interface ClickHandler extends ComponentEventListener<ClickEvent<? extend
     }
 
     /**
-     * Convert a Click Hanlder to a {@link ComponentEventListener}.
+     * Convert a Click Handler to a {@link ComponentEventListener}.
      *
      * @param clickHandler Click handler to convert.
      * @param <T> Component type

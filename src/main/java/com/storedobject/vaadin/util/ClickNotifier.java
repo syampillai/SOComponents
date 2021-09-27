@@ -19,7 +19,7 @@ public interface ClickNotifier extends com.vaadin.flow.component.ClickNotifier<C
     void removeClickListener(ComponentEventListener<ClickEvent<Component>> listener);
 
     /**
-     * Replace a listemer.
+     * Replace a listener.
      * @param oldListener Old listener
      * @param newListener New listener
      * @return Registration.

@@ -53,7 +53,9 @@ public interface HasIcon extends HasElement {
             if(ae != null) {
                 icon = ae.getIconName(icon);
             }
-            icon = "vaadin:" + icon;
+            if(!icon.contains(":")) {
+                icon = "vaadin:" + icon;
+            }
         }
         return icon.trim().toLowerCase().replace('_', '-');
     }
