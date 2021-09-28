@@ -1176,7 +1176,7 @@ public interface HasColumns<T> extends ExecutableView {
             columnName = getColumnMethodName(columnName);
             Method m;
             Class<?> objectClass = this.objectClass;
-            while (true) {
+            while (objectClass != null) {
                 m = getOutsideMethod(columnName, objectClass);
                 if(m != null) {
                     return m;
