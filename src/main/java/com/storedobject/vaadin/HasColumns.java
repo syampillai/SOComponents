@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * Common interface for DataGrid and DataTreeGrid. (Other implementations of {@link Grid} may also implement this).
+ * Common interface for {@link DataGrid} and {@link DataTreeGrid}. (Other implementations of {@link Grid} may also implement this).
  *
  * @param <T> Bean type of the Grid/TreeGrid.
  * @author Syam
@@ -79,7 +79,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Prepend a header row.
+     * Prepend a header row. See {@link #createHeaders()}.
      *
      * @return Row created.
      */
@@ -88,7 +88,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Append a header row.
+     * Append a header row. See {@link #createHeaders()}.
      *
      * @return Row created.
      */
@@ -97,7 +97,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Prepend a footer row.
+     * Prepend a footer row. See {@link #createFooters()}.
      *
      * @return Row created.
      */
@@ -106,7 +106,7 @@ public interface HasColumns<T> extends ExecutableView {
     }
 
     /**
-     * Append a footer row.
+     * Append a footer row. See {@link #createFooters()}.
      *
      * @return Row created.
      */

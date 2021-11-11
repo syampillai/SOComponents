@@ -19,7 +19,7 @@ public class ActionForm extends DataForm {
     private BooleanSupplier preconfirm;
 
     /**
-     * Constructor with out any action (can be set later).
+     * Constructor without any action (can be set later).
      *
      * @param message Message to be shown
      */
@@ -215,10 +215,40 @@ public class ActionForm extends DataForm {
      * @param labelNo Label for "No" button
      */
     public ActionForm(String caption, Component message, Runnable actionYes, Runnable actionNo, String labelYes, String labelNo) {
-        super(caption == null ? "Confirm" : caption, labelYes == null ? "Yes" : labelYes, labelNo == null ? "No" : labelNo);
+        super("");
+        setCaption(caption == null || caption.isEmpty() ? getDefaultCaption() : caption);
+        ok.setText(labelYes == null || labelYes.isEmpty() ? getDefaultYesLabel() : labelYes);
+        cancel.setText(labelNo == null || labelNo.isEmpty() ? getDefaultNoLabel() : labelNo);
         setConfirmAction(actionYes);
         setCancelAction(actionNo);
         add(message);
+    }
+
+    /**
+     * Get the default "Yes" label.
+     *
+     * @return The default label for the "Yes" button.
+     */
+    protected String getDefaultYesLabel() {
+        return "Yes";
+    }
+
+    /**
+     * Get the default "No" label.
+     *
+     * @return The default label for the "No" button.
+     */
+    protected String getDefaultNoLabel() {
+        return "No";
+    }
+
+    /**
+     * Get the default caption.
+     *
+     * @return The default caption.
+     */
+    protected String getDefaultCaption() {
+        return "Confirm";
     }
 
     private static Component createLabel(String message) {
