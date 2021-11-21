@@ -76,14 +76,16 @@ public class VideoCapture extends Video implements MediaCapture {
     }
 
     /**
-     * Select the front camera if possible. (This should be done before the {@link VideoCapture} component is added to the layout).
+     * Select the front camera if possible. (This should be done before the {@link VideoCapture} component is added
+     * to the layout).
      */
     public void selectFrontCamera() {
         frontCamera = true;
     }
 
     /**
-     * Select the rear camera if possible. (This should be done before the {@link VideoCapture} component is added to the layout).
+     * Select the rear camera if possible. (This should be done before the {@link VideoCapture} component is added
+     * to the layout).
      */
     public void selectRearCamera() {
         frontCamera = false;
@@ -127,12 +129,12 @@ public class VideoCapture extends Video implements MediaCapture {
     }
 
     /**
-     * Preview the camera's output on this video component. The output will be visible only if the following conditions are
-     * satisfied:<BR>
+     * Preview the camera's output on this video component. The output will be visible only if the following conditions
+     * are satisfied:<BR>
      * (1) The component is already on the screen (by adding to some layout in your application) and visible.<BR>
      * (2) The camera on the client computer can be accessed (browser will prompt the user for providing access).<BR>
-     * (3) Your application is using https protocol and not just http protocol (Modern browsers do not allow camera access to
-     * sites using http protocol).<BR>
+     * (3) Your application is using https protocol and not just http protocol (Modern browsers do not allow camera
+     * access when a site is using http protocol).<BR>
      * (4) If recording is not active already.
      */
     public void preview() {
@@ -148,7 +150,8 @@ public class VideoCapture extends Video implements MediaCapture {
     }
 
     /**
-     * Take snap-shot from the video stream and show that picture on the given image component. The output will be visible only if the previewing
+     * Take snap-shot from the video stream and show that picture on the given image component. The output will be
+     * visible only if the previewing
      * is already active and the image is already somewhere on the same screen.
      *
      * @param image The image component on which picture should be displayed
@@ -158,7 +161,8 @@ public class VideoCapture extends Video implements MediaCapture {
     }
 
     /**
-     * Take snap-shot from the video stream, show that picture on the already attached image component and also, save the picture via a "data receiver".
+     * Take snap-shot from the video stream, show that picture on the already attached image component and also, save
+     * the picture via a "data receiver".
      * The output will be visible and saved only if the previewing is already active.
      *
      * @param dataReceiver Data receiver to receive the picture stream
@@ -169,7 +173,8 @@ public class VideoCapture extends Video implements MediaCapture {
     }
 
     /**
-     * Take snap-shot from the video stream, show that picture on the given image component and also, save the picture via a "data receiver".
+     * Take snap-shot from the video stream, show that picture on the given image component and also, save the picture
+     * via a "data receiver".
      * The output will be visible and saved only if the previewing is already active.
      *
      * @param image The image component on which picture should be displayed
@@ -328,7 +333,8 @@ public class VideoCapture extends Video implements MediaCapture {
         }
 
         private void setReceiver(DataReceiver receiver) {
-            getElement().setAttribute("target", new StreamReceiver(getElement().getNode(), "camera" + ID.newID(), new MediaStreamVariable(receiver)));
+            getElement().setAttribute("target", new StreamReceiver(getElement().getNode(),
+                    "camera" + ID.newID(), new MediaStreamVariable(receiver)));
         }
 
         private void startRecording() {

@@ -92,8 +92,19 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
             wrapped = true;
         }
         this.data = list;
-        super.setItems(new ListDataProvider<>(this.data));
+        super.setItems(createListDataProvider(this.data));
         refresher.change();
+    }
+
+    /**
+     * Create an instance of {@link ListDataProvider} for the given data. The default implementation creates an
+     * instance of Vaadin's implementation. However, a modified implementation can be provided instead.
+     *
+     * @param data Data for which data provider needs to be created.
+     * @return An instance of the {@link ListDataProvider}.
+     */
+    protected ListDataProvider<T> createListDataProvider(DataList<T> data) {
+        return new ListDataProvider<>(data);
     }
 
     @Override

@@ -37,13 +37,13 @@ import java.util.stream.Stream;
  *    {@literal @}Push(PushMode.MANUAL)
  *    {@literal @}BodySize(height = "100vh", width = "100vw")
  *    {@literal @}Theme(value = Lumo.class, variant = Lumo.LIGHT)
- *     public static class DemoView extends ApplicationView implements AppShellConfigurator {
+ *    public static class DemoView extends ApplicationView implements AppShellConfigurator {
  *
- *        {@literal @}Override
- *         protected Application createApplication() {
- *             return new Demo();
- *         }
- *     }
+ *       {@literal @}Override
+ *       protected Application createApplication() {
+ *           return new Demo();
+ *       }
+ *    }
  * }
  *
  * public class MyLayout extends SplitLayout implements ApplicationLayout, ApplicationMenu {
@@ -56,27 +56,27 @@ import java.util.stream.Stream;
  *         getPrimaryComponent().getElement().getStyle().set("background-color", "lightblue");
  *     }
  *
- *    {@literal @}Override
+ *     {@literal @}Override
  *     public Component getComponent() {
  *         return this;
  *     }
  *
- *    {@literal @}Override
+ *     {@literal @}Override
  *     public ApplicationMenu getMenu() {
  *         return this;
  *     }
  *
- *    {@literal @}Override
+ *     {@literal @}Override
  *     public HasComponents getMenuPane() {
  *         return (Div)getPrimaryComponent();
  *     }
  *
- *    {@literal @}Override
+ *     {@literal @}Override
  *     public void getContent(Component content) {
  *         addToSecondary(content);
  *     }
  *
- *    {@literal @}Override
+ *     {@literal @}Override
  *     public void drawMenu(Application application) {
  *         getMenuPane().add(new HtmlComponent("hr"));
  *         add(application.createMenuItem(...));
