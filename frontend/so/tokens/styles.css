@@ -1,0 +1,6 @@
+:host {
+    padding: var(--lumo-space-xs), 0px;
+}
+[part="readonly-container"] {
+    padding: 0px 3.5px;
+}

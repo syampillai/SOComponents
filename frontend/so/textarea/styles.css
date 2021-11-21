@@ -1,0 +1,11 @@
+:host(.uppercase) [part="value"] {
+    text-transform: uppercase;
+}
+
+:host(.lowercase) [part="value"] {
+    text-transform: lowercase;
+}
+
+:host(.capitalize) [part="value"] {
+    text-transform: capitalize;
+}
