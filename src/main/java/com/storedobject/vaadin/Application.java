@@ -747,7 +747,9 @@ public abstract class Application {
                 }
             }
         }
-        alert.close();
+        if(alert.isOpened()) {
+            alert.close();
+        }
     }
 
     /**

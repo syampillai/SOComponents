@@ -20,7 +20,7 @@ public class Icon extends Composite<Component> implements HasStyle, HasIcon, Has
     private static final Map<String, Class<? extends IconInterface>> iconCollections = new HashMap<>();
     static {
         iconCollections.put("vaadin", VIcon.class);
-        iconCollections.put("icon", IIcon.class);
+        iconCollections.put("icons", IIcon.class);
         iconCollections.put("av", IIcon.class);
         iconCollections.put("communication", IIcon.class);
         iconCollections.put("device", IIcon.class);

@@ -5,7 +5,7 @@ import com.vaadin.flow.component.Component;
 /**
  * A {@link View} that is wrapped in an {@link ExecutableView}.
  * The {@link ExecutableView}'s {@link ExecutableView#getView(boolean)} can return such a wrapped view.
- * However, any {@link Component} may be used inside and it is not necessary to use anything that really
+ * However, any {@link Component} may be used inside, and it is not necessary to use anything that really
  * implements {@link ExecutableView}.
  *
  * @author Syam
@@ -112,5 +112,13 @@ public class WrappedView extends View {
             return ((ExecutableView) executableViewComponent).createMenuItem(menuAction);
         }
         return super.createMenuItem(menuAction);
+    }
+
+    @Override
+    public void clearAlerts() {
+        super.clearAlerts();
+        if(executableViewComponent instanceof ExecutableView) {
+            ((ExecutableView)executableViewComponent).clearAlerts();
+        }
     }
 }

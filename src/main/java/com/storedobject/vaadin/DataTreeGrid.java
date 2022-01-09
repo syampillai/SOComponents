@@ -3,7 +3,6 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.treegrid.TreeGrid;
-import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
@@ -158,23 +157,28 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
     }
 
     /**
-     * Add a HTML hierarchy column. If this or any of its cousin method is never called, the first column created will be made the hierarchy column.
+     * Add a HTML hierarchy column. If this or any of its cousin method is never called, the first column created will
+     * be made the hierarchy column.
      *
      * @param columnName Name of the column
      * @param htmlFunction Function that returns HTML content
      * @return Column created.
      */
     @Override
-    @SuppressWarnings({"unchecked", "UnusedReturnValue"})
+    @SuppressWarnings({"UnusedReturnValue"})
     public Column<T> createHTMLHierarchyColumn(String columnName, Function<T, ?> htmlFunction) {
         if(soGrid.treeCreated() || columnName == null) {
             return null;
         }
         soGrid.treeBuilt(columnName);
-        Column<T> column = addColumn((Renderer<T>)TemplateRenderer.
-                of("<vaadin-grid-tree-toggle leaf='[[item.leaf]]' expanded='{{expanded}}' level='[[level]]'><span inner-h-t-m-l=\"[[item.html]]\"></span></vaadin-grid-tree-toggle>").
-                withProperty("leaf", item -> !getDataCommunicator().hasChildren((T)item)).
-                withProperty("html", item -> Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(htmlFunction.apply((T)item))));
+        Column<T> column = addColumn(TemplateRenderer.<T>of("<vaadin-grid-tree-toggle " +
+                        "leaf='[[item.leaf]]' expanded='{{expanded}}' level='[[level]]'>" +
+                        "<span inner-h-t-m-l=\"[[item.html]]\"></span>" +
+                        "</vaadin-grid-tree-toggle>").
+                withProperty("leaf", item -> !getDataCommunicator().hasChildren(item)).
+                withProperty("html",
+                        item -> Objects.requireNonNull(ApplicationEnvironment.get())
+                                .toDisplay(htmlFunction.apply(item))));
         soGrid.acceptColumn(column, columnName);
         return column;
     }

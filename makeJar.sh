@@ -1,3 +1,5 @@
+. ~/.nvm/nvm.sh
+nvm use v16.13.1
 cd
 rm jdk
 ln -s jdkServer jdk

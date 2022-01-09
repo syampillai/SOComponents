@@ -171,8 +171,8 @@ public class Alert extends Notification implements HasText, ClickNotifier {
     }
 
     /**
-     * This method is invoked when clicked on the alert. Default behaviour of this method is to execute the action that is already defined or
-     * if no action is defined, it will be closed.
+     * This method is invoked when clicked on the alert. Default behaviour of this method is to execute the action
+     * that is already defined or if no action is defined, it will be closed.
      */
     public void clicked() {
         if(clickAction == null) {
