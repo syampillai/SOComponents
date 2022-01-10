@@ -330,4 +330,13 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T> {
         }
         return true;
     }
+
+    /**
+     * Set the placeholder text to be displayed while editing the tokens.
+     *
+     * @param placeHolder Placeholder text.
+     */
+    public void setPlaceholder(String placeHolder) {
+        combo.setPlaceholder(placeHolder);
+    }
 }
