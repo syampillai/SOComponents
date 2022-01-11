@@ -366,6 +366,12 @@ public class Data<T> extends HashMap<String, Object> {
     public boolean saveValues() {
         binder.getStatusLabel().ifPresent(errDisplay -> errDisplay.setText(""));
         for(HasValue<?, ?> field: fields.values()) {
+            if(field.isReadOnly()) {
+                continue;
+            }
+            if(field instanceof Component && (!((Component) field).isVisible() || !((Component) field).isVisible())) {
+                continue;
+            }
             if(field.isRequiredIndicatorVisible() && field.isEmpty()) {
                 showErr(field, FIELD_CANT_BE_EMPTY);
                 return false;
