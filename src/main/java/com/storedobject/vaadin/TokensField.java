@@ -18,11 +18,12 @@ import java.util.stream.Stream;
  * @author Syam
  */
 
-public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T> {
+public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, RequiredField, ValueRequired {
 
     private final Chips chips = new Chips();
     private List<T> items;
     private final Combo combo = new Combo();
+    private boolean required;
 
     /**
      * Constructor.
@@ -199,6 +200,26 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T> {
         setValue(new HashSet<>(value));
     }
 
+    /**
+     * Set this value is required or not.
+     *
+     * @param required True/false.
+     */
+    @Override
+    public void setRequired(boolean required) {
+        setRequiredIndicatorVisible(required);
+        this.required = required;
+    }
+
+    /**
+     * Whether this value is required or not.
+     *
+     * @return True/false.
+     */
+    public boolean isRequired() {
+        return required;
+    }
+
     private static class Holder extends VerticalLayout {
 
         Holder() {
@@ -338,5 +359,10 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T> {
      */
     public void setPlaceholder(String placeHolder) {
         combo.setPlaceholder(placeHolder);
+    }
+
+    @Override
+    public boolean isInvalid() {
+        return required && isEmpty();
     }
 }

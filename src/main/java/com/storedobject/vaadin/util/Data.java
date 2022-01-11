@@ -366,6 +366,10 @@ public class Data<T> extends HashMap<String, Object> {
     public boolean saveValues() {
         binder.getStatusLabel().ifPresent(errDisplay -> errDisplay.setText(""));
         for(HasValue<?, ?> field: fields.values()) {
+            if(field.isRequiredIndicatorVisible() && field.isEmpty()) {
+                showErr(field, FIELD_CANT_BE_EMPTY);
+                return false;
+            }
             if(field instanceof HasValidation && ((HasValidation) field).isInvalid()) {
                 showErr(field);
                 return false;
@@ -392,12 +396,18 @@ public class Data<T> extends HashMap<String, Object> {
     }
 
     private void showErr(HasValue<?, ?> field) {
+        showErr(field, null);
+    }
+
+    private void showErr(HasValue<?, ?> field, String m) {
         HasText hasText = binder.getStatusLabel().orElse(null);
         if(hasText == null) {
             return;
         }
         HasValidation hv = (HasValidation)field;
-        String m = hv.getErrorMessage();
+        if(m == null) {
+            m = hv.getErrorMessage();
+        }
         m = errMessage(field, m == null ? DataValidator.INVALID : m);
         hasText.setText(m);
     }

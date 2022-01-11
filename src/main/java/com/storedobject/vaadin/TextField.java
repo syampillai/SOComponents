@@ -9,7 +9,8 @@ import com.vaadin.flow.component.dependency.CssImport;
  * @author Syam
  */
 @CssImport(value = "./so/textfield/styles.css", themeFor = "vaadin-text-field")
-public class TextField extends com.vaadin.flow.component.textfield.TextField implements HasTextValue, DisablePaste {
+public class TextField extends com.vaadin.flow.component.textfield.TextField
+        implements HasTextValue, DisablePaste, RequiredField, ValueRequired {
 
     /**
      * Constructor.
@@ -26,6 +27,7 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField imp
     public TextField(String label) {
         super(label);
         setSpellCheck(false);
+        isRequired();
     }
 
     /**
