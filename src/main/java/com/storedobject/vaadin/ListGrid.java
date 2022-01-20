@@ -267,7 +267,7 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
      *
      * @param filter Filter to set.
      */
-    public void setFilter(Predicate<T> filter) {
+    public void setViewFilter(Predicate<T> filter) {
         getDataProvider().setFilter(filter::test);
     }
 
@@ -276,15 +276,24 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
      *
      * @param filter Filter to add.
      */
-    public void addFilter(Predicate<T> filter) {
-        getDataProvider().addFilter(filter::test);
+    public void addViewFilter(Predicate<T> filter) {
+        if(filter == null) {
+            return;
+        }
+        Predicate<T> old = getDataProvider().getFilter();
+        if(old == null) {
+            setViewFilter(filter);
+            return;
+        }
+        setViewFilter(item -> old.test(item) && filter.test(item));
     }
 
     /**
      * Clear all filters.
      */
-    public void clearFilters() {
-        getDataProvider().clearFilters();
+    public void clearViewFilters() {
+        //noinspection ConstantConditions
+        setViewFilter(null);
     }
 
     private class Refresher implements DataList.RefreshListener<T> {

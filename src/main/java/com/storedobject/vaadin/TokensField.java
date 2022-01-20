@@ -220,6 +220,21 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
         return required;
     }
 
+    /**
+     * Select all items. The {@link #getValue()} will return all the items after invoking this method.
+     */
+    public void selectAll() {
+        setValue(new HashSet<>(items));
+    }
+
+    /**
+     * Deselect all items. This is equivalent to setValue(null). The {@link #getValue()} will return an empty
+     * set after invoking this method.
+     */
+    public void deselectAll() {
+        setValue(null);
+    }
+
     private static class Holder extends VerticalLayout {
 
         Holder() {
