@@ -3,10 +3,9 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.select.data.SelectListDataView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Slightly enhanced version of Vaadin's {@link com.vaadin.flow.component.select.Select}.
@@ -14,9 +13,9 @@ import java.util.List;
  * @param <T> Value type of the field
  * @author Syam
  */
-public class ListField<T> extends Select<T> {
+public class ListField<T> extends Select<T> implements SpellCheck {
 
-    private List<T> items;
+    private SelectListDataView<T> view;
 
     /**
      * Constructor.
@@ -46,8 +45,24 @@ public class ListField<T> extends Select<T> {
      * @return Index of the item.
      */
     public int getIndex(T value) {
-        int i = value == null ? -1 : items.indexOf(value);
-        return i < 0 && !items.isEmpty() && isRequiredBoolean() ? 0 : i;
+        for(int i = 0; i < view.getItemCount(); i++) {
+            if(view.getItem(i).equals(value)) {
+                return i;
+            }
+        }
+        return view.getItemCount() != 0 && isRequiredBoolean() ? 0 : -1;
+    }
+
+    /**
+     * Set value via index. If the index is out of range, no value will be set.
+     *
+     * @param index Index.
+     */
+    public void setIndex(int index) {
+        if(index < 0 || index >= view.getItemCount()) {
+            return;
+        }
+        setValue(view.getItem(index));
     }
 
     /**
@@ -57,8 +72,13 @@ public class ListField<T> extends Select<T> {
      * @return Item at the index.
      */
     public T getValue(int index) {
-        return index < 0 || index >= items.size() ? (isRequiredBoolean() && !items.isEmpty() ? items.get(0) : null)
-                : items.get(index);
+        if(index >= 0 && index < view.getItemCount()) {
+            T item = view.getItem(index);
+            if(item != null) {
+                return item;
+            }
+        }
+        return isRequiredBoolean() && view.getItemCount() != 0 ? view.getItem(0) : null;
     }
 
     /**
@@ -68,8 +88,8 @@ public class ListField<T> extends Select<T> {
      * @return Data view
      */
     public SelectListDataView<T> setItems(Collection<T> items) {
-        this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
-        return super.setItems(this.items);
+        view = super.setItems(items);
+        return view;
     }
 
     /**
@@ -79,11 +99,11 @@ public class ListField<T> extends Select<T> {
      * @return Data view
      */
     public SelectListDataView<T> setItems(Iterable<T> items) {
-        this.items = new ArrayList<>();
+        List<T> list = new ArrayList<>();
         for(T item: items) {
-            this.items.add(item);
+            list.add(item);
         }
-        return super.setItems(this.items);
+        return setItems(list);
     }
 
     /**
@@ -92,10 +112,11 @@ public class ListField<T> extends Select<T> {
      * @param items Item list
      * @return Data view
      */
-    public SelectListDataView<T> setItems(T[] items) {
-        this.items = new ArrayList<>();
-        Collections.addAll(this.items, items);
-        return super.setItems(this.items);
+    @SafeVarargs
+    public final SelectListDataView<T> setItems(T... items) {
+        List<T> list = new ArrayList<>();
+        Collections.addAll(list, items);
+        return setItems(list);
     }
 
     /**
@@ -105,11 +126,80 @@ public class ListField<T> extends Select<T> {
      * @param item New item
      */
     public void setItem(int index, T item) {
+        List<T> items = view.getItems().collect(Collectors.toList());
         if(index >= 0 && index < items.size()) {
             items.set(index, item);
-            super.setItems(items);
+            setItems(items);
         }
     }
+
+    /**
+     * Remove items.
+     *
+     * @param items Items.
+     */
+    public SelectListDataView<T> removeItems(Collection<T> items) {
+        view.removeItems(items);
+        return view;
+    }
+
+    /**
+     * Remove items.
+     *
+     * @param items Items.
+     */
+    @SafeVarargs
+    public final SelectListDataView<T> removeItems(T... items) {
+        return removeItems(Arrays.asList(items));
+    }
+
+    /**
+     * Remove items.
+     *
+     * @param items Items.
+     */
+    public SelectListDataView<T> removeItems(Stream<T> items) {
+        items.forEach(view::removeItem);
+        return view;
+    }
+
+    /**
+     * Add items.
+     *
+     * @param items Items.
+     */
+    public SelectListDataView<T> addItems(Collection<T> items) {
+        view.addItems(items);
+        return view;
+    }
+
+    /**
+     * Add items.
+     *
+     * @param items Items.
+     */
+    @SafeVarargs
+    public final SelectListDataView<T> addItems(T... items) {
+        if(items != null) {
+            for(T item: items) {
+                if(item != null) {
+                    view.addItem(item);
+                }
+            }
+        }
+        return view;
+    }
+
+    /**
+     * Add items.
+     *
+     * @param items Items.
+     */
+    public SelectListDataView<T> addItems(Stream<T> items) {
+        items.filter(Objects::nonNull).forEach(view::addItem);
+        return view;
+    }
+
 
     @Override
     protected void setRequired(boolean required) {

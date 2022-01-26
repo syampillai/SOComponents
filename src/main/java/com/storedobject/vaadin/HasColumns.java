@@ -7,6 +7,7 @@ import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.SortDirection;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.function.ValueProvider;
@@ -389,6 +390,20 @@ public interface HasColumns<T> extends ExecutableView {
     @SuppressWarnings("unchecked")
     default boolean createColumn(String columnName, Function<T, ?>... functions) {
         return getSOGrid().createColumn(columnName, null, functions);
+    }
+
+    /**
+     * Create a {@link Component} column that uses {@link Component} provided by the function as its column value.
+     * <p>Note: Component columns must be used with caution because it can cause slow grid performance if the
+     * grid has too many rows.</p>
+     *
+     * @param columnName Column name
+     * @param componentProvider Function that takes object as a parameter and returns a {@link Component}.
+     * @param <C> Type of component.
+     * @return Whether a new column can be created or not.
+     */
+    default <C extends Component> boolean createComponentColumn(String columnName, Function<T, C> componentProvider) {
+        return createColumn(columnName, new ComponentRenderer<>(componentProvider::apply));
     }
 
     /**
@@ -921,8 +936,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void constructed() {
-            if(grid instanceof HasColumns) {
-                HasColumns<?> hc = (HasColumns<?>) grid;
+            if(grid instanceof HasColumns<?> hc) {
                 hc.constructed();
                 hc.streamConstructedListeners().forEach(cl -> cl.constructed(grid));
                 hc.clearConstructedListeners();
