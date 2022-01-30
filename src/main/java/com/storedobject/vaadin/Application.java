@@ -886,19 +886,19 @@ public abstract class Application {
         if(position != null) {
             n.setPosition(position);
         }
-        switch (messageType) {
-            case 1: // Warning
+        switch(messageType) {
+            case 1 -> { // Warning
                 messageType = 20000;
                 n.addThemeVariants(NotificationVariant.LUMO_CONTRAST);
-                break;
-            case 2: // Error
+            }
+            case 2 -> { // Error
                 messageType = Integer.MAX_VALUE;
                 n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                break;
-            default:
+            }
+            default -> {
                 messageType = 10000;
                 n.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                break;
+            }
         }
         n.setDuration(messageType);
         if(a == null) {
@@ -1641,13 +1641,14 @@ public abstract class Application {
             if(select(view)) {
                 return;
             }
+            View current = getActiveView();
             Component c = view.getComponent();
-            if(view.isHomeView() && homeView != null && !(c instanceof Dialog)) {
+            boolean window = c instanceof Dialog;
+            if(view.isHomeView() && homeView != null && !window) {
                 homeStack.add(homeView);
                 homeView.setVisible(false);
                 homeView = null;
             }
-            boolean window = c instanceof Dialog;
             if(window && parent == null && stack.size() > 0) {
                 parent = stack.get(stack.size() - 1);
                 if(parent.getComponent() instanceof Dialog) {
@@ -1687,6 +1688,10 @@ public abstract class Application {
                 menu.insert(0, m);
             }
             contentMenu.put(view, m);
+            if(current != null && current.getComponent() instanceof Dialog && !window) {
+                select(current);
+                return;
+            }
             hilite(m);
             applicationView.layout.viewSelected(view);
         }
@@ -1787,7 +1792,15 @@ public abstract class Application {
                 return false;
             }
             if(!m.isEnabled()) {
-                return true;
+                return true; // Not selected because menu is deactivated
+            }
+            View current = getActiveView();
+            if(view == current) {
+                current = null;
+            }
+            if(current != null && current.getComponent() instanceof Dialog
+                    && !(view.getComponent() instanceof Dialog)) {
+                return true; // Not selected because another dialog is active
             }
             hideAllContent(view);
             hilite(m);
