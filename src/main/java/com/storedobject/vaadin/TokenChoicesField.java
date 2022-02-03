@@ -1,7 +1,6 @@
 package com.storedobject.vaadin;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A field that allows you to select multiple values from a fixed list of Strings. The value is returned as
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
  */
 public class TokenChoicesField extends TranslatedField<Integer, Set<String>> {
     
-    private static Integer ZERO = 0;
+    private static final Integer ZERO = 0;
     private int valueMask;
 
     /**

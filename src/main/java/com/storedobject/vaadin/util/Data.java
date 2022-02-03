@@ -253,10 +253,9 @@ public class Data<T> extends HashMap<String, Object> {
     }
 
     private void setVisible(String fieldName, HasValue<?, ?> field) {
-        if(!(field instanceof Component)) {
+        if(!(field instanceof Component c)) {
             return;
         }
-        Component c = (Component)field;
         boolean v = valueHandler.isVisible(field);
         if(v) {
             v = valueHandler.isVisible(fieldName);
@@ -369,14 +368,14 @@ public class Data<T> extends HashMap<String, Object> {
             if(field.isReadOnly()) {
                 continue;
             }
-            if(field instanceof Component && (!((Component) field).isVisible() || !((Component) field).isVisible())) {
+            if(field instanceof Component c && (!c.isVisible() || !c.getElement().isEnabled())) {
                 continue;
             }
             if(field.isRequiredIndicatorVisible() && field.isEmpty()) {
                 showErr(field, FIELD_CANT_BE_EMPTY);
                 return false;
             }
-            if(field instanceof HasValidation && ((HasValidation) field).isInvalid()) {
+            if(field instanceof HasValidation hv && hv.isInvalid()) {
                 showErr(field);
                 return false;
             }
@@ -410,8 +409,7 @@ public class Data<T> extends HashMap<String, Object> {
         if(hasText == null) {
             return;
         }
-        HasValidation hv = (HasValidation)field;
-        if(m == null) {
+        if(m == null && field instanceof HasValidation hv) {
             m = hv.getErrorMessage();
         }
         m = errMessage(field, m == null ? DataValidator.INVALID : m);
