@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.datepicker.DatePicker;
 
 import java.sql.Date;
@@ -19,6 +20,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
 
     private static Date today = null;
     static Date nullValue = new Date(-5364662400000L);
+    private final Converter converter;
 
     /**
      * Constructor.
@@ -52,7 +54,12 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      * @param initialValue Initial value.
      */
     public DateField(String label, Date initialValue) {
-        super(new DatePicker(), (f, d) -> create(d), (f, d) -> create(d), null);
+        this(label, new Converter(), initialValue);
+    }
+
+    private DateField(String label, Converter converter, Date initialValue) {
+        super(new DatePicker(), converter::create, (f, d) -> converter.create(d), null);
+        this.converter = converter;
         setLabel(label);
         setValue(initialValue);
         getField().setClearButtonVisible(false);
@@ -71,7 +78,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
 
     static Date today() {
         if(today == null) {
-            today = create(LocalDate.now());
+            today = Converter.create(LocalDate.now(), 0);
         }
         return today;
     }
@@ -91,51 +98,6 @@ public class DateField extends TranslatedField<Date, LocalDate> {
         }
     }
 
-    /**
-     * Create an instance of a {@link Date} from a {@link LocalDate} instance.
-     *
-     * @param date Instance to convert.
-     * @return Converted value.
-     */
-    public static Date create(LocalDate date) {
-        if(date == null) {
-            return null;
-        }
-        @SuppressWarnings("MagicConstant")
-        GregorianCalendar c = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
-        c.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return new Date(c.getTimeInMillis());
-    }
-
-    /**
-     * Create an instance of a {@link LocalDate} from a {@link Date} instance.
-     *
-     * @param date Instance to convert.
-     * @param <D> Type of instance to convert.
-     * @return Converted value.
-     */
-    public static <D extends java.util.Date> LocalDate create(D date) {
-        return date == null ? null : LocalDate.of(getYear(date), getMonth(date), getDay(date));
-    }
-
-    private static <D extends java.util.Date> int getYear(D date) {
-        return get(date, YEAR);
-    }
-
-    private static <D extends java.util.Date> int getMonth(D date) {
-        return get(date, MONTH) + 1;
-    }
-
-    private static <D extends java.util.Date> int getDay(D date) {
-        return get(date, DATE);
-    }
-
-    private static <D extends java.util.Date> int get(D date, int field) {
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(date);
-        return c.get(field);
-    }
-
     @Override
     public DatePicker getField() {
         return (DatePicker) super.getField();
@@ -147,7 +109,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      * @param value Minimum value allowed.
      */
     public void setMin(Date value) {
-        getField().setMin(value == null ? null : create(value));
+        getField().setMin(value == null ? null : converter.create(value));
     }
 
     /**
@@ -156,7 +118,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      * @param value Maximum value allowed.
      */
     public void setMax(Date value) {
-        getField().setMax(value == null ? null : create(value));
+        getField().setMax(value == null ? null : converter.create(value));
     }
 
     /**
@@ -166,7 +128,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      */
     public Date getMin() {
         LocalDate d = getField().getMin();
-        return d == null ? null : create(d);
+        return d == null ? null : converter.create(null, d);
     }
 
     /**
@@ -176,7 +138,7 @@ public class DateField extends TranslatedField<Date, LocalDate> {
      */
     public Date getMax() {
         LocalDate d = getField().getMax();
-        return d == null ? null : create(d);
+        return d == null ? null : converter.create(null, d);
     }
 
     /**
@@ -238,5 +200,126 @@ public class DateField extends TranslatedField<Date, LocalDate> {
             }
         }
         return super.valueEquals(value1, value2);
+    }
+
+    /**
+     * Epoch value to set. Epoch value determines how a 2 digit year value is interpreted. Epoch value is added to
+     * the 2 digit year value. The default value of epoch is the first year of the century. For example, for the 21st
+     * century, the default epoch value is 2000.
+     *
+     * @param epoch Epoch value to set.
+     */
+    public void setEpoch(int epoch) {
+        converter.setEpoch(epoch);
+    }
+
+    /**
+     * Get the current epoch value. (Please see {@link #setEpoch(int)}).
+     *
+     * @return Current the current epoch value.
+     */
+    public int getEpoch() {
+        return converter.getEpoch();
+    }
+
+    /**
+     * Class that handles the date conversion part.
+     *
+     * @author Syam
+     */
+    private static class Converter {
+
+        private int epoch;
+
+        /**
+         * Constructor
+         */
+        Converter() {
+            epoch = (getYear(today()) / 100) * 100;
+        }
+
+        /**
+         * Create an instance of a {@link Date} from a {@link LocalDate} instance.
+         *
+         * @param date Instance to convert.
+         * @return Converted value.
+         */
+        Date create(HasValue<?, LocalDate> f, LocalDate date) {
+            Date d = create(date, epoch);
+            if(f != null && getYear(d) != date.getYear()) {
+                f.setValue(LocalDate.of(getYear(d), date.getMonthValue(), date.getDayOfMonth()));
+            }
+            return d;
+        }
+
+        /**
+         * Create an instance of a {@link Date} from a {@link LocalDate} instance.
+         *
+         * @param date Instance to convert.
+         * @param epoch Epoch value to adjust the year.
+         * @return Converted value.
+         */
+        static Date create(LocalDate date, int epoch) {
+            if(date == null) {
+                return null;
+            }
+            int year = date.getYear();
+            if(year < 100) {
+                year += epoch;
+            }
+            @SuppressWarnings("MagicConstant")
+            GregorianCalendar c = new GregorianCalendar(year, date.getMonthValue() - 1, date.getDayOfMonth());
+            c.setTimeZone(TimeZone.getTimeZone("GMT"));
+            return new Date(c.getTimeInMillis());
+        }
+
+        /**
+         * Create an instance of a {@link LocalDate} from a {@link Date} instance.
+         *
+         * @param date Instance to convert.
+         * @param <D> Type of instance to convert.
+         * @return Converted value.
+         */
+        <D extends java.util.Date> LocalDate create(D date) {
+            return date == null ? null : LocalDate.of(getYear(date), getMonth(date), getDay(date));
+        }
+
+        private static <D extends java.util.Date> int getYear(D date) {
+            return get(date, YEAR);
+        }
+
+        private static <D extends java.util.Date> int getMonth(D date) {
+            return get(date, MONTH) + 1;
+        }
+
+        private static <D extends java.util.Date> int getDay(D date) {
+            return get(date, DATE);
+        }
+
+        private static <D extends java.util.Date> int get(D date, int field) {
+            GregorianCalendar c = new GregorianCalendar();
+            c.setTime(date);
+            return c.get(field);
+        }
+
+        /**
+         * Epoch value to set. Epoch value determines how a 2 digit year value is interpreted. Epoch value is added to
+         * the 2 digit year value. The default value of epoch is the first year of the century. For example, for 21st
+         * century, epoch value is 2000.
+         *
+         * @param epoch Epoch value to set.
+         */
+        void setEpoch(int epoch) {
+            this.epoch = epoch;
+        }
+
+        /**
+         * Get the current epoch value. (Please see {@link #setEpoch(int)}).
+         *
+         * @return Current the current epoch value.
+         */
+        int getEpoch() {
+            return epoch;
+        }
     }
 }

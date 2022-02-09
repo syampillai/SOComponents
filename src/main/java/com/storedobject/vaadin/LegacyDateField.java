@@ -103,4 +103,25 @@ public class LegacyDateField extends TranslatedField<Date, java.sql.Date> {
         }
         return super.valueEquals(value1, value2);
     }
+
+
+    /**
+     * Epoch value to set. Epoch value determines how a 2 digit year value is interpreted. Epoch value is added to
+     * the 2 digit year value. The default value of epoch is the first year of the century. For example, for the 21st
+     * century, the default epoch value is 2000.
+     *
+     * @param epoch Epoch value to set.
+     */
+    public void setEpoch(int epoch) {
+        ((DateField)getField()).setEpoch(epoch);
+    }
+
+    /**
+     * Get the current epoch value. (Please see {@link #setEpoch(int)}).
+     *
+     * @return Current the current epoch value.
+     */
+    public int getEpoch() {
+        return ((DateField)getField()).getEpoch();
+    }
 }

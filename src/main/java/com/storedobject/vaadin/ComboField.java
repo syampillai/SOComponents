@@ -5,7 +5,7 @@ import com.vaadin.flow.component.combobox.dataview.ComboBoxListDataView;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -15,8 +15,6 @@ import java.util.stream.Stream;
  * @author Syam
  */
 public class ComboField<T> extends ComboBox<T> implements SpellCheck {
-
-    private ComboBoxListDataView<T> view;
 
     /**
      * Constructor.
@@ -66,6 +64,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @return Index of the item or -1 if not found.
      */
     public int getIndex(T item) {
+        ComboBoxListDataView<T> view = getListDataView();
         for(int i = 0; i < view.getItemCount(); i++) {
             if(view.getItem(i).equals(item)) {
                 return i;
@@ -81,6 +80,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @return Item or null if not found.
      */
     public T getValue(int index) {
+        ComboBoxListDataView<T> view = getListDataView();
         if(index < 0 || index >= view.getItemCount()) {
             return null;
         }
@@ -93,10 +93,12 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @param index Index.
      */
     public void setIndex(int index) {
+        ComboBoxListDataView<T> view = getListDataView();
         if(index < 0 || index >= view.getItemCount()) {
             return;
         }
         setValue(view.getItem(index));
+        getListDataView();
     }
 
     /**
@@ -119,7 +121,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @return Number of items.
      */
     public int size() {
-        return view.getItemCount();
+        return getListDataView().getItemCount();
     }
 
     /**
@@ -128,18 +130,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @return Stream of items from the combo.
      */
     public Stream<T> items() {
-        return view.getItems();
-    }
-
-    /**
-     * Set items.
-     *
-     * @param items Items.
-     */
-    @Override
-    public ComboBoxListDataView<T> setItems(Collection<T> items) {
-        view = super.setItems(items);
-        return view;
+        return getListDataView().getItems();
     }
 
     /**
@@ -159,8 +150,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @param items Items.
      */
     public ComboBoxListDataView<T> removeItems(Collection<T> items) {
-        view.removeItems(items);
-        return view;
+        return (ComboBoxListDataView<T>) getListDataView().removeItems(items);
     }
 
     /**
@@ -179,8 +169,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @param items Items.
      */
     public ComboBoxListDataView<T> removeItems(Stream<T> items) {
-        items.forEach(view::removeItem);
-        return view;
+        return addItems(items.collect(Collectors.toList()));
     }
 
     /**
@@ -189,8 +178,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @param items Items.
      */
     public ComboBoxListDataView<T> addItems(Collection<T> items) {
-        view.addItems(items);
-        return view;
+        return (ComboBoxListDataView<T>) getListDataView().addItems(items);
     }
 
     /**
@@ -200,14 +188,7 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      */
     @SafeVarargs
     public final ComboBoxListDataView<T> addItems(T... items) {
-        if(items != null) {
-            for(T item: items) {
-                if(item != null) {
-                    view.addItem(item);
-                }
-            }
-        }
-        return view;
+        return addItems(Arrays.asList(items));
     }
 
     /**
@@ -216,7 +197,6 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
      * @param items Items.
      */
     public ComboBoxListDataView<T> addItems(Stream<T> items) {
-        items.filter(Objects::nonNull).forEach(view::addItem);
-        return view;
+        return addItems(items.collect(Collectors.toList()));
     }
 }

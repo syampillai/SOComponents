@@ -8,7 +8,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.HasItems;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -105,12 +104,10 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
         if(value == null || value.isEmpty()) {
             return;
         }
-        setValue(new HashSet<>() {
-            {
-                addAll(getValue());
-                addAll(value);
-            }
-        });
+        Set<T> v = new HashSet<>();
+        v.addAll(getValue());
+        v.addAll(value);
+        setValue(v);
     }
 
     /**
@@ -124,7 +121,7 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
         if(items != null) {
             this.items.addAll(items);
         }
-        combo.setItems(this.items);
+        combo.setItems(new ArrayList<>(this.items));
     }
 
     /**
@@ -136,9 +133,8 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
         if(items == null || items.isEmpty()) {
             return;
         }
-        ArrayList<T> list = new ArrayList<>(this.items);
-        list.addAll(items);
-        setItems(list);
+        this.items.addAll(items);
+        combo.setItems(new ArrayList<>(this.items));
     }
 
     /**
@@ -148,7 +144,11 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
      */
     @SafeVarargs
     public final void addItems(T... items) {
-        this.addItems(Arrays.asList(items));
+        if(items == null || items.length == 0) {
+            return;
+        }
+        this.items.addAll(Arrays.asList(items));
+        combo.setItems(new ArrayList<>(this.items));
     }
 
     /**
@@ -157,7 +157,11 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
      * @param streamOfItems Items to be added
      */
     public void addItems(Stream<T> streamOfItems) {
-        this.addItems(streamOfItems.collect(Collectors.toList()));
+        if(items == null || items.isEmpty()) {
+            return;
+        }
+        streamOfItems.forEach(this.items::add);
+        combo.setItems(new ArrayList<>(this.items));
     }
 
     @Override
@@ -273,7 +277,7 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
             chips.add(chip);
             add(chip);
             if(fire) {
-                updateValue();
+                TokensField.this.updateValue();
             }
         }
 
@@ -282,9 +286,13 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
             if(chip != null) {
                 chips.remove(chip);
                 remove(chip);
-                combo.addItems(item);
+                List<T> items = new ArrayList<>(TokensField.this.items);
+                if(!chips.isEmpty()) {
+                    chips.forEach(c -> items.remove(c.item));
+                }
+                combo.setItems(items);
                 if(fire) {
-                    updateValue();
+                    TokensField.this.updateValue();
                 }
             }
         }
