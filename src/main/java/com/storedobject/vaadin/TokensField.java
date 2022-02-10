@@ -271,10 +271,9 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
         }
 
         void add(T item, boolean fire) {
-            combo.clear();
-            combo.removeItems(item);
             Chip chip = new Chip(item);
             chips.add(chip);
+            refreshCombo();
             add(chip);
             if(fire) {
                 TokensField.this.updateValue();
@@ -286,15 +285,18 @@ public class TokensField<T> extends CustomField<Set<T>> implements HasItems<T>, 
             if(chip != null) {
                 chips.remove(chip);
                 remove(chip);
-                List<T> items = new ArrayList<>(TokensField.this.items);
-                if(!chips.isEmpty()) {
-                    chips.forEach(c -> items.remove(c.item));
-                }
-                combo.setItems(items);
+                refreshCombo();
                 if(fire) {
                     TokensField.this.updateValue();
                 }
             }
+        }
+
+        private void refreshCombo() {
+            combo.clear();
+            List<T> items = new ArrayList<>(TokensField.this.items);
+            chips.forEach(c -> items.remove(c.item));
+            combo.setItems(items);
         }
 
         void readOnly(boolean readOnly) {
