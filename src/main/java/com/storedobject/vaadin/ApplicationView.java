@@ -6,6 +6,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.server.VaadinRequest;
 
@@ -22,7 +23,7 @@ import java.util.function.Consumer;
  * @see Application
  * @author Syam
  */
-public abstract class ApplicationView extends Composite<Component> implements BeforeEnterObserver {
+public abstract class ApplicationView extends Composite<Component> implements BeforeEnterObserver, HasDynamicTitle {
 
     /**
      * The application layout.
@@ -161,5 +162,15 @@ public abstract class ApplicationView extends Composite<Component> implements Be
         if(queryParams.isEmpty()) {
             queryParams = null;
         }
+    }
+
+    /**
+     * Get the page title to be displayed. By default, the {@link Application#getCaption()} is used as the page title.
+     *
+     * @return Page title.
+     */
+    @Override
+    public String getPageTitle() {
+        return application.getCaption();
     }
 }

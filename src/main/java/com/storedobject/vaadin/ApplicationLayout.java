@@ -20,6 +20,15 @@ public interface ApplicationLayout {
     }
 
     /**
+     * Get the caption of the application.
+     *
+     * @return The default implementation returns "SO Application">.
+     */
+    default String getCaption() {
+        return "SO Application";
+    }
+
+    /**
      * The component of the "layout".
      *
      * @return The main layout component.

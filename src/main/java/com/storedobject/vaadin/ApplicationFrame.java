@@ -142,6 +142,12 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         getLogoInt();
     }
 
+    @Override
+    public String getCaption() {
+        HasText c = getCaptionComponent();
+        return c == null ? ApplicationLayout.super.getCaption() : c.getText();
+    }
+
     /**
      * Get the height of the header area.
      *

@@ -1472,6 +1472,15 @@ public abstract class Application {
         return "US";
     }
 
+    /**
+     * Get the caption for this application. By default, {@link ApplicationLayout#getCaption()} is returned.
+     *
+     * @return Caption.
+     */
+    public String getCaption() {
+        return applicationLayout == null ? null : applicationLayout.getCaption();
+    }
+
     private class AlertList extends ArrayList<Alert> {
 
         private final Object owner;
