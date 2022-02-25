@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 /**
@@ -28,6 +29,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     protected HasComponents buttonPanel;
     private boolean buttonsAtTop = false;
     private final boolean windowMode;
+    private final boolean centered;
 
     /**
      * Constructor.
@@ -49,6 +51,17 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     /**
      * Constructor.
      * @param caption Caption
+     * @param windowMode True if the view to be displayed as a window/dialog
+     * @param centered Whether the components to be centered in the content area or not. Useful only when the "window
+     *                 mode" is off.
+     */
+    public DataForm(String caption, boolean windowMode, boolean centered) {
+        this(caption, null, null, windowMode, centered);
+    }
+
+    /**
+     * Constructor.
+     * @param caption Caption
      * @param labelOK "Ok" label
      * @param labelCancel "Cancel" label
      */
@@ -64,6 +77,19 @@ public abstract class DataForm extends AbstractDataForm<Object> {
      * @param windowMode True if the view to be displayed as a window/dialog
      */
     public DataForm(String caption, String labelOK, String labelCancel, boolean windowMode) {
+        this(caption, labelOK, labelCancel, windowMode, false);
+    }
+
+    /**
+     * Constructor.
+     * @param caption Caption
+     * @param labelOK "Ok" label
+     * @param labelCancel "Cancel" label
+     * @param windowMode True if the view to be displayed as a window/dialog
+     * @param centered Whether the components to be centered in the content area or not. Useful only when the "window
+     *                 mode" is off.
+     */
+    public DataForm(String caption, String labelOK, String labelCancel, boolean windowMode, boolean centered) {
         this.form = new Form();
         this.form.setView(this);
         setErrorDisplay(null);
@@ -72,7 +98,8 @@ public abstract class DataForm extends AbstractDataForm<Object> {
         ok.setDisableOnClick(true);
         cancel = new Button(labelCancel == null || labelCancel.isEmpty() ? "Cancel" : labelCancel, this);
         this.windowMode = windowMode;
-        if(windowMode) {
+        this.centered = centered;
+        if(windowMode || centered) {
             setColumns(1);
         }
     }
@@ -101,14 +128,24 @@ public abstract class DataForm extends AbstractDataForm<Object> {
                 window = new Window(new WindowDecorator(this), c);
             }
             setComponent(window);
-            getContent().getElement().getStyle().
-                    set("min-width", minMax(getMinimumContentWidth()) + "vw").
-                    set("min-height", minMax(getMinimumContentHeight()) + "vh").
-                    set("max-width", maxMin(getMaximumContentWidth()) + "vw").
-                    set("max-height", maxMin(getMaximumContentHeight()) + "vh");
+            sizeIt();
         } else {
+            if(centered) {
+                c = new CenteredLayout(c);
+            }
             setComponent(c);
+            if(centered) {
+                sizeIt();
+            }
         }
+    }
+
+    private void sizeIt() {
+        getContent().getElement().getStyle().
+                set("min-width", minMax(getMinimumContentWidth()) + "vw").
+                set("min-height", minMax(getMinimumContentHeight()) + "vh").
+                set("max-width", maxMin(getMaximumContentWidth()) + "vw").
+                set("max-height", maxMin(getMaximumContentHeight()) + "vh");
     }
 
     /**
@@ -170,7 +207,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     }
 
     private HasComponents createDefaultLayout() {
-        return new VerticalLayout();
+        return centered ? new Div() : new VerticalLayout();
     }
 
     private HasComponents createDefaultButtonLayout() {
