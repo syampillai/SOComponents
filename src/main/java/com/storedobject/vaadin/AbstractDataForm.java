@@ -527,9 +527,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
             field = form.getField(fieldName);
             if(field != null) {
                 hiddenFields.remove(field);
-                if(field instanceof Component) {
-                    ((Component) field).setVisible(true);
-                }
+                HasVisibility.setVisible(true, field);
             }
         }
     }
@@ -553,9 +551,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
                 hidden.remove(fieldName);
             }
             hiddenFields.remove(field);
-            if(field instanceof Component) {
-                ((Component) field).setVisible(true);
-            }
+            HasVisibility.setVisible(true, field);
         }
     }
 
@@ -604,9 +600,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
             hidden.add(fieldName);
             field = form.getField(fieldName);
             if(field != null) {
-                if(field instanceof  Component) {
-                    ((Component) field).setVisible(false);
-                }
+                HasVisibility.setVisible(false, field);
                 hiddenFields.add(field);
             }
         }
@@ -626,9 +620,7 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
             if(field == null) {
                 continue;
             }
-            if(field instanceof  Component) {
-                ((Component) field).setVisible(false);
-            }
+            HasVisibility.setVisible(false, field);
             fieldName = form.getFieldName(field);
             if(fieldName != null) {
                 hidden.add(fieldName);

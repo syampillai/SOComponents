@@ -4,7 +4,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.treegrid.TreeGrid;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -1127,7 +1126,7 @@ public interface HasColumns<T> extends ExecutableView {
 
         private ButtonIcon getConfigureButton() {
             if(configure == null) {
-                configure = new ButtonIcon(VaadinIcon.COG_O, e -> configure());
+                configure = new ButtonIcon("icons:settings", e -> configure());
                 configure.setPlaceholder("Configure columns");
             }
             return configure;

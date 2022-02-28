@@ -3,10 +3,10 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
-import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
  * Vaadin Flow wrapper around the Web Component: Paper Icon Button.
+ * <p>Note: Vaadin icons can't be used here because Vaadin icons are not "Iron" icons.</p>
  * 
  * @author Syam
  */
@@ -25,32 +25,11 @@ public class ButtonIcon extends Component implements HasSquareElement, HasIcon, 
     }
 
     /**
-     * Constructor
-     * @param icon Icon to use
-     * @param clickHandler Click handler
-     */
-    public ButtonIcon(VaadinIcon icon, ClickHandler clickHandler) {
-        this(icon, ClickHandler.convert(clickHandler));
-    }
-
-    /**
-     * Create with a Vaadin icon
-     * @param icon Vaadin icon
-     */
-    public ButtonIcon(VaadinIcon icon) {
-        this(icon, (ComponentEventListener<ClickEvent<ButtonIcon>>)null);
-    }
-
-    /**
      * Create with an Iron icon name
      * @param icon Name of the Iron icon
      */
     public ButtonIcon(String icon) {
         this(icon, (ComponentEventListener<ClickEvent<ButtonIcon>>)null);
-    }
-
-    private ButtonIcon(VaadinIcon icon, ComponentEventListener<ClickEvent<ButtonIcon>> listener) {
-        this(icon.name().toLowerCase().replace('_', '-'), listener);
     }
 
     private ButtonIcon(String icon, ComponentEventListener<ClickEvent<ButtonIcon>> listener) {
