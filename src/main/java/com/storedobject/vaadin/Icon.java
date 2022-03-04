@@ -280,7 +280,6 @@ public class Icon extends Composite<Component> implements HasStyle, HasIcon, Has
             } else {
                 this.getStyle().set("fill", color);
             }
-
         }
 
         default String getColor() {

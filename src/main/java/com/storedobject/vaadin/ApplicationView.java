@@ -9,6 +9,7 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Location;
 import com.vaadin.flow.server.VaadinRequest;
+import org.atmosphere.cpr.ApplicationConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -17,13 +18,17 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * The class that defines the content view of the {@link Application}. An implementation of this class (with all the necessary
- * annotations) is required for using {@link Application} class.
+ * The class that defines the content view of the {@link Application}. An implementation of this class with all the
+ * necessary annotations (minimally, root {@link com.vaadin.flow.router.Route} must be there. Others such as
+ * {@link com.vaadin.flow.component.page.Push}, {@link com.vaadin.flow.server.PWA},
+ * {@link com.vaadin.flow.component.page.BodySize} etc. could be added.) is required for using as part of the
+ * {@link Application} class.
  *
  * @see Application
  * @author Syam
  */
-public abstract class ApplicationView extends Composite<Component> implements BeforeEnterObserver, HasDynamicTitle {
+public abstract class ApplicationView extends Composite<Component>
+        implements BeforeEnterObserver, HasDynamicTitle, ApplicationConfig {
 
     /**
      * The application layout.
@@ -36,6 +41,8 @@ public abstract class ApplicationView extends Composite<Component> implements Be
      * Query parameters. (Used by {@link Application}.
      */
     Map<String, String> queryParams;
+    private int deviceWidth = -1, deviceHeight = -1;
+    private String url;
 
     /**
      * Default constructor.
@@ -105,17 +112,56 @@ public abstract class ApplicationView extends Composite<Component> implements Be
         return layout.getComponent();
     }
 
-    @ClientCallable
-    final void deviceSize(int width, int height) {
-        if(application == null) {
+    /**
+     * Get the device (browser) height.
+     *
+     * @return Device height.
+     */
+    public int getDeviceHeight() {
+        if(deviceHeight < 0) {
             receiveSize();
-        } else {
-            application.deviceSize(width, height);
         }
+        return deviceHeight;
     }
 
-    final void receiveSize() {
-        getElement().executeJs("$0.$server.deviceSize(window.innerWidth,window.innerHeight);", getElement());
+    /**
+     * Get the device (browser) width.
+     *
+     * @return Device width.
+     */
+    public int getDeviceWidth() {
+        if(deviceWidth < 0) {
+            receiveSize();
+        }
+        return deviceWidth;
+    }
+
+    /**
+     * get tje URL of application.
+     *
+     * @return URL of the application as a string.
+     */
+    public String getURL() {
+        if(url == null) {
+            receiveSize();
+        }
+        return url;
+    }
+
+    @ClientCallable
+    private void info(String url, int width, int height) {
+        this.url = url;
+        if(width == this.deviceWidth && height == this.deviceHeight) {
+            return;
+        }
+        this.deviceWidth = width;
+        this.deviceHeight = height;
+        application.fireResized(width, height);
+    }
+
+    private void receiveSize() {
+        getElement().executeJs("$0.$server.info(window.location.href,window.innerWidth,window.innerHeight);",
+                getElement());
     }
 
     /**

@@ -110,7 +110,6 @@ public abstract class Application {
     private ViewManager viewManager;
     private final ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
     private String link;
-    private int deviceWidth = -1, deviceHeight = -1;
     private final ArrayList<Command> commands = new ArrayList<>();
     private transient boolean closing = false;
     String error;
@@ -246,7 +245,7 @@ public abstract class Application {
             resizeListeners = new ArrayList<>();
             getPage().addBrowserWindowResizeListener(e -> {
                 fireResized(e.getWidth(), e.getHeight());
-                applicationView.receiveSize();
+                applicationView.getDeviceWidth();
             });
         }
         resizeListeners.add(new WeakReference<>(listener));
@@ -260,7 +259,13 @@ public abstract class Application {
         };
     }
 
-    private void fireResized(int width, int height) {
+    /**
+     * Invoked internally when the browser is resized or initialized.
+     *
+     * @param width Width.
+     * @param height Height.
+     */
+    void fireResized(int width, int height) {
         if(resizeListeners != null) {
             resizeListeners.removeIf(w -> w.get() == null);
             resizeListeners.forEach(w -> {
@@ -968,27 +973,13 @@ public abstract class Application {
         return link;
     }
 
-    final void deviceSize(int width, int height) {
-        if(deviceWidth == width && deviceHeight == height) {
-            return;
-        }
-        deviceWidth = width;
-        deviceHeight = height;
-        fireResized(width, height);
-    }
-
     /**
      * Get the device (browser) height.
      *
      * @return Device height.
      */
     public int getDeviceHeight() {
-        if(deviceHeight < 0) {
-            if(applicationView != null) {
-                applicationView.receiveSize();
-            }
-        }
-        return deviceHeight;
+        return applicationView == null ? -1 : applicationView.getDeviceHeight();
     }
 
     /**
@@ -997,12 +988,16 @@ public abstract class Application {
      * @return Device width.
      */
     public int getDeviceWidth() {
-        if(deviceWidth < 0) {
-            if(applicationView != null) {
-                applicationView.receiveSize();
-            }
-        }
-        return deviceWidth;
+        return applicationView == null ? -1 : applicationView.getDeviceWidth();
+    }
+
+    /**
+     * get tje URL of application.
+     *
+     * @return URL of the application as a string.
+     */
+    public String getURL() {
+        return applicationView == null ? null : applicationView.getURL();
     }
 
     /**

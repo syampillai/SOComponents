@@ -135,7 +135,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
         BiConsumer<D, ?> valueSetter;
         Method valueGetterM, valueSetterM;
         for(String fieldName: fieldNames) {
-            if(!includeF(fieldName)) {
+            if(!isFieldIncluded(fieldName)) {
                 continue;
             }
             valueGetterM = getGetMethodFromHost(fieldName);
@@ -215,7 +215,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * @param valueSetter Function that determines how to commit value from the field to the object's instance
      */
     protected void addField(String fieldName, Function<D, ?> valueGetter, BiConsumer<D, ?> valueSetter) {
-        if(!includeF(fieldName)) {
+        if(!isFieldIncluded(fieldName)) {
             return;
         }
         if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
@@ -266,7 +266,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
      * @param setMethod Method that determines how to commit the value from the field to the object's instance
      */
     protected void addField(String fieldName, Method getMethod, Method setMethod) {
-        if(!includeF(fieldName)) {
+        if(!isFieldIncluded(fieldName)) {
             return;
         }
         if(getM.containsKey(fieldName) || getF.containsKey(fieldName)) {
@@ -389,14 +389,14 @@ public class ObjectForm<D> extends AbstractForm<D> {
     protected void generateFieldNames() {
         getFieldGetMethods().forEach(m -> {
             String name = getFieldCreator().getFieldName(m);
-            if(name != null && includeF(name)) {
+            if(name != null && isFieldIncluded(name)) {
                 Method hm = getGetMethodFromHost(name);
                 addField(name, hm == null ? m : hm, null);
             }
         });
         Stream<String> additionalNames = getFieldCreator().getFieldNames();
         if(additionalNames != null) {
-            additionalNames.filter(Objects::nonNull).filter(this::includeF).forEach(this::addField);
+            additionalNames.filter(Objects::nonNull).filter(this::isFieldIncluded).forEach(this::addField);
         }
     }
 
@@ -411,7 +411,7 @@ public class ObjectForm<D> extends AbstractForm<D> {
      */
     protected final Stream<String> getFieldNames() {
         return Stream.concat(getM.keySet().stream(), getF.keySet().stream()).filter(n -> n != null && !n.isEmpty()).
-                filter(this::includeF).sorted(Comparator.comparingInt(this::getFieldOrder));
+                filter(this::isFieldIncluded).sorted(Comparator.comparingInt(this::getFieldOrder));
     }
 
     /**
@@ -434,7 +434,12 @@ public class ObjectForm<D> extends AbstractForm<D> {
         return true;
     }
 
-    private boolean includeF(String fieldName) {
+    /**
+     * Check whether this field was included while creating this form or not.
+     * @param fieldName Name of the field.
+     * @return True or false.
+     */
+    public final boolean isFieldIncluded(String fieldName) {
         return includeField.includeField(fieldName) && includeField(fieldName);
     }
 

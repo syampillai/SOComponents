@@ -150,7 +150,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
 
     /**
      * Get the minimum "content width" (Percentage value of the view port width). Value should be between 10 and 80.
-     * This value is used only in "window mode".
+     * This value is used only in "window mode" or "centered" mode.
      *
      * @return Percentage value of the view port width. Default is 10%.
      */
@@ -160,7 +160,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
 
     /**
      * Get the maximum "content width" (Percentage value of the view port width). Value should be between 10 and 90.
-     * This value is used only in "window mode".
+     * This value is used only in "window mode" or "centered" mode.
      *
      * @return Percentage value of the view port width. Default is 80%.
      */
@@ -170,7 +170,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
 
     /**
      * Get the minimum "content height" (Percentage value of the view port height. Value should be between 10 and 80.
-     * This value is used only in "window mode".
+     * This value is used only in "window mode" or "centered" mode.
      *
      * @return Percentage value of the view port height. Default is 10%.
      */
@@ -180,7 +180,7 @@ public abstract class DataForm extends AbstractDataForm<Object> {
 
     /**
      * Get the maximum "content height" (Percentage value of the view port height. Value should be between 10 and 90.
-     * This value is used only in "window mode".
+     * This value is used only in "window mode" or "centered" mode.
      *
      * @return Percentage value of the view port height. Default is 80%.
      */

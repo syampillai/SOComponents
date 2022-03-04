@@ -179,6 +179,15 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
     }
 
     /**
+     * Check whether this field was included while creating this editor or not.
+     * @param fieldName Name of the field.
+     * @return True or false.
+     */
+    public final boolean isFieldIncluded(String fieldName) {
+        return getForm().isFieldIncluded(fieldName);
+    }
+
+    /**
      * Customize a field. This method is invoked when a field is created. One may do some customization here.
      * @param fieldName Name of the field
      * @param field Field
