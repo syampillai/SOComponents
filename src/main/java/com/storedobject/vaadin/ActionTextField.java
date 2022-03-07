@@ -15,7 +15,7 @@ public class ActionTextField extends TextField {
 
     private Consumer<String> action;
     private boolean ignoreProgrammaticChanges = false;
-    private String text = null;
+    private String actionText = null;
     private int transform = 0;
 
     /**
@@ -107,6 +107,25 @@ public class ActionTextField extends TextField {
      * Action is carried out in this method.
      */
     synchronized void act() {
+        String t = getActionText();
+        if(actionText != null && actionText.equals(t)) {
+            focus();
+            return;
+        }
+        actionText = t;
+        Consumer<String> a = getAction();
+        if(a != null) {
+            a.accept(t);
+        }
+        focus();
+    }
+
+    /**
+     * Get the action text. (Action may not have invoked on this text).
+     *
+     * @return Action text.
+     */
+    public String getActionText() {
         String t = getValue();
         if((transform & 1) == 1) {
             t = t.trim();
@@ -116,16 +135,16 @@ public class ActionTextField extends TextField {
         } else if((transform & 4) == 4) {
             t = t.toLowerCase();
         }
-        if(text != null && text.equals(t)) {
-            focus();
-            return;
-        }
-        text = t;
-        Consumer<String> a = getAction();
-        if(a != null) {
-            a.accept(t);
-        }
-        focus();
+        return t;
+    }
+
+    /**
+     * The action text that was already acted up on. (Could be null).
+     *
+     * @return Previous action text.
+     */
+    public String getPreviousActionText() {
+        return actionText;
     }
 
     /**

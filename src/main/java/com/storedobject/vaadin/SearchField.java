@@ -3,7 +3,7 @@ package com.storedobject.vaadin;
 import java.util.function.Consumer;
 
 /**
- * An text field that can be used for triggering search action. Search action is triggered when "Enter" key
+ * A text field that can be used for triggering search action. Search action is triggered when "Enter" key
  * is pressed, text value change happened or the embedded button is pressed.
  *
  * @author Syam
@@ -33,13 +33,12 @@ public class SearchField extends ActionTextField {
      * Constructor.
      *
      * @param label Label.
-     * @param placeholder Place holder to be shown.
+     * @param placeholder Placeholder to be shown.
      * @param searchAction Search action.
      */
     public SearchField(String label, String placeholder, Consumer<String> searchAction) {
         super(label, placeholder, searchAction);
-        ImageButton b = new ImageButton("Search", e -> click());
-        addToPrefix(b);
+        addToPrefix(new ImageButton("Search", e -> act()));
         trim();
     }
 
@@ -59,9 +58,9 @@ public class SearchField extends ActionTextField {
     }
 
     /**
-     * To programmatically do the search.
+     * To programmatically invoke the search.
      */
-    protected void click() {
+    public void doSearch() {
         act();
     }
 }
