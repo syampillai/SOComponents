@@ -33,6 +33,7 @@ public class WrappedView extends View {
      */
     public WrappedView(Component executableView, String caption) {
         super(executableView, caption);
+        setCreatedBy(executableView);
         this.executableViewComponent = executableView;
     }
 

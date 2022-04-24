@@ -140,10 +140,9 @@ public class MenuItem extends Div implements ApplicationMenuItem {
 
         @Override
         public void add(ApplicationMenuItem menuItem) {
-            if(!(menuItem instanceof MenuItem)) {
+            if(!(menuItem instanceof MenuItem mi)) {
                 return;
             }
-            MenuItem mi = (MenuItem) menuItem;
             mi.level = level + 1;
             int n = 40 + (mi.level * 125);
             mi.icon.setStyle("margin-left", (n / 100) + "." + (n % 100) + "em");

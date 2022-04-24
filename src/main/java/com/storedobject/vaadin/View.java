@@ -14,7 +14,7 @@ import java.util.*;
  * View represents an independent piece of information (typically a "data entry form" or some information dashboard)
  * to be displayed in the content area of the {@link Application}. View implements {@link Runnable} interface. So,
  * it can be associated with a {@link MenuItem}. When a {@link MenuItem} is clicked, the {@link Runnable#run()} method
- * of the view is invoked and we say the "view is executed". When a view is executed, its component (specified using
+ * of the view is invoked, and we say the "view is executed". When a view is executed, its component (specified using
  * the {@link View#setComponent(Component)}) is displayed in the "content" area of the application.
  *
  * @author Syam
@@ -36,6 +36,7 @@ public class View implements ExecutableView {
     private Focusable<?> firstFocus;
     private Application application;
     private ApplicationMenuItem menuItem;
+    private Object createdBy;
     /**
      * Window decorator when this is a {@link Window}.
      */
@@ -204,8 +205,7 @@ public class View implements ExecutableView {
         if(component == null) {
             throw new RuntimeException("Component not set in View: " + getCaption());
         }
-        if(component instanceof Dialog) {
-            Dialog d = (Dialog)component;
+        if(component instanceof Dialog d) {
             if(windowMonitor == null) {
                 windowMonitor = d.addOpenedChangeListener(new WindowMonitor(this));
             }
@@ -328,9 +328,8 @@ public class View implements ExecutableView {
         if(component instanceof HasComponents) {
             return component.getChildren().anyMatch(c -> focus(c, checkSkip));
         } else {
-            if(component instanceof HasValue && component instanceof Focusable &&
+            if(component instanceof HasValue && component instanceof Focusable<?> focusable &&
                     !((HasValue<?, ?>) component).isReadOnly() && component.isVisible()) {
-                Focusable<?> focusable = (Focusable<?>) component;
                 if(!focusable.isEnabled() || (checkSkip && skipFirstFocus(focusable))) {
                     return false;
                 }
@@ -355,8 +354,7 @@ public class View implements ExecutableView {
         if(component instanceof HasComponents) {
             return component.getChildren().anyMatch(c -> focusAny(c, checkSkip));
         } else {
-            if(component instanceof Focusable && component.isVisible()) {
-                Focusable<?> focusable = (Focusable<?>) component;
+            if(component instanceof Focusable<?> focusable && component.isVisible()) {
                 if(!focusable.isEnabled() || (checkSkip && skipFirstFocus(focusable))) {
                     return false;
                 }
@@ -545,7 +543,7 @@ public class View implements ExecutableView {
      * Execute this view and set its parent too. (In this case, parent view is not locked). The parent view is
      * automatically selected when this view closes.
      *
-     * @param parent Parent view to be set
+     * @param parent Parent-view to be set
      */
     @Override
     public final void invoke(View parent) {
@@ -557,7 +555,7 @@ public class View implements ExecutableView {
      * Call super.execute(parent, doNotLock) to make the View appear on the screen.
      * Parent view is automatically selected when this view closes.
      *
-     * @param parent Parent view to lock
+     * @param parent Parent-view to lock
      * @param doNotLock True if parent should not be locked
      */
     protected void execute(View parent, boolean doNotLock) {
@@ -707,5 +705,24 @@ public class View implements ExecutableView {
      */
     public static void setDefaultPadding(int padding) {
         DEFAULT_PADDING = padding;
+    }
+
+    /**
+     * Get the object that created this view.
+     *
+     * @return  The creator of this view if it was set via {@link #setCreatedBy(Object)}. Otherwise, it will return
+     * self-reference.
+     */
+    public Object getCreatedBy() {
+        return createdBy == null ? this : createdBy;
+    }
+
+    /**
+     * Set the object that created this view.
+     *
+     * @param createdBy Creator.
+     */
+    public void setCreatedBy(Object createdBy) {
+        this.createdBy = createdBy;
     }
 }

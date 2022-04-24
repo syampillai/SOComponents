@@ -1706,6 +1706,9 @@ public interface HasColumns<T> extends ExecutableView {
                 view = new WrappedView(hc == null ? grid : hc.getViewComponent(),
                         hc != null ? hc.getCaption() : "Data View");
             }
+            if(view != null) {
+                view.setCreatedBy(hc);
+            }
             return view;
         }
 

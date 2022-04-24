@@ -275,7 +275,8 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
 
     /**
      * Create the menu item for this view. This will be invoked by {@link #getMenuItem(Runnable)}.
-     * By default, this invokes {@link ApplicationEnvironment#createMenuItem(ExecutableView, String, Runnable)} to create the menu item.
+     * By default, this invokes {@link ApplicationEnvironment#createMenuItem(ExecutableView, String, Runnable)} to
+     * create the menu item.
      *
      * @param menuAction Action for the menu item to be created
      * @return Menu item.
