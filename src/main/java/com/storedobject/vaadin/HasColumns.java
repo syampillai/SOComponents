@@ -1,6 +1,8 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
@@ -336,6 +338,16 @@ public interface HasColumns<T> extends ExecutableView {
      */
     default void refresh(T item, boolean refreshChildren) {
         getSOGrid().grid.getDataProvider().refreshItem(item, refreshChildren);
+    }
+
+    /**
+     * Get column details.
+     *
+     * @param columnName Column name.
+     * @return Column detail. Null is returned if columns are not yet created.
+     */
+    default GridColumnDetail<T> getColumnDetail(String columnName) {
+        return getSOGrid().columnDetails.get(columnName);
     }
 
     /**
@@ -885,12 +897,11 @@ public interface HasColumns<T> extends ExecutableView {
         private final Grid<T> grid;
         private final HasColumns<T> hc;
         private final Class<T> objectClass;
+        private final Map<String, GridColumnDetail<T>> columnDetails = new HashMap<>();
         private Map<String, Renderer<T>> renderers = new HashMap<>();
         private Map<String, Boolean> columnResizable = new HashMap<>();
         private Map<String, Boolean> columnVisible = new HashMap<>();
         private Map<String, Boolean> columnFrozen = new HashMap<>();
-        private final Map<String, Class<?>> columnTypes = new HashMap<>();
-        private final Map<String, String> columnCaptions = new HashMap<>();
         @SuppressWarnings("rawtypes")
         private Map<String, ValueProvider<T, Comparable>> columnComparators1 = new HashMap<>();
         private Map<String, Comparator<T>> columnComparators2 = new HashMap<>();
@@ -898,6 +909,7 @@ public interface HasColumns<T> extends ExecutableView {
         private Object methodHandlerHost;
         private int paramId = 0;
         private ButtonIcon configure;
+        private ColumnToggleContextMenu configureMenu;
         private ObjectColumnCreator<T> columnCreator;
         private Iterable<String> columns;
         private String caption;
@@ -935,6 +947,9 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private void constructed() {
+            if(configure != null && configureMenu == null) {
+                configure();
+            }
             if(grid instanceof HasColumns<?> hc) {
                 hc.constructed();
                 hc.streamConstructedListeners().forEach(cl -> cl.constructed(grid));
@@ -988,13 +1003,22 @@ public interface HasColumns<T> extends ExecutableView {
             constructed();
         }
 
+        private GridColumnDetail<T> cd(String columnName) {
+            GridColumnDetail<T> cd = columnDetails.get(columnName);
+            if(cd == null) {
+                cd = new GridColumnDetail<>();
+                columnDetails.put(columnName, cd);
+            }
+            return cd;
+        }
+
         private String trimCaption(String columnName) {
             int p = columnName.toLowerCase().indexOf(" as ");
             if(p < 0) {
                 return columnName;
             }
             String cn = columnName.substring(0, p).trim();
-            columnCaptions.put(cn, columnName.substring(p + 4));
+            cd(cn).setCaption(columnName.substring(p + 4));
             return cn;
         }
 
@@ -1134,6 +1158,33 @@ public interface HasColumns<T> extends ExecutableView {
 
         private void configure() {
             grid.recalculateColumnWidths();
+            if(configureMenu == null) {
+                configureMenu = new ColumnToggleContextMenu();
+                getColumns().forEach(c -> configureMenu.addColumn(c));
+            }
+        }
+
+        private class ColumnToggleContextMenu extends ContextMenu {
+
+            ColumnToggleContextMenu() {
+                super(configure);
+                setOpenOnClick(true);
+            }
+
+            void addColumn(Grid.Column<T> column) {
+                MenuItem menuItem = addItem(columnDetails.get(column.getKey()).getCaption(), e -> {
+                    MenuItem mi = e.getSource();
+                    boolean checked = mi.isChecked();
+                    if(!checked && columnDetails.values().stream().map(GridColumnDetail::getColumn)
+                                .noneMatch(c -> c != column && c.isVisible())) {
+                        mi.setChecked(true);
+                        return;
+                    }
+                    column.setVisible(checked);
+                });
+                menuItem.setCheckable(true);
+                menuItem.setChecked(column.isVisible());
+            }
         }
 
         /**
@@ -1375,6 +1426,7 @@ public interface HasColumns<T> extends ExecutableView {
 
         @SafeVarargs
         private Renderer<T> renderer(String columnName, String template, boolean html, Function<T, ?>... functions) {
+            cd(columnName).setValueFunction(functions);
             boolean sortable = hc != null && hc.isColumnSortable(columnName);
             if(template == null) {
                 StringBuilder s = new StringBuilder();
@@ -1501,7 +1553,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private Function<T, ?> getMethodFunction(String columnName, Method method) {
-            columnTypes.put(columnName, method.getReturnType());
+            cd(columnName).setValueType(method.getReturnType());
             method.setAccessible(true);
             if(methodHandlerHost != null && method.getDeclaringClass().isAssignableFrom(methodHandlerHost.getClass())) {
                 return (Function<T, Object>) t -> {
@@ -1588,6 +1640,7 @@ public interface HasColumns<T> extends ExecutableView {
          */
         public void acceptColumn(Grid.Column<T> column, String columnName) {
             column.setKey(columnName);
+            cd(columnName).setColumn(column);
             Component h = hc.getColumnHeaderComponent(columnName);
             if(h == null) {
                 column.setHeader(getHeader(columnName));
@@ -1680,20 +1733,28 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private Class<?> getColumnValueType(String columnName) {
-            Class<?> type = columnTypes.get(columnName);
+            Class<?> type = cd(columnName).getValueType();
             if(type == null) {
                 type = cc().getColumnValueType(columnName);
             }
-            return type == null ? Object.class : type;
+            if(type == null) {
+                type = Object.class;
+            }
+            cd(columnName).setValueType(type);
+            return type;
         }
 
         private String getHeader(String columnName) {
-            String h = columnCaptions.get(columnName);
+            String h = cd(columnName).getCaption();
             if(h != null) {
                 return h;
             }
             h = hc.getColumnCaption(columnName);
-            return h == null ? cc().getColumnCaption(columnName) : h;
+            if(h == null) {
+                h = cc().getColumnCaption(columnName);
+            }
+            cd(columnName).setCaption(h);
+            return h;
         }
 
         private View getView(boolean create) {

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * Enhancement to Vaadin's TreeGrid to handle Java Beans in a specialized way. Please note that this is not supporting the functionality supported
  * by Vaadin's Bean TreeGrid but has similar functionality. The main difference in use is that instead of addColumn methods, one should use the
  * createColumn methods. createColumn methods just return whether column can be created or not but, columns are created at a later stage
- * when all columns are defined and the ordinality of columns are determined. If you want to customize any Column, it can be done in
+ * when all columns are defined and the ordinal of columns is determined. If you want to customize any Column, it can be done in
  * customizeColumn(String, Column) method or by invoking methods provided in this claas
  * (See the implementation of the interface {@link HasColumns}).
  * Each column has a "column name" and it gets mapped to the Bean's getXXX

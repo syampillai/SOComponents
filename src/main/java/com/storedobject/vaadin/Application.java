@@ -365,8 +365,9 @@ public abstract class Application {
     }
 
     /**
-     * Invoked whenever this application is detached from its UI (it may get attached again to another UI if the user just refreshed
-     * the browser). The default implementation closes the application ({@link #close()}) after 20 seconds.
+     * Invoked whenever this application is detached from its UI (it may get attached again to another UI if the user
+     * just refreshed the browser). The default implementation closes the application ({@link #close()}) after
+     * 20 seconds.
      */
     public void detached() {
         removeUI();

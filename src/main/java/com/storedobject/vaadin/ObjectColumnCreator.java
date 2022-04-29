@@ -19,14 +19,14 @@ public interface ObjectColumnCreator<T> {
      * Create a "column creator" for the given grid.
      *
      * @param grid The grid for which columns need to be created.
-     * @return Column creator. The defaul implementation return the self reference.
+     * @return Column creator. The default implementation return the self reference.
      */
     default ObjectColumnCreator<T> create(@SuppressWarnings("unused") HasColumns<T> grid) {
         return this;
     }
 
     /**
-     * Get the column names for the the grid.
+     * Get the column names for the grid.
      *
      * @return Stream of column names.
      */
@@ -38,24 +38,25 @@ public interface ObjectColumnCreator<T> {
      * Get the method that is used to generate the content of a particular column.
      *
      * @param columnName Name of the column
-     * @return Method. Default implemenation returns null.
+     * @return Method. Default implementation returns null.
      */
     default Method getColumnMethod(@SuppressWarnings("unused") String columnName) {
         return null;
     }
 
     /**
-     * Get the funtion that is used to generate the content of a particular column.
+     * Get the function that is used to generate the content of a particular column.
      *
      * @param columnName Name of the column
-     * @return Function. Default implemenation returns null.
+     * @return Function. Default implementation returns null.
      */
     default Function<T, ?> getColumnFunction(@SuppressWarnings("unused") String columnName) {
         return null;
     }
 
     /**
-     * Get the order of the column to be displayed in the grid. It could be any integer number and lower numbered columns will be on the left side.
+     * Get the order of the column to be displayed in the grid. It could be any integer number and lower numbered
+     * columns will be on the left side.
      *
      * @param columnName Name of the column
      * @return An integer number representing the order. Default implementation returns {@link Integer#MIN_VALUE}.
@@ -68,7 +69,8 @@ public interface ObjectColumnCreator<T> {
      * Get the header text for the given column.
      *
      * @param columnName Name of the column
-     * @return Header text. Default implementation returns the value from {@link ApplicationEnvironment#createLabel(String)}.
+     * @return Header text. Default implementation returns the value from
+     * {@link ApplicationEnvironment#createLabel(String)}.
      */
     default String getColumnCaption(@SuppressWarnings("unused") String columnName) {
         return Objects.requireNonNull(ApplicationEnvironment.get()).createLabel(columnName);
@@ -79,11 +81,12 @@ public interface ObjectColumnCreator<T> {
      *
      * @param columnName Name of the column
      * @param valueType Value type of the column (If the value tye can not be determined, it will be <code>null</code>)
-     * @return Text alignment. Default implemenation returns START if the value type is <code>null</code> or non-numeric.
+     * @return Text alignment. Default implementation returns START if the value type is <code>null</code> or non-numeric.
      */
     default ColumnTextAlign getColumnTextAlign(@SuppressWarnings("unused") String columnName, @SuppressWarnings("unused") Class<?> valueType) {
         if(valueType != null) {
-            if(Number.class.isAssignableFrom(valueType) || valueType == int.class || valueType == long.class || valueType == double.class ||  valueType == float.class) {
+            if(Number.class.isAssignableFrom(valueType) || valueType == int.class || valueType == long.class
+                    || valueType == double.class ||  valueType == float.class) {
                 return ColumnTextAlign.END;
             }
         }
@@ -91,7 +94,7 @@ public interface ObjectColumnCreator<T> {
     }
 
     /**
-     * Get the value type of a particular column.
+     * Get the value type of particular column.
      *
      * @param columnName Name of the column
      * @return Value type. The default implementation returns <code>null</code>.
