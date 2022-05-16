@@ -12,6 +12,8 @@ import com.vaadin.flow.component.dependency.CssImport;
 public class TextField extends com.vaadin.flow.component.textfield.TextField
         implements HasTextValue, DisablePaste, RequiredField, ValueRequired {
 
+    private int inputType = 0;
+
     /**
      * Constructor.
      */
@@ -84,5 +86,21 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField
     @Override
     public void setText(String text) {
         setValue(text);
+    }
+
+    @Override
+    public void inputTypeSet(int type) {
+        this.inputType = type;
+    }
+
+    @Override
+    public String getValue() {
+        String v = super.getValue();
+        return switch(inputType) {
+            case 1 -> v.toLowerCase();
+            case 2 -> v.toUpperCase();
+            case 3 -> HasTextValue.camelcase(v);
+            default -> v;
+        };
     }
 }

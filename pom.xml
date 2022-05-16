@@ -5,12 +5,12 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>10.2.1</version>
+    <version>11.0.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>22.0.14</vaadin.version>
+        <vaadin.version>23.0.9</vaadin.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -89,6 +89,13 @@
             <groupId>org.vaadin</groupId>
             <artifactId>textfieldformatter</artifactId>
             <version>5.4.0</version>
+        </dependency>
+
+        <!-- Vaadin add-on for multi-select combo field -->
+        <dependency>
+            <groupId>com.vaadin.componentfactory</groupId>
+            <artifactId>multi-combo-box-flow</artifactId>
+            <version>2.0.0</version>
         </dependency>
 
         <!-- Servlet -->

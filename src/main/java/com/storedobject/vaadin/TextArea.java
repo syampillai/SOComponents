@@ -11,6 +11,8 @@ import com.vaadin.flow.component.dependency.CssImport;
 @CssImport(value = "./so/textarea/styles.css", themeFor = "vaadin-text-area")
 public class TextArea extends com.vaadin.flow.component.textfield.TextArea implements HasTextValue {
 
+    private int inputType = 0;
+
     /**
      * Constructor.
      */
@@ -186,5 +188,21 @@ public class TextArea extends com.vaadin.flow.component.textfield.TextArea imple
     @Override
     public void setText(String text) {
         setValue(text);
+    }
+
+    @Override
+    public void inputTypeSet(int type) {
+        this.inputType = type;
+    }
+
+    @Override
+    public String getValue() {
+        String v = super.getValue();
+        return switch(inputType) {
+            case 1 -> v.toLowerCase();
+            case 2 -> v.toUpperCase();
+            case 3 -> HasTextValue.camelcase(v);
+            default -> v;
+        };
     }
 }

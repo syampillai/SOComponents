@@ -7,7 +7,8 @@ https://vaadin.com/directory/component/so-components
 https://vaadin.com/directory/component/so-helper Ver 2.1.2 or later (Helper classes).
 
 https://vaadin.com/directory/component/textfield-formatter Ver 5.4.0 or later (for field formatting features).  
-Use versions < 1.3.0 if you don't want this dependency.
+
+https://vaadin.com/directory/component/multicombobox-component Ver 2.0.0 or later (for token-field implementation).
 
 https://xmlgraphics.apache.org/batik Ver 1.11 (for SVG image manipulation).
 

@@ -1,11 +1,11 @@
-:host(.uppercase) [part="value"] {
+:host(.uppercase) ::slotted(input) {
     text-transform: uppercase;
 }
 
-:host(.lowercase) [part="value"] {
+:host(.lowercase) ::slotted(input) {
     text-transform: lowercase;
 }
 
-:host(.capitalize) [part="value"] {
+:host(.capitalize) ::slotted(input) {
     text-transform: capitalize;
 }

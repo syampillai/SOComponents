@@ -33,6 +33,7 @@ public interface HasTextValue extends HasSize, HasText, SpellCheck {
         getClassNames().remove("lowercase");
         getClassNames().remove("capitalize");
         getClassNames().add("uppercase");
+        inputTypeSet(2);
     }
 
     /**
@@ -42,14 +43,49 @@ public interface HasTextValue extends HasSize, HasText, SpellCheck {
         getClassNames().add("lowercase");
         getClassNames().remove("capitalize");
         getClassNames().remove("uppercase");
+        inputTypeSet(1);
     }
 
     /**
-     * Capitalize words while inputting.
+     * Capitalize (camelcase) words while inputting.
      */
     default void capitalize() {
         getClassNames().remove("lowercase");
         getClassNames().add("capitalize");
         getClassNames().remove("uppercase");
+        inputTypeSet(3);
+    }
+
+    /**
+     * Remove text transformation if any.
+     */
+    default void normal() {
+        getClassNames().remove("lowercase");
+        getClassNames().remove("capitalize");
+        getClassNames().remove("uppercase");
+        inputTypeSet(0);
+    }
+
+    /**
+     * This method is invoked whenever the type of input is set.
+     *
+     * @param type Type of input - 0: Normal, 1: Lowercase, 2: Uppercase, 3: Camelcase
+     */
+    void inputTypeSet(int type);
+
+    /**
+     * Convert a string to camelcase.
+     * @param text Text to convert.
+     * @return Converted text.
+     */
+    static String camelcase(String text) {
+        StringBuilder builder = new StringBuilder();
+        char p = ' ', c;
+        for(int i = 0; i < text.length(); i++) {
+            c = text.charAt(i);
+            builder.append(Character.isLetterOrDigit(p) ? Character.toLowerCase(c) : Character.toUpperCase(c));
+            p = c;
+        }
+        return builder.toString();
     }
 }

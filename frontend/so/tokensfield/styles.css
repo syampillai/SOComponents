@@ -1,0 +1,23 @@
+:host(.tokens-no) ::slotted(input) {
+  display: block;
+}
+
+:host(.tokens-yes) ::slotted(input) {
+  display: none;
+}
+
+:host(.tokens-yes) ::slotted(suffix) {
+  display: none;
+}
+
+:host(.tokens-no) ::slotted(suffix) {
+  display: block;
+}
+
+:host(.tokens-no) [part="toggle-button"] {
+  display: block;
+}
+
+:host(.tokens-yes) [part="toggle-button"] {
+  display: none;
+}
