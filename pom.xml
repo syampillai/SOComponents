@@ -5,7 +5,7 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>11.0.0</version>
+    <version>11.0.1</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.storedobject.helper</groupId>
             <artifactId>so-helper</artifactId>
-            <version>2.1.2</version>
+            <version>3.0.0</version>
         </dependency>
 
         <!-- Vaadin add-on for text input formatting -->

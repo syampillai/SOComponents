@@ -1,4 +1,5 @@
-import { LitElement, html, css, property, customElement } from 'lit-element'
+import { LitElement, html, css } from 'lit'
+import {property, customElement} from 'lit/decorators.js';
 
 export class SOAppContent extends LitElement {
 

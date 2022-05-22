@@ -1,4 +1,5 @@
-import {LitElement, html,css } from 'lit-element';
+import { LitElement, html, css } from 'lit'
+import {property, customElement} from 'lit/decorators.js';
 import {GestureEventListeners} from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures.js';
 import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
@@ -305,7 +306,7 @@ const hintClasses = {
  * }
  * ```
  *
- * Additionaly the speed of the move animations can be adjusted with the `--cube-speed` parameter
+ * Additionally the speed of the move animations can be adjusted with the `--cube-speed` parameter
  *
  * ```
  * scary-cube {
@@ -394,7 +395,7 @@ class ScaryCube extends GestureEventListeners(LitElement) {
    *
    * Accepts an array of faces or a cube.js compatible string.
    *
-   * Throws erros when trying to set an invalid state.
+   * Throws errors when trying to set an invalid state.
    *
    * @return {Array}
    */
