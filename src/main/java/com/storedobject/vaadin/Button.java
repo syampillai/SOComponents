@@ -7,20 +7,23 @@ import com.vaadin.flow.shared.Registration;
 /**
  * Enhancements to Vaadin {@link com.vaadin.flow.component.button.Button}.
  * Main features are: (1) A {@link ClickHandler} can e defined as the action when button is clicked.
- * (2) From the text on the button,
- * it will try to create an {@link Icon} (unless an icon is already specified).
+ * (2) From the text on the button, it will try to create an {@link Icon} (unless an icon is already specified),
+ * (3) Enable/disable display of icons on any newly created buttons via method {@link #setNoIcons(boolean)}.
  * @author Syam
  */
 public class Button extends com.vaadin.flow.component.button.Button implements HasThemeStyle {
 
+    private static boolean noIcons = false;
+
     /**
      * Constructor.
      *
-     * @param text Text label to display and the respective icon will be used
+     * @param text Text label to display and the respective icon will be used (unless {@link #setNoIcons(boolean)} was
+     *             used to disable the display of icons.
      * @param clickHandler Click handler
      */
     public Button(String text, ClickHandler clickHandler) {
-        this(text, text, clickHandler);
+        this(text, noIcons ? null : text, clickHandler);
     }
 
     /**
@@ -118,6 +121,14 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
         setIcon(new Icon(icon));
     }
 
+    @Override
+    public void setIcon(Component icon) {
+        if(noIcons) {
+            return;
+        }
+        super.setIcon(icon);
+    }
+
     /**
      * Mark this Button as Primary.
      *
@@ -134,5 +145,13 @@ public class Button extends com.vaadin.flow.component.button.Button implements H
      */
     public Button asSmall() {
         return (Button) HasThemeStyle.super.asSmall();
+    }
+
+    /**
+     * Set "no icons" mode for buttons. If this is "on", no icon will be displayed on buttons.
+     * @param noIcons True/false.
+     */
+    public static void setNoIcons(boolean noIcons) {
+        Button.noIcons = noIcons;
     }
 }
