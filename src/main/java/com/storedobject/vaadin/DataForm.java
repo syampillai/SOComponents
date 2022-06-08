@@ -30,6 +30,8 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     private boolean buttonsAtTop = false;
     private final boolean windowMode;
     private final boolean centered;
+    private WindowDecorator windowDecorator;
+    private boolean closeable = true;
 
     /**
      * Constructor.
@@ -125,7 +127,8 @@ public abstract class DataForm extends AbstractDataForm<Object> {
         if(windowMode) {
             Window window = createWindow(c);
             if(window == null) {
-                window = new Window(new WindowDecorator(this), c);
+                window = new Window(windowDecorator = new WindowDecorator(this), c);
+                windowDecorator.setCloseable(closeable);
             }
             setComponent(window);
             sizeIt();
@@ -146,6 +149,13 @@ public abstract class DataForm extends AbstractDataForm<Object> {
                 set("min-height", minMax(getMinimumContentHeight()) + "vh").
                 set("max-width", maxMin(getMaximumContentWidth()) + "vw").
                 set("max-height", maxMin(getMaximumContentHeight()) + "vh");
+        sizeSet();
+    }
+
+    /**
+     * This method is invoked once when the size of the content is set. You can do further change if any.
+     */
+    protected void sizeSet() {
     }
 
     /**
@@ -280,5 +290,21 @@ public abstract class DataForm extends AbstractDataForm<Object> {
      */
     @SuppressWarnings("RedundantThrows")
     protected void validateData() throws Exception {
+    }
+
+    /**
+     * Set the closeability. This will have effect only in window-mode and the {@link Window} was created by the
+     * {@link DataForm} itself. If you create the {@link  Window} in an overridden {@link #createWindow(Component)}
+     * method, you should control the closeability of that yourself.
+     * @param closeable True/false.
+     */
+    public void setCloseable(boolean closeable) {
+        if(this.closeable == closeable) {
+            return;
+        }
+        this.closeable = closeable;
+        if(windowDecorator != null) {
+            windowDecorator.setCloseable(closeable);
+        }
     }
 }

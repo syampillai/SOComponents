@@ -15,6 +15,7 @@ public class WindowDecorator extends Composite<ButtonLayout> {
     private static final String COLOR = "var(--so-header-color)";
     private final ButtonLayout content = new ButtonLayout();
     private final Span titleText;
+    private final ImageButton close;
 
     /**
      * Constructor.
@@ -31,7 +32,8 @@ public class WindowDecorator extends Composite<ButtonLayout> {
                 .set("padding", "0px").set("margin", "0px 0px 0px 2px").set("display", "flex").set("flex-grow", "100")
                 .set("text-overflow", "ellipsis");
         content.setWidthFull();
-        ImageButton close = new ImageButton(VaadinIcon.CLOSE, view instanceof DataForm ? e -> ((DataForm) view).cancel() : e -> view.abort());
+        close = new ImageButton(VaadinIcon.CLOSE,
+                view instanceof DataForm ? e -> ((DataForm) view).cancel() : e -> view.abort());
         close.withBox();
         close.setColor(COLOR);
         content.add(titleText);
@@ -61,5 +63,14 @@ public class WindowDecorator extends Composite<ButtonLayout> {
      */
     public void setCaption(String caption) {
         titleText.setText(caption == null ? "" : caption);
+    }
+
+    /**
+     * Toggle the visibility of the "Close" button so that the associated Window's closeability can be controlled.
+     *
+     * @param closeable True/false.
+     */
+    public void setCloseable(boolean closeable) {
+        close.setVisible(closeable);
     }
 }
