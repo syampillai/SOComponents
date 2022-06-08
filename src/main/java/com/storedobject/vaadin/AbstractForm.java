@@ -350,8 +350,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Attach a field to the form. This is invoked whenever a field is added to the form. The default implementation adds the field component
-     * (if it is a component) to the field container.
+     * Attach a field to the form. This is invoked whenever a field is added to the form. The default implementation
+     * adds the field component (if it is a component) to the field container.
      *
      * @param fieldName Name of the field
      * @param field Field
@@ -371,8 +371,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Detach a field from the form. This is invoked whenever a field is removed to the form. The default implementation removes
-     * the field component (if it is a component) from the field container.
+     * Detach a field from the form. This is invoked whenever a field is removed to the form. The default
+     * implementation removes the field component (if it is a component) from the field container.
      *
      * @param fieldName Name of the field
      * @param field Field
@@ -417,7 +417,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set number of responsive columns for the form. (This will work only when the container is of type {@link FormLayout}).
+     * Set number of responsive columns for the form. (This will work only when the container is of type
+     * {@link FormLayout}).
      *
      * @param columns Number of responsive columns required
      */
@@ -429,7 +430,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Get number of responsive columns for the form. (This will work only when the container is of type {@link FormLayout}).
+     * Get number of responsive columns for the form. (This will work only when the container is of type
+     * {@link FormLayout}).
      *
      * @return Number of responsive columns of the form.
      */
@@ -450,13 +452,15 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set number of columns to span for a particular component. (This will work only when the container is of type {@link FormLayout}).
+     * Set number of columns to span for a particular component. (This will work only when the container is of type
+     * {@link FormLayout}).
      *
      * @param component Component for which column span to be set
      * @param columnSpan Number of columns to span
      */
     public void setColumnSpan(Component component, int columnSpan) {
-        component.getElement().setAttribute("colspan", "" + Math.min(Math.max(1, columnSpan), getColumns()));
+        component.getElement().setAttribute("colspan", "" + Math.min(Math.max(1, columnSpan),
+                getColumns()));
     }
 
     /**
@@ -570,8 +574,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
-     * {@link #commit()} will fail.
+     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking
+     * {@link HasValue#isEmpty()}), {@link #commit()} will fail.
      *
      * @param fieldName Field name
      * @param errorMessage Error message to show when the field is empty
@@ -581,8 +585,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
-     * {@link #commit()} will fail.
+     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking
+     * {@link HasValue#isEmpty()}), {@link #commit()} will fail.
      *
      * @param field Field
      * @param required True or false
@@ -592,8 +596,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
-     * {@link #commit()} will fail.
+     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking
+     * {@link HasValue#isEmpty()}), {@link #commit()} will fail.
      *
      * @param fieldName Field name
      * @param required True or false
@@ -603,8 +607,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
-     * {@link #commit()} will fail.
+     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking
+     * {@link HasValue#isEmpty()}), {@link #commit()} will fail.
      *
      * @param field Field
      * @param required True or false
@@ -615,8 +619,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
-     * {@link #commit()} will fail.
+     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking
+     * {@link HasValue#isEmpty()}), {@link #commit()} will fail.
      *
      * @param fieldName Field name
      * @param required True or false

@@ -215,15 +215,15 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     }
 
     /**
-     * This is where the fields are built. Typically, we create the fields and add it using {@link #addField(HasValue...)} or
-     * {@link #addField(String, HasValue)} methods.
+     * This is where the fields are built. Typically, we create the fields and add it using
+     * {@link #addField(HasValue...)} or {@link #addField(String, HasValue)} methods.
      */
     protected void buildFields() {
     }
 
     /**
-     * Build the buttons. Button "Ok" and "Cancel" are already created. This method add those to the {@link #buttonPanel}.
-     * You can add additional custom buttons and components to the {@link #buttonPanel}.
+     * Build the buttons. Button "Ok" and "Cancel" are already created. This method add those to the
+     * {@link #buttonPanel}. You can add additional custom buttons and components to the {@link #buttonPanel}.
      */
     protected void buildButtons() {
         buttonPanel.add(ok, cancel);
@@ -237,8 +237,8 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     }
 
     /**
-     * This method is invoked if the "Ok" button is pressed and there is no error raised by {@link #validateData()} method. This method has to
-     * return <code>true</code> in order to close the "data entry screen".
+     * This method is invoked if the "Ok" button is pressed and there is no error raised by {@link #validateData()}
+     * method. This method has to return <code>true</code> in order to close the "data entry screen".
      * @return True or false.
      */
     protected abstract boolean process();

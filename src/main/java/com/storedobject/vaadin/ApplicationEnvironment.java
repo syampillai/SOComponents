@@ -109,17 +109,11 @@ public interface ApplicationEnvironment {
         if(label == null || label.contains(":")) {
             return null;
         }
-        switch (label.toLowerCase()) {
-            case "save":
-            case "ok":
-            case "yes":
-                return "check";
-            case "cancel":
-            case "no":
-            case "clear":
-                return "close";
-        }
-        return label;
+        return switch(label.toLowerCase()) {
+            case "save", "ok", "yes" -> "check";
+            case "cancel", "no", "clear" -> "close";
+            default -> label;
+        };
     }
 
     /**

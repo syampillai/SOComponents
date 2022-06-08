@@ -3,6 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
@@ -90,10 +91,12 @@ public class Icon extends Composite<Component> implements HasStyle, HasIcon, Has
     private static IconInterface create(String icon) {
         IconInterface ii;
         if(icon == null || icon.isBlank()) {
-            ii = new VIcon();
-            ii.setIcon(VaadinIcon.BUG);
+            return new EmptyIcon();
         } else {
             icon = HasIcon.getIconName(icon);
+            if(icon == null || icon.isBlank()) {
+                return new EmptyIcon();
+            }
             Class<? extends IconInterface> iClass = iconCollections.get(icon.substring(0, icon.lastIndexOf(':')));
             ii = create(iClass);
             ii.setIcon(icon);
@@ -270,6 +273,9 @@ public class Icon extends Composite<Component> implements HasStyle, HasIcon, Has
     @JsModule("@polymer/iron-icons/places-icons.js")
     @Tag("iron-icon")
     private static class IIcon extends Component implements IconInterface, ClickNotifier<IIcon> {
+    }
+
+    private static class EmptyIcon extends Span implements IconInterface {
     }
 
     private interface IconInterface extends HasStyle, HasIcon, HasSquareElement {
