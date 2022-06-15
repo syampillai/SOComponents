@@ -142,17 +142,4 @@ public interface ApplicationLayout {
      */
     default void viewSelected(View view) {
     }
-
-    /**
-     * Save the current header height. If this is implemented, the {@link #restoreHeaderHeight()} should restore the
-     * header height.
-     */
-    default void saveHeaderHeight() {
-    }
-
-    /**
-     * Restore the header height saved earlier via {@link #saveHeaderHeight()}.
-     */
-    default void restoreHeaderHeight() {
-    }
 }

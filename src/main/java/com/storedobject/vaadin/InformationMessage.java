@@ -46,7 +46,7 @@ public class InformationMessage extends ActionForm {
      * @param labelOk Label for "Ok" button
      */
     public InformationMessage(Component message, Runnable action, String labelOk) {
-        super(null, message, action, action, null, null);
+        super(null, message, action, action, labelOk, null);
     }
 
     /**

@@ -1680,8 +1680,15 @@ public abstract class Application {
             }
             stack.add(view);
             view.decorateComponent();
+            if(view.isFullScreen()) {
+                applicationView.setLayoutVisible(false);
+            }
             if(!(c instanceof Dialog)) {
-                content.getElement().appendChild(c.getElement());
+                if(view.isFullScreen()) {
+                    applicationView.add(c);
+                } else {
+                    content.getElement().appendChild(c.getElement());
+                }
             }
             view.setVisible(true);
             ApplicationMenuItem m = view.getMenuItem(() -> select(view));
@@ -1789,6 +1796,9 @@ public abstract class Application {
 
         private void hideAllContent(View except) {
             stack.forEach(v -> v.setVisible(v == except));
+            if(except != null) {
+                applicationView.setLayoutVisible(!(except.isFullScreen()));
+            }
         }
 
         private boolean select(View view) {

@@ -40,7 +40,6 @@ export class SOTimer extends LitElement {
         if(limit == 0) {
             return;
         }
-        console.log("Prefix & Suffix are: " + this.prefixD + " & " + this.suffixD);
         this.limit = limit;
         this.up = limit > 0;
         this.span.textContent = this.prefixD + Math.abs(this.up ? 0 : limit) + this.suffixD;

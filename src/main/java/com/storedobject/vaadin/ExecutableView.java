@@ -294,15 +294,22 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
         return getApplication().getEnvironment().getActiveMenuIconName();
     }
 
-
     /**
-     * Check if this view is closeable or not. If closeable, a "closeable" menu item will be created by {@link #getMenuItem(Runnable)}.
+     * Check if this view is closeable or not. If closeable, a "closeable" menu item will be created by
+     * {@link #getMenuItem(Runnable)}.
      * This is checked only once when the "menu item" is created.
      *
-     * @return True if closeable. By default, a view is closeable if it implements {@link CloseableView}.
+     * @return True if closeable. By default, a view is closeable if it implements {@link CloseableView} or its
+     * internal component ({@link View#getComponent()}) implements {@link CloseableView}.
      */
     default boolean isCloseable() {
-        return this instanceof CloseableView;
+        if(this instanceof CloseableView) {
+            return true;
+        }
+        if(this instanceof View v) {
+            return v.getComponent() instanceof CloseableView;
+        }
+        return false;
     }
 
     /**
@@ -310,11 +317,34 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * Typically, views that show background images or some sort of dashboards can be defined as "Home Views" so
      * that they will always appear on the content portion of the {@link com.storedobject.vaadin.Application}.
      *
-     * @return True if this view is a "Home View". By default, if a view implements {@link HomeView}, this method
+     * @return True if this view is a "Home View". By default, if a view implements {@link HomeView} or its
+     * internal component ({@link View#getComponent()}) implements {@link HomeView}, this method
      * return <code>true</code>.
      */
     default boolean isHomeView() {
-        return this instanceof HomeView;
+        if(this instanceof HomeView) {
+            return true;
+        }
+        if(this instanceof View v) {
+            return v.getComponent() instanceof HomeView;
+        }
+        return false;
+    }
+
+    /**
+     * Check if this view is a full-screen view or not. A full-screen view takes up the whole screen.
+     *
+     * @return True if closeable. By default, a view takes up full-screen if it implements {@link FullScreen} or its
+     * internal component ({@link View#getComponent()}) implements {@link FullScreen}.
+     */
+    default boolean isFullScreen() {
+        if(this instanceof FullScreen) {
+            return true;
+        }
+        if(this instanceof View v) {
+            return v.getComponent() instanceof FullScreen;
+        }
+        return false;
     }
 
     /**

@@ -43,6 +43,7 @@ public abstract class ApplicationView extends Composite<Component>
     Map<String, String> queryParams;
     private int deviceWidth = -1, deviceHeight = -1;
     private String url;
+    private final Span root = new Span();
 
     /**
      * Default constructor.
@@ -91,7 +92,7 @@ public abstract class ApplicationView extends Composite<Component>
     }
 
     @Override
-    protected Component initContent() {
+    protected final Component initContent() {
         if(layout == null) {
             if(application == null) {
                 Notification.show("Logged out");
@@ -109,7 +110,19 @@ public abstract class ApplicationView extends Composite<Component>
             }
             layout = application.createLayout();
         }
-        return layout.getComponent();
+        add(layout.getComponent());
+        return root;
+    }
+
+    public void add(Component screen) {
+        root.add(screen);
+    }
+
+    public void setLayoutVisible(boolean visible) {
+        Component c = layout.getComponent();
+        if(c.isVisible() != visible) {
+            c.setVisible(visible);
+        }
     }
 
     /**
