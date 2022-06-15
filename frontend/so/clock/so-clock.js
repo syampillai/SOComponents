@@ -11,8 +11,9 @@ export class Clock extends LitElement {
         super();
         this.idClock = null;
         this.ampm = false;
-        this.gmt = true;
+        this.utc = true;
         this.timer = null;
+        this.showDate = true;
     }
 
     connectedCallback() {
@@ -31,8 +32,12 @@ export class Clock extends LitElement {
         this.ampm = ampm;
     }
 
-    setGMT(gmt) {
-        this.gmt = gmt;
+    setUTC(utc) {
+        this.utc = utc;
+    }
+
+    showDate(showDate) {
+        this.showDate = showDate;
     }
 
     _currTime() {
@@ -40,7 +45,7 @@ export class Clock extends LitElement {
         let hh;
         let mm;
         let ss;
-        if(this.gmt) {
+        if(this.utc) {
             hh = date.getUTCHours();
             mm = date.getUTCMinutes();
             ss = date.getUTCSeconds();
@@ -65,7 +70,17 @@ export class Clock extends LitElement {
         hh = (hh < 10) ? "0" + hh : hh;
         mm = (mm < 10) ? "0" + mm : mm;
         ss = (ss < 10) ? "0" + ss : ss;
-        this.shadowRoot.getElementById(this.idClock).innerText = hh + ":" + mm + ":" + ss + session;
+        let dp = "";
+        if(this.showDate) {
+            if(this.utc) {
+                dp = date.toUTCString();
+                dp = dp.substring(0, 16);
+            } else {
+                dp = date.toDateString();
+            }
+            dp += " ";
+        }
+        this.shadowRoot.getElementById(this.idClock).innerText = dp + hh + ":" + mm + ":" + ss + session;
     }
 }
 

@@ -7,7 +7,7 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 
 /**
- * A simple clock. By default, it will display the UTC time in 24-hours format.
+ * A simple clock. By default, it will display the UTC time in 24-hours format with its date-part.
  *
  * @author Syam
  */
@@ -23,12 +23,12 @@ public class Clock extends LitComponent implements HasStyle {
     }
 
     /**
-     * Set the GMT/UTC mode.
+     * Set the UTC mode.
      *
-     * @param gmt True/false.
+     * @param utc True/false.
      */
-    public void setGMT(boolean gmt) {
-        executeJS("setGMT", gmt);
+    public void setUTC(boolean utc) {
+        executeJS("setUTC", utc);
     }
 
     /**
@@ -38,5 +38,14 @@ public class Clock extends LitComponent implements HasStyle {
      */
     public void setAMPM(boolean ampm) {
         executeJS("setAMPM", ampm);
+    }
+
+    /**
+     * Whether to display date-part or not.
+     *
+     * @param showDate True/false.
+     */
+    public void showDate(boolean showDate) {
+        executeJS("showDate", showDate);
     }
 }
