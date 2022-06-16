@@ -25,6 +25,7 @@ public class View implements ExecutableView {
     private Set<ViewClosedListener> closedListeners;
     private Set<ViewOpenedListener> openedListeners;
     private Component component;
+    private boolean fullScreen = false;
     private String caption;
     private boolean aborted = false;
     private boolean detachParent = false;
@@ -211,6 +212,20 @@ public class View implements ExecutableView {
             }
         }
         return component;
+    }
+
+    @Override
+    public boolean isFullScreen() {
+        return fullScreen || ExecutableView.super.isFullScreen();
+    }
+
+    /**
+     * Set full-screen mode. The mode is activated only when it is executed next time.
+     *
+     * @param fullScreen True/false.
+     */
+    public void setFullScreen(boolean fullScreen) {
+        this.fullScreen = fullScreen;
     }
 
     private static class WindowMonitor implements ComponentEventListener<Dialog.OpenedChangeEvent<Dialog>> {

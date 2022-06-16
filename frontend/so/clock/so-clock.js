@@ -12,6 +12,7 @@ export class Clock extends LitElement {
         this.idClock = null;
         this.ampm = false;
         this.utc = true;
+        this.showUTC = true;
         this.timer = null;
         this.showDate = true;
     }
@@ -36,6 +37,10 @@ export class Clock extends LitElement {
         this.utc = utc;
     }
 
+    showUTC(showUTC) {
+        this.showUTC = showUTC;
+    }
+
     showDate(showDate) {
         this.showDate = showDate;
     }
@@ -54,18 +59,18 @@ export class Clock extends LitElement {
             mm = date.getMinutes();
             ss = date.getSeconds();
         }
-        let session;
+        let ampm;
         if(this.ampm) {
-            session = " AM";
+            ampm = " AM";
             if(hh == 0) {
                 hh = 12;
             }
             if(hh > 12) {
                 hh = hh - 12;
-                session = " PM";
+                ampm = " PM";
             }
         } else {
-            session = "";
+            ampm = "";
         }
         hh = (hh < 10) ? "0" + hh : hh;
         mm = (mm < 10) ? "0" + mm : mm;
@@ -80,7 +85,11 @@ export class Clock extends LitElement {
             }
             dp += " ";
         }
-        this.shadowRoot.getElementById(this.idClock).innerText = dp + hh + ":" + mm + ":" + ss + session;
+        dp += hh + ":" + mm + ":" + ss + ampm;
+        if(this.utc && this.showUTC) {
+            dp += " UTC";
+        }
+        this.shadowRoot.getElementById(this.idClock).innerText = dp;
     }
 }
 

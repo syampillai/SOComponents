@@ -1198,11 +1198,11 @@ public abstract class Application {
      * For internal use only. (Execute a "view").
      *
      * @param view View to execute
-     * @param doNotLock Whether to lock the parent or not
-     * @param parentBox Parent view if any, otherwise <code>null</code>
+     * @param doNotLock Whether to lock the parent view or not
+     * @param parent Parent view if any, otherwise <code>null</code>
      */
-    void execute(View view, boolean doNotLock, View parentBox) {
-        viewManager.attach(view, doNotLock, parentBox);
+    void execute(View view, boolean doNotLock, View parent) {
+        viewManager.attach(view, doNotLock, parent);
     }
 
     /**
@@ -1477,6 +1477,15 @@ public abstract class Application {
         return applicationLayout == null ? null : applicationLayout.getCaption();
     }
 
+    /**
+     * Check whether the application is currently in full-screen mode or not.
+     *
+     * @return True/false.
+     */
+    public boolean isFullScreenMode() {
+        return viewManager.isFS();
+    }
+
     private class AlertList extends ArrayList<Alert> {
 
         private final Object owner;
@@ -1680,11 +1689,15 @@ public abstract class Application {
             }
             stack.add(view);
             view.decorateComponent();
-            if(view.isFullScreen()) {
-                applicationView.setLayoutVisible(false);
+            boolean fs;
+            if(c instanceof Dialog && isFS()) {
+                fs = true;
+            } else {
+                fs = isFS(view, parent);
             }
+            applicationView.setLayoutVisible(!fs);
             if(!(c instanceof Dialog)) {
-                if(view.isFullScreen()) {
+                if(fs) {
                     applicationView.add(c);
                 } else {
                     content.getElement().appendChild(c.getElement());
@@ -1744,6 +1757,7 @@ public abstract class Application {
             }
             contentMenu.remove(view);
             view.getComponent().getElement().removeFromParent();
+            applicationView.setLayoutVisible(true);
             stack.remove(view);
             homeStack.remove(view);
             View parent = parents.remove(view);
@@ -1794,10 +1808,28 @@ public abstract class Application {
             return parents.keySet().stream().filter(k -> parents.get(k) == view).findAny().orElse(null);
         }
 
+        private boolean isFS(View view, View parent) {
+            return view.isFullScreen() || isFS(parent);
+        }
+
+        private boolean isFS(View view) {
+            if(view == null) {
+                return false;
+            }
+            if(view.isFullScreen()) {
+                return true;
+            }
+            return isFS(parents.get(view));
+        }
+
+        private boolean isFS() {
+            return !applicationView.layout.getComponent().isVisible();
+        }
+
         private void hideAllContent(View except) {
             stack.forEach(v -> v.setVisible(v == except));
             if(except != null) {
-                applicationView.setLayoutVisible(!(except.isFullScreen()));
+                applicationView.setLayoutVisible(!isFS(except));
             }
         }
 

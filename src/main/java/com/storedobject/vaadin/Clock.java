@@ -25,10 +25,19 @@ public class Clock extends LitComponent implements HasStyle {
     /**
      * Set the UTC mode.
      *
-     * @param utc True/false.
+     * @param utc Whether to show the time in UTC or not.
      */
     public void setUTC(boolean utc) {
         executeJS("setUTC", utc);
+    }
+
+    /**
+     * Whether to display "UTC" string or not. Applicable only when the UTC mode is active.
+     *
+     * @param showUTC True/false.
+     */
+    public void showUTC(boolean showUTC) {
+        executeJS("showUTC", showUTC);
     }
 
     /**
