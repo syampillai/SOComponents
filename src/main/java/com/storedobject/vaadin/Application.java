@@ -357,7 +357,10 @@ public abstract class Application {
     private void removeUI(boolean removeContent) {
         if(ui != null) {
             if(removeContent) {
-                ui.removeAll();
+                try {
+                    ui.removeAll();
+                } catch(Throwable ignored) {
+                }
             }
             ui.close();
             ui = null;

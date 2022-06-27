@@ -1013,7 +1013,7 @@ public interface HasColumns<T> extends ExecutableView {
         }
 
         private String trimCaption(String columnName) {
-            int p = columnName.toLowerCase().indexOf(" as ");
+            int p = columnName.toLowerCase().lastIndexOf(" as ");
             if(p < 0) {
                 return columnName;
             }
