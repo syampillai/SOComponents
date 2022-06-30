@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.grid.Grid;
 
 import java.util.function.Function;
@@ -16,6 +17,7 @@ public final class GridColumnDetail<T> {
     private String caption;
     private Function<T, ?> valueFunction;
     private Class<?> valueType;
+    private MenuItem contextMenu;
 
     /**
      * Constructor.
@@ -108,5 +110,37 @@ public final class GridColumnDetail<T> {
      */
     void setValueType(Class<?> valueType) {
         this.valueType = valueType;
+    }
+
+    /**
+     * Set the context menu (used by the configurator). See {@link HasColumns#getConfigureButton()}.
+     *
+     * @param contextMenu Context menu item to set.
+     */
+    void setContextMenu(MenuItem contextMenu) {
+        this.contextMenu = contextMenu;
+    }
+
+    /**
+     * Set the column visible.
+     * <p>Note: This is the recommended way to make the column visible because it will update the context menu
+     * of the configurator too.</p>
+     *
+     * @param visible True/false.
+     */
+    public void setVisible(boolean visible) {
+        if(column.isVisible() == visible) {
+            if(contextMenu == null) {
+                return;
+            }
+            if(contextMenu.isChecked() == visible) {
+                return;
+            }
+            contextMenu.setChecked(visible);
+            return;
+        }
+        column.setVisible(visible);
+        setVisible(visible);
+        column.getGrid().recalculateColumnWidths();
     }
 }

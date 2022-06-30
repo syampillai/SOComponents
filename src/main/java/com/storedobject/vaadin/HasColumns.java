@@ -1172,16 +1172,16 @@ public interface HasColumns<T> extends ExecutableView {
             }
 
             void addColumn(Grid.Column<T> column) {
-                MenuItem menuItem = addItem(columnDetails.get(column.getKey()).getCaption(), e -> {
+                GridColumnDetail<T> columnDetail = columnDetails.get(column.getKey());
+                MenuItem menuItem = addItem(columnDetail.getCaption(), e -> {
                     MenuItem mi = e.getSource();
                     boolean checked = mi.isChecked();
-                    if(!checked && columnDetails.values().stream().map(GridColumnDetail::getColumn)
-                                .noneMatch(c -> c != column && c.isVisible())) {
-                        mi.setChecked(true);
+                    if(checked == column.isVisible()) {
                         return;
                     }
                     column.setVisible(checked);
                 });
+                columnDetail.setContextMenu(menuItem);
                 menuItem.setCheckable(true);
                 menuItem.setChecked(column.isVisible());
             }
