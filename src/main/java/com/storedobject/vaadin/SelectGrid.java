@@ -184,7 +184,7 @@ public class SelectGrid<T> extends ListGrid<T> {
     }
 
     /**
-     * Set the message to be displayed when no rows exists while executing.
+     * Set the message to be displayed when no rows exist while executing.
      * If set to null, no message will be displayed.
      *
      * @param emptyRowsMessage Message to be displayed.
@@ -200,6 +200,7 @@ public class SelectGrid<T> extends ListGrid<T> {
      *
      * @return True/false. Default implementation returns <code>true</code>.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean validate() {
         return true;
     }

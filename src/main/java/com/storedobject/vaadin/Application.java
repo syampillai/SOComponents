@@ -362,7 +362,10 @@ public abstract class Application {
                 } catch(Throwable ignored) {
                 }
             }
-            ui.close();
+            try {
+                ui.close();
+            } catch(Throwable ignored) {
+            }
             ui = null;
         }
     }
