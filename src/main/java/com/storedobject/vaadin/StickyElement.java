@@ -34,7 +34,6 @@ public interface StickyElement extends HasElement {
      * @param element Element to make it sticky
      */
     static void sticky(Element element) {
-        element.getStyle().set("position", "sticky").set("top", "0px").set("z-index", "1").
-                set("background", "var(--lumo-base-color)");
+        element.getStyle().set("position", "sticky").set("top", "0px").set("z-index", "1");
     }
 }
