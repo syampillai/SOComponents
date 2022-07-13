@@ -5,12 +5,12 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>11.1.0</version>
+    <version>11.1.1</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>23.1.1</vaadin.version>
+        <vaadin.version>23.1.2</vaadin.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>com.vaadin.componentfactory</groupId>
             <artifactId>multi-combo-box-flow</artifactId>
-            <version>2.0.0</version>
+            <version>23.1.2</version>
         </dependency>
 
         <!-- Servlet -->
