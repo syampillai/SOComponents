@@ -92,6 +92,17 @@ public class ButtonLayout extends FlexLayout implements StickyElement {
         return filler;
     }
 
+    /**
+     * Create a filler component. A filler component is a special component that stretches to the whole
+     * horizontal length of the button layout. Any components added after this will be pushed to the
+     * right most end.
+     *
+     * @return The filler component that is created and added now.
+     */
+    public static Component createFiller() {
+        return new Filler();
+    }
+
     private static void m(Component c, int margin) {
         if(!(c instanceof InvisibleComponent)) {
             c.getElement().getStyle().set("margin-right", margin + "px");

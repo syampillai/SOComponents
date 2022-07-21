@@ -81,16 +81,6 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
-     * Create the window for embedding the form. Default implementation returns null.
-     *
-     * @param component Form component to embed
-     * @return A window with the form component added to it.
-     */
-    protected Window createWindow(Component component) {
-        return null;
-    }
-
-    /**
      * Get the "data" associated with the form.
      *
      * @return Data structure that holds the data.

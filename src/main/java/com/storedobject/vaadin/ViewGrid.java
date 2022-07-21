@@ -41,14 +41,15 @@ public class ViewGrid<T> extends ListGrid<T> {
      */
     public ViewGrid(Class<T> objectClass, List<T> items, Iterable<String> columns, String caption) {
         super(objectClass, items, columns);
-        setWidth("60vw");
-        setHeight("60vh");
         setCaption(caption);
     }
 
     @Override
     public final Component createHeader() {
         addExtraButtons();
+        if(!buttonLayout.isVisible()) {
+            return null;
+        }
         buttonLayout.add(exit);
         return buttonLayout;
     }
@@ -71,8 +72,8 @@ public class ViewGrid<T> extends ListGrid<T> {
     }
 
     @Override
-    public final View createView() {
-        return new GridView();
+    public Window createWindow(View view) {
+        return createDecoratedWindow(view);
     }
 
     /**
@@ -83,13 +84,5 @@ public class ViewGrid<T> extends ListGrid<T> {
      */
     public void setEmptyRowsMessage(String emptyRowsMessage) {
         this.emptyRowsMessage = emptyRowsMessage;
-    }
-
-    private class GridView extends View implements CloseableView, HomeView {
-
-        private GridView() {
-            setCaption(ViewGrid.this.getCaption());
-            setComponent(new Window(new WindowDecorator(this), ViewGrid.this));
-        }
     }
 }

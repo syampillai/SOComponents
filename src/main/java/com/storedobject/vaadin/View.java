@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.SupportWindowMode;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -153,7 +154,7 @@ public class View implements ExecutableView {
             return;
         }
         Element parent  = parent();
-        if(parent != null) {
+        if(parent != null && !isChild(component, this.component)) {
             this.component.getElement().removeFromParent();
             if(this.component instanceof Window) {
                 ((Window) this.component).close();
@@ -162,6 +163,19 @@ public class View implements ExecutableView {
             parent.appendChild(component.getElement());
         }
         this.component = component;
+        if(component instanceof SupportWindowMode swm) {
+            Window w = swm.createWindow(this);
+            if(w != null) {
+                this.component = w;
+            }
+        }
+    }
+
+    private static boolean isChild(Component parent, Component child) {
+        if(child == null) {
+            return false;
+        }
+        return parent.getChildren().anyMatch(c -> c == child || isChild(c, child));
     }
 
     /**
@@ -461,9 +475,11 @@ public class View implements ExecutableView {
             }
             boolean ex = executing();
             Component c = component;
-            Window w = new Window();
+            Window w = createWindow(c);
+            if(w == null) {
+                w = new Window(c);
+            }
             setComponent(w);
-            w.add(c);
             if(ex) {
                 w.setVisible(true);
             }
@@ -483,6 +499,17 @@ public class View implements ExecutableView {
         }
         ((Dialog)component).removeAll();
         setComponent(nc);
+    }
+
+    /**
+     * Create the window for embedding the component of this view. Default implementation returns null.
+     * <p>This method is invoked for "window" mode views only. See {@link #setWindowMode(boolean)}.</p>
+     *
+     * @param component Component to embed
+     * @return A window with the given component added to it.
+     */
+    protected Window createWindow(Component component) {
+        return null;
     }
 
     /**

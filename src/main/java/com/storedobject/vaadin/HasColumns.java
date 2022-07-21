@@ -1,5 +1,6 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.vaadin.util.SupportWindowMode;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -29,7 +30,7 @@ import java.util.stream.Stream;
  * @param <T> Bean type of the Grid/TreeGrid.
  * @author Syam
  */
-public interface HasColumns<T> extends ExecutableView {
+public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
     /**
      * Add a {@link ConstructedListener} so that we will be informed about when the columns are constructed.
@@ -143,7 +144,6 @@ public interface HasColumns<T> extends ExecutableView {
     default void customizeColumn(String columnName, Grid.Column<T> column) {
     }
 
-
     /**
      * Create a View to display the grid when executed. If this method returns null, a default View will be created.
      *
@@ -151,6 +151,20 @@ public interface HasColumns<T> extends ExecutableView {
      */
     default View createView() {
         return null;
+    }
+
+    /**
+     * This method creates a decorated {@link Window}. This may be invoked from the {@link #createWindow(View)}
+     * method to return a decorated window.
+     * <p>This method is never invoked. However, it can be used within the {@link #createWindow(View)} method.</p>
+     *
+     * @param view View for which the window to be created.
+     * @return Decorated window.
+     */
+    default Window createDecoratedWindow(View view) {
+        getSOGrid().grid.setWidth("80vw");
+        getSOGrid().grid.setHeight("80vh");
+        return new Window(new WindowDecorator(view), (Component) this);
     }
 
     /**
