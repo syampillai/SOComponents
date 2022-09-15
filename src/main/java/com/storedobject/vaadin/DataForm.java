@@ -203,6 +203,12 @@ public abstract class DataForm extends AbstractDataForm<Object> {
     }
 
     private static int maxMin(int v) {
+        if(v < 80) {
+            Application a = Application.get();
+            if(a != null && a.getWebBrowser().isIPhone()) {
+                v = 80;
+            }
+        }
         return Math.min(90, Math.max(10, v));
     }
 

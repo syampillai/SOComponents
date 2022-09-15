@@ -1,18 +1,14 @@
 package com.storedobject.vaadin;
 
-import com.vaadin.componentfactory.multiselect.MultiComboBox;
 import com.vaadin.flow.component.ItemLabelGenerator;
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import java.util.*;
 import java.util.stream.Stream;
 
-@CssImport(value = "./so/tokensfield/styles.css", themeFor = "vcf-multiselect-combo-box")
-public class TokensField<T> extends MultiComboBox<T> implements RequiredField {
-
-    private final Chips chips = new Chips();
+public class TokensField<T> extends MultiSelectComboBox<T> implements RequiredField {
+    
     /**
      * Constructor.
      */
@@ -70,47 +66,9 @@ public class TokensField<T> extends MultiComboBox<T> implements RequiredField {
      */
     public TokensField(String label, Collection<T> items, ItemLabelGenerator<T> itemLabelGenerator) {
         super(label, items == null ? new ArrayList<>() : items);
-        addValueChangeListener(e -> valueChanged(e.getValue()));
-        addClassNames("tokens", "tokens-no");
-        getElement().appendChild(chips.getElement());
         if(itemLabelGenerator != null) {
             setItemLabelGenerator(itemLabelGenerator);
         }
-    }
-
-    private void removeValue(T item) {
-        Set<T> v = new HashSet<>(getValue());
-        if(v.remove(item)) {
-            setValue(v);
-        }
-    }
-
-    private void valueChanged(Set<T> value) {
-        Chip chip;
-        for(T item: value) {
-            chip = chips.chips.stream().filter(c -> c.item.equals(item)).findAny().orElse(null);
-            if(chip == null) {
-                chips.add(item);
-            }
-        }
-        List<Chip> toRemove = new ArrayList<>(chips.chips);
-        toRemove.removeIf(c -> value.contains(c.item));
-        toRemove.forEach(chips::removeChip);
-        if(value.isEmpty()) {
-            removeClassName("tokens-yes");
-            addClassName("tokens-no");
-            chips.setVisible(false);
-        } else {
-            removeClassName("tokens-no");
-            addClassName("tokens-yes");
-            chips.setVisible(true);
-        }
-    }
-
-    @Override
-    public boolean isEmpty() {
-        Set<T> v = getValue();
-        return v == null || v.isEmpty();
     }
 
     @Override
@@ -127,81 +85,6 @@ public class TokensField<T> extends MultiComboBox<T> implements RequiredField {
             }
         }
         return true;
-    }
-
-    private class Chips extends ButtonLayout {
-
-        private final List<Chip> chips = new ArrayList<>();
-
-        Chips() {
-            getElement().setAttribute("slot", "prefix");
-            setVisible(false);
-            setWidthFull();
-            setGap(2);
-        }
-
-        void add(T item) {
-            Chip chip = new Chip(item);
-            chips.add(chip);
-            add(chip);
-        }
-
-        void removeChip(Chip chip) {
-            if(chip != null) {
-                chips.remove(chip);
-                remove(chip);
-            }
-        }
-
-        void readOnly(boolean readOnly) {
-            visible(!readOnly && TokensField.this.isEnabled());
-        }
-
-        void enable(boolean enabled) {
-            visible(!TokensField.this.isReadOnly() && enabled);
-        }
-
-        private void visible(boolean v) {
-            chips.forEach(c -> c.cross.setVisible(v));
-        }
-    }
-
-    private class Chip extends Span {
-
-        private final T item;
-        private final ImageButton cross;
-
-        Chip(T item) {
-            super(toS(item));
-            this.item = item;
-            cross = new ImageButton("Remove", "Close", e -> removeValue(this.item));
-            cross.withBox(18);
-            cross.getStyle().set("margin-left", "4px").set("margin-bottom", "2px");
-            getElement().appendChild(cross.getElement());
-            new Box(this);
-            cross.setVisible(TokensField.this.isEnabled() && !TokensField.this.isReadOnly());
-        }
-    }
-
-    private String toS(T item) {
-        ItemLabelGenerator<T> s = getItemLabelGenerator();
-        if(s != null) {
-            return s.apply(item);
-        }
-        ApplicationEnvironment ae = ApplicationEnvironment.get();
-        return ae == null ? item.toString() : ae.toDisplay(item);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) {
-        super.setReadOnly(readOnly);
-        chips.readOnly(readOnly);
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        chips.enable(enabled);
     }
 
     /**
@@ -282,7 +165,7 @@ public class TokensField<T> extends MultiComboBox<T> implements RequiredField {
      * set after invoking this method.
      */
     public void deselectAll() {
-        setValue(null);
+        setValue(Set.of());
     }
 
     private Collection<T> items() {

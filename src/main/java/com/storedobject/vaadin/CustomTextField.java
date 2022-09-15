@@ -6,6 +6,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.dom.Element;
 
 import java.util.Objects;
@@ -43,6 +44,14 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
     }
 
     /**
+     * Align right.
+     */
+    public void alignRight() {
+        ((TextField)getField()).addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
+    }
+
+
+    /**
      * Create the internal text field. By default, it creates a {@link com.vaadin.flow.component.textfield.TextField}.
      *
      * @return Text field to be used as internal field;
@@ -58,7 +67,6 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         field = new TF();
         field.setWidthFull();
         add((TF)field);
-        ((TF)field).setPreventInvalidInput(true);
         customizeTextField(field);
         ((TF)field).addValueChangeListener(e -> {
            if(e.isFromClient()) {

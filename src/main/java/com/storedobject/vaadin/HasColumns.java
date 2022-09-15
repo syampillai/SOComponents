@@ -1631,7 +1631,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
                                                  @SuppressWarnings("rawtypes") ValueProvider<T, Comparable> valueProviderForComparator,
                                                  Comparator<T> comparator) {
             if(valueProviderForComparator != null || comparator != null) {
-                Grid.Column<T> column = grid.addColumn(renderer, columnName);
+                Grid.Column<T> column = grid.addColumn(renderer).setSortProperty(columnName);
                 if(valueProviderForComparator != null) {
                     //noinspection unchecked
                     column.setComparator(valueProviderForComparator);

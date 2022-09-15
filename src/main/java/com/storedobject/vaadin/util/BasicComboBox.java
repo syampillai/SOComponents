@@ -33,7 +33,6 @@ public class BasicComboBox<T> extends ComboField<T> {
 
     private void init() {
         setAllowCustomValue(false);
-        setPreventInvalidInput(true);
         setRequired(true);
     }
 }
