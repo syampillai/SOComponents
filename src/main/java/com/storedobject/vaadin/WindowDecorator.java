@@ -13,7 +13,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 public class WindowDecorator extends Composite<ButtonLayout> {
 
     private static final String COLOR = "var(--so-header-color)";
-    private final ButtonLayout content = new ButtonLayout();
+    private final ButtonLayout header = new ButtonLayout();
     private final Span titleText;
     private final ImageButton close;
 
@@ -31,29 +31,29 @@ public class WindowDecorator extends Composite<ButtonLayout> {
                 .set("font-weight", "bold")
                 .set("padding", "0px").set("margin", "0px 0px 0px 2px").set("display", "flex").set("flex-grow", "100")
                 .set("text-overflow", "ellipsis");
-        content.setWidthFull();
+        header.setWidthFull();
         close = new ImageButton(VaadinIcon.CLOSE,
                 view instanceof DataForm ? e -> ((DataForm) view).cancel() : e -> view.abort());
         close.withBox();
         close.setColor(COLOR);
-        content.add(titleText);
+        header.add(titleText);
         if(headerComponents != null) {
-            content.add(headerComponents);
+            header.add(headerComponents);
         }
         close.getElement().setAttribute("title", view instanceof DataForm ? "Cancel" : "Close");
-        content.add(close);
+        header.add(close);
         close.getStyle().set("margin-right", "2px");
-        Box box = new Box(content);
+        Box box = new Box(header);
         box.alignSizing();
         box.setStyle("background-color", "var(--so-header-background-50pct)");
-        content.getStyle().set("flex-wrap", "nowrap");
+        header.getStyle().set("flex-wrap", "nowrap");
         setCaption(view.getCaption());
         view.windowDecorator = this;
     }
 
     @Override
     protected final ButtonLayout initContent() {
-        return content;
+        return header;
     }
 
     /**

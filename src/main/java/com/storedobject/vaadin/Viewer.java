@@ -32,7 +32,7 @@ public class Viewer extends View implements CloseableView {
     }
 
     /**
-     * Create the "window" to show the content. This should be invoked to obtain the {@link Window} component
+     * Create the "window" to show the content. This is invoked to obtain the {@link Window} component
      * only if the {@link View} has to appear as a popped-up window. The window will have a size of 80vw X 80vh by
      * default unless the methods {@link #getViewWidth()} and {@link #getViewHeight()} are overridden.
      *
@@ -40,7 +40,7 @@ public class Viewer extends View implements CloseableView {
      * @return A window containing the content that is passed.
      */
     protected Window createWindow(Component component) {
-        Window w = new Window(new WindowDecorator(this), component);
+        Window w = new Window(createWindowDecorator(), component);
         w.setWidth(Math.min(95, Math.max(20, getViewWidth())) + "vw");
         w.setHeight(Math.min(95, Math.max(20, getViewWidth())) + "vh");
         if(component instanceof HasSize) {
@@ -48,6 +48,16 @@ public class Viewer extends View implements CloseableView {
         }
         new Scrollable(component);
         return w;
+    }
+
+    /**
+     * Create the "window decorator" to decorate the content window. This is invoked while creating the
+     * {@link Window} component only if the {@link View} has to appear as a popped-up window.
+     *
+     * @return A window decorator. It typically creates a decorator via <code>new WindowDecorator(this)</code>.
+     */
+    protected WindowDecorator createWindowDecorator() {
+        return new WindowDecorator(this);
     }
 
     /**
