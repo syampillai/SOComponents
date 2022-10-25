@@ -863,6 +863,19 @@ public abstract class Application {
         notification(null, owner, message, messageType, null, true);
     }
 
+    /**
+     * Show a notification. (For internal use only).
+     * @param a Application.
+     * @param owner Owner of the message.
+     * @param message Message object.
+     * @param messageType Message type - 0: Normal, 1:Warning, 2: Error
+     * @param position Position of the message on the screen.
+     */
+    static void notification(Application a, Object owner, Object message, int messageType,
+                             Notification.Position position) {
+        notification(a, owner, message, messageType, position, messageType == 2);
+    }
+
     private static void notification(Application a, Object owner, Object message, int messageType,
                                      Notification.Position position, boolean log) {
         if(a == null) {

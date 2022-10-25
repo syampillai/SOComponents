@@ -107,10 +107,9 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
     }
 
     private static Collection<String> sanitize(Collection<String> collection) {
-        if (!(collection instanceof List)) {
+        if (!(collection instanceof List<String> list)) {
             return collection;
         }
-        List<String> list = (List<String>) collection;
         String item;
         for (int i = 0; i < list.size(); i++) {
             item = list.get(i);

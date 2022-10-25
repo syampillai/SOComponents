@@ -2,6 +2,7 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.notification.Notification;
 
 /**
  * An interface used by "displayable" classes such as {@link View}.
@@ -16,7 +17,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Warning
      */
     default void warning(Object message) {
-        Application.warning(this, message);
+        Application.notification(getApplication(), this, message, 1, null);
     }
 
     /**
@@ -25,7 +26,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Message to show in the tray.
      */
     default void tray(Object message) {
-        Application.tray(this, message);
+        Application.notification(getApplication(), this, message, 1, Notification.Position.BOTTOM_END);
     }
 
     /**
@@ -34,7 +35,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Message
      */
     default void message(Object message) {
-        Application.message(this, message);
+        Application.notification(getApplication(), this, message, 0, null);
     }
 
     /**
@@ -42,7 +43,7 @@ public interface ExecutableView extends Runnable, ClickHandler, ValueChangeHandl
      * @param message Error
      */
     default void error(Object message) {
-        Application.error(this, message);
+        Application.notification(getApplication(), this, message, 2, null);
     }
 
     /**
