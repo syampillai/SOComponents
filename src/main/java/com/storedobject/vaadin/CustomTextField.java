@@ -5,6 +5,8 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.textfield.Autocomplete;
+import com.vaadin.flow.component.textfield.HasAutocomplete;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.dom.Element;
@@ -17,7 +19,8 @@ import java.util.Objects;
  * @param <T> Value type
  * @author Syam
  */
-public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix, HasStyle, DisablePaste {
+public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix, HasStyle,
+        DisablePaste, HasAutocomplete {
 
     private HasTextValue field;
     private String emptyDisplay;
@@ -239,6 +242,16 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
      */
     public boolean isAutoselect() {
         return ((TextField)getField()).isAutoselect();
+    }
+
+    @Override
+    public Autocomplete getAutocomplete() {
+        return getField().getAutocomplete();
+    }
+
+    @Override
+    public void setAutocomplete(Autocomplete autocomplete) {
+        getField().setAutocomplete(autocomplete);
     }
 
     @Override

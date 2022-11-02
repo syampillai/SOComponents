@@ -162,12 +162,10 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
     }
 
     private NumeralFieldFormatter.ThousandsGroupStyle getThousandGroupStyle() {
-        switch(getCountry()) {
-            case "IN":
-                return NumeralFieldFormatter.ThousandsGroupStyle.LAKH;
-            case "CN":
-                return NumeralFieldFormatter.ThousandsGroupStyle.WAN;
-        }
-        return NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND;
+        return switch(getCountry()) {
+            case "IN" -> NumeralFieldFormatter.ThousandsGroupStyle.LAKH;
+            case "CN" -> NumeralFieldFormatter.ThousandsGroupStyle.WAN;
+            default -> NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND;
+        };
     }
 }

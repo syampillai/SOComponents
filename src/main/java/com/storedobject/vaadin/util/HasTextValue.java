@@ -3,8 +3,9 @@ package com.storedobject.vaadin.util;
 import com.storedobject.vaadin.SpellCheck;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.textfield.HasAutocomplete;
 
-public interface HasTextValue extends HasSize, HasText, SpellCheck {
+public interface HasTextValue extends HasSize, HasText, SpellCheck, HasAutocomplete {
 
     void setValue(String value);
 
