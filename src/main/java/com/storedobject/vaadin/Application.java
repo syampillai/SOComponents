@@ -107,6 +107,7 @@ public abstract class Application {
     private ApplicationEnvironment environment;
     private final Map<Object, AlertList> alerts = new HashMap<>();
     private final Map<Object, Integer> pollIntervals = new HashMap<>();
+    private final Map<Class<?>, Object> data = new HashMap<>();
     private ViewManager viewManager;
     private final ArrayList<WeakReference<Closeable>> resources = new ArrayList<>();
     private String link;
@@ -1431,13 +1432,24 @@ public abstract class Application {
     /**
      * Set some data in this application so that it can be retrieved later.
      *
+     * @param anything Data (An instance of anyClass).
+     */
+    public void setData(Object anything) {
+        if(anything != null) {
+            data.put(anything.getClass(), anything);
+        }
+    }
+
+    /**
+     * Set some data in this application so that it can be retrieved later.
+     *
      * @param anyClass Kind of data.
      * @param anything Data (An instance of anyClass).
      * @param <T> Type of data.
      */
     public <T> void setData(Class<T> anyClass, T anything) {
         if(anything != null) {
-            ComponentUtil.setData(getUI(), anyClass, anything);
+            data.put(anyClass, anything);
         }
     }
 
@@ -1449,8 +1461,7 @@ public abstract class Application {
      */
     public <T> void removeData(T anything) {
         if(anything != null) {
-            //noinspection unchecked
-            ComponentUtil.setData(getUI(), (Class<T>) anything.getClass(), null);
+            removeData(anything.getClass());
         }
     }
 
@@ -1462,7 +1473,7 @@ public abstract class Application {
      */
     public <T> void removeData(Class<T> anyClass) {
         if(anyClass != null) {
-            ComponentUtil.setData(getUI(), anyClass, null);
+            data.remove(anyClass);
         }
     }
 
@@ -1474,7 +1485,8 @@ public abstract class Application {
      * @return Data if exists, otherwise <code>null</code>.
      */
     public <T> T getData(Class<T> anyClass) {
-        return anyClass == null ? null : ComponentUtil.getData(getUI(), anyClass);
+        //noinspection unchecked
+        return anyClass == null ? null : (T)data.get(anyClass);
     }
 
     /**
