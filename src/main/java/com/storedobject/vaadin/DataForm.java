@@ -268,12 +268,18 @@ public abstract class DataForm extends AbstractDataForm<Object> {
         if(c == ok) {
             if(commit()) {
                 try {
-                    validateData();
-                    if(process()) {
-                        close();
+                    try {
+                        validateData();
+                        if(process()) {
+                            close();
+                        }
+                    } catch(RuntimeException error) {
+                        error(error);
+                        abort();
+                        return;
                     }
-                } catch (Exception e) {
-                    warning(e);
+                } catch(Exception warn) {
+                    warning(warn);
                 }
             }
             ok.setEnabled(true);
