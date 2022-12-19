@@ -7,8 +7,8 @@ public abstract class PatternField extends TextField {
 
     public PatternField(String label, int width, CustomStringBlockFormatter pattern) {
         super(label);
-        super.setMinlength(width);
-        super.setMaxlength(width);
+        this.getElement().setProperty("minlength", width);
+        this.getElement().setProperty("maxlength", width);
         pattern.extend(this);
         setValue(getEmptyValue());
         addBlurListener(e -> {
@@ -25,13 +25,5 @@ public abstract class PatternField extends TextField {
 
     @Override
     public void setPattern(String pattern) {
-    }
-
-    @Override
-    protected void setMinlength(double minlength) {
-    }
-
-    @Override
-    protected void setMaxlength(double maxlength) {
     }
 }

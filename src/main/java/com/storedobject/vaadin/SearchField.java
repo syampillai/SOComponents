@@ -38,7 +38,9 @@ public class SearchField extends ActionTextField {
      */
     public SearchField(String label, String placeholder, Consumer<String> searchAction) {
         super(label, placeholder, searchAction);
-        addToPrefix(new ImageButton("Search", e -> act()));
+        ImageButton imageButton = new ImageButton("Search", e -> act());
+        imageButton.getElement().setAttribute("slot", "prefix");
+        getElement().appendChild(imageButton.getElement());
         trim();
     }
 

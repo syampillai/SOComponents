@@ -61,7 +61,8 @@ public class TextField extends com.vaadin.flow.component.textfield.TextField
      * @param icon Icon to be set
      */
     public void setIcon(Icon icon) {
-        addToPrefix(icon);
+        icon.getElement().setAttribute("slot", "prefix");
+        this.getElement().appendChild(icon.getElement());
     }
 
     /**

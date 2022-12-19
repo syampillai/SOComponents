@@ -4,7 +4,6 @@ import com.storedobject.helper.ID;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.notification.GeneratedVaadinNotification;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
@@ -100,7 +99,6 @@ import java.util.stream.Stream;
 public abstract class Application {
 
     private final static String APP_KEY = "so$app";
-    private final AlertCloser alertCloser = new AlertCloser();
     private ApplicationView applicationView;
     private ApplicationLayout applicationLayout;
     private UI ui;
@@ -404,6 +402,10 @@ public abstract class Application {
      */
     public void setLocale(Locale locale) {
        applicationView.setLocale(locale);
+    }
+
+    public Locale getLocale() {
+        return applicationView.locale;
     }
 
     /**
@@ -937,20 +939,14 @@ public abstract class Application {
     }
 
     private void regAlert(Alert alert, Object owner) {
-        alert.addOpenedChangeListener(alertCloser);
+        alert.addOpenedChangeListener(e -> {
+            if(!alert.isOpened() && alert.deleteOnClose()) {
+                removeAlert(alert);
+            }
+        });
         if(owner != null) {
             synchronized(alerts) {
                 alerts.computeIfAbsent(owner, k -> new AlertList(owner)).add(alert);
-            }
-        }
-    }
-
-    private class AlertCloser implements ComponentEventListener<GeneratedVaadinNotification.OpenedChangeEvent<Notification>> {
-        @Override
-        public void onComponentEvent(GeneratedVaadinNotification.OpenedChangeEvent<Notification> e) {
-            Alert alert = (Alert)e.getSource();
-            if(!alert.isOpened() && alert.deleteOnClose()) {
-                removeAlert(alert);
             }
         }
     }

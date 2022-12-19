@@ -4,7 +4,6 @@ import com.storedobject.vaadin.util.SupportWindowMode;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.dialog.GeneratedVaadinDialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
@@ -251,11 +250,11 @@ public class View implements ExecutableView {
         }
 
         @Override
-        public void onComponentEvent(GeneratedVaadinDialog.OpenedChangeEvent openedChangeEvent) {
+        public void onComponentEvent(Dialog.OpenedChangeEvent<Dialog> dialogOpenedChangeEvent) {
             if(view.internalWindowAction) {
                 view.internalWindowAction = false;
-            } else if(!openedChangeEvent.isOpened()) {
-                ((Dialog)openedChangeEvent.getSource()).open();
+            } else if(!dialogOpenedChangeEvent.isOpened()) {
+                dialogOpenedChangeEvent.getSource().open();
             }
         }
     }

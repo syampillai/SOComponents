@@ -50,7 +50,7 @@ public class ListField<T> extends Select<T> implements SpellCheck {
                 return i;
             }
         }
-        return view.getItemCount() != 0 && isRequiredBoolean() ? 0 : -1;
+        return view.getItemCount() != 0 && isRequired() ? 0 : -1;
     }
 
     /**
@@ -78,7 +78,7 @@ public class ListField<T> extends Select<T> implements SpellCheck {
                 return item;
             }
         }
-        return isRequiredBoolean() && view.getItemCount() != 0 ? view.getItem(0) : null;
+        return isRequired() && view.getItemCount() != 0 ? view.getItem(0) : null;
     }
 
     /**
@@ -200,14 +200,12 @@ public class ListField<T> extends Select<T> implements SpellCheck {
         return view;
     }
 
-
     @Override
-    protected void setRequired(boolean required) {
-        super.setRequired(required);
+    public void setRequired(boolean required) {
+        this.getElement().setProperty("required", required);
     }
 
-    @Override
-    protected boolean isRequiredBoolean() {
-        return super.isRequiredBoolean();
+    public boolean isRequired() {
+        return this.getElement().getProperty("required", false);
     }
 }

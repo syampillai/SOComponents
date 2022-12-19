@@ -35,7 +35,7 @@ public abstract class ApplicationView extends Composite<Component>
      */
     ApplicationLayout layout;
     private final Application application;
-    private Locale locale;
+    Locale locale;
     private boolean firstTime = true;
     /**
      * Query parameters. (Used by {@link Application}.

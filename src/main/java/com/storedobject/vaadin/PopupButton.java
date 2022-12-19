@@ -121,7 +121,7 @@ public class PopupButton extends Button {
     }
 
     /**
-     * Remove components from the pop up.
+     * Remove components from the pop-up.
      *
      * @param components Components to remove
      */
@@ -132,7 +132,7 @@ public class PopupButton extends Button {
     }
 
     /**
-     * Remove all components from the pop up.
+     * Remove all components from the pop-up.
      */
     public void removeAll() {
         container.removeAll();

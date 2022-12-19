@@ -212,7 +212,7 @@ public class ChoiceField extends TranslatedField<Integer, String> implements Val
 
     @Override
     public boolean isRequired() {
-        return ((ListField<?>) getField()).isRequiredBoolean();
+        return ((ListField<?>) getField()).isRequired();
     }
 
     @Override
