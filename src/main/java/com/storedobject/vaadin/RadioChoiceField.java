@@ -87,4 +87,19 @@ public class RadioChoiceField extends TranslatedField<Integer, String> implement
     public void setItems(Collection<String> choices) {
         ((RadioField<String>)getField()).setItems(choices);
     }
+
+
+    /**
+     * Display the items vertically.
+     */
+    public void setVertical() {
+        ((RadioField<?>)getField()).setVertical();
+    }
+
+    /**
+     * Display the items horizontally. (This is the default).
+     */
+    public void setHorizontal() {
+        ((RadioField<?>)getField()).setHorizontal();
+    }
 }

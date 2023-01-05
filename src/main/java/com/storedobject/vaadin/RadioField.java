@@ -1,6 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.component.radiobutton.dataview.RadioButtonGroupListDataView;
 
 import java.util.ArrayList;
@@ -120,5 +121,19 @@ public class RadioField<T> extends RadioButtonGroup<T> {
         if(index >= 0 && index < view.getItemCount()) {
             setValue(view.getItem(index));
         }
+    }
+
+    /**
+     * Display the items vertically.
+     */
+    public void setVertical() {
+        addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
+    }
+
+    /**
+     * Display the items horizontally. (This is the default).
+     */
+    public void setHorizontal() {
+        removeThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
     }
 }
