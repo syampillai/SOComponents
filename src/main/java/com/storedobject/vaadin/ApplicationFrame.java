@@ -8,6 +8,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.dom.Style;
 
 /**
@@ -375,7 +376,13 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         }
 
         private void top() {
-            Application.get().getPage().executeJs("document.getElementById('" + getId().orElse(null) + "').scrollTop=0;");
+            Application a = Application.get();
+            if(a != null) {
+                Page p = a.getPage();
+                if(p != null) {
+                    p.executeJs("document.getElementById('" + getId().orElse(null) + "').scrollTop=0;");
+                }
+            }
         }
     }
 }

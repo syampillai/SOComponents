@@ -13,9 +13,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * Class to represent a "data entry form". A "field" in the form is a {@link HasValue}. Form internally keeps {@link Data} that is a structure
+ * Class to represent a "data entry form". A "field" in the form is a {@link HasValue}. Form internally keeps
+ * {@link Data} that is a structure
  * that keeps data for all the "fields" of the form.
- * <p>A form is not used directly in most cases. Instead, a {@link View} derived from {@link AbstractDataForm} is used where a form is
+ * <p>A form is not used directly in most cases. Instead, a {@link View} derived from {@link AbstractDataForm}
+ * is used where a form is
  * already embedded. All overridable methods in the form can be defined in {@link AbstractDataForm} too.</p>
  * <p>If at all required to use it directly, one should use {@link Form} instead of {@link AbstractForm}.</p>
  *
@@ -543,7 +545,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
+     * Set the "required" attribute of a field. If set to true, with empty data
+     * (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
      *
      * @param field Field
@@ -553,7 +556,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
+     * Set the "required" attribute of a field. If set to true, with empty data
+     * (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
      *
      * @param fieldName Field name
@@ -563,7 +567,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
+     * Set the "required" attribute of a field. If set to true, with empty data
+     * (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
      *
      * @param field Field
@@ -693,7 +698,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * Error messages of the form are typically displayed using {@link com.vaadin.flow.component.notification.Notification}. However,
+     * Error messages of the form are typically displayed using
+     * {@link com.vaadin.flow.component.notification.Notification}. However,
      * one can set any {@link HasText} for that.
      *
      * @param display Error messages will be displayed on this
@@ -785,8 +791,8 @@ public abstract class AbstractForm<D> extends Composite<Component> {
     }
 
     /**
-     * This method is invoked to determine the label used for displaying the field. The default implementation determine it by invoking
-     * {@link ApplicationEnvironment#createLabel(String)}.
+     * This method is invoked to determine the label used for displaying the field. The default implementation
+     * determine it by invoking {@link ApplicationEnvironment#createLabel(String)}.
      *
      * @param fieldName Name of the field
      * @return Label
