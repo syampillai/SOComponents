@@ -57,7 +57,17 @@ export class SOAppContent extends LitElement {
 
     updated(changedProps) {
         if(changedProps.has('speak')) {
-            window.speechSynthesis.speak(new SpeechSynthesisUtterance(this.speak));
+            window.speechSynthesis.cancel();
+            const utterThis = new SpeechSynthesisUtterance(this.speak);
+            this.timer = setInterval(() => {
+                window.speechSynthesis.pause();
+                window.speechSynthesis.resume();
+            }, 10000);
+            utterThis.addEventListener("end", (e) => {
+                clearInterval(this.timer);
+                this.$server.spoken();
+            });
+            window.speechSynthesis.speak(utterThis);
         }
     }
 }

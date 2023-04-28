@@ -1136,6 +1136,15 @@ public abstract class Application {
     }
 
     /**
+     * Check whether still speaking the previously set sentences.
+     *
+     * @return True/false.
+     */
+    public boolean isSpeaking() {
+        return speaker && viewManager != null && viewManager.content.speaking;
+    }
+
+    /**
      * Internally used by {@link SpeakerButton} to switch the speaker on or off.
      *
      * @param on True to switch on the speaker
@@ -1905,6 +1914,8 @@ public abstract class Application {
 
             private final ArrayList<WeakReference<ResizedListener>> resizeListeners = new ArrayList<>();
             private int width = -1, height = -1;
+            private boolean speaking = false;
+            private StringBuilder sentence;
 
             public Content(ApplicationLayout applicationLayout) {
                 Element e = getElement();
@@ -1940,8 +1951,34 @@ public abstract class Application {
                 };
             }
 
-            void speak(String sentence) {
+            synchronized void speak(String sentence) {
+                if(speaking) {
+                    if(this.sentence == null) {
+                        this.sentence = new StringBuilder(sentence);
+                    } else {
+                        this.sentence.append(' ').append(sentence);
+                    }
+                    return;
+                }
+                if(this.sentence != null) {
+                    this.sentence.append(' ').append(sentence);
+                }
+                toSpeak(this.sentence == null ? sentence : this.sentence.toString());
+            }
+
+            @ClientCallable
+            private synchronized void spoken() {
+                if(sentence != null) {
+                    toSpeak(sentence.toString());
+                    return;
+                }
+                speaking = false;
+            }
+
+            private void toSpeak(String sentence) {
+                speaking = true;
                 getElement().setProperty("speak", sentence);
+                this.sentence = null;
             }
         }
     }
