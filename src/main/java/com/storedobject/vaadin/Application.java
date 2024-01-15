@@ -1926,6 +1926,9 @@ public abstract class Application {
 
             @ClientCallable
             private void resized(int w, int h) {
+                if(w == width && h == height) {
+                    return;
+                }
                 this.width = w;
                 this.height = h;
                 resizeListeners.removeIf(wr -> wr.get() == null);
