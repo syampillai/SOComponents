@@ -37,12 +37,11 @@ export class SOAppContent extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         this._boundResizeHandler = this._sendSize.bind(this);
-        window.addEventListener('resize', this._boundResizeHandler);
+        new ResizeObserver(this._boundResizeHandler).observe(this.shadowRoot.getElementById(this.idContent));
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        window.removeEventListener('resize', this._sendSize);
         window.removeEventListener('resize', this._boundResizeHandler);
     }
 

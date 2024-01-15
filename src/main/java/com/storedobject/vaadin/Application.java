@@ -1941,8 +1941,7 @@ public abstract class Application {
                 if(width > 0) {
                     return width;
                 }
-                getElement().executeJs("$0.$server.resized($0.clientWidth,$0.clientHeight);",
-                        getElement());
+                checkSize();
                 return width;
             }
 
@@ -1952,6 +1951,10 @@ public abstract class Application {
                 }
                 w();
                 return height;
+            }
+
+            private void checkSize() {
+                getElement().executeJs("$0.$server.resized($0.clientWidth,$0.clientHeight);");
             }
 
             Registration addContentResizedListener(ResizedListener listener) {
