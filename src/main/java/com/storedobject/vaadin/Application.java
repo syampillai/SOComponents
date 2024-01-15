@@ -1260,6 +1260,7 @@ public abstract class Application {
         if(menuSearcher instanceof Focusable) {
             ((Focusable<?>) menuSearcher).focus();
         }
+        getContentWidth(); // Sometimes, content-width is not updated. This will trigger an update.
     }
 
     /**
