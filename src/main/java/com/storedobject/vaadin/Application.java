@@ -1023,7 +1023,7 @@ public abstract class Application {
      * @return Pixel height of the content area.
      */
     public int getContentHeight() {
-        return viewManager.content.height;
+        return viewManager.content.h();
     }
 
     /**
@@ -1032,7 +1032,7 @@ public abstract class Application {
      * @return Pixel width of the content area.
      */
     public int getContentWidth() {
-        return viewManager.content.width;
+        return viewManager.content.w();
     }
 
     /**
@@ -1934,6 +1934,23 @@ public abstract class Application {
                         l.resized(width, height);
                     }
                 });
+            }
+
+            int w() {
+                if(width > 0) {
+                    return width;
+                }
+                getElement().executeJs("$0.$server.resized($0.clientWidth,$0.clientHeight);",
+                        getElement());
+                return width;
+            }
+
+            int h() {
+                if(height > 0) {
+                    return height;
+                }
+                w();
+                return height;
             }
 
             Registration addContentResizedListener(ResizedListener listener) {
