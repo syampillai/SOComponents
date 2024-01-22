@@ -7,6 +7,7 @@ import com.vaadin.flow.component.Component;
  * componentX and componentY to provide (X, Y) position of the point on the component being clicked (relative to component's
  * top-left corner). This event class instance is available when you use {@link com.storedobject.vaadin.Clickable}.
  *
+ * @param <C> Component type.
  * @author Syam
  */
 public class EnhancedClickEvent<C extends Component> extends com.vaadin.flow.component.ClickEvent<C> {
