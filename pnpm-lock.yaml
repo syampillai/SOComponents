@@ -50,7 +50,7 @@ dependencies:
   '@vaadin/bundles':
     specifier: 23.2.17
     version: >-
-      23.2.17(@polymer/iron-icon@3.0.1)(@polymer/iron-iconset-svg@3.0.1)(@polymer/iron-meta@3.0.1)(@polymer/polymer@3.5.1)(@vaadin/accordion@23.2.17)(@vaadin/app-layout@23.2.17)(@vaadin/avatar-group@23.2.17)(@vaadin/avatar@23.2.17)(@vaadin/button@23.2.17)(@vaadin/checkbox-group@23.2.17)(@vaadin/checkbox@23.2.17)(@vaadin/combo-box@23.2.17)(@vaadin/component-base@23.2.17)(@vaadin/confirm-dialog@23.2.17)(@vaadin/context-menu@23.2.17)(@vaadin/custom-field@23.2.17)(@vaadin/date-picker@23.2.17)(@vaadin/date-time-picker@23.2.17)(@vaadin/details@23.2.17)(@vaadin/dialog@23.2.17)(@vaadin/email-field@23.2.17)(@vaadin/field-base@23.2.17)(@vaadin/field-highlighter@23.2.17)(@vaadin/form-layout@23.2.17)(@vaadin/grid@23.2.17)(@vaadin/horizontal-layout@23.2.17)(@vaadin/icon@23.2.17)(@vaadin/icons@23.2.17)(@vaadin/input-container@23.2.17)(@vaadin/integer-field@23.2.17)(@vaadin/item@23.2.17)(@vaadin/list-box@23.2.17)(@vaadin/lit-renderer@23.2.17)(@vaadin/login@23.2.17)(@vaadin/menu-bar@23.2.17)(@vaadin/message-input@23.2.17)(@vaadin/message-list@23.2.17)(@vaadin/multi-select-combo-box@23.2.17)(@vaadin/notification@23.2.17)(@vaadin/number-field@23.2.17)(@vaadin/password-field@23.2.17)(@vaadin/polymer-legacy-adapter@23.2.17)(@vaadin/progress-bar@23.2.17)(@vaadin/radio-group@23.2.17)(@vaadin/scroller@23.2.17)(@vaadin/select@23.2.17)(@vaadin/split-layout@23.2.17)(@vaadin/tabs@23.2.17)(@vaadin/text-area@23.2.17)(@vaadin/text-field@23.2.17)(@vaadin/time-picker@23.2.17)(@vaadin/upload@23.2.17)(@vaadin/vaadin-development-mode-detector@2.0.5)(@vaadin/vaadin-list-mixin@23.2.17)(@vaadin/vaadin-lumo-styles@23.2.17)(@vaadin/vaadin-overlay@23.2.17)(@vaadin/vaadin-themable-mixin@23.2.17)(@vaadin/vaadin-usage-statistics@2.1.2)(@vaadin/vertical-layout@23.2.17)(@vaadin/virtual-list@23.2.17)(lit@2.3.1)
+      23.2.17(@polymer/iron-icon@3.0.1)(@polymer/iron-iconset-svg@3.0.1)(@polymer/iron-meta@3.0.1)(@polymer/polymer@3.5.1)(@vaadin/accordion@23.2.17)(@vaadin/app-layout@23.2.17)(@vaadin/avatar-group@23.2.17)(@vaadin/avatar@23.2.17)(@vaadin/button@23.2.17)(@vaadin/checkbox-group@23.2.17)(@vaadin/checkbox@23.2.17)(@vaadin/combo-box@23.2.17)(@vaadin/component-base@23.2.17)(@vaadin/confirm-dialog@23.2.17)(@vaadin/context-menu@23.2.17)(@vaadin/custom-field@23.2.17)(@vaadin/date-picker@23.2.17)(@vaadin/date-time-picker@23.2.17)(@vaadin/details@23.2.17)(@vaadin/dialog@23.2.17)(@vaadin/email-field@23.2.17)(@vaadin/field-base@23.2.17)(@vaadin/field-highlighter@23.2.17)(@vaadin/form-layout@23.2.17)(@vaadin/grid@23.2.17)(@vaadin/horizontal-layout@23.2.17)(@vaadin/icon@23.2.17)(@vaadin/icons@23.2.17)(@vaadin/input-container@23.2.17)(@vaadin/integer-field@23.2.17)(@vaadin/item@23.2.17)(@vaadin/list-box@23.2.17)(@vaadin/lit-renderer@23.2.17)(@vaadin/login@23.2.17)(@vaadin/menu-bar@23.2.17)(@vaadin/message-input@23.2.17)(@vaadin/message-list@23.2.17)(@vaadin/multi-select-combo-box@23.2.17)(@vaadin/notification@23.2.17)(@vaadin/number-field@23.2.17)(@vaadin/password-field@23.2.17)(@vaadin/polymer-legacy-adapter@23.2.17)(@vaadin/progress-bar@23.2.17)(@vaadin/radio-group@23.2.17)(@vaadin/scroller@23.2.17)(@vaadin/select@23.2.17)(@vaadin/split-layout@23.2.17)(@vaadin/tabs@23.2.17)(@vaadin/text-area@23.2.17)(@vaadin/text-field@23.2.17)(@vaadin/time-picker@23.2.17)(@vaadin/upload@23.2.17)(@vaadin/vaadin-development-mode-detector@2.0.5)(@vaadin/vaadin-list-mixin@23.2.17)(@vaadin/vaadin-lumo-styles@23.2.17)(@vaadin/vaadin-overlay@23.2.17)(@vaadin/vaadin-themable-mixin@23.2.17)(@vaadin/vaadin-usage-statistics@2.1.2)(@vaadin/vertical-layout@23.2.17)(@vaadin/virtual-list@23.2.17)(lit@2.6.1)
   '@vaadin/button':
     specifier: 23.2.17
     version: 23.2.17
@@ -64,8 +64,8 @@ dependencies:
     specifier: 23.2.17
     version: 23.2.17
   '@vaadin/common-frontend':
-    specifier: 0.0.17
-    version: 0.0.17(lit@2.3.1)
+    specifier: 0.0.18
+    version: 0.0.18(lit@2.6.1)
   '@vaadin/component-base':
     specifier: 23.2.17
     version: 23.2.17
@@ -99,9 +99,6 @@ dependencies:
   '@vaadin/field-highlighter':
     specifier: 23.2.17
     version: 23.2.17
-  '@vaadin/flow-frontend':
-    specifier: ./target/flow-frontend
-    version: link:target/flow-frontend
   '@vaadin/form-layout':
     specifier: 23.2.17
     version: 23.2.17
@@ -166,8 +163,8 @@ dependencies:
     specifier: 23.2.17
     version: 23.2.17
   '@vaadin/router':
-    specifier: 1.7.4
-    version: 1.7.4
+    specifier: 1.7.5
+    version: 1.7.5
   '@vaadin/scroller':
     specifier: 23.2.17
     version: 23.2.17
@@ -331,8 +328,8 @@ dependencies:
     specifier: 2.29.3
     version: 2.29.3
   lit:
-    specifier: 2.3.1
-    version: 2.3.1
+    specifier: 2.6.1
+    version: 2.6.1
   resize-observer-polyfill:
     specifier: 1.5.1
     version: 1.5.1
@@ -363,23 +360,23 @@ devDependencies:
     specifier: 2.4.4
     version: 2.4.4
   typescript:
-    specifier: 4.7.4
-    version: 4.7.4
+    specifier: 4.9.5
+    version: 4.9.5
   vite:
-    specifier: v3.1.0
-    version: 3.1.0
+    specifier: 3.2.7
+    version: 3.2.7
   vite-plugin-checker:
-    specifier: 0.4.9
-    version: 0.4.9(vite@3.1.0)
+    specifier: 0.5.4
+    version: 0.5.4(typescript@4.9.5)(vite@3.2.7)
   workbox-build:
-    specifier: 6.5.0
-    version: 6.5.0
+    specifier: 6.5.4
+    version: 6.5.4
   workbox-core:
-    specifier: 6.5.0
-    version: 6.5.0
+    specifier: 6.5.4
+    version: 6.5.4
   workbox-precaching:
-    specifier: 6.5.0
-    version: 6.5.0
+    specifier: 6.5.4
+    version: 6.5.4
 
 packages:
 
@@ -712,6 +709,7 @@ packages:
   /@babel/plugin-proposal-unicode-property-regex@7.18.6(@babel/core@7.22.9):
     resolution: {integrity: sha512-2BShG/d5yoZyXZfVePH91urL5wTG6ASZU9M4o03lKK8u8UW1y08OMttBSOADTcJrnPMpvDXRG3G8fyLh4ovs8w==}
     engines: {node: '>=4'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-unicode-property-regex instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
@@ -1959,7 +1957,7 @@ packages:
       '@vaadin/vaadin-themable-mixin': 23.2.17
     dev: false
 
-  ? /@vaadin/bundles@23.2.17(@polymer/iron-icon@3.0.1)(@polymer/iron-iconset-svg@3.0.1)(@polymer/iron-meta@3.0.1)(@polymer/polymer@3.5.1)(@vaadin/accordion@23.2.17)(@vaadin/app-layout@23.2.17)(@vaadin/avatar-group@23.2.17)(@vaadin/avatar@23.2.17)(@vaadin/button@23.2.17)(@vaadin/checkbox-group@23.2.17)(@vaadin/checkbox@23.2.17)(@vaadin/combo-box@23.2.17)(@vaadin/component-base@23.2.17)(@vaadin/confirm-dialog@23.2.17)(@vaadin/context-menu@23.2.17)(@vaadin/custom-field@23.2.17)(@vaadin/date-picker@23.2.17)(@vaadin/date-time-picker@23.2.17)(@vaadin/details@23.2.17)(@vaadin/dialog@23.2.17)(@vaadin/email-field@23.2.17)(@vaadin/field-base@23.2.17)(@vaadin/field-highlighter@23.2.17)(@vaadin/form-layout@23.2.17)(@vaadin/grid@23.2.17)(@vaadin/horizontal-layout@23.2.17)(@vaadin/icon@23.2.17)(@vaadin/icons@23.2.17)(@vaadin/input-container@23.2.17)(@vaadin/integer-field@23.2.17)(@vaadin/item@23.2.17)(@vaadin/list-box@23.2.17)(@vaadin/lit-renderer@23.2.17)(@vaadin/login@23.2.17)(@vaadin/menu-bar@23.2.17)(@vaadin/message-input@23.2.17)(@vaadin/message-list@23.2.17)(@vaadin/multi-select-combo-box@23.2.17)(@vaadin/notification@23.2.17)(@vaadin/number-field@23.2.17)(@vaadin/password-field@23.2.17)(@vaadin/polymer-legacy-adapter@23.2.17)(@vaadin/progress-bar@23.2.17)(@vaadin/radio-group@23.2.17)(@vaadin/scroller@23.2.17)(@vaadin/select@23.2.17)(@vaadin/split-layout@23.2.17)(@vaadin/tabs@23.2.17)(@vaadin/text-area@23.2.17)(@vaadin/text-field@23.2.17)(@vaadin/time-picker@23.2.17)(@vaadin/upload@23.2.17)(@vaadin/vaadin-development-mode-detector@2.0.5)(@vaadin/vaadin-list-mixin@23.2.17)(@vaadin/vaadin-lumo-styles@23.2.17)(@vaadin/vaadin-overlay@23.2.17)(@vaadin/vaadin-themable-mixin@23.2.17)(@vaadin/vaadin-usage-statistics@2.1.2)(@vaadin/vertical-layout@23.2.17)(@vaadin/virtual-list@23.2.17)(lit@2.3.1)
+  ? /@vaadin/bundles@23.2.17(@polymer/iron-icon@3.0.1)(@polymer/iron-iconset-svg@3.0.1)(@polymer/iron-meta@3.0.1)(@polymer/polymer@3.5.1)(@vaadin/accordion@23.2.17)(@vaadin/app-layout@23.2.17)(@vaadin/avatar-group@23.2.17)(@vaadin/avatar@23.2.17)(@vaadin/button@23.2.17)(@vaadin/checkbox-group@23.2.17)(@vaadin/checkbox@23.2.17)(@vaadin/combo-box@23.2.17)(@vaadin/component-base@23.2.17)(@vaadin/confirm-dialog@23.2.17)(@vaadin/context-menu@23.2.17)(@vaadin/custom-field@23.2.17)(@vaadin/date-picker@23.2.17)(@vaadin/date-time-picker@23.2.17)(@vaadin/details@23.2.17)(@vaadin/dialog@23.2.17)(@vaadin/email-field@23.2.17)(@vaadin/field-base@23.2.17)(@vaadin/field-highlighter@23.2.17)(@vaadin/form-layout@23.2.17)(@vaadin/grid@23.2.17)(@vaadin/horizontal-layout@23.2.17)(@vaadin/icon@23.2.17)(@vaadin/icons@23.2.17)(@vaadin/input-container@23.2.17)(@vaadin/integer-field@23.2.17)(@vaadin/item@23.2.17)(@vaadin/list-box@23.2.17)(@vaadin/lit-renderer@23.2.17)(@vaadin/login@23.2.17)(@vaadin/menu-bar@23.2.17)(@vaadin/message-input@23.2.17)(@vaadin/message-list@23.2.17)(@vaadin/multi-select-combo-box@23.2.17)(@vaadin/notification@23.2.17)(@vaadin/number-field@23.2.17)(@vaadin/password-field@23.2.17)(@vaadin/polymer-legacy-adapter@23.2.17)(@vaadin/progress-bar@23.2.17)(@vaadin/radio-group@23.2.17)(@vaadin/scroller@23.2.17)(@vaadin/select@23.2.17)(@vaadin/split-layout@23.2.17)(@vaadin/tabs@23.2.17)(@vaadin/text-area@23.2.17)(@vaadin/text-field@23.2.17)(@vaadin/time-picker@23.2.17)(@vaadin/upload@23.2.17)(@vaadin/vaadin-development-mode-detector@2.0.5)(@vaadin/vaadin-list-mixin@23.2.17)(@vaadin/vaadin-lumo-styles@23.2.17)(@vaadin/vaadin-overlay@23.2.17)(@vaadin/vaadin-themable-mixin@23.2.17)(@vaadin/vaadin-usage-statistics@2.1.2)(@vaadin/vertical-layout@23.2.17)(@vaadin/virtual-list@23.2.17)(lit@2.6.1)
   : resolution: {integrity: sha512-sYB7F501OJDnMbEIvBTs0YJrOxJ/ILiSB+oA+vPkw8CUfDtodUj+yMwpqXn7jj0bBNnexPCZYTRFMJ12yu+3cQ==}
     peerDependencies:
       '@polymer/iron-flex-layout': 3.0.1
@@ -2249,7 +2247,7 @@ packages:
       '@vaadin/vaadin-usage-statistics': 2.1.2
       '@vaadin/vertical-layout': 23.2.17
       '@vaadin/virtual-list': 23.2.17
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/button@23.2.17:
@@ -2302,12 +2300,12 @@ packages:
       '@vaadin/vaadin-themable-mixin': 23.2.17
     dev: false
 
-  /@vaadin/common-frontend@0.0.17(lit@2.3.1):
-    resolution: {integrity: sha512-M4tg10cYgdDqQAXfGfXpQ90eHm+xL6ynAFEDgtc2IxXVWXKYU8jGK08SM5yOcZ4wDk0ETyHMtQlKUPDNkz6Qfw==}
+  /@vaadin/common-frontend@0.0.18(lit@2.6.1):
+    resolution: {integrity: sha512-RurZlTh30U17LB/LGUOZFtGbPK4uTOZhA9V50cRy0QikcEiwTIbSYSpbEOVcIF+UJ4dLpREs8f1v66dvufPFwA==}
     peerDependencies:
       lit: ^2.0.0
     dependencies:
-      lit: 2.3.1
+      lit: 2.6.1
       tslib: 2.6.1
     dev: false
 
@@ -2318,7 +2316,7 @@ packages:
       '@polymer/polymer': 3.5.1
       '@vaadin/vaadin-development-mode-detector': 2.0.5
       '@vaadin/vaadin-usage-statistics': 2.1.2
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/confirm-dialog@23.2.17:
@@ -2430,7 +2428,7 @@ packages:
       '@open-wc/dedupe-mixin': 1.4.0
       '@polymer/polymer': 3.5.1
       '@vaadin/component-base': 23.2.17
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/field-highlighter@23.2.17:
@@ -2442,7 +2440,7 @@ packages:
       '@vaadin/vaadin-material-styles': 23.2.17
       '@vaadin/vaadin-overlay': 23.2.17
       '@vaadin/vaadin-themable-mixin': 23.2.17
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/form-layout@23.2.17:
@@ -2486,7 +2484,7 @@ packages:
       '@vaadin/component-base': 23.2.17
       '@vaadin/vaadin-lumo-styles': 23.2.17
       '@vaadin/vaadin-themable-mixin': 23.2.17
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/icons@23.2.17:
@@ -2543,7 +2541,7 @@ packages:
   /@vaadin/lit-renderer@23.2.17:
     resolution: {integrity: sha512-0r4JdWhT/uTs0VVArwsKs9PllqBRshTUEOX9UTbWwSzFjiu8k2Du9s0wzwq1s6flmpVxjfnQZHbYxZ7RqjLchQ==}
     dependencies:
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/login@23.2.17:
@@ -2620,7 +2618,7 @@ packages:
       '@vaadin/vaadin-lumo-styles': 23.2.17
       '@vaadin/vaadin-material-styles': 23.2.17
       '@vaadin/vaadin-themable-mixin': 23.2.17
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/number-field@23.2.17:
@@ -2650,7 +2648,7 @@ packages:
     dependencies:
       '@polymer/polymer': 3.5.1
       '@vaadin/vaadin-themable-mixin': 23.2.17
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/progress-bar@23.2.17:
@@ -2675,8 +2673,8 @@ packages:
       '@vaadin/vaadin-themable-mixin': 23.2.17
     dev: false
 
-  /@vaadin/router@1.7.4:
-    resolution: {integrity: sha512-B4JVtzFVUMlsjuJHNXEMfNZrM4QDrdeOMc6EEigiHYxwF82py6yDdP6SWP0aPoP3f6aQHt51tLWdXSpkKpWf7A==}
+  /@vaadin/router@1.7.5:
+    resolution: {integrity: sha512-uRN3vd1ihgd596bF/NMZqpgxau0nlvIc0/JDd1EwStFNbZID/xIVse5LXdQhIyUKLmSl4T0GeCQK505xerWX0w==}
     dependencies:
       '@vaadin/vaadin-usage-statistics': 2.1.2
       path-to-regexp: 2.4.0
@@ -3021,7 +3019,7 @@ packages:
     resolution: {integrity: sha512-nA4lW5W+UdYFqvlCH1NJZoXlMg+dGPpJ9+1J45oT9PsG+Hrl1Rg0WrfBUiAoG1E06FU3OyCZ7ikmHlI8g3pW8Q==}
     dependencies:
       '@open-wc/dedupe-mixin': 1.4.0
-      lit: 2.3.1
+      lit: 2.6.1
     dev: false
 
   /@vaadin/vaadin-time-picker@23.2.17:
@@ -3930,8 +3928,8 @@ packages:
       function-bind: 1.1.1
     dev: true
 
-  /idb@6.1.5:
-    resolution: {integrity: sha512-IJtugpKkiVXQn5Y+LteyBCNk1N8xpGV3wWZk9EVtZWH8DYkjBn0bX1XnGP9RkyZF0sAcywa6unHqSWKe7q4LGw==}
+  /idb@7.1.1:
+    resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
     dev: true
 
   /inflight@1.0.6:
@@ -4185,8 +4183,8 @@ packages:
       '@types/trusted-types': 2.0.3
     dev: false
 
-  /lit@2.3.1:
-    resolution: {integrity: sha512-TejktDR4mqG3qB32Y8Lm5Lye3c8SUehqz7qRsxe1PqGYL6me2Ef+jeQAEqh20BnnGncv4Yxy2njEIT0kzK1WCw==}
+  /lit@2.6.1:
+    resolution: {integrity: sha512-DT87LD64f8acR7uVp7kZfhLRrHkfC/N4BVzAtnw9Yg8087mbBJ//qedwdwX0kzDbxgPccWRW6mFwGbRQIxy0pw==}
     dependencies:
       '@lit/reactive-element': 1.6.3
       lit-element: 3.3.3
@@ -4505,14 +4503,6 @@ packages:
       terser: 5.19.2
     dev: true
 
-  /rollup@2.78.1:
-    resolution: {integrity: sha512-VeeCgtGi4P+o9hIg+xz4qQpRl6R401LWEXBmxYKOV4zlF82lyhgh2hTZnheFUbANE8l2A41F458iwj2vEYaXJg==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /rollup@2.79.1:
     resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
     engines: {node: '>=10.0.0'}
@@ -4819,8 +4809,8 @@ packages:
       is-typed-array: 1.1.12
     dev: true
 
-  /typescript@4.7.4:
-    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
+  /typescript@4.9.5:
+    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
@@ -4891,11 +4881,36 @@ packages:
       punycode: 2.3.0
     dev: true
 
-  /vite-plugin-checker@0.4.9(vite@3.1.0):
-    resolution: {integrity: sha512-Oii9mTum8bqZovWejcR739kCqST32oG6LdB/XMdwcLVzmcjq0gf1iVDIedVzJJ7t6GLQAYgjNwvB0fuMiT3tlg==}
-    hasBin: true
+  /vite-plugin-checker@0.5.4(typescript@4.9.5)(vite@3.2.7):
+    resolution: {integrity: sha512-T6y+OHXqwOjGrCErbhzg5x79NQZV46cgLwYTxuMQnDzAfA6skh2i8PIHcKks8ZlxopzbkvMb5vwc2DpNXiHJdg==}
+    engines: {node: '>=14.16'}
     peerDependencies:
-      vite: ^2.0.0 || ^3.0.0-0
+      eslint: '>=7'
+      meow: ^9.0.0
+      optionator: ^0.9.1
+      stylelint: '>=13'
+      typescript: '*'
+      vite: '>=2.0.0'
+      vls: '*'
+      vti: '*'
+      vue-tsc: '*'
+    peerDependenciesMeta:
+      eslint:
+        optional: true
+      meow:
+        optional: true
+      optionator:
+        optional: true
+      stylelint:
+        optional: true
+      typescript:
+        optional: true
+      vls:
+        optional: true
+      vti:
+        optional: true
+      vue-tsc:
+        optional: true
     dependencies:
       '@babel/code-frame': 7.22.5
       ansi-escapes: 4.3.2
@@ -4908,28 +4923,35 @@ packages:
       npm-run-path: 4.0.1
       strip-ansi: 6.0.1
       tiny-invariant: 1.3.1
-      vite: 3.1.0
+      typescript: 4.9.5
+      vite: 3.2.7
       vscode-languageclient: 7.0.0
       vscode-languageserver: 7.0.0
       vscode-languageserver-textdocument: 1.0.8
       vscode-uri: 3.0.7
     dev: true
 
-  /vite@3.1.0:
-    resolution: {integrity: sha512-YBg3dUicDpDWFCGttmvMbVyS9ydjntwEjwXRj2KBFwSB8SxmGcudo1yb8FW5+M/G86aS8x828ujnzUVdsLjs9g==}
+  /vite@3.2.7:
+    resolution: {integrity: sha512-29pdXjk49xAP0QBr0xXqu2s5jiQIXNvE/xwd0vUizYT2Hzqe4BksNNoWllFVXJf4eLZ+UlVQmXfB4lWrc+t18g==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
+      '@types/node': '>= 14'
       less: '*'
       sass: '*'
       stylus: '*'
+      sugarss: '*'
       terser: ^5.4.0
     peerDependenciesMeta:
+      '@types/node':
+        optional: true
       less:
         optional: true
       sass:
         optional: true
       stylus:
+        optional: true
+      sugarss:
         optional: true
       terser:
         optional: true
@@ -4937,7 +4959,7 @@ packages:
       esbuild: 0.15.18
       postcss: 8.4.27
       resolve: 1.22.4
-      rollup: 2.78.1
+      rollup: 2.79.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -5015,21 +5037,21 @@ packages:
       has-tostringtag: 1.0.0
     dev: true
 
-  /workbox-background-sync@6.5.0:
-    resolution: {integrity: sha512-rrekt/gt6qOIZsisj6QZfmAFPAnocq1Z603zAjt+qHmeXY8DLPOklVtvrXSaHoHH3qIjUq3SQY5s2x240iTIKw==}
+  /workbox-background-sync@6.5.4:
+    resolution: {integrity: sha512-0r4INQZMyPky/lj4Ou98qxcThrETucOde+7mRGJl13MPJugQNKeZQOdIJe/1AchOP23cTqHcN/YVpD6r8E6I8g==}
     dependencies:
-      idb: 6.1.5
-      workbox-core: 6.5.0
+      idb: 7.1.1
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-broadcast-update@6.5.0:
-    resolution: {integrity: sha512-JC97c7tYqoGWcCfbKO9KHG6lkU+WhXCnDB2j1oFWEiv53nUHy3yjPpzMmAGNLD9oV5lInO15n6V18HfwgkhISw==}
+  /workbox-broadcast-update@6.5.4:
+    resolution: {integrity: sha512-I/lBERoH1u3zyBosnpPEtcAVe5lwykx9Yg1k6f8/BGEPGaMMgZrwVrqL1uA9QZ1NGGFoyE6t9i7lBjOlDhFEEw==}
     dependencies:
-      workbox-core: 6.5.0
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-build@6.5.0:
-    resolution: {integrity: sha512-da0/1b6//P9+ts7ofcIKcMVPyN6suJvjJASXokF7DsqvUmgRBPcCVV4KCy8QWjgfcz7mzuTpkSbdVHcPFJ/p0A==}
+  /workbox-build@6.5.4:
+    resolution: {integrity: sha512-kgRevLXEYvUW9WS4XoziYqZ8Q9j/2ziJYEtTrjdz5/L/cTUa2XfyMP2i7c3p34lgqJ03+mTiz13SdFef2POwbA==}
     engines: {node: '>=10.0.0'}
     dependencies:
       '@apideck/better-ajv-errors': 0.3.6(ajv@8.12.0)
@@ -5054,111 +5076,111 @@ packages:
       strip-comments: 2.0.1
       tempy: 0.6.0
       upath: 1.2.0
-      workbox-background-sync: 6.5.0
-      workbox-broadcast-update: 6.5.0
-      workbox-cacheable-response: 6.5.0
-      workbox-core: 6.5.0
-      workbox-expiration: 6.5.0
-      workbox-google-analytics: 6.5.0
-      workbox-navigation-preload: 6.5.0
-      workbox-precaching: 6.5.0
-      workbox-range-requests: 6.5.0
-      workbox-recipes: 6.5.0
-      workbox-routing: 6.5.0
-      workbox-strategies: 6.5.0
-      workbox-streams: 6.5.0
-      workbox-sw: 6.5.0
-      workbox-window: 6.5.0
+      workbox-background-sync: 6.5.4
+      workbox-broadcast-update: 6.5.4
+      workbox-cacheable-response: 6.5.4
+      workbox-core: 6.5.4
+      workbox-expiration: 6.5.4
+      workbox-google-analytics: 6.5.4
+      workbox-navigation-preload: 6.5.4
+      workbox-precaching: 6.5.4
+      workbox-range-requests: 6.5.4
+      workbox-recipes: 6.5.4
+      workbox-routing: 6.5.4
+      workbox-strategies: 6.5.4
+      workbox-streams: 6.5.4
+      workbox-sw: 6.5.4
+      workbox-window: 6.5.4
     transitivePeerDependencies:
       - '@types/babel__core'
       - supports-color
     dev: true
 
-  /workbox-cacheable-response@6.5.0:
-    resolution: {integrity: sha512-sqAtWAiBwWvI8HG/2Do7BeKPhHuUczt22ORkAjkH9DfTq9LuWRFd6T4HAMqX5G8F1gM9XA2UPlxRrEeSpFIz/A==}
+  /workbox-cacheable-response@6.5.4:
+    resolution: {integrity: sha512-DCR9uD0Fqj8oB2TSWQEm1hbFs/85hXXoayVwFKLVuIuxwJaihBsLsp4y7J9bvZbqtPJ1KlCkmYVGQKrBU4KAug==}
     dependencies:
-      workbox-core: 6.5.0
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-core@6.5.0:
-    resolution: {integrity: sha512-5SPwNipUzYBhrneLVT02JFA0fw3LG82jFAN/G2NzxkIW10t4MVZuML2nU94bbkgjq25u0fkY8+4JXzMfHgxEWQ==}
+  /workbox-core@6.5.4:
+    resolution: {integrity: sha512-OXYb+m9wZm8GrORlV2vBbE5EC1FKu71GGp0H4rjmxmF4/HLbMCoTFws87M3dFwgpmg0v00K++PImpNQ6J5NQ6Q==}
     dev: true
 
-  /workbox-expiration@6.5.0:
-    resolution: {integrity: sha512-y3WRkKRy/gMuZZNkrLFahjY0QZtLoq+QfhTbVAsOGHVg1CCtnNbeFAnEidQs7UisI2BK76VqQPvM7hEOFyZ92A==}
+  /workbox-expiration@6.5.4:
+    resolution: {integrity: sha512-jUP5qPOpH1nXtjGGh1fRBa1wJL2QlIb5mGpct3NzepjGG2uFFBn4iiEBiI9GUmfAFR2ApuRhDydjcRmYXddiEQ==}
     dependencies:
-      idb: 6.1.5
-      workbox-core: 6.5.0
+      idb: 7.1.1
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-google-analytics@6.5.0:
-    resolution: {integrity: sha512-CHHh55wMNCc/BV1URrzEM2Zjgf6g2CV6QpAAc1pBRqaLY5755PeQZbp3o8KbJEM7YsC9mIBeQVsOkSKkGS30bg==}
+  /workbox-google-analytics@6.5.4:
+    resolution: {integrity: sha512-8AU1WuaXsD49249Wq0B2zn4a/vvFfHkpcFfqAFHNHwln3jK9QUYmzdkKXGIZl9wyKNP+RRX30vcgcyWMcZ9VAg==}
     dependencies:
-      workbox-background-sync: 6.5.0
-      workbox-core: 6.5.0
-      workbox-routing: 6.5.0
-      workbox-strategies: 6.5.0
+      workbox-background-sync: 6.5.4
+      workbox-core: 6.5.4
+      workbox-routing: 6.5.4
+      workbox-strategies: 6.5.4
     dev: true
 
-  /workbox-navigation-preload@6.5.0:
-    resolution: {integrity: sha512-ktrRQzXJ0zFy0puOtCa49wE3BSBGUB8KRMot3tEieikCkSO0wMLmiCb9GwTVvNMJLl0THRlsdFoI93si04nTxA==}
+  /workbox-navigation-preload@6.5.4:
+    resolution: {integrity: sha512-IIwf80eO3cr8h6XSQJF+Hxj26rg2RPFVUmJLUlM0+A2GzB4HFbQyKkrgD5y2d84g2IbJzP4B4j5dPBRzamHrng==}
     dependencies:
-      workbox-core: 6.5.0
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-precaching@6.5.0:
-    resolution: {integrity: sha512-IVLzgHx38T6LphJyEOltd7XAvpDi73p85uCT2ZtT1HHg9FAYC49a+5iHUVOnqye73fLW20eiAMFcnehGxz9RWg==}
+  /workbox-precaching@6.5.4:
+    resolution: {integrity: sha512-hSMezMsW6btKnxHB4bFy2Qfwey/8SYdGWvVIKFaUm8vJ4E53JAY+U2JwLTRD8wbLWoP6OVUdFlXsTdKu9yoLTg==}
     dependencies:
-      workbox-core: 6.5.0
-      workbox-routing: 6.5.0
-      workbox-strategies: 6.5.0
+      workbox-core: 6.5.4
+      workbox-routing: 6.5.4
+      workbox-strategies: 6.5.4
     dev: true
 
-  /workbox-range-requests@6.5.0:
-    resolution: {integrity: sha512-+qTELdGZE5rOjuv+ifFrfRDN8Uvzpbm5Fal7qSUqB1V1DLCMxPwHCj6mWwQBRKBpW7G09kAwewH7zA3Asjkf/Q==}
+  /workbox-range-requests@6.5.4:
+    resolution: {integrity: sha512-Je2qR1NXCFC8xVJ/Lux6saH6IrQGhMpDrPXWZWWS8n/RD+WZfKa6dSZwU+/QksfEadJEr/NfY+aP/CXFFK5JFg==}
     dependencies:
-      workbox-core: 6.5.0
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-recipes@6.5.0:
-    resolution: {integrity: sha512-7hWZAIcXmvr31NwYSWaQIrnThCH/Dx9+eYv/YdkpUeWIXRiHRkYvP1FdiHItbLSjL4Y6K7cy2Y9y5lGCkgaE4w==}
+  /workbox-recipes@6.5.4:
+    resolution: {integrity: sha512-QZNO8Ez708NNwzLNEXTG4QYSKQ1ochzEtRLGaq+mr2PyoEIC1xFW7MrWxrONUxBFOByksds9Z4//lKAX8tHyUA==}
     dependencies:
-      workbox-cacheable-response: 6.5.0
-      workbox-core: 6.5.0
-      workbox-expiration: 6.5.0
-      workbox-precaching: 6.5.0
-      workbox-routing: 6.5.0
-      workbox-strategies: 6.5.0
+      workbox-cacheable-response: 6.5.4
+      workbox-core: 6.5.4
+      workbox-expiration: 6.5.4
+      workbox-precaching: 6.5.4
+      workbox-routing: 6.5.4
+      workbox-strategies: 6.5.4
     dev: true
 
-  /workbox-routing@6.5.0:
-    resolution: {integrity: sha512-w1A9OVa/yYStu9ds0Dj+TC6zOAoskKlczf+wZI5mrM9nFCt/KOMQiFp1/41DMFPrrN/8KlZTS3Cel/Ttutw93Q==}
+  /workbox-routing@6.5.4:
+    resolution: {integrity: sha512-apQswLsbrrOsBUWtr9Lf80F+P1sHnQdYodRo32SjiByYi36IDyL2r7BH1lJtFX8fwNHDa1QOVY74WKLLS6o5Pg==}
     dependencies:
-      workbox-core: 6.5.0
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-strategies@6.5.0:
-    resolution: {integrity: sha512-Ngnwo+tfGw4uKSlTz3h1fYKb/lCV7SDI/dtTb8VaJzRl0N9XssloDGYERBmF6BN/DV/x3bnRsshfobnKI/3z0g==}
+  /workbox-strategies@6.5.4:
+    resolution: {integrity: sha512-DEtsxhx0LIYWkJBTQolRxG4EI0setTJkqR4m7r4YpBdxtWJH1Mbg01Cj8ZjNOO8etqfA3IZaOPHUxCs8cBsKLw==}
     dependencies:
-      workbox-core: 6.5.0
+      workbox-core: 6.5.4
     dev: true
 
-  /workbox-streams@6.5.0:
-    resolution: {integrity: sha512-ZbeaZINkju4x45P9DFyRbOYInE+dyNAJIelflz4f9AOAdm+zZUJCooU4MdfsedVhHiTIA6pCD/3jCmW1XbvlbA==}
+  /workbox-streams@6.5.4:
+    resolution: {integrity: sha512-FXKVh87d2RFXkliAIheBojBELIPnWbQdyDvsH3t74Cwhg0fDheL1T8BqSM86hZvC0ZESLsznSYWw+Va+KVbUzg==}
     dependencies:
-      workbox-core: 6.5.0
-      workbox-routing: 6.5.0
+      workbox-core: 6.5.4
+      workbox-routing: 6.5.4
     dev: true
 
-  /workbox-sw@6.5.0:
-    resolution: {integrity: sha512-uPGJ9Yost4yabnCko/IuhouquoQKrWOEqLq7L/xVYtltWe4+J8Hw8iPCVtxvXQ26hffd7MaFWUAN83j2ZWbxRg==}
+  /workbox-sw@6.5.4:
+    resolution: {integrity: sha512-vo2RQo7DILVRoH5LjGqw3nphavEjK4Qk+FenXeUsknKn14eCNedHOXWbmnvP4ipKhlE35pvJ4yl4YYf6YsJArA==}
     dev: true
 
-  /workbox-window@6.5.0:
-    resolution: {integrity: sha512-DOrhiTnWup/CsNstO2uvfdKM4kdStgHd31xGGvBcoCE3Are3DRcy5s3zz3PedcAR1AKskQj3BXz0UhzQiOq8nA==}
+  /workbox-window@6.5.4:
+    resolution: {integrity: sha512-HnLZJDwYBE+hpG25AQBO8RUWBJRaCsI9ksQJEp3aCOFCaG5kqaToAYXFRAHxzRluM2cQbGzdQF5rjKPWPA1fug==}
     dependencies:
       '@types/trusted-types': 2.0.3
-      workbox-core: 6.5.0
+      workbox-core: 6.5.4
     dev: true
 
   /wrappy@1.0.2:

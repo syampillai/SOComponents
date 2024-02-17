@@ -37,12 +37,14 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
     @Override
     public void setWidth(String width) {
         super.setWidth(width);
+        createField();
         field.setWidth(width);
     }
 
     @Override
     public void setHeight(String height) {
         super.setHeight(height);
+        createField();
         field.setHeight(height);
     }
 
