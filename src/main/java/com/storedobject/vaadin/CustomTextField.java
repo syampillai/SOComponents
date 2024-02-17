@@ -1,10 +1,7 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.HasTextValue;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasEnabled;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.HasAutocomplete;
 import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
@@ -46,13 +43,36 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
         getField().setHeight(height);
     }
 
+    @Override
+    public void setMaxWidth(String maxWidth) {
+        super.setMaxWidth(maxWidth);
+        getField().setMaxWidth(maxWidth);
+    }
+
+    @Override
+    public void setMaxHeight(String maxHeight) {
+        super.setMaxHeight(maxHeight);
+        getField().setMaxHeight(maxHeight);
+    }
+
+    @Override
+    public void setMinWidth(String minWidth) {
+        super.setMinWidth(minWidth);
+        getField().setMinWidth(minWidth);
+    }
+
+    @Override
+    public void setMinHeight(String minHeight) {
+        super.setMinHeight(minHeight);
+        getField().setMinHeight(minHeight);
+    }
+
     /**
      * Align right.
      */
     public void alignRight() {
         ((TextField)getField()).addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
     }
-
 
     /**
      * Create the internal text field. By default, it creates a {@link com.vaadin.flow.component.textfield.TextField}.
