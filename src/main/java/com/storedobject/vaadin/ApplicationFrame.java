@@ -99,13 +99,13 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
             if(getLogoInt() != null) {
                 addToNavbar(logo);
             }
-            if(captionComponent() != null && captionComponent instanceof Component) {
+            if(getCaptionComponent() != null && captionComponent instanceof Component) {
                 addToNavbar(true, (Component)captionComponent);
                 noWrap((Component) captionComponent);
             }
             addToNavbar(filler());
             addToNavbar(true, filler());
-            if(userNameComponent() != null && userNameComponent instanceof Component) {
+            if(getUserNameComponent() != null && userNameComponent instanceof Component) {
                 addToNavbar(true, (Component)userNameComponent);
                 userNameComponent.getElement().getStyle().set("text-align", "right");
                 noWrap((Component) userNameComponent);
@@ -145,7 +145,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
 
     @Override
     public String getCaption() {
-        HasText c = captionComponent();
+        HasText c = getCaptionComponent();
         return c == null ? ApplicationLayout.super.getCaption() : c.getText();
     }
 
@@ -193,7 +193,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      */
     @Override
     public void setCaption(String caption) {
-        if(captionComponent() != null) {
+        if(getCaptionComponent() != null) {
             captionComponent.setText(caption);
         }
     }
@@ -240,9 +240,19 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         return drawerToggle;
     }
 
-    private HasText captionComponent() {
+    protected HasText createCaptionComponent() {
+        return null;
+    }
+
+    /**
+     * Get the component to display the "caption" of the application. This will be displayed to the right of the "Logo"
+     * on the "Nav Bar" with "touchOptimized" as <code>true</code> (see {@link AppLayout#addToNavbar(boolean, Component...)}).
+     *
+     * @return The default implementation returns an {@link H2} component if {@link #createCaptionComponent()} is not overridden.
+     */
+    public final HasText getCaptionComponent() {
         if(captionComponent == null) {
-            captionComponent = getCaptionComponent();
+            captionComponent = createCaptionComponent();
         }
         if(captionComponent == null) {
             H2 c = new H2();
@@ -252,25 +262,8 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         return captionComponent;
     }
 
-    /**
-     * Get the component to display the "caption" of the application. This will be displayed to the right of the "Logo"
-     * on the "Nav Bar" with "touchOptimized" as <code>true</code> (see {@link AppLayout#addToNavbar(boolean, Component...)}).
-     *
-     * @return The default implementation returns an {@link H2} component.
-     */
-    public HasText getCaptionComponent() {
+    protected HasText createUserNameComponent() {
         return null;
-    }
-
-    private HasText userNameComponent() {
-        if(userNameComponent == null) {
-            userNameComponent = getUserNameComponent();
-        }
-        if(userNameComponent == null) {
-            userNameComponent = new Span();
-            userNameComponent.getElement().getStyle().set("color", "var(--so-header-color)");
-        }
-        return userNameComponent;
     }
 
 
@@ -278,10 +271,17 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      * Get the component to display the "User's name" for the application. This will be displayed just before the "toolbox"
      * on the "Nav Bar".
      *
-     * @return Returning null will create the default = a {@link Span} component.
+     * @return The default implementation returns an {@link Span} component if {@link #createUserNameComponent()} is not overridden.
      */
     public HasText getUserNameComponent() {
-        return null;
+        if(userNameComponent == null) {
+            userNameComponent = createUserNameComponent();
+        }
+        if(userNameComponent == null) {
+            userNameComponent = new Span();
+            userNameComponent.getElement().getStyle().set("color", "var(--so-header-color)");
+        }
+        return userNameComponent;
     }
 
     @Override
