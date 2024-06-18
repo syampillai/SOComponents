@@ -240,6 +240,12 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         return drawerToggle;
     }
 
+    /**
+     * Get the component to display the "caption" of the application. This will be displayed to the right of the "Logo"
+     * on the "Nav Bar" with "touchOptimized" as <code>true</code> (see {@link AppLayout#addToNavbar(boolean, Component...)}).
+     *
+     * @return The default implementation returns null so that an {@link H2} component is created automatically.
+     */
     protected HasText createCaptionComponent() {
         return null;
     }
@@ -262,18 +268,23 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         return captionComponent;
     }
 
+    /**
+     * Create the component to display the "User's name" for the application. This will be displayed just before the "toolbox"
+     * on the "Nav Bar".
+     *
+     * @return The default implementation returns null so that a {@link Span} component is created automatically.
+     */
     protected HasText createUserNameComponent() {
         return null;
     }
-
 
     /**
      * Get the component to display the "User's name" for the application. This will be displayed just before the "toolbox"
      * on the "Nav Bar".
      *
-     * @return The default implementation returns an {@link Span} component if {@link #createUserNameComponent()} is not overridden.
+     * @return The default implementation returns a {@link Span} component if {@link #createUserNameComponent()} is not overridden.
      */
-    public HasText getUserNameComponent() {
+    public final HasText getUserNameComponent() {
         if(userNameComponent == null) {
             userNameComponent = createUserNameComponent();
         }
