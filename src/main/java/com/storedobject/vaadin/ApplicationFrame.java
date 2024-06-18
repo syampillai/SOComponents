@@ -99,13 +99,13 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
             if(getLogoInt() != null) {
                 addToNavbar(logo);
             }
-            if(getCaptionComponent() != null && captionComponent instanceof Component) {
+            if(captionComponent() != null && captionComponent instanceof Component) {
                 addToNavbar(true, (Component)captionComponent);
                 noWrap((Component) captionComponent);
             }
             addToNavbar(filler());
             addToNavbar(true, filler());
-            if(getUserNameComponent() != null && userNameComponent instanceof Component) {
+            if(userNameComponent() != null && userNameComponent instanceof Component) {
                 addToNavbar(true, (Component)userNameComponent);
                 userNameComponent.getElement().getStyle().set("text-align", "right");
                 noWrap((Component) userNameComponent);
@@ -145,7 +145,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
 
     @Override
     public String getCaption() {
-        HasText c = getCaptionComponent();
+        HasText c = captionComponent();
         return c == null ? ApplicationLayout.super.getCaption() : c.getText();
     }
 
@@ -193,7 +193,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
      */
     @Override
     public void setCaption(String caption) {
-        if(getCaptionComponent() != null) {
+        if(captionComponent() != null) {
             captionComponent.setText(caption);
         }
     }
@@ -240,13 +240,10 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         return drawerToggle;
     }
 
-    /**
-     * Get the component to display the "caption" of the application. This will be displayed to the right of the "Logo"
-     * on the "Nav Bar" with "touchOptimized" as <code>true</code> (see {@link AppLayout#addToNavbar(boolean, Component...)}).
-     *
-     * @return The default implementation returns an {@link H2} component.
-     */
-    public HasText getCaptionComponent() {
+    private HasText captionComponent() {
+        if(captionComponent == null) {
+            captionComponent = getCaptionComponent();
+        }
         if(captionComponent == null) {
             H2 c = new H2();
             c.getStyle().set("color", "var(--so-header-color)");
@@ -256,17 +253,35 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     }
 
     /**
-     * Get the component to display the "user name" for the application. This will be displayed just before the "toolbox"
-     * on the "Nav Bar".
+     * Get the component to display the "caption" of the application. This will be displayed to the right of the "Logo"
+     * on the "Nav Bar" with "touchOptimized" as <code>true</code> (see {@link AppLayout#addToNavbar(boolean, Component...)}).
      *
-     * @return The default implementation returns a {@link Span} component.
+     * @return The default implementation returns an {@link H2} component.
      */
-    public HasText getUserNameComponent() {
+    public HasText getCaptionComponent() {
+        return null;
+    }
+
+    private HasText userNameComponent() {
+        if(userNameComponent == null) {
+            userNameComponent = getUserNameComponent();
+        }
         if(userNameComponent == null) {
             userNameComponent = new Span();
             userNameComponent.getElement().getStyle().set("color", "var(--so-header-color)");
         }
         return userNameComponent;
+    }
+
+
+    /**
+     * Get the component to display the "User's name" for the application. This will be displayed just before the "toolbox"
+     * on the "Nav Bar".
+     *
+     * @return Returning null will create the default = a {@link Span} component.
+     */
+    public HasText getUserNameComponent() {
+        return null;
     }
 
     @Override

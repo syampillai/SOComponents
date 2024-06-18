@@ -1018,12 +1018,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
         }
 
         private GridColumnDetail<T> cd(String columnName) {
-            GridColumnDetail<T> cd = columnDetails.get(columnName);
-            if(cd == null) {
-                cd = new GridColumnDetail<>();
-                columnDetails.put(columnName, cd);
-            }
-            return cd;
+            return columnDetails.computeIfAbsent(columnName, k -> new GridColumnDetail<>());
         }
 
         private String trimCaption(String columnName) {
