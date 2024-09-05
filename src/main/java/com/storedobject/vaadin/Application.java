@@ -910,7 +910,7 @@ public abstract class Application {
         if(m == null) {
             m = a == null ? message.toString() : a.getEnvironment().toDisplay(message);
         }
-        Alert n = new Alert(m);
+        Alert n = new Alert(m.replace("\n", "<BR>"));
         if(position != null) {
             n.setPosition(position);
         }
