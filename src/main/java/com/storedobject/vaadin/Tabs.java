@@ -125,7 +125,7 @@ public class Tabs extends Composite<Div> {
         componentList = new ArrayList<>();
         Collections.addAll(componentList, components);
         componentMap.put(tab, componentList);
-        boolean first = this.tabs.getComponentCount() == 0;
+        boolean first = this.tabs.getTabCount() == 0;
         this.tabs.add(tab);
         if(first) {
             setSelectedTab(tab);

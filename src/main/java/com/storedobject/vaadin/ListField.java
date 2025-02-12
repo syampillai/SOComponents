@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * @param <T> Value type of the field
  * @author Syam
  */
-public class ListField<T> extends Select<T> implements SpellCheck {
+public class ListField<T> extends Select<T> implements SpellCheck, ValueRequired {
 
     private SelectListDataView<T> view;
 
@@ -205,6 +205,7 @@ public class ListField<T> extends Select<T> implements SpellCheck {
         this.getElement().setProperty("required", required);
     }
 
+    @Override
     public boolean isRequired() {
         return this.getElement().getProperty("required", false);
     }

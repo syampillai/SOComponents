@@ -6,14 +6,15 @@ import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.RouteNotFoundError;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class InvalidLinkError extends RouteNotFoundError {
 
     @Override
     public int setErrorParameter(BeforeEnterEvent event, ErrorParameter<NotFoundException> parameter) {
         getElement().setText("");
-        Notification.show("Invalid application link - " + event.getLocation().getPath());
+        String path = event.getLocation().getPath();
+        Notification.show("Invalid application link" + (path.isEmpty() ? "" : (" - " + path)));
         return HttpServletResponse.SC_NOT_FOUND;
     }
 }

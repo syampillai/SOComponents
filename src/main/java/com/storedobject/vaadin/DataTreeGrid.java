@@ -3,7 +3,7 @@ package com.storedobject.vaadin;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.treegrid.TreeGrid;
-import com.vaadin.flow.data.renderer.TemplateRenderer;
+import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 
@@ -157,7 +157,7 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
     }
 
     /**
-     * Add a HTML hierarchy column. If this or any of its cousin method is never called, the first column created will
+     * Add an HTML hierarchy column. If this or any of its cousin method is never called, the first column created will
      * be made the hierarchy column.
      *
      * @param columnName Name of the column
@@ -171,7 +171,7 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
             return null;
         }
         soGrid.treeBuilt(columnName);
-        Column<T> column = addColumn(TemplateRenderer.<T>of("<vaadin-grid-tree-toggle " +
+        Column<T> column = addColumn(LitRenderer.<T>of("<vaadin-grid-tree-toggle " +
                         "leaf='[[item.leaf]]' expanded='{{expanded}}' level='[[level]]'>" +
                         "<span inner-h-t-m-l=\"[[item.html]]\"></span>" +
                         "</vaadin-grid-tree-toggle>").

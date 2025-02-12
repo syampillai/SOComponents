@@ -241,7 +241,7 @@ public class View implements ExecutableView {
         this.fullScreen = fullScreen;
     }
 
-    private static class WindowMonitor implements ComponentEventListener<Dialog.OpenedChangeEvent<Dialog>> {
+    private static class WindowMonitor implements ComponentEventListener<Dialog.OpenedChangeEvent> {
 
         private final View view;
 
@@ -250,7 +250,7 @@ public class View implements ExecutableView {
         }
 
         @Override
-        public void onComponentEvent(Dialog.OpenedChangeEvent<Dialog> dialogOpenedChangeEvent) {
+        public void onComponentEvent(Dialog.OpenedChangeEvent dialogOpenedChangeEvent) {
             if(view.internalWindowAction) {
                 view.internalWindowAction = false;
             } else if(!dialogOpenedChangeEvent.isOpened()) {

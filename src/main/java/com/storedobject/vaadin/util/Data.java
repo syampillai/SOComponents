@@ -598,19 +598,20 @@ public class Data<T> extends HashMap<String, Object> {
 
     private static class DataValidators<D, F> extends ArrayList<Validator<F>> implements Validator<D> {
 
-        private final ValueContext valueContext;
+        //private final ValueContext valueContext; // TODO
         private final HasValue<?, F> field;
 
         private DataValidators(HasValue<?, F> field, Alert errorText) {
             this.field = field;
-            valueContext = new ValueContext(field instanceof Component ? (Component)field : errorText, field);
+            //valueContext = new ValueContext(field instanceof Component ? (Component)field : errorText, field);
         }
 
         @Override
         public ValidationResult apply(D data, ValueContext valueContext) {
             ValidationResult vr = OK;
             for(Validator<F> v: this) {
-                vr = v.apply(field.getValue(), this.valueContext);
+                //vr = v.apply(field.getValue(), this.valueContext);
+                vr = v.apply(field.getValue(), valueContext);
                 if(vr.getErrorLevel().isPresent()) {
                     break;
                 }

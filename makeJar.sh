@@ -1,5 +1,3 @@
-#. ~/.nvm/nvm.sh
-#nvm use v16.14.0
 cd ~/IdeaProjects/SOComponents
 cd src/main
 rm -fr resources

@@ -2,9 +2,10 @@ package com.storedobject.vaadin;
 
 import com.storedobject.vaadin.util.HasTextValue;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.HasAutocomplete;
-import com.vaadin.flow.component.textfield.HasPrefixAndSuffix;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.dom.Element;
 
@@ -16,7 +17,7 @@ import java.util.Objects;
  * @param <T> Value type
  * @author Syam
  */
-public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefixAndSuffix, HasStyle,
+public abstract class CustomTextField<T> extends CustomField<T> implements HasPrefix, HasSuffix, HasStyle,
         DisablePaste, HasAutocomplete {
 
     private HasTextValue field;
@@ -207,26 +208,26 @@ public abstract class CustomTextField<T> extends CustomField<T> implements HasPr
 
     @Override
     public void setPrefixComponent(Component component) {
-        if(field instanceof HasPrefixAndSuffix) {
-            ((HasPrefixAndSuffix) field).setPrefixComponent(component);
+        if(field instanceof HasPrefix) {
+            ((HasPrefix) field).setPrefixComponent(component);
         }
     }
 
     @Override
     public Component getPrefixComponent() {
-        return field instanceof HasPrefixAndSuffix ? ((HasPrefixAndSuffix)field).getPrefixComponent() : null;
+        return field instanceof HasPrefix ? ((HasPrefix)field).getPrefixComponent() : null;
     }
 
     @Override
     public void setSuffixComponent(Component component) {
-        if(field instanceof HasPrefixAndSuffix) {
-            ((HasPrefixAndSuffix) field).setSuffixComponent(component);
+        if(field instanceof HasSuffix) {
+            ((HasSuffix) field).setSuffixComponent(component);
         }
     }
 
     @Override
     public Component getSuffixComponent() {
-        return field instanceof HasPrefixAndSuffix ? ((HasPrefixAndSuffix)field).getSuffixComponent() : null;
+        return field instanceof HasSuffix ? ((HasSuffix)field).getSuffixComponent() : null;
     }
 
     @Override
