@@ -36,22 +36,24 @@ export class SOAppContent extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        this._boundResizeHandler = this._sendSize.bind(this);
-        new ResizeObserver(this._boundResizeHandler).observe(this.shadowRoot.getElementById(this.idContent));
-    }
+        this.$server.ready();
+        this.resizeObserver = new ResizeObserver(() => this.sendSize());
+        this.resizeObserver.observe(this);    }
 
     disconnectedCallback() {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
         super.disconnectedCallback();
-        window.removeEventListener('resize', this._boundResizeHandler);
     }
 
     firstUpdated() {
         this.content = this.shadowRoot.getElementById(this.idContent);
-        this._sendSize();
+        this.sendSize();
     }
 
-    _sendSize() {
-        this.$server.resized(this.content.clientWidth, this.content.clientHeight);
+    sendSize() {
+        this.$server.resized(this.content.clientWidth, this.content.clientHeight, window.innerWidth, window.innerHeight);
     }
 
     updated(changedProps) {

@@ -1,13 +1,13 @@
 package com.storedobject.vaadin;
 
 import com.storedobject.helper.ID;
+import com.storedobject.helper.LitComponent;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.page.Page;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.*;
 import com.vaadin.flow.shared.Registration;
 
@@ -33,10 +33,7 @@ import java.util.stream.Stream;
  *     }
  *
  *    {@literal @}Route("")
- *    {@literal @}Push(PushMode.MANUAL)
- *    {@literal @}BodySize(height = "100vh", width = "100vw")
- *    {@literal @}Theme(value = Lumo.class, variant = Lumo.LIGHT)
- *    public static class DemoView extends ApplicationView implements AppShellConfigurator {
+ *    public static class DemoView extends ApplicationView {
  *
  *       {@literal @}Override
  *       protected Application createApplication() {
@@ -120,6 +117,7 @@ public abstract class Application {
     private ArrayList<WeakReference<ResizedListener>> resizeListeners;
     private WebBrowser webBrowser;
     private final Alert errorText = new Alert(null, NotificationVariant.LUMO_PRIMARY);
+    private int deviceWidth = -1, deviceHeight = -1;
 
     /**
      * This method is invoked by {@link ApplicationView} class.
@@ -242,10 +240,6 @@ public abstract class Application {
         }
         if(resizeListeners == null) {
             resizeListeners = new ArrayList<>();
-            getPage().addBrowserWindowResizeListener(e -> {
-                fireResized(e.getWidth(), e.getHeight());
-                applicationView.getDeviceWidth();
-            });
         }
         resizeListeners.add(new WeakReference<>(listener));
         return () -> {
@@ -265,6 +259,11 @@ public abstract class Application {
      * @param height Height.
      */
     void fireResized(int width, int height) {
+        if(width == deviceWidth && height == deviceHeight) {
+            return;
+        }
+        deviceWidth = width;
+        deviceHeight = height;
         if(resizeListeners != null) {
             resizeListeners.removeIf(w -> w.get() == null);
             resizeListeners.forEach(w -> {
@@ -996,7 +995,11 @@ public abstract class Application {
      * @return Device height.
      */
     public int getDeviceHeight() {
-        return applicationView == null ? -1 : applicationView.getDeviceHeight();
+        if(deviceHeight > 0) {
+            return deviceHeight;
+        }
+        getDeviceWidth();
+        return deviceHeight;
     }
 
     /**
@@ -1005,7 +1008,13 @@ public abstract class Application {
      * @return Device width.
      */
     public int getDeviceWidth() {
-        return applicationView == null ? -1 : applicationView.getDeviceWidth();
+        if(deviceWidth > 0) {
+            return deviceWidth;
+        }
+        if(viewManager != null) {
+            viewManager.content.checkSize();
+        }
+        return deviceWidth;
     }
 
     /**
@@ -1096,7 +1105,7 @@ public abstract class Application {
     final void setMainView(ApplicationView applicationView) {
         this.applicationView = applicationView;
         if(this.viewManager == null) {
-            viewManager = new ViewManager(applicationView);
+            viewManager = new ViewManager(this);
             applicationLayout.closeMenu();
             login();
         }
@@ -1254,7 +1263,7 @@ public abstract class Application {
      * This method must be called from {@link #login()} when login credentials are verified.
      */
     protected final void loggedin() {
-        viewManager.loggedin(this);
+        viewManager.loggedIn(this);
         applicationLayout.toggleMenu();
         Component menuSearcher = applicationLayout.getMenuSearcher();
         if(menuSearcher instanceof Focusable) {
@@ -1620,14 +1629,14 @@ public abstract class Application {
         private Runnable pendingToRun;
         private final Content content;
 
-        public ViewManager(ApplicationView applicationView) {
-            this.applicationView = applicationView;
+        public ViewManager(Application application) {
+            this.applicationView = application.applicationView;
             this.menu = applicationView.layout.getMenu();
-            this.content = new Content(applicationView.layout);
+            this.content = new Content(application);
             applicationView.layout.setContent(this.content);
         }
 
-        public void loggedin(Application application) {
+        public void loggedIn(Application application) {
             applicationView.layout.loggedin(application);
             applicationView.layout.drawMenu(application);
         }
@@ -1911,33 +1920,34 @@ public abstract class Application {
 
         @Tag("so-app-content")
         @JsModule("./so/appcontent/content.js")
-        private static class Content extends Component {
+        private static class Content extends LitComponent {
 
             private final ArrayList<WeakReference<ResizedListener>> resizeListeners = new ArrayList<>();
             private int width = -1, height = -1;
             private boolean speaking = false;
             private StringBuilder sentence;
+            private final Application application;
 
-            public Content(ApplicationLayout applicationLayout) {
-                Element e = getElement();
-                e.setProperty("idContent", "so" + ID.newID());
-                applicationLayout.resizeContent();
+            public Content(Application application) {
+                this.application = application;
+                getElement().setProperty("idContent", "so" + ID.newID());
+                application.applicationLayout.resizeContent();
             }
 
             @ClientCallable
-            private void resized(int w, int h) {
-                if(w == width && h == height) {
-                    return;
+            private void resized(int w, int h, int ww, int wh) {
+                if(w != width || h != height) {
+                    this.width = w;
+                    this.height = h;
+                    resizeListeners.removeIf(wr -> wr.get() == null);
+                    resizeListeners.forEach(wr -> {
+                        ResizedListener l = wr.get();
+                        if (l != null) {
+                            l.resized(width, height);
+                        }
+                    });
                 }
-                this.width = w;
-                this.height = h;
-                resizeListeners.removeIf(wr -> wr.get() == null);
-                resizeListeners.forEach(wr -> {
-                    ResizedListener l = wr.get();
-                    if (l != null) {
-                        l.resized(width, height);
-                    }
-                });
+                application.fireResized(ww, wh);
             }
 
             int w() {
@@ -1957,7 +1967,7 @@ public abstract class Application {
             }
 
             private void checkSize() {
-                getElement().executeJs("$0.$server.resized($0.clientWidth,$0.clientHeight);");
+                executeJS("sendSize");
             }
 
             Registration addContentResizedListener(ResizedListener listener) {

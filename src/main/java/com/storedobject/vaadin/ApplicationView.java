@@ -1,6 +1,9 @@
 package com.storedobject.vaadin;
 
+import com.storedobject.helper.ID;
+import com.storedobject.helper.LitComponent;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
@@ -18,10 +21,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * The class that defines the content view of the {@link Application}. An implementation of this class with all the
- * necessary annotations (minimally, root {@link com.vaadin.flow.router.Route} must be there. Others such as
- * {@link com.vaadin.flow.component.page.Push}, {@link com.vaadin.flow.server.PWA},
- * {@link com.vaadin.flow.component.page.BodySize} etc. could be added.) is required for using as part of the
+ * The class that defines the content view of the {@link Application}. An implementation of this class with the
+ * root {@link com.vaadin.flow.router.Route} must be there. It is required for using as part of the
  * {@link Application} class.
  *
  * @see Application
@@ -38,12 +39,11 @@ public abstract class ApplicationView extends Composite<Component>
     Locale locale;
     private boolean firstTime = true;
     /**
-     * Query parameters. (Used by {@link Application}.
+     * Query parameters. Used by {@link Application}.
      */
     Map<String, String> queryParams;
-    private int deviceWidth = -1, deviceHeight = -1;
     private String url;
-    private final Span root = new Span();
+    private final Root root = new Root();
 
     /**
      * Default constructor.
@@ -73,7 +73,7 @@ public abstract class ApplicationView extends Composite<Component>
             if (layout != null) {
                 application.setMainView(this);
             }
-            receiveSize();
+            root.receiveInfo();
         }
     }
 
@@ -131,10 +131,7 @@ public abstract class ApplicationView extends Composite<Component>
      * @return Device height.
      */
     public int getDeviceHeight() {
-        if(deviceHeight < 0) {
-            receiveSize();
-        }
-        return deviceHeight;
+        return application.getDeviceHeight();
     }
 
     /**
@@ -143,10 +140,7 @@ public abstract class ApplicationView extends Composite<Component>
      * @return Device width.
      */
     public int getDeviceWidth() {
-        if(deviceWidth < 0) {
-            receiveSize();
-        }
-        return deviceWidth;
+        return application.getDeviceWidth();
     }
 
     /**
@@ -156,25 +150,13 @@ public abstract class ApplicationView extends Composite<Component>
      */
     public String getURL() {
         if(url == null) {
-            receiveSize();
+            root.receiveInfo();
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException ignored) {
+            }
         }
         return url;
-    }
-
-    @ClientCallable
-    private void info(String url, int width, int height) {
-        this.url = url;
-        if(width == this.deviceWidth && height == this.deviceHeight) {
-            return;
-        }
-        this.deviceWidth = width;
-        this.deviceHeight = height;
-        application.fireResized(width, height);
-    }
-
-    private void receiveSize() {
-        getElement().executeJs("$0.$server.info(window.location.href,window.innerWidth,window.innerHeight);",
-                getElement());
     }
 
     /**
@@ -231,5 +213,30 @@ public abstract class ApplicationView extends Composite<Component>
     @Override
     public String getPageTitle() {
         return application.getCaption();
+    }
+
+    @Tag("so-page-root")
+    @JsModule("./so/pageroot/pageroot.js")
+    private class Root extends LitComponent {
+
+        private Root() {
+            getElement().setProperty("idContent", "so" + ID.newID());
+        }
+
+        @ClientCallable
+        private void info(String url) {
+            ApplicationView.this.url = url;
+        }
+
+        public void add(Component screen) {
+            if(screen == null) {
+                return;
+            }
+            getElement().appendChild(screen.getElement());
+        }
+
+        private void receiveInfo() {
+            executeJS("sendInfo");
+        }
     }
 }
