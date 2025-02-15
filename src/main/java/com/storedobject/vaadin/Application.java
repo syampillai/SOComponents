@@ -1706,7 +1706,7 @@ public abstract class Application {
             boolean window = c instanceof Dialog;
             if(view.isHomeView() && homeView != null && !window) {
                 homeStack.add(homeView);
-                homeView.setVisible(false);
+                homeView.setVisibility(false);
                 homeView = null;
             }
             if(window && parent == null && stack.size() > 0) {
@@ -1749,7 +1749,7 @@ public abstract class Application {
                     content.getElement().appendChild(c.getElement());
                 }
             }
-            view.setVisible(true);
+            view.setVisibility(true);
             ApplicationMenuItem m = view.getMenuItem(() -> select(view));
             if(view.isHomeView()) {
                 if(!(view.getComponent() instanceof Dialog)) {
@@ -1828,7 +1828,7 @@ public abstract class Application {
                 if(stack.isEmpty()) {
                     if(homeView == null && !homeStack.isEmpty()) {
                         homeView = homeStack.remove(homeStack.size() - 1);
-                        homeView.setVisible(true);
+                        homeView.setVisibility(true);
                     }
                     runPending();
                 } else {
@@ -1873,7 +1873,7 @@ public abstract class Application {
         }
 
         private void hideAllContent(View except) {
-            stack.forEach(v -> v.setVisible(v == except));
+            stack.forEach(v -> v.setVisibility(v == except));
             if(except != null) {
                 applicationView.setLayoutVisible(!isFS(except));
             }

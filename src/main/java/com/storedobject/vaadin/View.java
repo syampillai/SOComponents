@@ -264,7 +264,7 @@ public class View implements ExecutableView {
      *
      * @param visible Visibility of the view
      */
-    void setVisible(boolean visible) {
+    void setVisibility(boolean visible) {
         if(component instanceof Dialog) {
             internalWindowAction = true;
             if(visible) {
