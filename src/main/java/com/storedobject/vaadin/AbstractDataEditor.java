@@ -375,8 +375,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
         protected Method getFieldGetMethod(String fieldName) {
             Method m;
             try {
-                m = getFieldCreator().getFieldGetMethod(fieldName);
-                if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                m = checkMethod(getFieldCreator().getFieldGetMethod(fieldName));
+                if (m != null) {
                     return m;
                 }
             } catch (FieldError ignored) {
@@ -386,14 +386,17 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
             } catch (FieldError ignored) {
             }
             try {
-                m = AbstractDataEditor.this.getClass().getMethod("get" + fieldName);
-                if (!m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                m =checkMethod(AbstractDataEditor.this.getClass().getMethod("get" + fieldName));
+                if (m != null) {
                     return m;
                 }
             } catch (NoSuchMethodException ignored) {
             }
             try {
-                return AbstractDataEditor.this.getClass().getMethod("is" + fieldName);
+                m = checkMethod(AbstractDataEditor.this.getClass().getMethod("is" + fieldName));
+                if(m != null) {
+                    return m;
+                }
             } catch (NoSuchMethodException ignored) {
             }
             return super.getFieldGetMethod(fieldName);
@@ -403,8 +406,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
         protected Method getFieldSetMethod(String fieldName, Method getMethod) {
             Method m;
             try {
-                m = getFieldCreator().getFieldSetMethod(fieldName, getMethod);
-                if (m != null && !m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                m = checkMethod(getFieldCreator().getFieldSetMethod(fieldName, getMethod));
+                if (m != null) {
                     return m;
                 }
             } catch (FieldError ignored) {
@@ -416,8 +419,8 @@ public abstract class AbstractDataEditor<T> extends AbstractDataForm<T> {
             if(!"Caption".equals(fieldName)) {
                 Class<?>[] params = new Class[]{getMethod.getReturnType()};
                 try {
-                    m = AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params);
-                    if(!m.getDeclaringClass().isAssignableFrom(AbstractDataEditor.class)) {
+                    m = checkMethod(AbstractDataEditor.this.getClass().getMethod("set" + fieldName, params));
+                    if(m != null) {
                         return m;
                     }
                 } catch(NoSuchMethodException ignored) {

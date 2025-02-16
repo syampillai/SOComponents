@@ -208,7 +208,7 @@ public class Data<T> extends HashMap<String, Object> {
     private <F> DataValidators<T, F> validator(HasValue<?, F> field) {
         @SuppressWarnings("unchecked") DataValidators<T, F> dv = (DataValidators<T, F>) validators.get(field);
         if(dv == null) {
-            dv = new DataValidators<>(field, errorText());
+            dv = new DataValidators<>(binder, field, errorText());
             validators.put(field, dv);
         }
         return dv;
@@ -598,20 +598,19 @@ public class Data<T> extends HashMap<String, Object> {
 
     private static class DataValidators<D, F> extends ArrayList<Validator<F>> implements Validator<D> {
 
-        //private final ValueContext valueContext; // TODO - This needs to be checked further.
+        private final ValueContext valueContext;
         private final HasValue<?, F> field;
 
-        private DataValidators(HasValue<?, F> field, Alert errorText) {
+        private DataValidators(Binder binder, HasValue<?, F> field, Alert errorText) {
             this.field = field;
-            //valueContext = new ValueContext(field instanceof Component ? (Component)field : errorText, field);
+            valueContext = new ValueContext(binder, field instanceof Component ? (Component)field : errorText, field);
         }
 
         @Override
         public ValidationResult apply(D data, ValueContext valueContext) {
             ValidationResult vr = OK;
             for(Validator<F> v: this) {
-                //vr = v.apply(field.getValue(), this.valueContext);
-                vr = v.apply(field.getValue(), valueContext);
+                vr = v.apply(field.getValue(), this.valueContext);
                 if(vr.getErrorLevel().isPresent()) {
                     break;
                 }

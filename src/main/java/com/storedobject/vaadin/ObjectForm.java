@@ -341,15 +341,21 @@ public class ObjectForm<D> extends AbstractForm<D> {
     /**
      * Get the field's "get" method. The default implementation checks for both getXXX and isXXX methods.
      * @param fieldName Name of the field
-     * @return Field' "get" method (if method is found, it will return <code>null</code>).
+     * @return Field's "get" method (if method is found, it will return <code>null</code>).
      */
     protected Method getFieldGetMethod(String fieldName) {
         try {
-            return this.getClass().getMethod("get" + fieldName);
+            Method m = checkMethod(this.getClass().getMethod("get" + fieldName));
+            if(m != null) {
+                return m;
+            }
         } catch (NoSuchMethodException ignored) {
         }
         try {
-            return this.getClass().getMethod("is" + fieldName);
+            Method m = checkMethod(this.getClass().getMethod("is" + fieldName));
+            if(m != null) {
+                return m;
+            }
         } catch (NoSuchMethodException ignored) {
         }
         try {
@@ -363,16 +369,28 @@ public class ObjectForm<D> extends AbstractForm<D> {
         return null;
     }
 
+    Method checkMethod(Method m) {
+        if(m == null) {
+            return null;
+        }
+        Class<?> dc = m.getDeclaringClass();
+        return  (dc == this.getClass() || dc == AbstractDataEditor.DForm.class
+                || dc.isAssignableFrom(AbstractDataEditor.class) || dc.getName().startsWith("com.vaadin.")) ? null : m;
+    }
+
     /**
      * Get the field's "set" method. The default implementation checks the availability of setXXX method.
      * @param fieldName Name of the field
      * @param getMethod "get" method of this field (determined through {@link #getFieldGetMethod(String)})
-     * @return Field' "set" method (if method is found, it will return <code>null</code>).
+     * @return Field's "set" method (if method is found, it will return <code>null</code>).
      */
     protected Method getFieldSetMethod(String fieldName, Method getMethod) {
         Class<?>[] params = new Class[] { getMethod.getReturnType() };
         try {
-            return this.getClass().getMethod("set" + fieldName, params);
+            Method m = checkMethod(this.getClass().getMethod("set" + fieldName, params));
+            if(m != null) {
+                return m;
+            }
         } catch (NoSuchMethodException ignored) {
         }
         try {
