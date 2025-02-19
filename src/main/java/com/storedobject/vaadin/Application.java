@@ -1742,7 +1742,9 @@ public abstract class Application {
                 fs = isFS(view, parent);
             }
             applicationView.setLayoutVisible(!fs);
-            if(!(c instanceof Dialog)) {
+            if(c instanceof Dialog) {
+                UI.getCurrent().add(c);
+            } else {
                 if(fs) {
                     applicationView.add(c);
                 } else {

@@ -265,12 +265,12 @@ public class View implements ExecutableView {
      * @param visible Visibility of the view
      */
     void setVisibility(boolean visible) {
-        if(component instanceof Dialog) {
+        if(component instanceof Dialog d) {
             internalWindowAction = true;
             if(visible) {
-                ((Dialog) component).open();
+                d.open();
             } else {
-                ((Dialog) component).close();
+                d.close();
             }
         } else {
             component.setVisible(visible);
