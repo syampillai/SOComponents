@@ -163,5 +163,8 @@ public final class GridColumnDetail<T> {
      */
     public void setLabel(String label) {
         this.label = label;
+        if(contextMenu != null) {
+            contextMenu.setText(label);
+        }
     }
 }
