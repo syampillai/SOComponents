@@ -1170,6 +1170,16 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
             if(configureMenu == null) {
                 configureMenu = new ColumnToggleContextMenu();
                 getColumns().forEach(c -> configureMenu.addColumn(c));
+            } else {
+                getColumns().forEach(c -> {
+                    GridColumnDetail<T> cd = cd(c.getKey());
+                    if (cd != null) {
+                        MenuItem mi = cd.getContextMenu();
+                        if (mi != null) {
+                            mi.setChecked(c.isVisible());
+                        }
+                    }
+                });
             }
         }
 
@@ -1182,13 +1192,18 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
             void addColumn(Grid.Column<T> column) {
                 GridColumnDetail<T> columnDetail = columnDetails.get(column.getKey());
+                if(columnDetail == null) {
+                    return;
+                }
                 MenuItem menuItem = addItem(columnDetail.getLabel(), e -> {
-                    MenuItem mi = e.getSource();
-                    boolean checked = mi.isChecked();
-                    if(checked == column.isVisible()) {
-                        return;
+                    if(e.isFromClient()) {
+                        MenuItem mi = e.getSource();
+                        boolean checked = mi.isChecked();
+                        if (checked == column.isVisible()) {
+                            return;
+                        }
+                        column.setVisible(checked);
                     }
-                    column.setVisible(checked);
                 });
                 columnDetail.setContextMenu(menuItem);
                 menuItem.setCheckable(true);

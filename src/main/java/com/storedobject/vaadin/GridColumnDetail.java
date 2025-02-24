@@ -122,6 +122,15 @@ public final class GridColumnDetail<T> {
     }
 
     /**
+     * Get the context menu item associated with this. (Used by the configurator).
+     *
+     * @return The context menu item. It could be null if not yet set.
+     */
+    MenuItem getContextMenu() {
+        return contextMenu;
+    }
+
+    /**
      * Set the column visible.
      * <p>Note: This is the recommended way to make the column visible because it will update the context menu
      * of the configurator too.</p>
