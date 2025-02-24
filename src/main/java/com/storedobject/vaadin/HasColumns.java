@@ -1182,7 +1182,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
             void addColumn(Grid.Column<T> column) {
                 GridColumnDetail<T> columnDetail = columnDetails.get(column.getKey());
-                MenuItem menuItem = addItem(columnDetail.getCaption(), e -> {
+                MenuItem menuItem = addItem(columnDetail.getLabel(), e -> {
                     MenuItem mi = e.getSource();
                     boolean checked = mi.isChecked();
                     if(checked == column.isVisible()) {

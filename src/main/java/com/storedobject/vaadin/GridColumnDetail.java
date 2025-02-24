@@ -14,7 +14,7 @@ import java.util.function.Function;
 public final class GridColumnDetail<T> {
 
     private Grid.Column<T> column;
-    private String caption;
+    private String caption, label;
     private Function<T, ?> valueFunction;
     private Class<?> valueType;
     private MenuItem contextMenu;
@@ -66,7 +66,7 @@ public final class GridColumnDetail<T> {
 
     /**
      * Get the function that can compute the rendering value associated with column. For multivalued columns,
-     * the function returns a array of values.
+     * the function returns an array of values.
      *
      * @return Value function.
      */
@@ -142,5 +142,26 @@ public final class GridColumnDetail<T> {
         column.setVisible(visible);
         setVisible(visible);
         column.getGrid().recalculateColumnWidths();
+    }
+
+    /**
+     * Retrieves the label of the grid column. If the label is not set (null),
+     * it returns the caption instead.
+     * <p>Note: Label is used as the menu label inside the {@link HasColumns#getConfigureButton()}'s menu.</p>
+     *
+     * @return The label of the grid column, or the caption if the name is null.
+     */
+    public String getLabel() {
+        return label == null ? caption : label;
+    }
+
+    /**
+     * Sets the label of the grid column.
+     * <p>Note: Label is used as the menu label inside the {@link HasColumns#getConfigureButton()}'s menu.</p>
+     *
+     * @param label The Label to set for the grid column.
+     */
+    public void setLabel(String label) {
+        this.label = label;
     }
 }
