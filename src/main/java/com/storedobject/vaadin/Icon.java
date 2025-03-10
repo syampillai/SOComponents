@@ -44,7 +44,8 @@ public class Icon extends Composite<Component> implements HasStyle, HasIcon, Has
     }
 
     /**
-     * Create from an Iron icon.
+     * Create from an icon from the name. It could specify the collection name too. See {@link #setIcon(String)}.
+     *
      * @param icon Name of the Iron icon
      */
     public Icon(String icon) {
@@ -98,7 +99,24 @@ public class Icon extends Composite<Component> implements HasStyle, HasIcon, Has
                 return new EmptyIcon();
             }
             Class<? extends IconInterface> iClass = iconCollections.get(icon.substring(0, icon.lastIndexOf(':')));
+            if(iClass == null) {
+                return new EmptyIcon();
+            }
             ii = create(iClass);
+            if(ii instanceof VIcon) {
+                String name = icon.substring(icon.lastIndexOf(':') + 1).toUpperCase()
+                        .replace('-', '_');
+                boolean found = false;
+                for(VaadinIcon vi: VaadinIcon.values()) {
+                    if(vi.name().equals(name)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found) {
+                    return new EmptyIcon();
+                }
+            }
             ii.setIcon(icon);
         }
         return ii;

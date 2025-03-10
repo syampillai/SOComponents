@@ -10,7 +10,16 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 public interface HasIcon extends HasElement {
 
     /**
-     * Set the icon
+     * Set the icon name.
+     * <p>In addition to Vaadin's icons, icons from
+     * <a href="https://www.webcomponents.org/element/@polymer/iron-icons/demo/demo/index.html">Polymer Iron Icons</a>
+     * are included.
+     * <p>Note: The name could be structured to denote collection too. Available collections are "vaadin", "icons",
+     * "av", "communication", "device", "editor", "hardware", "image", "maps", "notifications", "social", and "places".
+     * For example, if you want to use the "bluetooth" icon from the "device" collection - </p>
+     * <code>
+     * new Icon("device:bluetooth");
+     *</code>
      * @param icon Name of the Iron icon to set
      */
     default void setIcon(String icon) {
