@@ -18,7 +18,9 @@ public interface HasIcon extends HasElement {
      * "av", "communication", "device", "editor", "hardware", "image", "maps", "notifications", "social", and "places".
      * For example, if you want to use the "bluetooth" icon from the "device" collection - </p>
      * <code>
-     * new Icon("device:bluetooth");
+     *     Icon icon = new Icon("device:bluetooth");
+     *     OR
+     *     icon.setIcon("device:bluetooth");
      *</code>
      * @param icon Name of the Iron icon to set
      */
