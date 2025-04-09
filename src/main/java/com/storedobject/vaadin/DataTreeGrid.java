@@ -171,14 +171,28 @@ public class DataTreeGrid<T> extends TreeGrid<T> implements HasColumns<T> {
             return null;
         }
         soGrid.treeBuilt(columnName);
-        Column<T> column = addColumn(LitRenderer.<T>of("<vaadin-grid-tree-toggle " +
-                        "leaf='[[item.leaf]]' expanded='{{expanded}}' level='[[level]]'>" +
-                        "<span inner-h-t-m-l=\"[[item.html]]\"></span>" +
-                        "</vaadin-grid-tree-toggle>").
-                withProperty("leaf", item -> !getDataCommunicator().hasChildren(item)).
-                withProperty("html",
-                        item -> Objects.requireNonNull(ApplicationEnvironment.get())
-                                .toDisplay(htmlFunction.apply(item))));
+        Column<T> column = super.addColumn(
+                LitRenderer.<T>of("""
+        <vaadin-grid-tree-toggle 
+            @click=${onClick}
+            .leaf=${!item.children}
+            .expanded=${model.expanded}
+            .level=${model.level}>
+            <div .innerHTML=${item.html} style="display: inline-block"></div>
+        </vaadin-grid-tree-toggle>
+        """).withProperty("children", item -> getDataCommunicator().hasChildren(item))
+                        .withProperty("html", item ->
+                                Objects.requireNonNull(ApplicationEnvironment.get()).toDisplay(htmlFunction.apply(item)))
+                        .withFunction("onClick", item -> {
+                            if (getDataCommunicator().hasChildren(item)) {
+                                if (isExpanded(item)) {
+                                    collapse(List.of(item));
+                                } else {
+                                    expand(List.of(item));
+                                }
+                            }
+                        })
+        );
         soGrid.acceptColumn(column, columnName);
         return column;
     }

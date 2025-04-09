@@ -5,22 +5,25 @@
 
     <groupId>com.storedobject.vaadin</groupId>
     <artifactId>so-components</artifactId>
-    <version>12.0.6</version>
+    <version>13.0.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>24.6.6</vaadin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java-version>17</java-version>
-        <maven.compiler.release>${java-version}</maven.compiler.release>
-        <maven-compiler-plugin-version>3.12.1</maven-compiler-plugin-version>
-        <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
+        <vaadin.version>24.7.1</vaadin.version>
+        <java-version>21</java-version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <maven-compiler-plugin-version>3.14.0</maven-compiler-plugin-version>
+        <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
+        <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <maven-resources-plugin-version>3.3.1</maven-resources-plugin-version>
-        <maven-javadoc-plugin-version>3.6.3</maven-javadoc-plugin-version>
-        <maven-source-plugin-version>3.3.0</maven-source-plugin-version>
-        <maven-assembly-plugin-version>3.6.0</maven-assembly-plugin-version>
+        <maven-javadoc-plugin-version>3.11.2</maven-javadoc-plugin-version>
+        <maven-source-plugin-version>3.3.1</maven-source-plugin-version>
+        <maven-assembly-plugin-version>3.7.1</maven-assembly-plugin-version>
+        <maven-shade-plugin-version>3.6.0</maven-shade-plugin-version>
+        <maven-dependency-plugin-version>3.8.1</maven-dependency-plugin-version>
+        <jackson-version>2.18.2</jackson-version>
+        <batik-version>1.18</batik-version>
         <so-helper-version>4.0.0</so-helper-version>
     </properties>
 
@@ -73,6 +76,23 @@
 
     <dependencies>
 
+        <!-- Enforcing latest versions -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.17.0</version>
+        </dependency>
+
         <!-- Vaadin core dependencies -->
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -101,21 +121,11 @@
             <version>23.3.2</version>
         </dependency>
 
-        <!-- Batik library for SVG image support -->
+        <!-- Batik library for SVG image support (If you don't want all, include only the ones needed for SVG in your POM file) -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-svggen</artifactId>
-            <version>1.17</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-dom</artifactId>
-            <version>1.17</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-codec</artifactId>
-            <version>1.17</version>
+            <artifactId>batik-all</artifactId>
+            <version>${batik-version}</version>
         </dependency>
 
     </dependencies>
