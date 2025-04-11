@@ -111,7 +111,7 @@
         <dependency>
             <groupId>com.storedobject.helper</groupId>
             <artifactId>so-helper</artifactId>
-            <version>4.0.0</version>
+            <version>4.1.0</version>
         </dependency>
 
         <!-- Vaadin add-on for text input formatting -->

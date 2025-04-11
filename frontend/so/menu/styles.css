@@ -8,19 +8,20 @@
     border-width: 2px;
     border-color: var(--so-menu-border-color, var(--lumo-contrast-20pct));
     border-style: solid;
+    background: var(--so-menu-background, var(--lumo-base-color));
 }
 
 .so-menu:hover {
-    background-color: var(--so-menu-hover-background, var(--lumo-primary-color-50pct));
+    background: var(--so-menu-hover-background, var(--lumo-primary-color-50pct));
     color: var(--so-menu-hover-color, var(--lumo-primary-contrast-color));
 }
 
 .so-menu-active {
-    background-color: var(--so-menu-active-background, var(--lumo-primary-contrast-color));
+    background: var(--so-menu-active-background, var(--lumo-primary-contrast-color));
     color: var(--so-menu-active-color, var(--lumo-primary-text-color));
 }
 
 .so-menu-hilite {
-    background-color: var(--so-menu-hilite-background, var(--lumo-primary-color));
+    background: var(--so-menu-hilite-background, var(--lumo-primary-color));
     color: var(--so-menu-hilite-color, var(--lumo-primary-contrast-color));
 }
