@@ -134,9 +134,10 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
     }
 
     /**
-     * Set items.
+     * Sets the items for the combo box using the provided items.
      *
-     * @param items Items.
+     * @param items The items to be set in the combo box.
+     * @return The updated ComboBoxListDataView representing the current state of the combo box data.
      */
     @SafeVarargs
     @Override
@@ -145,18 +146,20 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
     }
 
     /**
-     * Remove items.
+     * Removes the specified collection of items from the ComboBox's data view.
      *
-     * @param items Items.
+     * @param items A collection of items to be removed.
+     * @return The updated ComboBoxListDataView after removing the specified items.
      */
     public ComboBoxListDataView<T> removeItems(Collection<T> items) {
         return (ComboBoxListDataView<T>) getListDataView().removeItems(items);
     }
 
     /**
-     * Remove items.
+     * Removes the specified items from the data view of the combo box.
      *
-     * @param items Items.
+     * @param items An array of items to be removed.
+     * @return The updated ComboBoxListDataView after removing the specified items.
      */
     @SafeVarargs
     public final ComboBoxListDataView<T> removeItems(T... items) {
@@ -164,27 +167,30 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
     }
 
     /**
-     * Remove items.
+     * Removes items from the ComboBoxListDataView that match the specified stream of items.
      *
-     * @param items Items.
+     * @param items A stream of items to be removed from the ComboBoxListDataView.
+     * @return The updated ComboBoxListDataView instance after items have been removed.
      */
     public ComboBoxListDataView<T> removeItems(Stream<T> items) {
         return addItems(items.collect(Collectors.toList()));
     }
 
     /**
-     * Add items.
+     * Adds a collection of items to the ComboBox's data view.
      *
-     * @param items Items.
+     * @param items The collection of items to be added.
+     * @return An instance of ComboBoxListDataView representing the updated data view of the ComboBox.
      */
     public ComboBoxListDataView<T> addItems(Collection<T> items) {
         return (ComboBoxListDataView<T>) getListDataView().addItems(items);
     }
 
     /**
-     * Add items.
+     * Adds the specified items to the ComboBox list data view.
      *
-     * @param items Items.
+     * @param items Items to be added to the ComboBox.
+     * @return A ComboBoxListDataView instance for further operations.
      */
     @SafeVarargs
     public final ComboBoxListDataView<T> addItems(T... items) {
@@ -192,9 +198,10 @@ public class ComboField<T> extends ComboBox<T> implements SpellCheck {
     }
 
     /**
-     * Add items.
+     * Adds the given items represented as a Stream to the combo box.
      *
-     * @param items Items.
+     * @param items Stream of items to be added to the combo box.
+     * @return The updated data view of the combo box after adding the items.
      */
     public ComboBoxListDataView<T> addItems(Stream<T> items) {
         return addItems(items.collect(Collectors.toList()));

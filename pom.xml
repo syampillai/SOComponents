@@ -3,28 +3,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.storedobject.vaadin</groupId>
+    <parent>
+        <groupId>com.storedobject</groupId>
+        <artifactId>so-vaadinpom</artifactId>
+        <version>24.7.2</version>
+    </parent>
+
     <artifactId>so-components</artifactId>
-    <version>13.0.0</version>
+    <version>14.0.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <vaadin.version>24.7.1</vaadin.version>
-        <java-version>21</java-version>
-        <maven.compiler.release>21</maven.compiler.release>
-        <maven-compiler-plugin-version>3.14.0</maven-compiler-plugin-version>
-        <maven-jar-plugin-version>3.4.2</maven-jar-plugin-version>
-        <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
-        <maven-resources-plugin-version>3.3.1</maven-resources-plugin-version>
-        <maven-javadoc-plugin-version>3.11.2</maven-javadoc-plugin-version>
-        <maven-source-plugin-version>3.3.1</maven-source-plugin-version>
-        <maven-assembly-plugin-version>3.7.1</maven-assembly-plugin-version>
-        <maven-shade-plugin-version>3.6.0</maven-shade-plugin-version>
-        <maven-dependency-plugin-version>3.8.1</maven-dependency-plugin-version>
-        <jackson-version>2.18.2</jackson-version>
-        <batik-version>1.18</batik-version>
-        <so-helper-version>4.0.0</so-helper-version>
+        <so-helper-version>5.0.0</so-helper-version>
     </properties>
 
     <organization>
@@ -39,66 +30,14 @@
         </license>
     </licenses>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-bom</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>${vaadin.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <repositories>
         <repository>
-            <id>Vaadin pre-release repository</id>
-            <url>http://maven.vaadin.com/vaadin-prereleases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>vaadin-addons</id>
-            <url>https://maven.vaadin.com/vaadin-addons</url>
+            <id>so-maven</id>
+            <url>https://storedobject.com/maven</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>Vaadin pre-release repository</id>
-            <url>http://maven.vaadin.com/vaadin-prereleases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
-
-        <!-- Enforcing latest versions -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.13.0</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.17.0</version>
-        </dependency>
-
-        <!-- Vaadin core dependencies -->
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-core</artifactId>
-        </dependency>
-
         <!-- Java Servlet -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -109,9 +48,9 @@
 
         <!-- Vaadin add-on SO Helper -->
         <dependency>
-            <groupId>com.storedobject.helper</groupId>
+            <groupId>com.storedobject</groupId>
             <artifactId>so-helper</artifactId>
-            <version>4.1.0</version>
+            <version>${so-helper-version}</version>
         </dependency>
 
         <!-- Vaadin add-on for text input formatting -->
@@ -127,132 +66,5 @@
             <artifactId>batik-all</artifactId>
             <version>${batik-version}</version>
         </dependency>
-
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven-jar-plugin-version}</version>
-                <configuration>
-                    <archive>
-                        <index>true</index>
-                        <manifest>
-                            <addClasspath>false</addClasspath>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Vaadin-Package-Version>1</Vaadin-Package-Version>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-maven-plugin</artifactId>
-                <version>${vaadin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-frontend</goal>
-                            <goal>build-frontend</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <pnpmEnable>true</pnpmEnable>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>directory</id>
-            <build>
-                <plugins>
-                    <!-- Compile -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>${maven-compiler-plugin-version}</version>
-                        <configuration>
-                            <source>${java-version}</source>
-                            <target>${java-version}</target>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>${maven-assembly-plugin-version}</version>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>assembly/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <phase>install</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin-version}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin-version}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <source>${java-version}</source>
-                            <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                            <quiet>true</quiet>
-                            <!--
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                            -->
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>${maven-jar-plugin-version}</version>
-                        <configuration>
-                            <!-- Generated file that shouldn't be included in add-ons -->
-                            <excludes>
-                                <exclude>META-INF/VAADIN/</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

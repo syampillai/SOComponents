@@ -114,10 +114,21 @@ public abstract class ApplicationView extends Composite<Component>
         return root;
     }
 
+    /**
+     * Adds a given component to the root container of the application view.
+     *
+     * @param screen The component to be added to the root container.
+     *               If the component is null, no action is performed.
+     */
     public void add(Component screen) {
         root.add(screen);
     }
 
+    /**
+     * Sets the visibility of the layout's main component.
+     *
+     * @param visible A boolean indicating whether the layout's main component should be visible (true) or hidden (false).
+     */
     public void setLayoutVisible(boolean visible) {
         Component c = layout.getComponent();
         if(c.isVisible() != visible) {

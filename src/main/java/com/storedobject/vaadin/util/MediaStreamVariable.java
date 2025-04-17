@@ -5,13 +5,25 @@ import com.vaadin.flow.server.StreamVariable;
 
 import java.io.OutputStream;
 
+/**
+ * The MediaStreamVariable class implements the StreamVariable interface to handle
+ * streaming data with associated MIME type provided by a MediaCapture.DataReceiver.
+ * It manages the output stream for the streaming data and handles streaming events.
+ *
+ * @author Syam
+ */
 public class MediaStreamVariable implements StreamVariable {
 
     private String mime;
-    private MediaCapture.DataReceiver receiver;
+    private final MediaCapture.DataReceiver receiver;
     private OutputStream out;
     private boolean aborted = false;
 
+    /**
+     * Constructs a MediaStreamVariable instance with the specified MediaCapture.DataReceiver.
+     *
+     * @param receiver the MediaCapture.DataReceiver to receive streaming data
+     */
     public MediaStreamVariable(MediaCapture.DataReceiver receiver) {
         this.receiver = receiver;
     }
@@ -63,6 +75,11 @@ public class MediaStreamVariable implements StreamVariable {
         mime = event.getMimeType();
     }
 
+    /**
+     * Returns the MIME type associated with the streaming media.
+     *
+     * @return the MIME type as a String
+     */
     public String getMime() {
         return mime;
     }

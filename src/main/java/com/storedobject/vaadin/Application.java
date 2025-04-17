@@ -27,58 +27,42 @@ import java.util.stream.Stream;
  * <code>
  * public class Demo extends Application {
  *
- *    {@literal @}Override
- *     protected ApplicationLayout createLayout() {
- *         return new MyLayout();
- *     }
+ *   {@literal @}Override
+ *   protected ApplicationLayout createLayout() {
+ *     return new AppFrame();
+ *   }
  *
- *    {@literal @}Route("")
- *    public static class DemoView extends ApplicationView {
- *
- *       {@literal @}Override
- *       protected Application createApplication() {
- *           return new Demo();
- *       }
- *    }
- * }
- *
- * public class MyLayout extends SplitLayout implements ApplicationLayout, ApplicationMenu {
- *
- *     public MyLayout() {
- *         super(new Div(), new Div());
- *         setSplitterPosition(15);
- *         setHeight("100vh");
- *         setWidth("100vw");
- *         getPrimaryComponent().getElement().getStyle().set("background-color", "lightblue");
- *     }
- *
- *     {@literal @}Override
- *     public Component getComponent() {
- *         return this;
- *     }
- *
- *     {@literal @}Override
- *     public ApplicationMenu getMenu() {
- *         return this;
- *     }
- *
- *     {@literal @}Override
- *     public HasComponents getMenuPane() {
- *         return (Div)getPrimaryComponent();
- *     }
- *
- *     {@literal @}Override
- *     public void getContent(Component content) {
- *         addToSecondary(content);
- *     }
+ *   private static class AppFrame extends ApplicationFrame {
  *
  *     {@literal @}Override
  *     public void drawMenu(Application application) {
- *         getMenuPane().add(new HtmlComponent("hr"));
- *         add(application.createMenuItem(...));
- *         add(application.createMenuItem(...));
- *         add(application.createMenuItem(...));
+ *       setCaption("Sample Application  Ver 1.0.4");
+ *       addToNavbar(new SpeakerButton());
+ *       ApplicationMenu menu = getMenu();
+ *       ApplicationMenuItem ami;
+ *       ami = application.createMenuItem("One", () -> Notification.show("Hello World!"));
+ *       menu.add(ami);
+ *       ami = application.createMenuItem("Two", () -> Notification.show("Hello World 2!"));
+ *       menu.add(ami);
+ *       ami = application.createMenuItem("Greeting", () -> {
+ *         Application a = Application.get();
+ *         a.speak("Hello, how are you?");
+ *         if(!a.isSpeakerOn()) {
+ *           Notification.show("Speaker is off! Click on the speaker button to turn it on.");
+ *         }
+ *       });
+ *       menu.add(ami);
  *     }
+ *   }
+ *
+ *   {@literal @}Route("")
+ *   public static class AppView extends ApplicationView {
+ *
+ *     {@literal @}Override
+ *     protected Application createApplication() {
+ *       return new Demo();
+ *     }
+ *   }
  * }
  * </code>
  * </pre>
@@ -88,7 +72,7 @@ import java.util.stream.Stream;
  * action associated with it will be executed. One may associate any <code>Runnable</code> action with a 'menu item' such as generating a report or
  * invoking a {@link com.storedobject.vaadin.View}. If a {@link com.storedobject.vaadin.View} is invoked, its associated 'view component' is
  * displayed in the 'content' area and its 'caption' is inserted as a new 'menu item' in the 'menu' area. The 'content' area displays only the 'active
- * view' (currently selected or executed view) and hides all previously displayed 'views' but any those 'views' can be made active again
+ * view' (currently selected or executed view) and hides all previously displayed 'views' but any of those 'views' can be made active again
  * by licking on its respective 'menu item' created from its 'caption'.
  *
  * @author Syam
@@ -403,6 +387,11 @@ public abstract class Application {
        applicationView.setLocale(locale);
     }
 
+    /**
+     * Retrieves the current locale used in the application view.
+     *
+     * @return the Locale object representing the current locale.
+     */
     public Locale getLocale() {
         return applicationView.locale;
     }

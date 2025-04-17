@@ -8,15 +8,45 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.shared.Registration;
 import elemental.json.JsonObject;
 
+/**
+ * A class that enables handling and notifying click events for a specified component.
+ * The class adds an event listener to the component's associated {@code Element} to capture
+ * click events with detailed event data, and notifies registered listeners when a click event occurs.
+ * This provides an enhanced mechanism to manage and process click events on components.
+ *
+ * The class uses {@code EnhancedClickEvent} to encapsulate detailed click event information,
+ * such as screen coordinates, client coordinates, component-relative coordinates, button state,
+ * and additional keyboard modifier states (e.g., Ctrl, Shift, Alt, Meta).
+ *
+ * This class implements the {@code ClickNotifier} interface, allowing the addition and removal
+ * of click listeners dynamically.
+ *
+ * @author Syam
+ */
 public class ElementClick implements ClickNotifier {
 
     private final Component component;
     private final Listeners listeners = new ClickListeners();
 
+    /**
+     * Constructor to initialize an ElementClick instance with a specified component.
+     *
+     * @param component the component to which the click event listener will be attached.
+     */
     public ElementClick(Component component) {
         this(component, null);
     }
 
+    /**
+     * Constructs an instance of the ElementClick class. Sets up a click event listener for the specified element,
+     * or resolves the element from the given component if the element is null. The event listener captures various
+     * click data such as position, button, and modifier keys.
+     *
+     * @param component the component associated with the click event. If the element is null, the component's element
+     *                  or internal element (if the component is an instance of InternalElement) is used.
+     * @param element the specific element to which the click event listener is attached. If null, the element
+     *                is resolved from the provided component.
+     */
     public ElementClick(Component component, Element element) {
         this.component = component;
         if(element == null) {

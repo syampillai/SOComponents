@@ -7,6 +7,15 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * A custom field extending {@link MultiSelectComboBox} to support token-based multi-selection of items.
+ * This class provides various utility methods to manipulate and manage the selected values and items available
+ * for selection. It also implements the {@link RequiredField} interface to allow marking the field as required.
+ *
+ * @param <T> The type of items in the selection.
+ *
+ * @author Syam
+ */
 public class TokensField<T> extends MultiSelectComboBox<T> implements RequiredField {
     
     /**
@@ -149,6 +158,11 @@ public class TokensField<T> extends MultiSelectComboBox<T> implements RequiredFi
         super.setValue(value);
     }
 
+    /**
+     * Sets the value by converting the provided collection into a set and passing it to the {@code setValue} method of the parent class.
+     *
+     * @param value The collection of elements to set as the value.
+     */
     public void setValue(Collection<T> value) {
         setValue(new HashSet<>(value));
     }

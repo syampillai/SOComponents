@@ -5,16 +5,47 @@ import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.textfield.HasAutocomplete;
 
+/**
+ * Interface representing a component that can have a textual value along with additional
+ * features like size, text transformation, spell check, and autocomplete.
+ *
+ * @author Syam
+ */
 public interface HasTextValue extends HasSize, HasText, SpellCheck, HasAutocomplete {
 
+    /**
+     * Sets the textual value for the component.
+     *
+     * @param value the text value to be set
+     */
     void setValue(String value);
 
+    /**
+     * Retrieves the textual value associated with the component.
+     *
+     * @return the current value of the component as a String.
+     */
     String getValue();
 
+    /**
+     * Sets the minimum number of characters that can be entered into the specified component.
+     *
+     * @param width the minimum number of characters allowed
+     */
     void setMinLength(int width);
 
+    /**
+     * Sets the maximum length for the textual value of the component.
+     *
+     * @param width the maximum number of characters allowed
+     */
     void setMaxLength(int width);
 
+    /**
+     * Sets the pattern used to validate the input value.
+     *
+     * @param pattern the regular expression pattern that the input value must conform to
+     */
     void setPattern(String pattern);
 
     @Override

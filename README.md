@@ -3,6 +3,24 @@ A set of Vaadin Flow Components and Abstractions
 
 https://vaadin.com/directory/component/so-components
 
+Include this in the dependencies section of your POM file:
+```xml
+  <dependency>
+    <groupId>com.storedobject</groupId>
+    <artifactId>so-components</artifactId>
+    <version>14.0.0</version>
+  </dependency>
+```
+Also, include this in your repositories section:
+```xml
+<repositories>
+    <repository>
+        <id>so-maven</id>
+        <url>https://storedobject.com/maven</url>
+    </repository>
+</repositories>
+```
+
 ## Dependencies
 https://vaadin.com/directory/component/so-helper Ver 2.1.2 or later (Helper classes).
 

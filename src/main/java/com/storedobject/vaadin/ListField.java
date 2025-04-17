@@ -134,9 +134,10 @@ public class ListField<T> extends Select<T> implements SpellCheck, ValueRequired
     }
 
     /**
-     * Remove items.
+     * Removes the specified items from the current view.
      *
-     * @param items Items.
+     * @param items The collection of items to be removed from the view.
+     * @return The updated data view after removing the specified items.
      */
     public SelectListDataView<T> removeItems(Collection<T> items) {
         view.removeItems(items);
@@ -144,9 +145,10 @@ public class ListField<T> extends Select<T> implements SpellCheck, ValueRequired
     }
 
     /**
-     * Remove items.
+     * Removes the specified items from the list and updates the data view.
      *
-     * @param items Items.
+     * @param items Items to be removed.
+     * @return The updated data view after removing the items.
      */
     @SafeVarargs
     public final SelectListDataView<T> removeItems(T... items) {
@@ -154,9 +156,10 @@ public class ListField<T> extends Select<T> implements SpellCheck, ValueRequired
     }
 
     /**
-     * Remove items.
+     * Removes the specified items from the list and updates the view accordingly.
      *
-     * @param items Items.
+     * @param items Stream of items to be removed from the list.
+     * @return Updated data view after the removal of items.
      */
     public SelectListDataView<T> removeItems(Stream<T> items) {
         items.forEach(view::removeItem);
@@ -164,9 +167,10 @@ public class ListField<T> extends Select<T> implements SpellCheck, ValueRequired
     }
 
     /**
-     * Add items.
+     * Adds a collection of items to the view.
      *
-     * @param items Items.
+     * @param items The collection of items to be added.
+     * @return The view representing the updated list of items.
      */
     public SelectListDataView<T> addItems(Collection<T> items) {
         view.addItems(items);
@@ -174,9 +178,10 @@ public class ListField<T> extends Select<T> implements SpellCheck, ValueRequired
     }
 
     /**
-     * Add items.
+     * Adds the specified items to the view if they are not null.
      *
-     * @param items Items.
+     * @param items Items to be added to the view. Items that are null will be ignored.
+     * @return The updated data view after adding the items.
      */
     @SafeVarargs
     public final SelectListDataView<T> addItems(T... items) {
@@ -191,9 +196,10 @@ public class ListField<T> extends Select<T> implements SpellCheck, ValueRequired
     }
 
     /**
-     * Add items.
+     * Adds a stream of non-null items to the data view.
      *
-     * @param items Items.
+     * @param items A stream of items to be added. Null items in the stream will be filtered out.
+     * @return The updated data view after adding the items.
      */
     public SelectListDataView<T> addItems(Stream<T> items) {
         items.filter(Objects::nonNull).forEach(view::addItem);
