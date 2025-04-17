@@ -26,7 +26,7 @@ import java.net.InetAddress;
  */
 public class IPAddressTextField extends PatternField {
 
-    private static CustomStringBlockFormatter pattern =
+    private static final CustomStringBlockFormatter pattern =
             new CustomStringBlockFormatter(new int[] { 3, 3, 3, 3},
                     new String[] { ".", ".", ".", "." },
                     CustomStringBlockFormatter.ForceCase.NONE, "", true);
