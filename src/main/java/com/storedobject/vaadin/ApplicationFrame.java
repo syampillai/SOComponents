@@ -37,7 +37,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
     }
 
     /**
-     * Create the menu. The component of the menu should be added to appropriate place within this method.
+     * Create the menu. The component of the menu should be added to the appropriate place within this method.
      * The default implementation adds the menu to the "drawer" area along with the "menu searcher"
      * {@link #getMenuSearcher()} if one is available.
      *
@@ -118,7 +118,11 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
             }
         }
         super.onAttach(attachEvent);
-        styles("--so-header-background", getHeaderBackground(), "--so-header-color", getHeaderColor());
+        styles("--so-header-background", getHeaderBackground(),
+                "--so-header-color", getHeaderColor(),
+                "--so-menu-width", "12vw",
+                "--vaadin-app-layout-drawer-width", "var(--so-menu-width, 12vw)"
+        );
         resizeContent();
     }
 

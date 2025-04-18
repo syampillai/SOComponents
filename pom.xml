@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>so-components</artifactId>
-    <version>14.0.0</version>
+    <version>14.0.1</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 

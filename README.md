@@ -8,7 +8,7 @@ Include this in the dependencies section of your POM file:
   <dependency>
     <groupId>com.storedobject</groupId>
     <artifactId>so-components</artifactId>
-    <version>14.0.0</version>
+    <version>14.0.1</version>
   </dependency>
 ```
 Also, include this in your repositories section:
