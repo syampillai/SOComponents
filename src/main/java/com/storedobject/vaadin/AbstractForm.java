@@ -90,7 +90,7 @@ public abstract class AbstractForm<D> extends Composite<Component> {
 
     @Override
     public final Component getContent() {
-        return (Component) container;
+        return (Component) getContainer();
     }
 
     /**

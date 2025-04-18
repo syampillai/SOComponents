@@ -31,6 +31,11 @@ public class Demo extends Application {
                 }
             });
             menu.add(ami);
+            ami = application.createMenuItem("Person Form",
+                    () -> new PersonView().execute());
+            menu.add(ami);
+            ami = application.createMenuItem("Person Form (Cached)", new PersonView("Cached Person Form"));
+            menu.add(ami);
         }
     }
 
@@ -40,6 +45,17 @@ public class Demo extends Application {
         @Override
         protected Application createApplication() {
             return new Demo();
+        }
+    }
+
+    private static class PersonView extends View implements CloseableView {
+
+        public PersonView() {
+            this(null);
+        }
+
+        public PersonView(String caption) {
+            super(new PersonForm(), caption == null || caption.isBlank() ? "Person Details" : caption);
         }
     }
 }
