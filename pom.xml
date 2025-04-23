@@ -9,8 +9,9 @@
         <version>24.7.2</version>
     </parent>
 
+    <groupId>org.vaadin.addons.so</groupId>
     <artifactId>so-components</artifactId>
-    <version>14.0.1</version>
+    <version>14.0.2</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
@@ -48,9 +49,9 @@
 
         <!-- Vaadin add-on SO Helper -->
         <dependency>
-            <groupId>com.storedobject</groupId>
+            <groupId>org.vaadin.addons.so</groupId>
             <artifactId>so-helper</artifactId>
-            <version>${so-helper-version}</version>
+            <version>5.0.0</version>
         </dependency>
 
         <!-- Vaadin add-on for text input formatting -->
