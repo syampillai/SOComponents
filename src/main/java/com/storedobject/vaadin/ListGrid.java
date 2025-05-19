@@ -149,7 +149,6 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
     @Nonnull
     @Override
     public <T1> T1[] toArray(@Nonnull T1[] a) {
-        //noinspection SuspiciousToArrayCall
         return data.toArray(a);
     }
 
@@ -183,6 +182,7 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
         return data.removeAll(collection);
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean removeIf(Predicate<? super T> filter) {
         return data.removeIf(filter);
@@ -193,6 +193,7 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
         return data.retainAll(collection);
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public void replaceAll(UnaryOperator<T> operator) {
         data.replaceAll(operator);
@@ -268,6 +269,10 @@ public class ListGrid<T> extends DataGrid<T> implements List<T> {
      * @param filter Filter to set.
      */
     public void setViewFilter(Predicate<T> filter) {
+        if(filter == null) {
+            getDataProvider().setFilter(null);
+            return;
+        }
         getDataProvider().setFilter(filter::test);
     }
 
