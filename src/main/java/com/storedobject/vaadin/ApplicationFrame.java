@@ -120,7 +120,7 @@ public abstract class ApplicationFrame extends AppLayout implements ApplicationL
         super.onAttach(attachEvent);
         styles("--so-header-background", getHeaderBackground(),
                 "--so-header-color", getHeaderColor(),
-                "--so-menu-width", "12vw",
+                "--so-menu-width", "max(12vw,17em)",
                 "--vaadin-app-layout-drawer-width", "var(--so-menu-width, 12vw)"
         );
         resizeContent();
