@@ -34,7 +34,7 @@ public class SelectGrid<T> extends ListGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      */
     public SelectGrid(Class<T> objectClass, List<T> items) {
@@ -44,7 +44,7 @@ public class SelectGrid<T> extends ListGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      * @param columns Column names of the grid.
      */
@@ -55,7 +55,7 @@ public class SelectGrid<T> extends ListGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      * @param consumer Consumer to consume the selected item.
      */
@@ -66,20 +66,20 @@ public class SelectGrid<T> extends ListGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      * @param columns Column names of the grid.
      * @param consumer Consumer to consume the selected item.
      */
     public SelectGrid(Class<T> objectClass, List<T> items, Iterable<String> columns, Consumer<T> consumer) {
         //noinspection unchecked
-        this(objectClass, items, columns, o -> consumer.accept((T)o), false);
+        this(objectClass, items, columns, consumer == null ? null : o -> consumer.accept((T)o), false);
     }
 
     /**
      * For internal use only.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      * @param columns Column names of the grid.
      * @param consumer Consumer to consume the selected item.

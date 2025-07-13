@@ -16,7 +16,7 @@ public class MultiSelectGrid<T> extends SelectGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      */
     public MultiSelectGrid(Class<T> objectClass, List<T> items) {
@@ -26,7 +26,7 @@ public class MultiSelectGrid<T> extends SelectGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      * @param columns Column names of the grid.
      */
@@ -37,7 +37,7 @@ public class MultiSelectGrid<T> extends SelectGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      * @param consumer Consumer to consume the selected item.
      */
@@ -48,7 +48,7 @@ public class MultiSelectGrid<T> extends SelectGrid<T> {
     /**
      * Constructor.
      *
-     * @param objectClass Type object in the grid.
+     * @param objectClass Type of object in the grid.
      * @param items Items of the grid.
      * @param columns Column names of the grid.
      * @param consumer Consumer to consume the selected item.

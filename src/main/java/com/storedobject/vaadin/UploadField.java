@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
  * <p>This component is a {@link com.vaadin.flow.component.HasValue} and the value returned is the number of files
  * successfully uploaded.</p>
  *
- * <p>The default maximum file size is set to 10000000 bytes but it can be changed via the
+ * <p>The default maximum file size is set to 10,000,000 bytes, but it can be changed via the
  * {@link Upload#setMaxFileSize(int)} method and the {@link Upload} component can be obtained via the
  * {@link #getUploadComponent()} method.</p>
  *
@@ -207,7 +207,7 @@ public class UploadField extends CustomField<Integer> {
     }
 
     /**
-     * This is where the real processing happens. This method is invoked to process the uploaded content and by default,
+     * This is where the real processing happens. This method is invoked to process the uploaded content, and by default,
      * it asks the "processor" to process it. However, this can be overridden.
      * @param data Uploaded content
      * @param mimeType Mime type of the content
@@ -219,7 +219,7 @@ public class UploadField extends CustomField<Integer> {
     }
 
     /**
-     * Get name of the file that is being processed. This could be called from within the "processor" if required.
+     * Get the name of the file that is being processed. This could be called from within the "processor" if required.
      * @return File name
      */
     public String getFileName() {
@@ -227,7 +227,7 @@ public class UploadField extends CustomField<Integer> {
     }
 
     /**
-     * Set number of files that are allowed upload.
+     * Set the number of files that are allowed to upload.
      * @param fileCount Number of files
      */
     public void setMaxFiles(int fileCount) {
