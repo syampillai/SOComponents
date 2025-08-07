@@ -23,12 +23,10 @@ export class SOTimer extends LitElement {
 
     setDPrefix(prefixD) {
         this.prefixD = prefixD;
-        console.log("Prefix: " + prefixD);
     }
 
     setDSuffix(suffixD) {
         this.suffixD = suffixD;
-        console.log("Suffix: " + suffixD);
     }
 
     count(limit) {
