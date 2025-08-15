@@ -60,7 +60,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
     /**
      * You can have a "header row" (as the first row) that covers the whole grid. Typically, such a row is to show
-     * your own buttons or components to customize the grid. The default implementation returns null and thus, no
+     * your own buttons or components to customize the grid. The default implementation returns null, and thus, no
      * such row is created. (Please note that {@link #createHeaders()}} is invoked before this method for adding
      * other header rows just above the main header row. This may be used for column grouping etc.)
      *
@@ -72,14 +72,14 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
     /**
      * Create extra header rows if required here by invoking {@link #prependHeader()} or {@link #appendHeader()}
-     * (typically useful for creating column grouping etc.). Default implementation does nothing. This is invoked
+     * (typically useful for creating column grouping etc.). The default implementation does nothing. This is invoked
      * before {@link #createHeader()}.
      */
     default void createHeaders() {
     }
 
     /**
-     * Create footer rows if required here by invoking {@link #appendFooter()} or {@link #prependFooter()}. Default
+     * Create footer rows if required here by invoking {@link #appendFooter()} or {@link #prependFooter()}. The default
      * implementation does nothing.
      */
     default void createFooters() {
@@ -124,9 +124,9 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     /**
      * This method is invoked to find out the names of the columns to be generated. However, this will not be invoked
      * if the column names are already passed in the constructor of the {@link SOGrid}. The default implementation
-     * returns null (however, this behaviour can be changed by setting up an
+     * returns null (however, this behavior can be changed by setting up an
      * appropriate {@link ApplicationEnvironment} that can create a customized
-     * {@link ObjectColumnCreator#getColumnNames()}) and in that case, columns names will be determined
+     * {@link ObjectColumnCreator#getColumnNames()}) and in that case, column names will be determined
      * through getXXX and isXXX methods of the Bean type.
      *
      * @return Column names to be constructed.
@@ -186,7 +186,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * This method is invoked just before each row is rendered. You can do special set up or computation at this stage.
+     * This method is invoked just before each row is rendered. You can do special setup or computation at this stage.
      *
      * @param object Currently rendered object.
      */
@@ -203,7 +203,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Sometimes the row object being rendered may be embedded in another object and just before rendering the row's
+     * Sometimes the row object being rendered may be embedded in another object, and just before rendering the row's
      * column details, it may have to be unwrapped. This method is invoked when the row is rendered and just before
      * the rendering function is applied. The default implementation returns the same object.
      *
@@ -293,7 +293,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      * method, this can be overridden.</p>
      *
      * @param columnName Name of the column.
-     * @return Default implementation returns -1, meaning the value should not be applied.
+     * @return The default implementation returns -1, meaning the value should not be applied.
      */
     default int getRelativeColumnWidth(String columnName) {
         return -1;
@@ -304,7 +304,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      * inflexible width" or not. The value returned should be a CSS compatible width attribute such as "80px" etc.
      *
      * @param columnName Name of the column.
-     * @return Default implementation returns null, meaning the value should not be applied.
+     * @return The default implementation returns null, meaning the value should not be applied.
      */
     default String getFixedColumnWidth(String columnName) {
         return null;
@@ -376,8 +376,8 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Get the name of the method to determine column data. Normally, existence of getXXX(T object) or isXXX(T object)
-     * methods are checked to determine the method. However, this method can specify that otherwise. If the method
+     * Get the name of the method to determine column data. Normally, the existence of getXXX(T object) or isXXX(T object)
+     * methods is checked to determine the method. However, this method can specify that otherwise. If the method
      * name doesn't start with a lowercase character, "get" and "is"
      * prefixes are added to the method name returned to check the existence of the method.
      * 
@@ -403,11 +403,11 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
     /**
      * Create a column that uses one or more functions to generate its column value. It generates a multi-line output
-     * with result of each function
-     * in separate line unless a template is already defined for this column using getColumnTemplate method.
+     * with a result of each function
+     * in a separate line unless a template is already defined for this column using the getColumnTemplate method.
      *
      * @param columnName Column name
-     * @param functions Functions that take object as a parameter and returns some sort of value. Values are
+     * @param functions Functions that take an object as a parameter and returns some sort of value. Values are
      *                  stringified before displaying. (Application Environment may be set up to control how the
      *                  stringification process by defining it in the toDisplay(...) method).
      * @return Whether a new column can be created or not.
@@ -423,7 +423,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      * grid has too many rows.</p>
      *
      * @param columnName Column name
-     * @param componentProvider Function that takes object as a parameter and returns a {@link Component}.
+     * @param componentProvider Function that takes an object as a parameter and returns a {@link Component}.
      * @param <C> Type of component.
      * @return Whether a new column can be created or not.
      */
@@ -435,7 +435,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      * Create an HTML column that uses HTML emitted by the function as its column value.
      *
      * @param columnName Column name
-     * @param htmlFunction Function that takes object as a parameter and returns HTML text.
+     * @param htmlFunction Function that takes an object as a parameter and returns HTML text.
      * @return Whether a new column can be created or not.
      */
     default boolean createHTMLColumn(String columnName, Function<T, ?> htmlFunction) {
@@ -450,7 +450,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      *
      * @param columnName Column name
      * @param template Template
-     * @param functions Functions that take object as a parameter and returns some sort of value.
+     * @param functions Functions that take an object as a parameter and returns some sort of value.
      *                  Values are stringified before displaying. (Application Environment may be set up to control
      *                  how the stringification process by defining it in the toDisplay(...) method).
      * @return Whether a new column can be created or not.
@@ -462,7 +462,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
     /**
      * Create a column uses a method to determine its data. The method must be either available in the grid itself or
-     * must be available in the object. If it is available in the grid itself, it should take object as the only
+     * must be available in the object. If it is available in the grid itself, it should take an object as the only
      * parameter.
      *
      * @param columnName Column name
@@ -497,7 +497,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
     /**
      * Customize the renderer for the given column. This will be invoked when the renderer for the column is ready.
-     * This method is useful when you are creating HTML columns using templating mechanism (eiter using
+     * This method is useful when you are creating HTML columns using a templating mechanism (eiter using
      * {@link #createColumn(String, String, Function[])} or by returning appropriate values from
      * {@link #getColumnTemplate(String)} and not via {@link #createHTMLColumn(String, Function)})
      * and you want to have features like "click" etc. on the column values.
@@ -571,14 +571,14 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      * Determines the text alignment of the column.
      *
      * @param columnName Column name
-     * @return Default implementation returns START for all columns.
+     * @return The default implementation returns START for all columns.
      */
     default ColumnTextAlign getTextAlign(String columnName) {
         return null;
     }
 
     /**
-     * Get the header component for the specified column. If no header component is defined, getHeader method will be
+     * Get the header component for the specified column. If no header component is defined, the getHeader method will be
      * invoked to create a text-based header.
      *
      * @param columnName Column name
@@ -593,7 +593,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      * returns null.
      *
      * @param columnName Column name
-     * @return Text to display as header. By default, it tries to determine this from the Application Environment.
+     * @return Text to display as a header. By default, it tries to determine this from the Application Environment.
      */
     default String getColumnCaption(String columnName) {
         return null;
@@ -610,7 +610,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Set some other object to supply the column methods. If such an object is set, for column method look up,
+     * Set some other object to supply the column methods. If such an object is set, for column method lookup,
      * this object also will be used before checking in the gird itself.
      *
      * @param host An object containing getXXX / isXXX methods for the respective column names.
@@ -637,7 +637,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Set caption used when displaying the grid in a View.
+     * Set the caption used when displaying the grid in a View.
      *
      * @param caption Caption
      */
@@ -647,7 +647,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Get the menu item for this when displayed as view. This is the menu item displayed by the {@link Application}
+     * Get the menu item for this when displayed as a view. This is the menu item displayed by the {@link Application}
      * when its view is activated.
      *
      * @return Menu item. May return <code>null</code> it the menu item is not yet created.
@@ -739,7 +739,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Add the hierarchy column. If this or any of its cousin method is never called, the first column created will be
+     * Add the hierarchy column. If this or any of its cousin methods is never called, the first column created will be
      * made the hierarchy column.
      * Note: This method is invoked only for Tree type grids.
      *
@@ -752,7 +752,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Add an HTML hierarchy column. If this or any of its cousin method is never called, the first column created
+     * Add an HTML hierarchy column. If this or any of its cousin methods is never called, the first column created
      * will be made the hierarchy column.
      * Note: This method is invoked only for Tree type grids.
      *
@@ -824,7 +824,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Create "sort order" definition for the given column name. (It will be an "ascending order" definition). This
+     * Create a "sort order" definition for the given column name. (It will be an "ascending order" definition). This
      * method is useful to use as parameters to {@link #sort(GridSortOrder[])}.
      *
      * @param columnName Column name
@@ -835,7 +835,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * Create "sort order" definition for the given column name. This
+     * Create a "sort order" definition for the given column name. This
      * method is useful to use as parameters to {@link #sort(GridSortOrder[])}.
      *
      * @param columnName Column name
@@ -852,7 +852,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
      * Sort the columns as defined in the "sort order definitions" passed. Typically, it is easy to write something
      * like this to sort:<BR>
      * <code>sort(sort("Age", false), sort("FirstName"));</code><BR>
-     * This will sort "Age" column in the descending order and then, the "FirstName" column in the ascending order.
+     * This will sort the "Age" column in the descending order and then, the "FirstName" column in the ascending order.
      *
      * @param sortOrders Sort order definitions.
      */
@@ -896,13 +896,23 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
     }
 
     /**
-     * This class takes care of creation of the columns in the grid. In order to have behaviours of {@link HasColumns},
+     * Retrieves a stream of rendered column names from the current grid. This method should be called only if the
+     * rendering of the grid is completed. There is no point in overriding this method.
+     *
+     * @return a stream of strings representing the names of the rendered columns
+     */
+    default Stream<String> getRenderedColumnNames() {
+        return getSOGrid().renderedColumns.stream();
+    }
+
+    /**
+     * This class takes care of the creation of the columns in the grid. To have behaviors of {@link HasColumns},
      * an instance of this class is required and should be returned to the {@link HasColumns#getSOGrid()} method. (See
      * the source code of {@link DataGrid} and {@link DataTreeGrid} classes to get an idea). Also, the following methods
      * of the grid must be overridden: {@link Grid#setColumnReorderingAllowed(boolean)},
      * {@link Grid#isColumnReorderingAllowed()}, {@link Grid#getColumns()}, @{@link Grid#getColumnByKey(String)}. These
      * methods should check whether the grid is rendered using {@link SOGrid#rendered()} method and if not rendered,
-     * these method calls to be delegated into this class.
+     * these methods call to be delegated into this class.
      *
      * @param <T> Bean type of the grid
      */
@@ -933,6 +943,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
         private String treeColumnName = "_$_";
         private Application application;
         private List<ItemSelectedListener<T>> itemSelectedListeners;
+        private final List<String> renderedColumns = new ArrayList<>();
 
         /**
          * Constructor.
@@ -977,15 +988,27 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
             }
             if(columns != null) {
                 columns.forEach(n -> {
+                    renderedColumns.add(n);
                     n = trimCaption(n);
                     if(includeColumn(n)) {
                         createColumn(n);
+                    } else {
+                        renderedColumns.removeLast();
                     }
                 });
             } else {
                 Stream<String> columnNames = getColumnNames();
                 if(columnNames != null) {
-                    columnNames.map(this::trimCaption).filter(this::includeColumn).forEach(this::createColumn);
+                    columnNames.filter(n -> {
+                        renderedColumns.add(n);
+                        return true;
+                    }).map(this::trimCaption).filter(n -> {
+                        if(includeColumn(n)) {
+                            return true;
+                        }
+                        renderedColumns.removeLast();
+                        return false;
+                    }).forEach(this::createColumn);
                 } else {
                     generateColumns();
                 }
@@ -1256,6 +1279,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
                 }
                 name = getColumnName(m);
                 if(name != null && includeColumn(name)) {
+                    renderedColumns.add(name);
                     createColumn(name, m);
                 }
             }
@@ -1623,7 +1647,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
 
         /**
          * This is where the column is finally constructed. If you have another implementation, this method can be
-         * overridden. (For example, an "editable" grid such as Vaadin's GridPro, may construct an
+         * overridden. (For example, an "editable" grid, such as Vaadin's GridPro, may construct an
          * "editable" column). One of the parameters <code>valueProviderForComparator</code> and <code>comparator</code>
          * will be <code>null</code> because their values are mutually exclusive.
          *
@@ -1634,7 +1658,7 @@ public interface HasColumns<T> extends ExecutableView, SupportWindowMode {
          *                                   sorting (Could be <code>null</code>)
          * @param comparator Comparator used for sorting this column (Could be <code>null</code>)
          *
-         * @return Column created. Default implementation use the {@link Grid#addColumn(Renderer)} method to create the
+         * @return Column created. Default implementation uses the {@link Grid#addColumn(Renderer)} method to create the
          * column and set the comparator if it is not <code>null</code>.
          */
         protected Grid.Column<T> constructColumn(String columnName, Grid<T> grid, Renderer<T> renderer,
