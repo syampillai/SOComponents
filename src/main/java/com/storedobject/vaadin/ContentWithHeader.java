@@ -9,7 +9,7 @@ import com.vaadin.flow.component.html.Div;
  *
  * @author Syam
  */
-public class ContentWithHeader extends Composite<Div> {
+public class ContentWithHeader extends Composite<Div> implements HasSize{
 
     private final Div layout = new Div();
     private Component header;

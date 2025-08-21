@@ -3,7 +3,7 @@ package com.storedobject.vaadin;
 /**
  * Enhancement to Vaadin's {@link com.vaadin.flow.component.HasSize} interface.
  * Vaadin's {@link com.vaadin.flow.component.HasSize} sets width/height as "styles"
- * whereas this interface's default methods sets it as "attributes" too.
+ * whereas this interface's default methods set it as "attributes" too.
  *
  * @author Syam
  */

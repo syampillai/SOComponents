@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Dashboard is a "view" that can show multiple embedded "sub-views". Dashboard divides the display area into rows and columns and each
+ * Dashboard is a "view" that can show multiple embedded "sub-views". Dashboard divides the display area into rows and columns, and each
  * "sub-view" can span across one or more rows and columns.
  *
  * @author Syam
@@ -62,7 +62,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * Set minimum width for the column. Default width is 250 pixels.
+     * Set the minimum width for the column. The default width is 250 pixels.
      *
      * @param width Width
      */
@@ -84,7 +84,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * Check the current value of auto-arrange flag.
+     * Check the current value of an auto-arrange flag.
      *
      * @return Current auto-arrange flag
      * @see #setAutoarrange(boolean)
@@ -94,7 +94,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * Justify (horizontally) a view within its grid cell.
+     * Horizontally justify a view within its grid cell.
      *
      * @param view View
      * @param position Position
@@ -125,7 +125,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * Set the column-span for the particular sub-view. Minimum value is 1 and maximum allowed is 6.
+     * Set the column-span for the particular sub-view. The minimum value is 1 and the maximum allowed is 6.
      *
      * @param component Sub-view
      * @param numberOfColumns Number of columns to span
@@ -138,7 +138,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * Set the column-span for the particular sub-view. Minimum value is 1 and maximum allowed is 6.
+     * Set the column-span for the particular sub-view. The minimum value is 1 and the maximum allowed is 6.
      *
      * @param view Sub-view
      * @param numberOfColumns Number of columns to span
@@ -189,8 +189,10 @@ public class Dashboard extends CSSGrid implements ExecutableView {
      */
     public void add(View... views) {
         if(views != null) {
+            View thisView = getView(true);
             for(View v: views) {
                 if(v != null) {
+                    v.setEmbeddedView(thisView);
                     if(registrationMap.get(v) == null) {
                         registrationMap.put(v, v.addClosedListener(viewMonitor));
                         add(v.getComponent());
@@ -201,7 +203,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * Remove sub-views to the dashboard.
+     * Remove sub-views from the dashboard.
      *
      * @param views Sub-views.
      */
@@ -257,7 +259,7 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * Caption used when displaying it in a View. If no caption was set using setCaption method, "Dashboard" will be returned.
+     * Caption used when displaying it in a View. If no caption was set using the setCaption method, "Dashboard" will be returned.
      *
      * @return Caption
      */
@@ -295,13 +297,13 @@ public class Dashboard extends CSSGrid implements ExecutableView {
     }
 
     /**
-     * This will be invoked whenever the dashboard is closed or aborted so that any resource clean-up can be run.
+     * This will be invoked whenever the dashboard is closed or aborted so that any resource cleanup can be run.
      */
     public void clean() {
     }
 
     /**
-     * Set caption used when displaying the grid in a View.
+     * Set the caption used when displaying the grid in a View.
      *
      * @param caption Caption
      */
