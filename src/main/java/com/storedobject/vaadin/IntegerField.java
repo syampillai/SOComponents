@@ -118,7 +118,6 @@ public class IntegerField extends NumericField<Integer> {
         createField();
         setLength(width);
         setValue(initialValue);
-        setPattern();
         setLabel(label);
     }
 

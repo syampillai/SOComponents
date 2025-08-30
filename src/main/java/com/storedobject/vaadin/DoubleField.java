@@ -259,6 +259,5 @@ public class DoubleField extends NumericField<Double> {
             decimals = 0;
         }
         this.decimals = decimals;
-        setPattern();
     }
 }

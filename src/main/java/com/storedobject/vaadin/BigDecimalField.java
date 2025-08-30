@@ -226,7 +226,6 @@ public class BigDecimalField extends NumericField<BigDecimal> {
         this.decimals = decimals(decimals);
         setLength(width);
         setValue(initialValue);
-        setPattern();
         setLabel(label);
     }
 

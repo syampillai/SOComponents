@@ -117,7 +117,6 @@ public class LongField extends NumericField<Long> {
         this.allowNegative = allowNegative;
         setLength(width);
         setValue(initialValue);
-        setPattern();
         setLabel(label);
     }
 

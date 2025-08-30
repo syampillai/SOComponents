@@ -2,9 +2,7 @@ package com.storedobject.vaadin.util;
 
 import com.storedobject.vaadin.Application;
 import com.storedobject.vaadin.CustomTextField;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.textfield.TextField;
-import org.vaadin.textfieldformatter.NumeralFieldFormatter;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -22,7 +20,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
 
     /**
      * Determines whether the numeric field should apply grouping of digits
-     * (e.g., thousands separators) when displaying numbers.
+     * (e.g., thousand-separators) when displaying numbers.
      */
     protected boolean grouping;
     /**
@@ -35,8 +33,11 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
      * This variable controls the maximum visible or editable width of the field.
      */
     protected int width;
+    /*
     private NumeralFieldFormatter formatter;
     private boolean formatted = false;
+
+     */
 
     /**
      * Constructs a NumericField with a specified default value.
@@ -46,15 +47,6 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
     protected NumericField(T defaultValue) {
         super(defaultValue);
         ((TextField)getField()).setAutoselect(true);
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        if(!formatted && formatter != null) {
-            formatter.extend((TextField)getField());
-            formatted = true;
-        }
     }
 
     /**
@@ -74,7 +66,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
      */
     public void setGrouping(boolean grouping) {
         this.grouping = grouping;
-        setPattern();
+        //setPattern();
     }
 
     /**
@@ -95,7 +87,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
      */
     public void setAllowNegative(boolean allowNegative) {
         this.allowNegative = allowNegative;
-        setPattern();
+        //setPattern();
     }
 
     @Override
@@ -129,7 +121,12 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         if(value == null) {
             value = getEmptyValue();
         }
-        DecimalFormat format = (DecimalFormat) DecimalFormat.getNumberInstance();
+        DecimalFormat format;
+        if("CN".equals(getCountry())) {
+            format = new DecimalFormat("##,##,##,#0.00");
+        } else {
+            format = (DecimalFormat) DecimalFormat.getNumberInstance();
+        }
         format.setMaximumIntegerDigits(30);
         format.setRoundingMode(RoundingMode.HALF_UP);
         int decimals = getDecimals();
@@ -142,7 +139,7 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
         }
         String s = format.format(value);
         if(grouping) {
-            if(getCountry().equals("IN")) {
+            if("IN".equals(getCountry())) {
                 return indianStyle(s);
             }
             return s;
@@ -216,45 +213,6 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
     }
 
     /**
-     * Configures the formatting pattern for the numeric field based on several parameters
-     * such as grouping, decimal places, and whether negative values are allowed.
-     *
-     * This method ensures that the internal {@code formatter} instance is properly set up
-     * or removed if it already exists. It calculates the maximum width of the numeric input
-     * based on defined constraints such as whether negative numbers are allowed and the number
-     * of decimal places. The {@code formatter} uses parameters such as grouping characters,
-     * decimal separators, and the desired formatting style to ensure that the numeric field's
-     * input and display follow the specified rules.
-     *
-     * The method also applies the configured formatter to the underlying text field and updates the
-     * displayed value to match the current formatting rules.
-     *
-     * Preconditions:
-     * - The numeric field's configuration parameters (e.g., grouping, decimal precision) must be set.
-     * - The {@code getField()} method provides the internal text field for the numeric field.
-     *
-     * Postconditions:
-     * - The numeric field's {@code formatter} is updated and applied to the text field.
-     * - The displayed presentation value reflects the new formatting pattern.
-     */
-    protected final void setPattern() {
-        if(formatter != null) {
-            formatter.remove();
-        }
-        int w = width - getDecimals();
-        if(allowNegative) {
-            --w;
-        }
-        formatter = new NumeralFieldFormatter(grouping ? "," : "", ".", w, getDecimals(), !allowNegative,
-                getThousandGroupStyle(), false, true, null);
-        if(getUI().isPresent()) {
-            formatter.extend((TextField) getField());
-            formatted = true;
-        }
-        setPresentationValue(getValue());
-    }
-
-    /**
      * Retrieves the country code associated with the current application context.
      * If no application context is available, the default country code "US" is returned.
      *
@@ -263,13 +221,5 @@ public abstract class NumericField<T extends Number> extends CustomTextField<T> 
     protected String getCountry() {
         Application a = Application.get();
         return a == null ? "US" : a.getCountry();
-    }
-
-    private NumeralFieldFormatter.ThousandsGroupStyle getThousandGroupStyle() {
-        return switch(getCountry()) {
-            case "IN" -> NumeralFieldFormatter.ThousandsGroupStyle.LAKH;
-            case "CN" -> NumeralFieldFormatter.ThousandsGroupStyle.WAN;
-            default -> NumeralFieldFormatter.ThousandsGroupStyle.THOUSAND;
-        };
     }
 }
