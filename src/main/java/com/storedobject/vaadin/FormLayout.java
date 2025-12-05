@@ -30,7 +30,7 @@ public class FormLayout extends com.vaadin.flow.component.formlayout.FormLayout 
     }
 
     /**
-     * Set number of responsive columns for the form.
+     * Set the number of responsive columns for the form.
      *
      * @param columns Number of responsive columns required
      */
@@ -55,7 +55,7 @@ public class FormLayout extends com.vaadin.flow.component.formlayout.FormLayout 
     }
 
     /**
-     * Get number of responsive columns for the form.
+     * Get the number of responsive columns for the form.
      *
      * @return Number of responsive columns of the form.
      */
@@ -71,7 +71,7 @@ public class FormLayout extends com.vaadin.flow.component.formlayout.FormLayout 
     }
 
     /**
-     * Set number of columns to span for a particular component.
+     * Set the number of columns to span for a particular component.
      *
      * @param component Component for which column span to be set
      * @param columnSpan Number of columns to span
@@ -83,7 +83,7 @@ public class FormLayout extends com.vaadin.flow.component.formlayout.FormLayout 
     /**
      * Get the column span of a component.
      *
-     * @param component omponent for which column span to be retrieved
+     * @param component component for which column span to be retrieved
      * @return Column span for the component.
      */
     public int getColumnSpan(Component component) {

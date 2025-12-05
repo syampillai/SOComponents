@@ -4,7 +4,7 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.server.AbstractStreamResource;
 
 /**
- * A PDF viewer component that uses browser's native object tag.
+ * A PDF viewer component that uses the browser's native object tag.
  *
  * @author Syam
  */
@@ -19,7 +19,7 @@ public class PDFViewer extends AbstractResourcedComponent {
     }
 
     /**
-     * Constructor with file to view.
+     * Constructor with a file to view.
      * @param fileURI URI of the file to view
      */
     public PDFViewer(String fileURI) {
@@ -35,7 +35,7 @@ public class PDFViewer extends AbstractResourcedComponent {
     }
 
     /**
-     * This will be invoked by the constructor for initial set up.
+     * This will be invoked by the constructor for initial setup.
      */
     protected void init() {
         super.init();

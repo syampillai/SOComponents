@@ -4,7 +4,7 @@ import com.vaadin.flow.server.AbstractStreamResource;
 
 /**
  * A component that requires a resource.
- * 
+ *
  * @author Syam
  */
 public interface ResourcedComponent {

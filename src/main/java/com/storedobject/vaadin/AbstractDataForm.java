@@ -319,6 +319,23 @@ public abstract class AbstractDataForm<D> extends View implements HasContainer {
     }
 
     /**
+     * Sets the specified fields as required in the form.
+     *
+     * @param fields the array of fields to be marked as required; each field
+     *               in this array should implement the HasValue interface.
+     *               Null values and fields within the array will be ignored.
+     */
+    public void setRequired(HasValue<?, ?>... fields) {
+        if(fields != null) {
+            for(HasValue<?, ?> field: fields ) {
+                if(field != null) {
+                    form.setRequired(field);
+                }
+            }
+        }
+    }
+
+    /**
      * Set the "required" attribute of a field. If set to true, with empty data (checked by invoking {@link HasValue#isEmpty()}),
      * {@link #commit()} will fail.
      *

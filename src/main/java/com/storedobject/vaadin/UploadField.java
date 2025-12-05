@@ -2,9 +2,12 @@ package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.server.streams.*;
 
 import java.io.*;
 import java.util.function.BiConsumer;
@@ -27,10 +30,12 @@ import java.util.function.BiConsumer;
 public class UploadField extends CustomField<Integer> {
 
     private final Upload upload;
+    private final Handler handler = new Handler();
     private int fileCount = 0, maxFileCount = Integer.MAX_VALUE;
     private final BiConsumer<InputStream, String> processor;
     private String fileName;
     private final Div description = new Div();
+    Application application;
     private UI ui;
 
     /**
@@ -66,26 +71,30 @@ public class UploadField extends CustomField<Integer> {
      */
     public UploadField(String label, BiConsumer<InputStream, String> processor) {
         super(0);
-        upload = new Upload(this::createStream);
+        upload = new Upload(handler);
+        if(upload.getUploadButton() instanceof Button b) {
+            b.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        }
         upload.setMaxFiles(maxFileCount);
         upload.setMaxFileSize(10000000);
-        upload.addFileRejectedListener(e -> getU().access(() ->
-                inform("Rejected: " + e.getErrorMessage())));
-        upload.addFailedListener(e -> getU().access(() -> {
+        upload.addFileRejectedListener(e -> {
             --fileCount;
-            inform("Error: Upload Failed");
-            setReadOnly(true);
-        }));
-        upload.addFinishedListener(e -> {
-            inform(null);
-            ++fileCount;
+            inform("File Rejected - " + e.getErrorMessage());
         });
+        upload.addAllFinishedListener(e -> inform(null));
         add(upload, description);
         setLabel(label);
         this.processor = processor;
     }
 
     private void inform(String m) {
+        if(getU() == null) {
+            return;
+        }
+        ui.access(() -> inf(m));
+    }
+
+    private void inf(String m) {
         String s = "Files: " + (fileCount + 1);
         if(maxFileCount < Integer.MAX_VALUE) {
             s += "/" + maxFileCount;
@@ -94,6 +103,9 @@ public class UploadField extends CustomField<Integer> {
             s += " - " + m;
         }
         description.setText(s);
+        if(fileCount >= maxFileCount) {
+            setReadOnly(true);
+        }
     }
 
     /**
@@ -107,7 +119,7 @@ public class UploadField extends CustomField<Integer> {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        getU();
+        application = Application.get(getU());
     }
 
     private UI getU() {
@@ -137,8 +149,7 @@ public class UploadField extends CustomField<Integer> {
      * @param description Description to show.
      */
     public void setDescription(String description) {
-        getU();
-        if(ui == null) {
+        if(getU() == null) {
             this.description.setText(description);
         } else {
             ui.access(() -> this.description.setText(description));
@@ -154,56 +165,60 @@ public class UploadField extends CustomField<Integer> {
     protected void setPresentationValue(Integer integer) {
     }
 
-    private OutputStream createStream(String fileName, String mimeType) {
-        Application a = Application.get(ui);
-        this.fileName = fileName;
-        PipedOutputStream out = new PipedOutputStream();
-        try {
-            PipedInputStream in = new PipedInputStream(out);
-            if(a != null) {
-                a.startPolling(in);
-            }
-            new Thread(() -> {
-                try {
-                    process(in, mimeType);
-                } catch(Throwable processingError) {
-                    if(a != null) {
-                        a.log(processingError);
-                    } else {
-                        processingError.printStackTrace();
-                    }
-                    StyledText error = new StyledText("<span style=\"color:red\">Processing error!</span>");
-                    ui.access(() -> {
-                        UploadField.this.add(error);
-                        setReadOnly(true);
-                    });
-                }
-                try {
-                    //noinspection StatementWithEmptyBody
-                    while (in.read() != -1);
-                } catch(IOException ignore) {
-                }
-                if(fileCount == maxFileCount) {
-                    ui.access(() -> {
-                        new Box(description);
-                        setReadOnly(true);
-                    });
-                }
-                try {
-                    out.close();
-                } catch (IOException ignore) {
-                }
-                try {
-                    if(a != null) {
-                        a.stopPolling(in);
-                    }
-                    in.close();
-                } catch (IOException ignore) {
-                }
-            }).start();
-        } catch (IOException ignored) {
+    private class Handler implements UploadHandler {
+
+        @Override
+        public void handleUploadRequest(UploadEvent uploadEvent) {
+            handleUpload(uploadEvent);
         }
-        return out;
+    }
+
+    private void handleUpload(UploadEvent event) {
+        if (application != null) {
+            application.startPolling(this);
+        }
+        try {
+            this.fileName = event.getFileName();
+            InputStream in = event.getInputStream();
+            try {
+                process(in, event.getContentType());
+                ++fileCount;
+                inform(null);
+                handler.responseHandled(true, event.getResponse());
+            } catch (Throwable processingError) {
+                processingError.printStackTrace();
+                if (application != null) {
+                    application.log(processingError);
+                } else {
+                    processingError.printStackTrace();
+                }
+                StyledText error = new StyledText("<span style=\"color:red\">Processing error!</span>");
+                ui.access(() -> {
+                    UploadField.this.add(error);
+                    setReadOnly(true);
+                });
+                handler.responseHandled(false, event.getResponse());
+            }
+            try {
+                //noinspection StatementWithEmptyBody
+                while (in.read() != -1) ;
+            } catch (IOException ignore) {
+            }
+            if (fileCount == maxFileCount) {
+                ui.access(() -> {
+                    new Box(description);
+                    setReadOnly(true);
+                });
+            }
+            try {
+                in.close();
+            } catch (IOException ignore) {
+            }
+        } finally {
+            if (application != null) {
+                application.stopPolling(this);
+            }
+        }
     }
 
     /**
