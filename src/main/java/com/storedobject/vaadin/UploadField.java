@@ -279,6 +279,11 @@ public class UploadField extends CustomField<Integer> {
         }
     }
 
+    /**
+     * Sets the consumer to handle errors that occur during the processing of uploaded content.
+     *
+     * @param processErrorConsumer The consumer that will handle processing errors, which accepts a {@link Throwable} representing the error.
+     */
     public void setProcessErrorConsumer(Consumer<Throwable> processErrorConsumer) {
         this.processErrorConsumer = processErrorConsumer;
     }
