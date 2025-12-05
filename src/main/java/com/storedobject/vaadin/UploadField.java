@@ -11,6 +11,7 @@ import com.vaadin.flow.server.streams.*;
 
 import java.io.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A class to process uploaded content. The content will be available to the "processor" as an {@link InputStream}.
@@ -35,8 +36,9 @@ public class UploadField extends CustomField<Integer> {
     private final BiConsumer<InputStream, String> processor;
     private String fileName;
     private final Div description = new Div();
-    Application application;
+    private Application application;
     private UI ui;
+    private Consumer<Throwable> processErrorConsumer;
 
     /**
      * Constructor.
@@ -186,17 +188,22 @@ public class UploadField extends CustomField<Integer> {
                 inform(null);
                 handler.responseHandled(true, event.getResponse());
             } catch (Throwable processingError) {
-                processingError.printStackTrace();
-                if (application != null) {
-                    application.log(processingError);
+                if(processErrorConsumer != null) {
+                    processErrorConsumer.accept(processingError);
+                    ui.access(() -> setReadOnly(true));
                 } else {
                     processingError.printStackTrace();
+                    if (application != null) {
+                        application.log(processingError);
+                    } else {
+                        processingError.printStackTrace();
+                    }
+                    StyledText error = new StyledText("<span style=\"color:red\">Processing error!</span>");
+                    ui.access(() -> {
+                        UploadField.this.add(error);
+                        setReadOnly(true);
+                    });
                 }
-                StyledText error = new StyledText("<span style=\"color:red\">Processing error!</span>");
-                ui.access(() -> {
-                    UploadField.this.add(error);
-                    setReadOnly(true);
-                });
                 handler.responseHandled(false, event.getResponse());
             }
             try {
@@ -270,5 +277,9 @@ public class UploadField extends CustomField<Integer> {
                 upload.setVisible(true);
             }
         }
+    }
+
+    public void setProcessErrorConsumer(Consumer<Throwable> processErrorConsumer) {
+        this.processErrorConsumer = processErrorConsumer;
     }
 }
