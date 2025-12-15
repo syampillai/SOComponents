@@ -79,10 +79,7 @@ public class UploadField extends CustomField<Integer> {
         }
         upload.setMaxFiles(maxFileCount);
         upload.setMaxFileSize(10000000);
-        upload.addFileRejectedListener(e -> {
-            --fileCount;
-            inform("File Rejected - " + e.getErrorMessage());
-        });
+        upload.addFileRejectedListener(e -> inform("File Rejected - " + e.getErrorMessage()));
         upload.addAllFinishedListener(e -> inform(null));
         add(upload, description);
         setLabel(label);
@@ -97,7 +94,7 @@ public class UploadField extends CustomField<Integer> {
     }
 
     private void inf(String m) {
-        String s = "Files: " + (fileCount + 1);
+        String s = "Files: " + fileCount;
         if(maxFileCount < Integer.MAX_VALUE) {
             s += "/" + maxFileCount;
         }
