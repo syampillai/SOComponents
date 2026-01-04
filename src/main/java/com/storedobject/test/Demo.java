@@ -37,6 +37,12 @@ public class Demo extends Application {
                 }
             });
             menu.add(ami);
+            ami = application.createMenuItem("PDF Viewer",
+                    () -> new PDFTestView().execute());
+            menu.add(ami);
+            ami = application.createMenuItem("PDF File Viewer",
+                    () -> new PDFFileView().execute());
+            menu.add(ami);
             ami = application.createMenuItem("Person Form",
                     () -> new PersonView().execute());
             menu.add(ami);
@@ -65,6 +71,18 @@ public class Demo extends Application {
 
         public PersonView(String caption) {
             super(new PersonForm(), caption == null || caption.isBlank() ? "Person Details" : caption);
+        }
+    }
+
+    private static class PDFTestView extends View implements CloseableView {
+
+        public PDFTestView() {
+        }
+    }
+
+    private static class PDFFileView extends View implements CloseableView {
+
+        public PDFFileView() {
         }
     }
 

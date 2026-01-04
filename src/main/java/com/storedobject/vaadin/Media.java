@@ -31,7 +31,7 @@ public abstract class Media extends Component implements HasSize {
     }
 
     /**
-     * Consructor.
+     * Constructor.
      * @param resources Sources to be set
      */
     public Media(StreamResource... resources) {

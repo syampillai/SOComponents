@@ -65,4 +65,13 @@ public class SearchField extends ActionTextField {
     public void doSearch() {
         act();
     }
+
+    /**
+     * To programmatically invoke the search with the given text.
+     *
+     * @param text Search text.
+     */
+    public void doSearch(String text) {
+        act(text);
+    }
 }

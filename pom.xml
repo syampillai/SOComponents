@@ -6,17 +6,17 @@
     <parent>
         <groupId>com.storedobject</groupId>
         <artifactId>so-vaadinpom</artifactId>
-        <version>24.8.7</version>
+        <version>24.9.8</version>
     </parent>
 
     <groupId>org.vaadin.addons.so</groupId>
     <artifactId>so-components</artifactId>
-    <version>14.0.7</version>
+    <version>14.1.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
     <properties>
-        <so-helper-version>5.0.0</so-helper-version>
+        <so-helper-version>5.0.2</so-helper-version>
     </properties>
 
     <organization>
@@ -31,13 +31,6 @@
         </license>
     </licenses>
 
-    <repositories>
-        <repository>
-            <id>so-maven</id>
-            <url>https://storedobject.com/maven</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <!-- Java Servlet -->
         <dependency>
@@ -51,7 +44,7 @@
         <dependency>
             <groupId>org.vaadin.addons.so</groupId>
             <artifactId>so-helper</artifactId>
-            <version>5.0.0</version>
+            <version>${so-helper-version}</version>
         </dependency>
 
         <!-- Vaadin add-on for text input formatting -->

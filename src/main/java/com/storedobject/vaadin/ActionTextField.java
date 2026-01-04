@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 /**
  * A TextField that triggers a Consumer action (when value changed or "Enter" key is pressed). A value-change-timeout
- * of 1000 milliseconds is set as the default but it may be changed.
+ * of 1000 milliseconds is set as the default, but it may be changed.
  *
  * @author Syam
  */
@@ -107,15 +107,25 @@ public class ActionTextField extends TextField {
      * Action is carried out in this method.
      */
     synchronized void act() {
-        String t = getActionText();
-        if(actionText != null && actionText.equals(t)) {
+        act(getValue());
+    }
+
+    /**
+     * Action is carried out in this method.
+     *
+     * @param actionText Action text.
+     */
+    public synchronized void act(String actionText) {
+        if(actionText == null) return;
+        actionText = getActionText(actionText);
+        if(this.actionText != null && this.actionText.equals(actionText)) {
             focus();
             return;
         }
-        actionText = t;
+        this.actionText = actionText;
         Consumer<String> a = getAction();
         if(a != null) {
-            a.accept(t);
+            a.accept(actionText);
         }
         focus();
     }
@@ -126,7 +136,13 @@ public class ActionTextField extends TextField {
      * @return Action text.
      */
     public String getActionText() {
-        String t = getValue();
+        return getActionText(getValue());
+    }
+
+    private String getActionText(String t) {
+        if(t == null) {
+            return null;
+        }
         if((transform & 1) == 1) {
             t = t.trim();
         }
