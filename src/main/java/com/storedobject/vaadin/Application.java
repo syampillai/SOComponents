@@ -320,6 +320,7 @@ public abstract class Application {
                     set("--so-header-background-50pct", "var(--lumo-primary-color-50pct)").
                     set("--so-hover-background", "var(--lumo-primary-color-50pct)").
                     set("--so-grid-selected-background", "var(--lumo-primary-color-50pct)").
+                    set("--so-grid-selected-color", "var(--so-header-color)").
                     set("--so-grid-stripes-background", "var(--lumo-primary-color-10pct)");
         }
         this.ui = ui;
@@ -327,7 +328,7 @@ public abstract class Application {
     }
 
     /**
-     * Invoked whenever this application is attached to a UI. Default implementation does nothing.
+     * Invoked whenever this application is attached to a UI. The default implementation does nothing.
      */
     public void attached() {
     }

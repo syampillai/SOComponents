@@ -1,25 +1,21 @@
 package com.storedobject.vaadin;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.function.BooleanSupplier;
 
 /**
- * A confirm button is a button whose "click handler" will be invoked only after a further confirmation obtained from the user.
- * (Typical use case is to ask further confirmation when a "Delete" button is pressed).
+ * A confirmation button is a button whose "click handler" will be invoked only after a further confirmation obtained from the user.
+ * (A typical use case is to ask for further confirmation when a "Delete" button is pressed).
  *
  * @author Syam
  */
-public class ConfirmButton extends Button {
+public class ConfirmButton extends PopupButton {
 
     private BooleanSupplier preconfirm;
     private Yes yes;
-    private ContextMenu menu;
-    private ButtonLayout buttons;
-    private StyledText message;
 
     /**
      * Constructor.
@@ -92,7 +88,7 @@ public class ConfirmButton extends Button {
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
      */
     public ConfirmButton(String text, ClickHandler clickHandler, String message) {
-        super(text, null);
+        super(text);
         init(clickHandler, message);
     }
 
@@ -104,7 +100,7 @@ public class ConfirmButton extends Button {
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
      */
     public ConfirmButton(Component icon, ClickHandler clickHandler, String message) {
-        super(icon, null);
+        super(icon);
         init(clickHandler, message);
     }
 
@@ -117,7 +113,7 @@ public class ConfirmButton extends Button {
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
      */
     public ConfirmButton(String text, String icon, ClickHandler clickHandler, String message) {
-        super(text, icon, null);
+        super(text, icon);
         init(clickHandler, message);
     }
 
@@ -130,7 +126,7 @@ public class ConfirmButton extends Button {
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
      */
     public ConfirmButton(String text, Component icon, ClickHandler clickHandler, String message) {
-        super(text, icon, null);
+        super(text, icon);
         init(clickHandler, message);
     }
 
@@ -142,7 +138,7 @@ public class ConfirmButton extends Button {
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
      */
     public ConfirmButton(VaadinIcon icon, ClickHandler clickHandler, String message) {
-        super(icon, null);
+        super(icon);
         init(clickHandler, message);
     }
 
@@ -155,35 +151,22 @@ public class ConfirmButton extends Button {
      * @param message Message to be displayed when confirming (If <code>null</code>, it will use "Are you sure?")
      */
     public ConfirmButton(String text, VaadinIcon icon, ClickHandler clickHandler, String message) {
-        super(text, icon, null);
+        super(text, icon);
         init(clickHandler, message);
     }
 
     private void init(ClickHandler clickHandler, String message) {
-        this.message = new StyledText(message == null ? "Are you sure?" : message);
-        getElement().appendChild(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL).getElement());
+        add(new StyledText(message == null ? "Are you sure?" : message));
         getElement().getStyle().set("background", "var(--lumo-error-color-10pct)");
         yes = new Yes(clickHandler);
-        buttons = new ButtonLayout(new Button("No", e -> {}).asSmall(), yes);
-        createMenu();
-    }
-
-    private void createMenu() {
-        if(menu != null) {
-            menu.setTarget(null);
-            menu.removeAll();
-        }
-        menu = new ContextMenu(this);
-        menu.setOpenOnClick(true);
-        menu.addOpenedChangeListener(e -> {
+        add(new ButtonLayout(new Button("No", e -> getPopover().close()).asSmall(), yes));
+        getPopover().addOpenedChangeListener(e -> {
             if(e.isOpened()) {
                 if(preconfirm != null && !preconfirm.getAsBoolean()) {
-                    menu.close();
+                    e.getSource().close();
                 }
             }
         });
-        menu.addItem(message);
-        menu.addItem(buttons, null);
     }
 
     @Override
@@ -221,6 +204,7 @@ public class ConfirmButton extends Button {
 
         @Override
         public void clicked(Component c) {
+            getPopover().close();
             if(handler != null) {
                 handler.clicked(ConfirmButton.this);
             }

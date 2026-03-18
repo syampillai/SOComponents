@@ -6,6 +6,7 @@
 }
 :host(.so-grid) [part~="row"][selected] [part~="body-cell"]:not([part~="details-cell"]) {
     background: var(--so-grid-selected-background, var(--lumo-primary-color-50pct));
+    color: var(--so-grid-selected-color, var(--so-header-color));
 }
 :host([theme~='row-stripes']) [part~='row']:not([odd]) [part~='body-cell'],
     :host([theme~='row-stripes']) [part~='row']:not([odd]) [part~='details-cell'] {

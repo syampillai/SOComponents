@@ -5,20 +5,11 @@ https://vaadin.com/directory/component/so-components
 
 Include this in the dependencies section of your POM file:
 ```xml
-  <dependency>
-    <groupId>com.storedobject</groupId>
+<dependency>
+    <groupId>org.vaadin.addons.so</groupId>
     <artifactId>so-components</artifactId>
-    <version>14.0.7</version>
-  </dependency>
-```
-Also, include this in your repositories section:
-```xml
-<repositories>
-    <repository>
-        <id>so-maven</id>
-        <url>https://storedobject.com/maven</url>
-    </repository>
-</repositories>
+    <version>14.1.0</version>
+</dependency>
 ```
 
 ## Dependencies
@@ -57,5 +48,5 @@ Please see the documentation of the Application class to get an idea how to crea
 application.
 
 ## Documentation
-Most classes are documented with some explanation about its usage. Please see the API
+Most classes are documented with some explanation about their usage. Please see the API
 documentation.
