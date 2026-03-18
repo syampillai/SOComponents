@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.storedobject</groupId>
         <artifactId>so-vaadinpom</artifactId>
-        <version>24.9.8</version>
+        <version>24.10.0</version>
     </parent>
 
     <groupId>org.vaadin.addons.so</groupId>
     <artifactId>so-components</artifactId>
-    <version>14.1.0</version>
+    <version>14.2.0</version>
     <name>SO Components</name>
     <description>A set of Vaadin Flow Components and Abstractions</description>
 
