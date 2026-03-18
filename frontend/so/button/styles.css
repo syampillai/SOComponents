@@ -1,0 +1,6 @@
+/* Expand a button suffix to fill the width */
+vaadin-button.expand-suffix::part(suffix) {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: flex-end;
+}
